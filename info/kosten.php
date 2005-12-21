@@ -70,13 +70,13 @@ include("../menu.php");
 			foreach($gRes as $n=>$f) ${"partcost_".$f} = $o->c * $gBuildingType[$o->type]->{"cost_".$f};
 			foreach($gRes as $n=>$f) ${"totalcost_".$f} += ${"partcost_".$f};
 		?>
-		<?php foreach($gRes as $n=>$f) echo '<td align="right">'.round(${"partcost_".$f},0).'</td>'; ?>
+		<?php foreach($gRes as $n=>$f) echo '<td align="right">'.kplaintrenner(round(${"partcost_".$f},0)).'</td>'; ?>
 		<td align="right"><?=Duration2Text($parttime)?></td>
 	</tr>
 	<?php } ?>
 	<tr>
-		<td align="right" colspan=3><b>summe</b></td>
-		<?php foreach($gRes as $n=>$f) echo '<td align="right"><b>'.round(${"totalcost_".$f},0).'</b></td>'; ?>
+		<td align="right" colspan=3><b>Summe</b></td>
+		<?php foreach($gRes as $n=>$f) echo '<td align="right"><b>'.kplaintrenner(round(${"totalcost_".$f},0)).'</b></td>'; ?>
 		<td align="right"><?=Duration2Text($timesum)?></td>
 	</tr>
 	<?php foreach($gRes as $n=>$f) ${"grandtotalcost_".$f} += ${"totalcost_".$f};?>
@@ -115,13 +115,13 @@ include("../menu.php");
 			if ($timesum < $parttimesum)
 				$timesum = $parttimesum;
 		?>
-		<?php foreach($gRes as $n=>$f) echo '<td align="right">'.round($o->c*${"partcost_".$f},0).'</td>'; ?>
+		<?php foreach($gRes as $n=>$f) echo '<td align="right">'.kplaintrenner(round($o->c*${"partcost_".$f},0)).'</td>'; ?>
 		<td align="right"><?=Duration2Text($parttimesum)?></td>
 	</tr>
 	<?php }?>
 	<tr>
 		<td align="right" colspan=3><b>summe</b></td>
-		<?php foreach($gRes as $n=>$f) echo '<td align="right"><b>'.round(${"totalcost_".$f},0).'</b></td>'; ?>
+		<?php foreach($gRes as $n=>$f) echo '<td align="right"><b>'.kplaintrenner(round(${"totalcost_".$f},0)).'</b></td>'; ?>
 		<td align="right"><?=Duration2Text($timesum)?></td>
 	</tr>
 	<?php foreach($gRes as $n=>$f) ${"grandtotalcost_".$f} += ${"totalcost_".$f};?>
@@ -160,13 +160,13 @@ include("../menu.php");
 			if ($timesum < $parttimesum)
 				$timesum = $parttimesum;
 		?>
-		<?php foreach($gRes as $n=>$f) echo '<td align="right">'.round(${"partcost_".$f},0).'</td>'; ?>
+		<?php foreach($gRes as $n=>$f) echo '<td align="right">'.kplaintrenner(round(${"partcost_".$f},0)).'</td>'; ?>
 		<td align="right"><?=Duration2Text($parttimesum)?></td>
 	</tr>
 	<?php }?>
 	<tr>
 		<td align="right" colspan=3><b>summe</b></td>
-		<?php foreach($gRes as $n=>$f) echo '<td align="right"><b>'.round(${"totalcost_".$f},0).'</b></td>'; ?>
+		<?php foreach($gRes as $n=>$f) echo '<td align="right"><b>'.kplaintrenner(round(${"totalcost_".$f},0)).'</b></td>'; ?>
 		<td align="right"><?=Duration2Text($timesum)?></td>
 	</tr>
 	<?php foreach($gRes as $n=>$f) ${"grandtotalcost_".$f} += ${"totalcost_".$f};?>
@@ -200,13 +200,13 @@ include("../menu.php");
 			foreach($gRes as $n=>$f) ${"partcost_".$f} = $amount * $gUnitType[$o->param1]->{"cost_".$f};
 			foreach($gRes as $n=>$f) ${"totalcost_".$f} += ${"partcost_".$f};
 		?>
-		<?php foreach($gRes as $n=>$f) echo '<td align="right">'.round(${"partcost_".$f},0).'</td>'; ?>
+		<?php foreach($gRes as $n=>$f) echo '<td align="right">'.kplaintrenner(round(${"partcost_".$f},0)).'</td>'; ?>
 		<td align="right"><?=Duration2Text($parttime)?></td>
 	</tr>
 	<?php }?>
 	<tr>
 		<td align="right" colspan=3><b>summe</b></td>
-		<?php foreach($gRes as $n=>$f) echo '<td align="right"><b>'.round(${"totalcost_".$f},0).'</b></td>'; ?>
+		<?php foreach($gRes as $n=>$f) echo '<td align="right"><b>'.kplaintrenner(round(${"totalcost_".$f},0)).'</b></td>'; ?>
 		<td align="right"><?=Duration2Text($timesum)?></td>
 	</tr>
 	<?php foreach($gRes as $n=>$f) ${"grandtotalcost_".$f} += ${"totalcost_".$f};?>
@@ -217,8 +217,8 @@ include("../menu.php");
 	
 	<?php /* ***** Grand Total ***** */ ?>
 	<tr>
-		<td align="right" colspan=3><b>summe total</b></td>
-		<?php foreach($gRes as $n=>$f) echo '<td align="right"><b style="color:'.((round(${"grandtotalcost_".$f},0)<=$gUser->$f)?"green":"red").'">'.round(${"grandtotalcost_".$f},0).'</b></td>'; ?>
+		<td align="right" colspan=3><b>Summe total</b></td>
+		<?php foreach($gRes as $n=>$f) echo '<td align="right"><b style="color:'.((round(${"grandtotalcost_".$f},0)<=$gUser->$f)?"green":"red").'">'.kplaintrenner(round(${"grandtotalcost_".$f},0)).'</b></td>'; ?>
 		<td align="right"><?=Duration2Text($grandtotaltimesum)?></td>
 	</tr>
 </table>
