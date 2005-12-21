@@ -1,0 +1,36 @@
+====================================================
+         Installing Zwischenwelt
+====================================================
+ok, sorry for this bad installation documentation and
+the general lack of any documentation. maybe more next
+release. Under http://zwischenwelt.org/wiki/ you can
+get information (mostly german) and http://zwischenwelt.org/forum/
+is also a good place to get help (mostly german, but
+postings in english are wellcome).
+
+==[ requirements ]==
+*Webserver (ie. Apache) with PHP4 support
+*MySql 4.0
+*some space on the harddisc
+*good internet connection
+
+==[ installation ]==
+-put all this code somewhere in your wwwroot
+-import db.sql (it contains a minimum db dump)
+ with the admin user and the newbie guild "weltbank"
+-rename the defines.mysql.php.dist to defines.mysql.php
+ and change the basic settings like db access or gfx path
+-create a directory "tmp" in the BASEPATH of the game where the
+ webserver can write files
+-set admin user password with this query: UPDATE USER SET pass=PASSWORD("your-admin-password")
+-login with username Admin and your password an start creating the game
+-adjust pwvergessen.php and anmelden.php (ie. mail)
+-open your webbrowser and register an account (php needs to send a mail) for creating a normal
+ player account
+
+if this does not work find the error and tell us :) that we can add the fix into
+the next relase. so have fun with this.
+
+cron.php needs to be called every minute
+
+ ~~ Zwischenwelt Team

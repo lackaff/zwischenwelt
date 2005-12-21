@@ -1,0 +1,359 @@
+24.02.05
+	Armeen : Flucht, Aufspalten und Vereinigen möglich,
+	"Lagereinzahlung bei Ankunft" als Befehl möglich
+
+23.02.05
+	Hilfe für besonders für Anfänger umsortiert und erweitert.
+	Upgrade-Kosten-Darstellung verbessert, 
+	Baupläne-Umsortier-Seite 
+	eingebaut, Kosten-Seite eingebaut Gegenstände:Portalsteine 
+	und Monster:Schlangen eingebaut
+
+22.02.05
+	Questbelohnungen saftig erhöht
+	Reisezeitberechnung, Warnung bei Wegblockierung, 
+	WegpunktMap, GildenLagerSperrung
+
+21.02.05
+	öffentliche portale, dauerabholzen, gildenlog
+
+20.02.05
+	CreepMap eingebaut, MiniMap und GildMap optimiert
+
+17.02.05
+	Kampfsimulator eingebaut, Questsystem voll in Betrieb, 
+	einige neue Admin Tools
+
+15.02.05
+	das erste experimentelle Quest hat bei 134,134 das Licht 
+	der Zwischenwelt erblickt ^^
+
+08.02.05
+	es gibt nun Ruinen von den meisten Gebäuden
+
+06.02.05
+	Cron Optimiert (anzahl der sql querrys 
+	nurnoch ca 1/3 von vorher =)
+
+04.02.05
+	einige Optimierungen, wenn was nicht mehr geht, 
+	im Forum posten
+
+23.01.05
+	Wegfindung neu geschrieben, nun beachtet er auch Straßen 
+	und all sowas (A* Algo)
+
+22.01.05
+	Kampfberichte per IGM
+
+21.01.05
+	Gilden Lager Code überarbeitet.
+	Armeen bekommen nun einen Angriffsbonus wenn Sie mehr Frags
+	als der Gegner haben. 1 A für je 100 Frags mehr.
+
+17.01.05
+	Übersicht über schon erforschte Technologien unter Forschung
+
+04.01.05
+	Man Kann nun mit Armeen Wälder abholzen. 
+	Bringt keine Rohstoffe.
+	Aber man kann so wildgewachsenes Unterholz beseitigen.
+	Dauert 10 Minuten.
+	
+03.01.05
+	Highscore rewrite, unter 'Profile' kann man nun seine Punkte
+	ein bischen aufgeschluesselt sehen
+
+01.01.05
+	Pfade für einige Dateien haben sich geändert. 
+	Wer die Grafiken lokal bei sich hat, 	
+	sollte sich diese neu runterladen.
+	
+21.12.04
+	rewrite der meisten Zauber
+	neue tabellenstruktur der zauber in der DB
+	ein objekt geschaffen, welches das zauberschreiben vereinfacht
+	die ausgabe beim sprechen von zaubern huebscher gemacht
+	ein bug im zaubersystem gefixt
+	den erdbebenzauber heile gemacht ... nun bleiben wirklich
+	level + 1 hp im normalen gebaeude und 100 + 5*level hp im hq
+
+17.12.04
+	Wenn man das HQ loescht verschwindet auch die Forschung
+	Man benötigt nun eine Schmiede um Kasernen bauen zu können
+	Man benötigt nun eine Werkstatt um Mauern bauen zu können
+	Der Rammen bug ist nun behoben, man kann nur eine Ramme haben
+	Gilden wurden um ein internes Profil erweitert
+	
+15.12.04
+	Produktionsslots Bug behoben (glaube ich :) )
+
+14.12.04
+	Gilden können nun Logos haben, aber man kann sie noch nicht hochladen,
+	sondern muß das Bild im moment noch auf einem externen Webspace haben
+
+09.12.04
+	Armeen verhungern nun langsam wenn keine Nahrung im Lager ist
+	Um Farmen herum wachsen nun Felder, außerdem werden nun die Produktionsslots von Gebäuden
+	durch die umliegenden Felder beeinflusst.
+	Monster in der Nähe der Hellholes sind jetzt agressiv, und attackieren Armeen
+	Crosshair in der Minimap (um rauszufinden welchen Fleck der Welt man sich gerade auf der Karte anschaut)
+	Schnellbauen + Schnellwegpunktsetzen eingebaut (unter der map)
+	Runden plünder Bug behoben, außerdem haben nun einige Icons Tooltips bekommen.
+	In der Highscore kann man nun auf die Gilden klicken bekommt mehr Infos.
+
+27.11.04
+	Es gibt ein neues Gebaeude, Portal heisst es und man kann
+	damit Armeen quer ueber die Map schicken
+	ausserdem wurden ein paar kleine bugs gefixt
+
+25.11.04
+	Armeen können nun in Gildenverwaltung gegeben werden. Dann
+	kann auch der Armeekommandand die Armee steuern.
+
+24.11.04
+	Armeen bewegen sich nun unterschiedlich schnell.
+	Auf wegen am schnellsten und auf zb. Wald langsamer.
+	
+23.11.04
+	Guilden haben nun ein Lager, ist aber noch nicht aktiv.
+	Die Summe der Lager aller Mitglieder ist das Lager der Guilde.
+	Wenn das Userlager voll ist werden die Produzierten Rohstoffe
+	automatisch ins Gildenlager geladen.
+
+22.11.04
+	Hauptkarte wird jetzt in JavaScript gecached (getestet auf IE und Mozilla),
+	bis zu 3 mal scrollen in jede Richtung ist ohne neuladen möglich.
+
+19.11.04
+	In der Karte erscheinen jetzt neue Baupläne sofort.
+	(mit Javascript -> ohne neu-laden)
+
+18.11.04
+	Tempel und Werkstatt jetzt auch im Haupthaus-Schnellsprung.
+	Arbeiterverteilung im Haupthaus verbessert (javascript)
+	Datumsformat im Log(links-unten) verkürzt
+	
+16.11.04
+	Nun kann man sich einen Überblick über Forschungen und deren
+	Abhängigkeiten machen.
+
+13.11.04 
+	Nun gibt es Tausendertrenner in den Zahlenwerten, besonders bei GP
+	praktisch, wenns noch irgendwo hin soll bitte mail an merlin at leenox
+	dot de
+
+24.10.04
+	Es wird nun das Anmeldedatum der Spieler gespeichert
+	2 Sekunden nachdem man einen Bau in Auftrag gegeben hat, läd die Map nun neu
+	Das 1. Haupthaus ist nun sofort fertiggebaut, also kein lästiges warten für Neuanfänger
+	BUGFIX: in fremden HQs forschen
+
+12.10.04
+	Bei Upgrades werden HP wieder hergestellt bzw die MAXHP werden
+	erhoeht, beides um 15% der basis MAXHP des Gebaeudes
+	Upgrades in belagerten Gebaeuden werden nicht gestartet (wegen obigem)
+	Es gibt nun eine Technologie, die macht einem mehr Produktionsslots
+	gibt (Schichtarbeit im HQ)
+	Einheiten in der Kaserne kann man nun nur noch bauen, wenn man die
+	passenden Technologien erforscht hat, welche man braucht, kann man
+	derzeit nur der Einheitenbeschreibung entnehmen
+	Im Turm gibts nun einen Manabalken
+	Ein paar kleine Bugs behoben
+	
+11.10.04
+	Rohstoffprouktion kann nun mittels Forschung gesteigert werden
+	Die Zaubersprueche sollten nun die versprochene Zeit anhalten
+	Upgrades werden in der Highscore staerker beruecksichtigt
+
+06.10.04
+	Rohstoffe Code etwas überarbeitet. Also wenn irgendwas nicht geht, gleich einen Bug
+	im Forum posten.
+
+04.10.04
+	eine kleine Änderung im Layout der Startseite
+
+26.09.04
+	es gibt nun 4 funktionierende spells
+
+25.09.04
+	das magiesystem ist soweit integriert, dass bis auf kleinigkeiten
+	nun mit dem schreiben der spells an sich begonnen werden kann
+
+24.09.04
+	runen produktion etc
+	ein paar interne aenderungen und angefangen mit magiecode
+
+23.09.04
+	gilden highscore eingebaut
+	tore können jetzt für spieler in der eigenen gilde geöffnet werden.
+
+21.09.04
+	ein paar datenbank optimierungen
+
+20.09.04
+	technologiesystem einsatzbereit, sichtbar in der schmiede,
+	wir muessen aber noch die technologiebäume planen und einbauen.
+	
+19.09.04
+	truppenübersicht unter "übersicht" umgebaut.
+	technologiesystem angefangen (sichtbar in der schmiede, leider noch nicht fertig)
+
+18.09.04
+	übersicht mit grafiken versehen, highscore armeeliste und statistik verbessert
+
+11.09.04
+	Innerhalb der Gilden kann man nun Nachrichten austauschen
+
+10.09.04
+	es gibt jetzt hellholes, wo ca alle 2 stunden neue monster erscheinen, wenn nicht genug da sind
+	monster um die hellholes herum wandern zufällig herum
+	also dann fröhliche monster jagt =)
+	armee grafik im info fenster (links) repariert (war noch die uralte drin)
+	armeen (auch monster!) jetzt als kleine rote punkte auf der minimap sichtbar
+
+10.9.04
+	neues Logsystem, aber fast nur interne Änderungen
+
+06.9.04
+	beschreibungen und doku sind der übersichtlichkeit halber jetzt nicht überall dabei,
+	sondern können meist per klick auf die bilder geöffnet werden.
+	minimap grafik fehler behoben (hatte zuviel ram verbraucht)
+
+05.9.04
+	upgrade code neu geschrieben und einige optische anpassungen
+
+04.9.04
+	Gildenpunkte
+
+29.8.04
+	Die Uebersichtsseite zeigt nun nicht mehr alles an, sondern nur
+	jeweils die Gewuenschten Gebaeudetypen. Der Anbieter erhält nun einen Logeintrag,
+	wenn jemand seinen Handel im Marktplatz annimmt.
+
+04.7.04
+	in der letzten zeit sind viele kleine Änderungen gemacht worden, die
+	aber nur im Forum gepostet wurden :) daher ist in der ChangeLog gerade
+	nicht viel neues.
+
+21.6.04
+	Geb&auml;ude Upgrades besser planbar =)
+
+20.6.04
+	Passwort-vergessen, alle gebäudepläne löschen, haupthaus einreissen = neuanfang, zufällige startplatzsuche
+
+19.6.04
+	minimap(pixelweltkarte) im rechten fenster springt bei click an die entsprechende stelle.
+
+19.6.04
+	felder in der grossen map nun clickbar !
+
+18.6.04
+	monster eingebaut (baummonster und golem), suchen, killen, und ressis verdienen !
+
+18.6.04	
+	in der armee wird eine wegpunkt liste angezeigt, man kann sie rauskopieren und aufheben,
+	und dann später wieder einfügen, dann werden die wegpunkte wieder gesetzt.
+
+15.6.04
+	es gibt nun rammen mit denen man sich die gebäude weghauen kann.
+	gebaut werden können sie in der werkstatt.
+	
+14.6.04
+	man kann nun sich die wegpunkte in der näheren umgebung einer armee berechnen.
+	außerdem bekommt nun die gewinnerarmee die rohstoffe der verliererarmee.
+
+13.6.04
+	man kann nun sich die wegpunkte in der näheren umgebung einer armee berechnen lassen(pathfinding).
+	plünderungsgrenze von 200 für jeden rohstoff eingebaut, plünderung hört jetzt auf, wenn lager leer ist.
+	
+10.6.04 
+	kampf & plünder bug behoben, armeen können andere armeen blockieren, man muss beim geplünderten lager bleiben.
+	userprofil im haupthaus gebaut
+	grundproduktion für holz und stein : 10 einheiten pro stunde, das sollte den anfang angenehmer machen =)
+	
+9.6.04
+	menu und rohstoffanzeige umgebaut, übersicht erweitert
+
+8.6.04
+	info über ein feld umgebaut und einiges am code aufgeräumt, karten-filegrösse optimiert
+
+7.5.04
+	man kann sich nun gegenseitig nachrichten schreiben
+
+24.4.04
+	man kann nun Kämpfen *fg* und plündern
+	
+19.4.04
+	Armee-Einheiten mit Grafiken versehen, und in der Kaserne die Beschreibungen der Einheiten verfügbar gemacht.
+	
+19.4.04
+	der bug, daß man nach einer neuanmeldung 0 rohstoffe hat, sollte nun behoben sein.
+	falls nicht im forum melden :) aber glaube nun klappts.
+
+15.4.04
+	es gibts nun marktplätze an denen man rohstoffe handeln kann
+
+06.4.04
+	javascript und css gestützte map eingebaut, mal schaun ob die jetzt ne ecke schneller ist
+
+01.4.04
+	man braucht nun bauernhöfe und sowas, damit die rohstoffproduktion
+	effizient ist.
+
+23.3.04
+        gebäudeupgrades dauern nun zeit
+
+22.3.04
+	so nun kann man auch gilden gründen
+	
+15.3.04
+	kleine änderungen stehen im forum, daher sollte jeder gelegentlich mal
+	da reinschaun.
+	
+10.3.04 
+        armee code überarbeitet, waypoints setzen geht jetzt von der armee selber mit coordinatenangabe,
+	oder auf terrain oder strassen info mit armee auswahl.
+	armee bewegung geht jetzt auch. die armee bewegt sich genau so wie auf der map angezeigt.
+	die armee bleibt stehen wenn sie ein feld nicht betreten kann.
+	Felder die sie nicht betreten kann werden auch in der map in waypointansicht rot dargestellt.
+	unterschiedliche geschwindigkeiten je nach terrain geht auch schon,
+	auf strasse 1 minute für ein feld, auf wiese 2 minuten für ein feld,
+	im wald oder in den BROID kratern 3 minuten für ein feld.
+
+9.3.04
+	die preise haben sich ein wenig geändert und man kann nun seine farbe ändern.
+	es gibt jetzt ein forum : 
+	<a href="http://zwischenwelt.net-play.de/forum/phpBB2/index.php">zwforum</a>
+
+7.3.04
+	goto funktion auf der map eingebaut,
+	wenn man armeen hat kann man die auch auf der map zentrieren
+	liste mit sichtbaren spielern und deren farben unter der map,
+	man kann alle gebäude/einheiten eines bestimmten spielers markieren lassen.
+
+6.3.04
+	eigene/fremde häuser auf map grün/rot gekennzeichnet
+	construction/bau code überarbeitet
+	man kann nurnoch mit maximal 2 felder abstand zu einem bestehenden gebäude bauen,
+	bauzeit steigt mit der entfernung zum nächstgelegenen haupthaus oder lager
+	man kann wenn man noch garnichts hat nur ein haupthaus bauen, das aber überall.
+	wenn man schon ein haupthaus hat kann man keins mehr bauen
+	(bekannter bug : man kann mehr als 1 bauen in dem man am anfang 2 in auftrag gibt)
+	kaserne funktioniert : man kann einheiten bauen, die ressourcen werden abgebucht,
+	man kann einheiten auf armeen verteilen, armeen umbenennen und neue armeen gründen,
+	man kann max 4 armeen haben.
+
+	man bekommt nun rohstoffe, aber erst mal nur abhängig von der
+	arbeitereinteilung und der population (DB Äderung in user)
+	
+4.3.04
+	das baun kostet nun rohstoffe
+	
+3.3.04
+	armeen rumschicken geht schon, solange man die erreichten wegpunkte
+	von hand loescht, denn im automatischen loeschen selbiger ist
+	anscheinend noch ein kleiner haken drin
+
+1.3.04
+	man kann nun was baun und armeen laufen rum und anmelden geht vielleicht auch schon

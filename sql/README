@@ -1,0 +1,2 @@
+db.sql contains a complete db dump of the newes version
+update-AtoB.sql the db changes from version A to B

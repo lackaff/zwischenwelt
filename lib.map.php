@@ -1,0 +1,262 @@
+<?php
+require_once("lib.minimap.php");
+
+function FindRandomStartplace () {
+	global $gGlobal;
+	//$o = sqlgetobject("SELECT MIN(`x`) as minx,MAX(`x`) as maxx,MIN(`y`) as miny,MAX(`y`) as maxy FROM `building`");
+	$o->minx = $gGlobal["hq_min_x"];
+	$o->maxx = $gGlobal["hq_max_x"];
+	$o->miny = $gGlobal["hq_min_y"];
+	$o->maxy = $gGlobal["hq_max_y"];
+	for($i=0;$i<50;++$i){
+		$x = rand($o->minx-20,$o->maxx+20);
+		$y = rand($o->miny-20,$o->maxy+20);
+		$d = 20;
+		$count = sqlgetone("SELECT COUNT(`id`) FROM `building` WHERE (".($x-$d).")<=`x` AND `x`<=(".($x+$d).") AND (".($y-$d).")<=`y` AND `y`<=(".($y+$d).")");
+		if($count == 0)break;
+	}
+	return array($x,$y);
+}
+
+
+//checks if the position is in an buildable area
+//will be used to limit new hq in an area in the middle of the world
+//min max are stored in the globals table
+function isPositionInBuildableRange($x,$y){
+	global $gGlobal;
+	$minx = $gGlobal["hq_min_x"];
+	$maxx = $gGlobal["hq_max_x"];
+	$miny = $gGlobal["hq_min_y"];
+	$maxy = $gGlobal["hq_max_y"];
+	return ($x>=$minx && $x<=$maxx) && ($y>=$miny && $y<=$maxy);
+}
+
+function TypeCheck ($arr) {
+	if (count($arr) == 0) return "1";
+	return "`type` = ".implode(" OR `type` = ",$arr);
+}
+
+function UpdateTerrainNWSE ($o) {
+	global $gTerrainType;
+	
+	/*
+	$types = $array();
+	$btypes = array();
+	
+	$types[]=$o->type;
+	
+	//TODO: unhardcode this?!?
+	
+	//terrain <-> terrain coupling
+	// Sea connects to ...
+	if ($o->type==kTerrain_Sea)  $types[]=kTerrain_River;
+	if ($o->type==kTerrain_Sea)  $types[]=kTerrain_Swamp;
+	if ($o->type==kTerrain_Sea)  $types[]=kTerrain_DeepSea;
+	// Swamp connects to ...
+	if ($o->type==kTerrain_Swamp) $types[]=kTerrain_Sea;
+	//SnowyMountain connects to ..
+	if ($o->type==kTerrain_SnowyMountain) $types[]=kTerrain_Mountain;
+	//Mountain connects to ..
+	if ($o->type==kTerrain_Mountain)  $types[]=kTerrain_SnowyMountain;
+	//Desert connects to ...
+	if ($o->type==kTerrain_Desert)  $types[]=kTerrain_Oasis;
+	
+	//terrain <->building coupling
+	if ($o->type=kTerrain_Sea) $btypes[] = kBuilding_Harbor;
+	*/
+	
+	$qry = "SELECT 1 FROM `terrain` WHERE (".TypeCheck($gTerrainType[$o->type]->connectto_terrain).") AND ";
+	/*
+	if (count($btypes)<=0) {
+		if (sqlgetone($qry."`x` = ".($o->x)." AND `y` = ".($o->y - 1))) $str .= "n";
+		if (sqlgetone($qry."`x` = ".($o->x - 1)." AND `y` = ".($o->y))) $str .= "w";
+		if (sqlgetone($qry."`x` = ".($o->x)." AND `y` = ".($o->y + 1))) $str .= "s";
+		if (sqlgetone($qry."`x` = ".($o->x + 1)." AND `y` = ".($o->y))) $str .= "e";
+	}else
+	*/
+	{
+		$code = 0;
+		$qry2 = "SELECT 1 FROM `building` WHERE (".TypeCheck($gTerrainType[$o->type]->connectto_building).") AND ";
+		if (sqlgetone($qry."`x` = ".($o->x)." AND `y` = ".($o->y - 1))) $code |= kNWSE_N;
+		if (sqlgetone($qry2."`x` = ".($o->x)." AND `y` = ".($o->y - 1))) $code |= kNWSE_N;
+		if (sqlgetone($qry."`x` = ".($o->x - 1)." AND `y` = ".($o->y))) $code |= kNWSE_W;
+		if (sqlgetone($qry2."`x` = ".($o->x - 1)." AND `y` = ".($o->y))) $code |= kNWSE_W;
+		if (sqlgetone($qry."`x` = ".($o->x)." AND `y` = ".($o->y + 1))) $code |= kNWSE_S;
+		if (sqlgetone($qry2."`x` = ".($o->x)." AND `y` = ".($o->y + 1))) $code |= kNWSE_S;
+		if (sqlgetone($qry."`x` = ".($o->x + 1)." AND `y` = ".($o->y))) $code |= kNWSE_E;
+		if (sqlgetone($qry2."`x` = ".($o->x + 1)." AND `y` = ".($o->y))) $code |= kNWSE_E;
+	}
+
+	sql("UPDATE `terrain` SET `nwse` = '".$code."' WHERE `id` = ".$o->id);
+	
+	return $code;
+}
+
+function UpdateBuildingNWSE ($o) {
+	$types = array();
+	$code = "";
+	if ($o->type == kBuilding_Gate) {
+		// "ns" : wall from north to south , path from east to west
+		$wall = "SELECT 1 FROM `building` WHERE `construction`=0 AND `type` = ".kBuilding_Wall." AND ";
+		$path = "SELECT 1 FROM `building` WHERE `construction`=0 AND `type` = ".kBuilding_Path." AND ";
+		$a1 = sqlgetone($path."`x` = ".($o->x - 1)." AND `y` = ".($o->y));
+		$a2 = sqlgetone($path."`x` = ".($o->x + 1)." AND `y` = ".($o->y));
+		$b1 = sqlgetone($wall."`x` = ".($o->x)." AND `y` = ".($o->y - 1));
+		$b2 = sqlgetone($wall."`x` = ".($o->x)." AND `y` = ".($o->y + 1));
+
+		if (($a1 && $a2) || ($b1 && $b2) || (($a1 || $a2) && ($b1 || $b2)))
+			$code = kNWSE_N | kNWSE_S; // ns match 2 sides
+		else if ($a1 || $a2 || $b1 || $b2) { // ns match 1 side
+			// we does not match 2 sides
+			$a1 = sqlgetone($wall."`x` = ".($o->x - 1)." AND `y` = ".($o->y));
+			$a2 = sqlgetone($wall."`x` = ".($o->x + 1)." AND `y` = ".($o->y));
+			$b1 = sqlgetone($path."`x` = ".($o->x)." AND `y` = ".($o->y - 1));
+			$b2 = sqlgetone($path."`x` = ".($o->x)." AND `y` = ".($o->y + 1));
+			if (($a1 && $a2) || ($b1 && $b2) || (($a1 || $a2) && ($b1 || $b2)))
+					$code = kNWSE_W | kNWSE_E;
+			else	$code = kNWSE_N | kNWSE_S; // ns match 1 side and we does not match 2 sides
+		} else	$code = kNWSE_W | kNWSE_E;
+	} else if ($o->type == kBuilding_Bridge || $o->type == kBuilding_GB) {
+		// "ns" : path from north to south , river from east to west
+		$river = "SELECT 1 FROM `terrain` WHERE `type` = ".kTerrain_River." AND ";
+		$path = "SELECT 1 FROM `building` WHERE `construction`=0 AND `type` = ".kBuilding_Path." AND ";
+		$a1 = sqlgetone($river."`x` = ".($o->x - 1)." AND `y` = ".($o->y));
+		$a2 = sqlgetone($river."`x` = ".($o->x + 1)." AND `y` = ".($o->y));
+		$b1 = sqlgetone($path."`x` = ".($o->x)." AND `y` = ".($o->y - 1));
+		$b2 = sqlgetone($path."`x` = ".($o->x)." AND `y` = ".($o->y + 1));
+		if (($a1 && $a2) || ($b1 && $b2) || (($a1 || $a2) && ($b1 || $b2)))
+				$code = kNWSE_N | kNWSE_S;
+		else	$code = kNWSE_W | kNWSE_E;
+	} else if ($o->type == kBuilding_SeaGate) {
+		$wall = "SELECT 1 FROM `building` WHERE `construction`=0 AND `type` = ".kBuilding_SeaWall." AND ";
+		$b1 = sqlgetone($wall."`x` = ".($o->x)." AND `y` = ".($o->y - 1));
+		$b2 = sqlgetone($wall."`x` = ".($o->x)." AND `y` = ".($o->y + 1));
+		if ($b1) $code = kNWSE_N | kNWSE_S;
+		if ($b1 && $b2)
+			$code = kNWSE_N | kNWSE_S; // ns match 2 sides
+		else	$code = kNWSE_W | kNWSE_E;
+	} else if ($o->type == kBuilding_Harbor){ //TODO: verallgemeinern ... gebaeude sollten an gelaende orrientierbar sein
+		$select="SELECT 1 FROM `terrain` WHERE `type` = ".kTerrain_Sea;
+		$a=sqlgetone($select." AND (`x`=".($o->x+1)." AND `y`=".($o->y).")");
+		$b=sqlgetone($select." AND (`x`=".($o->x-1)." AND `y`=".($o->y).")");
+		$c=sqlgetone($select." AND (`x`=".($o->x)." AND `y`=".($o->y-1).")");
+		$d=sqlgetone($select." AND (`x`=".($o->x)." AND `y`=".($o->y+1).")");
+		if ($a) {
+			$code = kNWSE_E;
+		}else if ($b) {
+			$code = kNWSE_W;
+		}else if ($c) {
+			$code = kNWSE_N;
+		}else if ($d) {
+			$code = kNWSE_S;
+		}
+	} else {
+		//TODO: unhardcode this?
+		$types[] = $o->type;
+		if ($o->type == kBuilding_Path) $types[] = kBuilding_Bridge;
+		if ($o->type == kBuilding_Path) $types[] = kBuilding_GB;
+		if ($o->type == kBuilding_Path) $types[] = kBuilding_Gate;
+		if ($o->type == kBuilding_Wall) $types[] = kBuilding_Gate;
+		if ($o->type == kBuilding_SeaWall) $types[] = kBuilding_SeaGate;
+		if ($o->type == kBuilding_SeaWall) $types[] = kBuilding_Wall;
+		if ($o->type == kBuilding_Wall) $types[] = kBuilding_SeaWall;
+		if ($o->type == kBuilding_Steg) $types[] = kBuilding_Harbor;
+		
+		$qry = "SELECT 1 FROM `building` WHERE (".TypeCheck($types).") AND `construction`=0 AND ";
+		if (sqlgetone($qry."`x` = ".($o->x)." AND `y` = ".($o->y - 1))) $code |= kNWSE_N;
+		if (sqlgetone($qry."`x` = ".($o->x - 1)." AND `y` = ".($o->y))) $code |= kNWSE_W;
+		if (sqlgetone($qry."`x` = ".($o->x)." AND `y` = ".($o->y + 1))) $code |= kNWSE_S;
+		if (sqlgetone($qry."`x` = ".($o->x + 1)." AND `y` = ".($o->y))) $code |= kNWSE_E;
+	}
+	sql("UPDATE `building` SET `nwse` = '".$code."' WHERE `id` = ".$o->id);
+	return $code;
+}
+
+function RegenSurroundingNWSE ($x,$y,$report_css_change=false) {
+	$x = intval($x);
+	$y = intval($y);
+	return RegenAreaNWSE($x-1,$y-1,$x+1,$y+1,$report_css_change);
+}
+
+function RegenAreaNWSE ($x1,$y1,$x2,$y2,$report_css_change=false) {
+	$xylimit = "`x` >= ".intval($x1)." AND `x` <= ".intval($x2)." AND 
+				`y` >= ".intval($y1)." AND `y` <= ".intval($y2);
+	
+	global $gTerrainType;
+	$cssclassarr = array();
+	$gMapTerrain = sqlgettable("SELECT * FROM `terrain` WHERE ".$xylimit);
+	foreach ($gMapTerrain as $o) {
+		$o->nwse = UpdateTerrainNWSE($o);
+		if ($report_css_change) {
+			//$cssbase = $gTerrainType[$o->type]->cssclass;
+			$cssbase = "t".($gTerrainType[$o->type]->id)."-%NWSE%";
+			if ($o->type==kTerrain_River) foreach ($gMapTerrain as $x) if ($x->type == kTerrain_Sea) 
+			if (($x->x == $o->x-1 && $x->y == $o->y && $o->nwse=="e") ||
+				($x->x == $o->x+1 && $x->y == $o->y && $o->nwse=="w") ||
+				($x->x == $o->x && $x->y == $o->y-1 && $o->nwse=="s") ||
+				($x->x == $o->x && $x->y == $o->y+1 && $o->nwse=="n"))
+				$cssbase = "fluss-see_%NWSE%";
+			$cssclassarr[] = arr2obj(array("x"=>$o->x,"y"=>$o->y,"css"=>str_replace("%NWSE%",$o->nwse,$cssbase)));
+		}
+	}
+	$gMapBuilding = sqlgettable("SELECT * FROM `building` WHERE `construction`=0 AND ".$xylimit);
+	foreach ($gMapBuilding as $o) {
+		$o->nwse = UpdateBuildingNWSE($o);
+		if ($report_css_change)
+			$cssclassarr[] = arr2obj(array("x"=>$o->x,"y"=>$o->y,"css"=>GetBuildingCSS($o,0)));
+	}
+	return $cssclassarr;
+}
+
+		
+		
+function	terraingen($x,$y,$type,$dur,$ang,$step,$line,$split=0) {
+	$x = intval($x);
+	$y = intval($y);
+	$type = intval($type);
+	$dur = intval($dur);
+	$ang = intval($ang);
+	$split = intval($split);
+	$curang = rand(0,360);
+	$minx = round($x);	$miny = round($y);
+	$maxx = round($x);	$maxy = round($y);
+	// x and y are used as floats
+	
+	for ($i=0;$i<$dur;$i++) {
+		if ($split > 0 && ($i % $split) == $split-1)
+			terraingen($x,$y,$type,$dur-$i-1,$ang,$step,$line,0);
+		
+		$oldx = $x;
+		$oldy = $y;
+		$x += $step*sin(deg2rad($curang));
+		$y += $step*cos(deg2rad($curang));
+		$curang += rand(-$ang,$ang);
+		
+		$myx = round($oldx);
+		$myy = round($oldy);
+		
+		// connect last and current pos with a straight line, if $line is true
+		do {
+			if (!sqlgetone("SELECT 1 FROM `building` WHERE `x` = ".$myx." AND `y` = ".$myy." LIMIT 1")) {
+				sql("DELETE FROM `terrain` WHERE `x` = ".$myx." AND `y` = ".$myy);
+				sql("INSERT INTO `terrain` SET type = $type , `x` = ".$myx." , `y` = ".$myy);
+				
+				if ($minx > $myx) $minx = $myx;
+				if ($miny > $myy) $miny = $myy;
+				if ($maxx < $myx) $maxx = $myx;
+				if ($maxy < $myy) $maxy = $myy;
+			}
+			
+			list($myx,$myy) = GetNextStep($myx,$myy,round($oldx),round($oldy),round($x),round($y));
+		} while ($line && ($myx != round($x) || $myy != round($y))) ;
+		
+	}
+	
+	$xylimit = "`x` >= ".intval($minx-1)." AND `x` <= ".intval($maxx+1)." AND 
+				`y` >= ".intval($miny-1)." AND `y` <= ".intval($maxy+1);
+	
+	$gMapTerrain = sqlgettable("SELECT * FROM `terrain` WHERE ".$xylimit);
+	foreach ($gMapTerrain as $o)
+		UpdateTerrainNWSE($o);
+}
+?>

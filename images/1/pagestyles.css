@@ -1,0 +1,149 @@
+body {
+	background-color:white;
+}
+
+* {
+	font-family:verdana;
+	font-size:10pt;
+}
+
+#header {
+	background-image:url(header.jpg);
+	width:582px;
+	height:198px;
+}
+
+#header span {
+	display:none;
+}
+
+#menugfx {
+	
+}
+
+#menutext {
+	display:none;
+}
+
+#info {
+	background-color:#B2ECB2;
+	border:dotted #489F36 1px;
+	padding:4px;
+	margin:4px;
+}
+
+#home img {
+	background-image:url(menu_home.jpg);
+	width:194px;
+	height:76px;
+	border:0px;
+}	
+
+#code img {
+	background-image:url(menu_code.jpg);
+	width:194px;
+	height:21px;
+	border:0px;
+}	
+
+#hilfe img {
+	background-image:url(menu_hilfe.jpg);
+	width:194px;
+	height:24px;
+	border:0px;
+}	
+
+#team img {
+	background-image:url(menu_team.jpg);
+	width:194px;
+	height:25px;
+	border:0px;
+}	
+
+#anmeldung img {
+	background-image:url(menu_anmeldung.jpg);
+	width:194px;
+	height:28px;
+	border:0px;
+}	
+
+#passwortvergessen img {
+	background-image:url(menu_passwortvergessen.jpg);
+	width:194px;
+	height:51px;
+	border:0px;
+}	
+
+#content {
+	position:absolute;
+	left:220px;
+	top:230px;
+		
+	background-color:#CEF8CE;
+	border:dotted #489F36 1px;
+	padding:8px;
+	margin:4px;
+}
+
+#links {
+	position:absolute;
+	left:20px;
+	top:460px;
+	padding:4px;
+	margin:4px;
+}
+
+#login #text {
+	display:none;
+}
+
+#input input {
+	width:80px;
+	height:14px;
+	font-size:10px;
+}
+
+#button input {
+	width:82px;
+	height:20px;
+	font-size:9px;
+}
+
+#login {
+	position:absolute;
+	left:620px;
+	top:20px;
+	padding:4px;
+
+	background-color:#CEF8CE;
+	border:dotted #489F36 1px;
+}
+
+#footer {
+
+}
+#layoutswitchtext {
+	display:none;
+}
+#forum img {display:none;}
+#impressum img {display:none;}
+
+#prev img {
+	position:absolute;
+	top:5px;
+	left:5px;
+	background-image:url(../prev.png);
+	width:10px;
+	height:10px;
+	border:0px;	
+}
+
+#next img {
+	position:absolute;
+	top:5px;
+	left:15px;
+	background-image:url(../next.png);
+	width:10px;
+	height:10px;
+	border:0px;	
+}

@@ -1,0 +1,85 @@
+<?php
+
+require_once("cronlib.php");
+require_once("lib.quest.php");
+require_once("lib.map.php");
+require_once("lib.technology.php");
+require_once("lib.spells.php");
+require_once("lib.army.php"); // sql
+require_once("lib.weather.php");
+require_once("lib.armythink.php"); // warning ! generates big globals
+require_once("lib.fight.php");
+
+$mlock = FALSE;
+if(!isset ($lock) && $mlock)
+	if(file_exists("/tmp/zw-cron.lock"))
+		exit(1);
+	else
+		shell_exec("echo lock > /tmp/zw-cron.lock");
+
+
+$time = time();
+$lastminitick = $gGlobal["lastminitick"];
+if(empty($lastminitick))$lastminitick = $gGlobal["lasttick"];
+SetGlobal("lastminitick",$time);
+
+$dtime = min($time - $gGlobal["lasttick"],$time - $lastminitick);
+if($dtime < 0)$dtime = 0;
+
+echo "dtime = $dtime<br><br>";
+
+
+//sql("DELETE FROM `unit` WHERE `amount` < 1.0"); 
+sql("UPDATE `army` SET `idle`=`idle`+$dtime");
+
+
+
+$thinkarmies = $gAllArmys;
+foreach ($thinkarmies as $army) if ($army) {
+	if (!isset($gAllArmyUnits[$army->id])) warning("Army $army->id ($army->x,$army->y) has no units ??<br>");
+	$army->units = isset($gAllArmyUnits[$army->id])?$gAllArmyUnits[$army->id]:array(); // constructed in lib.armythink.php
+	$army->size = cUnit::GetUnitsSum($army->units);
+	$army->useditemobj = $army->useditem ? sqlgetobject("SELECT * FROM `item` WHERE `id` = ".$army->useditem) : false;
+	//if ($army->size < 1.0) { cArmy::DeleteArmy($army->id); continue; }
+	if ($army->type == kArmyType_Fleet) // todo : $army->transport = $gAllArmyTransport[$army->id];
+		$army->transport = cUnit::GetUnits($army->id,kUnitContainer_Transport);
+	
+	// eating : monsters and siege-armies do not eat
+	if ($army->user != 0 && $army->type != kArmyType_Siege) {
+		if ($army->type == kArmyType_Fleet)
+				$verbrauch = $dtime * cUnit::GetUnitsEatSum($army->transport) / 3600.0;
+		else	$verbrauch = $dtime * cUnit::GetUnitsEatSum($army->units) / 3600.0;
+		
+		if ($army->useditemobj && $army->useditemobj->type == kItem_Spam) $verbrauch *= 0.5;
+		
+		if ($verbrauch > 0) {
+			$hungerschaden = max(0,$verbrauch - sqlgetone("SELECT `food` FROM `user` WHERE `id`=".$army->user));
+			sql("UPDATE `user` SET `food`=GREATEST(0,`food`-$verbrauch) WHERE `id`=".$army->user);
+			if ($hungerschaden > 0) {
+				if($army->type == kArmyType_Fleet) {
+					$army->transport = cUnit::GetUnitsAfterDamage($army->transport,$hungerschaden,$army->user);
+					cUnit::SetUnits($army->transport,$army->id,kUnitContainer_Transport);
+				} else {
+					$army->units = cUnit::GetUnitsAfterDamage($army->units,$hungerschaden,$army->user);
+					cUnit::SetUnits($army->units,$army->id);
+					$army->size = cUnit::GetUnitsSum($army->units);
+					if ($army->size <= 0.0) { 
+						// armee ist verhungert
+						cArmy::DeleteArmy($army->id); continue; 
+					}
+				} 
+			}
+		}
+	}
+
+	if ($army->nextactiontime > $time) continue;
+	
+	ArmyThink($army);
+}
+?>
+
+<?php
+	if(!isset($lock) && $mlock)
+		if(file_exists("/tmp/zw-cron.lock"))
+			shell_exec("rm -f /tmp/zw-cron.lock");
+?>

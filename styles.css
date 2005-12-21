@@ -1,0 +1,174 @@
+td {
+	COLOR: #000000;
+	FONT-FAMILY: monospace;
+	FONT-SIZE: 9pt;
+	FONT-WEIGHT: normal;
+}
+
+* FORM {
+	margin-top:0px;
+	margin-bottom:0px;
+}
+
+BODY {
+	BACKGROUND-COLOR: #FFFFFF;
+	COLOR: #000000;
+	FONT-FAMILY: monospace;
+	FONT-SIZE: 9pt;
+	FONT-WEIGHT: normal;
+}
+* INPUT,TEXTAREA {
+	BACKGROUND-COLOR: #EEEEEE;
+	COLOR: #000000;
+	FONT-FAMILY: monospace;
+	FONT-SIZE: 9pt;
+	FONT-WEIGHT: normal;
+}
+A {
+	COLOR: #000000;
+	FONT-FAMILY: monospace;
+	FONT-SIZE: 9pt;
+	FONT-WEIGHT: normal;
+	TEXT-DECORATION: none;
+}
+A:hover {
+	COLOR: #00AA00; TEXT-DECORATION: underline
+}
+A:active {
+	TEXT-DECORATION: none
+}
+
+.picframe {
+	 border:1px solid black;
+}
+
+.map * {
+	FONT-FAMILY: monospace;
+	FONT-SIZE: 9pt;
+	FONT-WEIGHT: normal;
+}
+.map th {
+	FONT-FAMILY: monospace;
+	FONT-SIZE: 7pt;
+	FONT-WEIGHT: normal;
+}
+.map {
+	border:1px solid black;
+	empty-cells:show;
+}
+.mapnav {
+	border:1px solid black;
+}
+
+table info{
+	border:0.5px solid grey;
+}
+table info th{
+	text-align:center;
+}
+table info td{
+	text-align:center;
+}
+
+hr {
+	width:100%;
+	height:1px;
+	border:0px;
+	border-top:solid black 1px;
+	margin-top:4px;
+	margin-bottom:6px;
+}
+
+
+
+
+#summary {
+	border:solid 1px black;
+	border-collapse:collapse;
+	text-align:left;
+}
+
+#summary td {
+	padding-right:10px;
+	padding-left:10px;
+	}
+
+#summary th {
+	padding-right:10px;
+	padding-left:10px;
+	border-bottom:solid 1px black;
+	}
+	
+#message {
+	border-collapse:collapse;
+	border:solid 1px black;
+	width:100%;
+}
+
+#message th {
+	text-align:left; 
+	width:40px;
+}
+
+#messagetext {
+	padding:5px;
+	border:solid 1px black;
+}
+
+
+
+
+div#mainnaviborder {
+	padding: 0.2em;
+}
+
+div#mainnaviborder div {
+	clear: left;
+}
+
+ul#mainnavi {
+	margin: 0; padding: 0;
+	text-align: center;
+}
+
+ul#mainnavi li {
+	list-style: none;
+	float: left;  /* ohne width - nach CSS 2.1 erlaubt */
+	position: relative;
+	margin: 0.1em; padding: 0;
+	}
+
+ul#mainnavi li ul {
+	margin: 0; padding: 0;
+	position: absolute;
+	top: 1.3em; left: -0.1em;
+	display: none;  /* Untermainnavi ausblenden */
+	background-color:white;
+}
+
+ul#mainnavi li:hover ul {
+	display: block;  /* Untermainnavi in modernen Browsern einblenden */
+}
+
+ul#mainnavi li ul li {
+	float: none;
+	display: block;
+	margin-bottom: 0.0em;
+}
+
+ul#mainnavi a, ul#mainnavi span {
+	display: block;
+	width: 6em;  /* Breite den in li enthaltenen Elementen zuweisen */
+	text-decoration: none;
+	border: 1px solid black;
+	color: black; background-color: #eeeeee;
+}
+
+ul#mainnavi li ul span:hover, ul#mainnavi a:hover {
+	background-color:#dddddd;
+}
+
+ul#mainnavi span#new, ul#mainnavi a#new {
+	background-color:green;
+	color:white;
+}

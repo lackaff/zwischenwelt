@@ -1,0 +1,70 @@
+o-----------------------------------------------------------------------------o
+|                                                                             |
+|                        Zwichenwelt                                          |
+|                                                                             |
+|              Version "cinnamon spice" R3                                    |
+|                                                                             |
+|        Copyright (C) 2005      Zwischenwelt Team                            |
+|                                                                             |
+o-----------------------------------------------------------------------------o
+
+o-----------------------------------------------------------------------------o
+| Table of Contents                                                           |
+o-----------------------------------------------------------------------------o
+
+  1 License
+  2 Expectations
+  3 What is 'Zwischenwelt'?
+  4 Features
+  5 Requirements
+  6 Website
+  7 Author
+
+o-----------------------------------------------------------------------------o
+| 1 License                                                                   |
+o-----------------------------------------------------------------------------o
+
+Zwischnwelt Sourcecode is released under the GPL. The Graphics and all 
+other non-Code files are released under [CC]Attribution-NonCommercial-ShareAlike 2.0.
+For more details see COPYING.
+
+o-----------------------------------------------------------------------------o
+| 2 Expectations                                                              |
+o-----------------------------------------------------------------------------o
+
+Zwischenwelt is a beta version. So if things don't work, no panic... fix it :)
+But running a version of this game online works quite well.
+
+o-----------------------------------------------------------------------------o
+| 3 What is 'Zwischnwelt'?                                                    |
+o-----------------------------------------------------------------------------o
+
+Zwischenwelt is a browser game inspired by Civilisation, Master of Magic, 
+and some other games like this. It supports building towns, armies, trading, 
+casting spells, and more. The project's language is mostly German.
+
+o-----------------------------------------------------------------------------o
+| 4 Features                                                                  |
+o-----------------------------------------------------------------------------o
+
+see ChangeLog
+
+o-----------------------------------------------------------------------------o
+| 5 Requirements                                                              |
+o-----------------------------------------------------------------------------o
+
+see INSTALL
+
+o-----------------------------------------------------------------------------o
+| 6 Website                                                                   |
+o-----------------------------------------------------------------------------o
+
+The official website of Zwischnwelt can be found at: http://zwischenwelt.org (only in german)
+
+o-----------------------------------------------------------------------------o
+| 7 Author                                                                    |
+o-----------------------------------------------------------------------------o
+
+see AUTHORS
+
+o-----------------------------------------------------------------------------o

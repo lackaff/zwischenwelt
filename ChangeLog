@@ -1,0 +1,107 @@
+11.12.05
+	Einige Bugfixes wurden gemacht.
+	Der Tempel wurde ein wenig geändert.
+	Es gibt nun den Anfang einer Gesinnung.
+	
+05.12.05
+	Identische Log Nachrichten werden nun gestapelt
+
+22.11.05
+	Es ist nun nur Möglich eine neue
+	Siedlung im Kern der Welt zu beginnen.
+	Der automatisch vorgeschlagene Startpunkte
+	sollte aber im gültigen Bereich liegen.
+
+20.11.05
+	ein paar neue Bilder bei den Gebäuden
+
+06.11.05
+	Höllenauge gibt IGM-Bericht
+	IGMs und Berichte können an andere Spieler weitergeleitet werden
+	Portal listet jetzt Mapmarks auf andere Portale schön auf
+
+12.10.05
+	Bugfixe
+
+11.10.05
+	beschädigte Gebäude lassen sich nun reparieren
+
+22.09.05
+	Neue überarbeitete Minimap
+
+24.08.05
+	Bugfixe
+
+01.08.05 
+	grösseres update eingespielt. EinheitenAustausch verbessert,
+	Megablob, Orkdorf, MapMarks, Zauber(Brandrodung,ArmeeDerToten:verändert),
+	neues Armeeverhalten (Patroullie,automatisches Belagern/Einzahlen,...),
+	MapModus:GebäudeHP, diverse Optimierungen und Aufräumarbeiten im Code,
+	Zahlendarstellung an vielen Stellen mit Tausender-Trenner.
+	BigMap ist jetzt navigierbar.
+	
+08.07.05 
+	6 neue Zauber (Schatzsuche,Spinnennetz,Höllenauge,Bann,Steinschlag,Komet)
+
+07.07.05
+	Bug im Flotten-Transfercode behoben, Transfercode verbessert
+	5 neue Zauber (Dürre,Pest,Regen,Portalstein,7-Meilen-Stiefel)
+
+06.07.05
+	einiges am Zaubersystem-code umgebaut,
+	man kriegt jetzt IGM-Berichte bei Erbeben,Strike 
+	und in der Nähe eigener Truppen gesichteter ArmeeDerToten
+	
+29.06.05
+	Monsterkampfberichte jetzt mit anderem thema, 
+	und unter Einstellungen abschaltbar
+
+25.06.05
+	Einheitentranfser im moment wegen
+	Bugsuche deaktiviert --- bug gefunden, wieder aktiv
+	Seefahrt
+	Lagerkapazität verdoppelt
+
+30.0505
+	Ein neuen Layout ist online
+
+29.05.05
+	überall kleine ? verstreut die auf 
+	die passenden Seiten im Wiki zeigen.
+
+27.05.05
+	Kämpfe werden nun von der Umgebung 
+	(Landschaft,Gebäude) beeinflußt
+
+05.05.05 (cooles Datum)
+	Der Serverumzug ist geschafft und wir haben 
+	nun ein Frühlingslayout.
+
+25.04.05
+	Freundschaften können nun bei einem 
+	Angriff automatisch beendet werden
+	
+06.04.05
+	R2 Released
+
+02.04.05
+	armee einzahlen überschuss wandert ins gildenlager, 
+	speicherverbrauch optimiert
+	type-cache eingebaut (idee von merlin) 
+	
+01.04.05
+	Übersicht verbessert, Gildenlager entnahme überarbeitet, 
+	karte optimiert
+
+25.03.05
+	Wettersystem angefangen
+
+06.03.05
+	Freund Feind System
+
+02.03.05
+	Kampfberichte in berichte über Schlachten umgewandelt
+	hoffentlich alle compose IGM links gefunden, 
+	die noch bugy waren
+	fragbonus ist aufgehoben, dafuer werden 
+	nun elitekrieger trainiert
