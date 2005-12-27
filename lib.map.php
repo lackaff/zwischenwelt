@@ -275,6 +275,8 @@ class cMap {
 		$dx64 = ceil($dx/64)+1;$dy64 = ceil($dy/64)+1;
 		$x4 = floor($x/4);$y4 = floor($y/4);
 		$dx4 = ceil($dx/4)+1;$dy4 = ceil($dy/4)+1;
+		$this->x = $x;$this->y = $y;
+		$this->dx = $dx;$this->dy = $dy;
 		
 		$lseg64 = sqlgettable("SELECT * FROM `terrainsegment64` 
 			WHERE `x`>=($x64) AND `x`<($x64+$dx64) AND `y`>=($y64) AND `y`<($y64+$dy64)");
@@ -302,6 +304,7 @@ class cMap {
 	}
 	
 	function getTerrainTypeAt($x,$y){
+		assert('$x>=$this->x && $y>=$this->y && $x<($this->x+$this->dx) && $y<($this->y+$this->dy)');
 		$x64 = floor($x/64);$y64 = floor($y/64);
 		$x4 = floor($x/4);$y4 = floor($y/4);
 
@@ -331,7 +334,7 @@ class cMap {
 
 		$nwse = 0;
 		//if(!empty($this->seg64[$x64][$y64]))$type = $this->seg64[$x64][$y64]->type;
-		if(empty($this->seg1[$x][$y]))return kNWSE_ALL;
+		//if(empty($this->seg1[$x][$y]))return kNWSE_ALL;
 		
 		//todo: use the nwse field in the db to save cpu power (cache)
 		$type = $this->getTerrainTypeAt($x,$y);

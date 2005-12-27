@@ -1,6 +1,8 @@
 <?php
 define("kMiniMapCacheTimeout",60*60*24);
 
+require_once("lib.map.php");
+
 function GetFOFminimap	($masteruser,$otheruser) { 
 	$fof = GetFOF($masteruser->id,$otheruser->id);
 	if ($masteruser->id == $otheruser->id || $fof == kFOF_Friend) return "minimap_friend.gif";
@@ -103,12 +105,19 @@ function renderMinimap($top,$left,$bottom,$right,$filename,$mode="normal",$segme
 		$sright = $sleft + $segment;
 		$sbottom = $stop + $segment;
 		
+		$map = getMapAtPosition($stop,$sleft,$segment,$segment);
+		for($xxx=$stop;$xxx<$stop+$segment;++$xxx)for($yyy=$sleft;$yyy<$sleft+$segment;++$yyy){
+			$type = $map->getTerrainTypeAt($xxx,$yyy);
+			if($type != kTerrain_Grass)
+				imagesetpixel($im, $xxx-$left,$yyy-$top,$gTerrainType[$type]->imgcolor);
+		}
+	/*		
 		$l = sqlgettable("SELECT `x`,`y`,`type` FROM `terrain` WHERE `x`>=$sleft AND `x`<$sright AND `y`>=$stop AND `y`<$sbottom");
 		foreach($l as $x)if ($x->type != kTerrain_Grass && $gTerrainType[$x->type]->speed > 0) {
 			imagesetpixel($im, $x->x-$left,$x->y-$top,$gTerrainType[$x->type]->imgcolor);
-		}
+		}*/
 	}
-	unset($l);
+	//unset($l);
 	
 	if ($mode == "creep") {
 		array_walk($gUnitType,"renderMinimap_walkgetmonsterpic");

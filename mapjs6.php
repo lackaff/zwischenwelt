@@ -120,8 +120,8 @@ $gScroll = floor($gCX/2);
 $xylimit = "`x` >= ".($gLeft-1)." AND `x` < ".($gLeft+$gCX+1)." AND 
 			`y` >= ".($gTop-1)." AND `y` < ".($gTop+$gCY+1);
 			
-$gMap = getMapAtPosition($gLeft-1,$gTop-1,$gCX+1,$gCY+1);
-echo "[type:".($gMap->getTerrainTypeAt(2,2))."]";
+$gMap = getMapAtPosition($gLeft-1,$gTop-1,$gCX+2,$gCY+2);
+//echo "[type:".($gMap->getTerrainTypeAt(2,2))."]";
 //print_r($gMap);
 
 // initialize map

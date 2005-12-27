@@ -141,7 +141,6 @@ function userErrorHandler($errno, $errmsg, $filename, $linenum, $vars)
 // we will do our own error handling
 //error_reporting(0);
 //$gOldErrorHandler = set_error_handler("userErrorHandler");
-
 //##########################################################################################
 //##########################################################################################
 //##########################################################################################
@@ -884,10 +883,13 @@ assert_options(ASSERT_QUIET_EVAL, 1);
 // Create a handler function
 function my_assert_handler($file, $line, $code)
 {
+  $trace = shorttrace();
    echo "<hr>Assertion Failed:
        File '$file'<br />
        Line '$line'<br />
-       Code '$code'<br /><hr />";
+       Code '$code'<br />
+       Trace '$trace'<br />
+       <hr />";
 }
 
 // Set up the callback
