@@ -228,7 +228,7 @@ if($gGuild->founder == $gUser->id || ($gUser->guildstatus%kGuildAdmin)==0){
 						</td>
 					</tr>
 					<tr>
-						<td colspan="3"><i><?=$u->comment?></i></td>
+						<td colspan="3"><i><?=nl2br($u->comment)?></i></td>
 					</tr>
 					<tr>
 						<td align="left" valign="top">

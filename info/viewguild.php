@@ -62,7 +62,7 @@ include("../menu.php");
 
 <form method="post" action="<?=Query("guild.php?sid=?")?>">
 <h4>Sich bei dieser Gilde bewerben</h4>
-Name der Gilde: <input type="text" name="guildname" value="<?=$gGuild->name?>" readonly><br>
+Name der Gilde: <input type="hidden" name="guildname" value="<?=$gGuild->name?>"><?=$gGuild->name?><br>
 Kommentar:<br>
 <textarea name="comment" rows="4" cols="35">hier ein Bewerbungstext</textarea><br>
 <input type="submit" name="join" value="abschicken">

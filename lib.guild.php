@@ -105,16 +105,10 @@ function requestJoinGuild($guild,$comment)
 	
 	if($guildid > 0)
 	{
-		$comment = sqlgetone("SELECT `comment` FROM `guild_request` WHERE `user`=".$gUser->id." AND `guild`=$guildid")."\n".$comment;
+		$oldcomment = sqlgetone("SELECT `comment` FROM `guild_request` WHERE `user`=".$gUser->id." AND `guild`=$guildid");
+		if(!empty($oldcomment))$comment = $oldcomment."\n".$comment;
 		sql("DELETE FROM `guild_request` WHERE `user`=".$gUser->id." AND `guild`=$guildid");
-		
-		$guild = sqlgetone("SELECT `guild` FROM `user` WHERE `id`=".$gUser->id);
-		
-		if($guild == 0)
-		{
-			sql("INSERT INTO `guild_request` SET `user`=".$gUser->id.",`time`=".time().",`comment`='$comment',`guild`=$guildid");
-			$ok = true;
-		}
+		sql("INSERT `guild_request` SET `user`=".$gUser->id.",`time`=".time().",`comment`='$comment',`guild`=$guildid");
 	}
 	sql("UNLOCK TABLES");
 	return $ok;
@@ -131,8 +125,11 @@ function reactOnRequestGuild($user,$guild,$accept)
 	$guildid = sqlgetone("SELECT `guild` FROM `user` WHERE `id`=".$user);
 	$guild = sqlgetone("SELECT `id` FROM `guild` WHERE `id`=".intval($guild));
 	
-	if($guildid == 0 && $guild > 0)
-	{
+	if($guild > 0){
+		if($guildid > 0){
+			//leave old guild
+		}
+		
 		$request = sqlgetobject("SELECT * FROM `guild_request` WHERE `user`=".$user." AND `guild`=$guild");
 		sql("DELETE FROM `guild_request` WHERE `user`=$user AND `guild`=$guild");
 		if($accept){
