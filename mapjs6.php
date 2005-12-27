@@ -119,7 +119,10 @@ $gScroll = floor($gCX/2);
 
 $xylimit = "`x` >= ".($gLeft-1)." AND `x` < ".($gLeft+$gCX+1)." AND 
 			`y` >= ".($gTop-1)." AND `y` < ".($gTop+$gCY+1);
-
+			
+$gMap = getMapAtPosition($gLeft-1,$gTop-1,$gCX+1,$gCY+1);
+echo "[type:".($gMap->getTerrainTypeAt(2,2))."]";
+//print_r($gMap);
 
 // initialize map
 $gMapClassesBG = array_fill(0,$gCY,array_fill(0,$gCX,"t1-0"));
@@ -133,17 +136,18 @@ if ($profile) profile_page_start($profile_title." - 20");
 
 // local users
 $gLocalUserIDs = array();
-$gMapArmy = sqlgettable("SELECT * FROM `army` WHERE ".$xylimit);
-foreach($gMapArmy as $o) {
+//$gMapArmy = sqlgettable("SELECT * FROM `army` WHERE ".$xylimit);
+foreach($gMap->army as $o) {
 	if ($o->user > 0 && !in_array($o->user,$gLocalUserIDs))
 		$gLocalUserIDs[] = $o->user;
 	//$gMapBlocked[$o->x-$gLeft][$o->y-$gTop] = true;
 }
-$gMapBuilding = sqlgettable("SELECT * FROM `building` WHERE ".$xylimit);
-foreach($gMapBuilding as $o) {
-	if ($o->type != kBuilding_Path && $o->type != kBuilding_Wall &&
-		$o->user > 0 && !in_array($o->user,$gLocalUserIDs))
-		$gLocalUserIDs[] = $o->user;
+
+//$gMapBuilding = sqlgettable("SELECT * FROM `building` WHERE ".$xylimit);
+foreach($gMap->building as $o) {
+	//if ($o->type != kBuilding_Path && $o->type != kBuilding_Wall &&
+	//	$o->user > 0 && 
+	if($o->user>0 && !in_array($o->user,$gLocalUserIDs))$gLocalUserIDs[] = $o->user;
 	//if ($gBuildingType[$o->type]->speed == 0) $gMapBlocked[$o->x-$gLeft][$o->y-$gTop] = true;
 	//else if ($o->type == kBuilding_Bridge && $o->construction > 0) $gMapBlocked[$o->x-$gLeft][$o->y-$gTop] = true;
 }
@@ -165,6 +169,19 @@ if ($profile) profile_page_start($profile_title." - 30");
 // terrain
 $gMT = array_fill(0,$gCX,array_fill(0,$gCY,1));
 $gMapTerrain = sqlgettable("SELECT * FROM `terrain` WHERE ".$xylimit);
+
+for($x=$gLeft-1;$x<$gLeft-1+$gCX+1;++$x)
+for($y=$gTop-1;$y<$gTop+$gCY+1;++$y){
+	$lx = $x-$gLeft;
+	$ly = $y-$gTop;
+	$type = $gMap->getTerrainTypeAt($x,$y);
+	$nwse = $gMap->getTerrainNwseAt($x,$y);
+	$gMT[$lx][$ly] = $type;
+	//if ($gTerrainType[$o->type]->speed == 0) $gMapBlocked[$x][$y] = true;
+	$gMapClassesBG[$ly][$lx] = NWSEReplace("t".($type)."-%NWSE%",$nwse);
+}
+
+/*
 foreach ($gMapTerrain as $o) $gMT[$o->x-$gLeft][$o->y-$gTop] = $o->type;
 foreach ($gMapTerrain as $o) {
 	$x = $o->x-$gLeft;
@@ -172,31 +189,35 @@ foreach ($gMapTerrain as $o) {
 	//if ($gTerrainType[$o->type]->speed == 0) $gMapBlocked[$x][$y] = true;
 	$gMapClassesBG[$y][$x] = NWSEReplace("t".($o->type)."-%NWSE%",$o->nwse);
 }
+*/
 
 // terrain patch
-foreach ($gMapTerrain as $o) {
+for($x=$gLeft-1;$x<$gLeft-1+$gCX+1;++$x)
+for($y=$gTop-1;$y<$gTop+$gCY+1;++$y){
+//foreach ($gMapTerrain as $o) {
+	$type = $gMap->getTerrainTypeAt($x,$y);
 	//fluss see verbindung
-	$x = $o->x-$gLeft;
-	$y = $o->y-$gTop;
+	$lx = $o->x-$gLeft;
+	$ly = $o->y-$gTop;
 	//if ($gTerrainType[$o->type]->speed == 0) $gMapBlocked[$x][$y] = true;
 	
-	if(!empty($gTerrainPatchTypeMap[$o->type])){
+	if(!empty($gTerrainPatchTypeMap[$type])){
 		//echo "check patches<br>";
 		//there are patches for this terraintype so check if one matches
-		foreach($gTerrainPatchTypeMap[$o->type] as $oo){
-			//echo " patch $id l".($gMT[$x-1][$y])." r".($gMT[$x+1][$y])." u".($gMT[$x][$y-1])." d".($gMT[$x][$y+1])."<br>";
-			//print_r($oo);
+		foreach($gTerrainPatchTypeMap[$type] as $o){
+			//echo " patch $id l".($gMT[$lx-1][$ly])." r".($gMT[$lx+1][$ly])." u".($gMT[$lx][$ly-1])." d".($gMT[$lx][$ly+1])."<br>";
+			//print_r($o);
 			if(
-				($oo->left==0 || ($oo->left>0 && isset($gMT[$x-1][$y]) && $gMT[$x-1][$y] == $oo->left)) &&
-				($oo->right==0 || ($oo->right>0 && isset($gMT[$x+1][$y]) && $gMT[$x+1][$y] == $oo->right)) &&
-				($oo->up==0 || ($oo->up>0 && isset($gMT[$x][$y-1]) && $gMT[$x][$y-1] == $oo->up)) &&
-				($oo->down==0 || ($oo->down>0 && isset($gMT[$x][$y+1]) && $gMT[$x][$y+1] == $oo->down))
+				($o->left==0 || ($o->left>0 && isset($gMT[$lx-1][$ly]) && $gMT[$lx-1][$ly] == $o->left)) &&
+				($o->right==0 || ($o->right>0 && isset($gMT[$lx+1][$ly]) && $gMT[$lx+1][$ly] == $o->right)) &&
+				($o->up==0 || ($o->up>0 && isset($gMT[$lx][$ly-1]) && $gMT[$lx][$ly-1] == $o->up)) &&
+				($o->down==0 || ($o->down>0 && isset($gMT[$lx][$ly+1]) && $gMT[$lx][$ly+1] == $o->down))
 			) {
-				$gMapClassesBG[$y][$x] = "p".($oo->id);
-				if($oo->left>0)$gMapClassesBG[$y][$x-1] = addNWSELetter($gMapClassesBG[$y][$x-1],"e");
-				if($oo->right>0)$gMapClassesBG[$y][$x+1] = addNWSELetter($gMapClassesBG[$y][$x+1],"w");
-				if($oo->up>0)$gMapClassesBG[$y-1][$x] = addNWSELetter($gMapClassesBG[$y-1][$x],"s");
-				if($oo->down>0)$gMapClassesBG[$y+1][$x] = addNWSELetter($gMapClassesBG[$y+1][$x],"n");
+				$gMapClassesBG[$ly][$lx] = "p".($o->id);
+				if($o->left>0)$gMapClassesBG[$ly][$lx-1] = addNWSELetter($gMapClassesBG[$ly][$lx-1],"e");
+				if($o->right>0)$gMapClassesBG[$ly][$lx+1] = addNWSELetter($gMapClassesBG[$ly][$lx+1],"w");
+				if($o->up>0)$gMapClassesBG[$ly-1][$lx] = addNWSELetter($gMapClassesBG[$ly-1][$lx],"s");
+				if($o->down>0)$gMapClassesBG[$ly+1][$lx] = addNWSELetter($gMapClassesBG[$ly+1][$lx],"n");
 				//echo "match !!!";
 			}
 		}
@@ -205,7 +226,7 @@ foreach ($gMapTerrain as $o) {
 
 
 // Buildings
-foreach ($gMapBuilding as $o) {
+foreach ($gMap->building as $o) {	
 	$x = $o->x-$gLeft;
 	$y = $o->y-$gTop;
 	$blocked = false;
@@ -288,9 +309,9 @@ if ($profile) profile_page_start($profile_title." - 60");
 
 if ($f_mode != "bauzeit" && $f_mode != "health") {
 	$gMapItem = sqlgettable("SELECT * FROM `item` WHERE `army`=0 AND ".$xylimit);
-	foreach($gMapItem as $o) if ($o->amount >= 1.0)
+	foreach($gMap->item as $o) if ($o->amount >= 1.0)
 		$gMapClasses[$o->y-$gTop][$o->x-$gLeft] = "item_$o->type";
-	foreach($gMapArmy as $o) {
+	foreach($gMap->army as $o) {
 		$units = cUnit::GetUnits($o->id);
 		$maxtype = cUnit::GetUnitsMaxType($units);
 		if($maxtype == kMonster_HyperblobID){

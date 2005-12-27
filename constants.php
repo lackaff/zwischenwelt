@@ -8,6 +8,7 @@ define("kNWSE_N",1);
 define("kNWSE_W",2);
 define("kNWSE_S",4);
 define("kNWSE_E",8);
+define("kNWSE_ALL",kNWSE_N|kNWSE_W|kNWSE_S|kNWSE_E);
 
 define("kStats_UserInfo",1);
 define("kStats_SysInfo_Misc",2);

@@ -259,4 +259,95 @@ function	terraingen($x,$y,$type,$dur,$ang,$step,$line,$split=0) {
 	foreach ($gMapTerrain as $o)
 		UpdateTerrainNWSE($o);
 }
+
+/**
+* a interface (cMap) to read and write map data for rect from (x,y) to (x+dx-1,y+dy-1) of the terrain
+*/
+function getMapAtPosition($x,$y,$dx,$dy){
+	return new cMap($x,$y,$dx,$dy);
+}
+
+class cMap {
+	function cMap($x,$y,$dx,$dy){
+		$x = intval($x)-1;$y = intval($y)-1;
+		$dx = intval($dx)+2;$dy = intval($dy)+2;
+		$x64 = floor($x/64);$y64 = floor($y/64);
+		$dx64 = ceil($dx/64)+1;$dy64 = ceil($dy/64)+1;
+		$x4 = floor($x/4);$y4 = floor($y/4);
+		$dx4 = ceil($dx/4)+1;$dy4 = ceil($dy/4)+1;
+		
+		$lseg64 = sqlgettable("SELECT * FROM `terrainsegment64` 
+			WHERE `x`>=($x64) AND `x`<($x64+$dx64) AND `y`>=($y64) AND `y`<($y64+$dy64)");
+		$lseg4  = sqlgettable("SELECT * FROM `terrainsegment4`  
+			WHERE `x`>=($x4) AND `x`<($x4+$dx4) AND `y`>=($y4) AND `y`<($y4+$dy4)");
+		
+		$this->seg64 = array();
+		$this->seg4 = array();
+		foreach($lseg64 as $o)$this->seg64[$o->x][$o->y] = $o;
+		foreach($lseg4 as $o)$this->seg4[$o->x][$o->y] = $o;
+		unset($lseg64);
+		unset($lseg4);
+		
+		$l = sqlgettable("SELECT * FROM `terrain` WHERE `x`>=($x) AND `x`<($x+$dx) AND `y`>=($y) AND `y`<($y+$dy)");
+		foreach($l as $o)$this->seg1[$o->x][$o->y] = $o;
+		unset($l);
+		
+		$this->army = sqlgettable("SELECT * FROM `army` WHERE `x`>=($x) AND `x`<($x+$dx) AND `y`>=($y) AND `y`<($y+$dy)");
+		$this->item = sqlgettable("SELECT * FROM `item` WHERE `x`>=($x) AND `x`<($x+$dx) AND `y`>=($y) AND `y`<($y+$dy)");
+		$this->building = sqlgettable("SELECT * FROM `building` WHERE `x`>=($x) AND `x`<($x+$dx) AND `y`>=($y) AND `y`<($y+$dy)");
+		
+		//print_r($this);
+		
+		echo "[1:($x,$y,$dx,$dy) 64:($x64,$y64,$dx64,$dy64) 4:($x4,$y4,$dx4,$dy4)]";
+	}
+	
+	function getTerrainTypeAt($x,$y){
+		$x64 = floor($x/64);$y64 = floor($y/64);
+		$x4 = floor($x/4);$y4 = floor($y/4);
+
+		$type = kTerrain_Grass;
+		if(!empty($this->seg64[$x64][$y64]))$type = $this->seg64[$x64][$y64]->type;
+		if(!empty($this->seg4[$x4][$y4]))$type = $this->seg4[$x4][$y4]->type;
+		if(!empty($this->seg1[$x][$y]))$type = $this->seg1[$x][$y]->type;
+		
+		return $type;
+	}
+
+	function getBuildingAt($x,$y){
+		foreach($this->building as $o)if($o->x == $x && $o->y == $y)return $o;
+		return null;
+	}
+	
+	function getBuildingTypeAt($x,$y){
+		$o = $this->getBuildingAt($x,$y);
+		if($o == null)return 0;
+		else return $o->type;
+	}
+
+	function getTerrainNwseAt($x,$y){
+		global $gTerrainType;
+		$x64 = floor($x/64);$y64 = floor($y/64);
+		$x4 = floor($x/4);$y4 = floor($y/4);
+
+		$nwse = 0;
+		//if(!empty($this->seg64[$x64][$y64]))$type = $this->seg64[$x64][$y64]->type;
+		if(empty($this->seg1[$x][$y]))return kNWSE_ALL;
+		
+		//todo: use the nwse field in the db to save cpu power (cache)
+		$type = $this->getTerrainTypeAt($x,$y);
+		$connectto_terrain = $gTerrainType[$type]->connectto_terrain;
+		$connectto_building = $gTerrainType[$type]->connectto_building;
+		if(in_array($this->getTerrainTypeAt($x,$y-1),$connectto_terrain)) $nwse |= kNWSE_N;
+		if(in_array($this->getBuildingTypeAt($x,$y-1),$connectto_building)) $nwse |= kNWSE_N;
+		if(in_array($this->getTerrainTypeAt($x-1,$y),$connectto_terrain)) $nwse |= kNWSE_W;
+		if(in_array($this->getBuildingTypeAt($x-1,$y),$connectto_building)) $nwse |= kNWSE_W;
+		if(in_array($this->getTerrainTypeAt($x,$y+1),$connectto_terrain)) $nwse |= kNWSE_S;
+		if(in_array($this->getBuildingTypeAt($x,$y+1),$connectto_building)) $nwse |= kNWSE_S;
+		if(in_array($this->getTerrainTypeAt($x+1,$y),$connectto_terrain)) $nwse |= kNWSE_E;
+		if(in_array($this->getBuildingTypeAt($x+1,$y),$connectto_building)) $nwse |= kNWSE_E;
+
+		return $nwse;
+	}
+}
+
 ?>
