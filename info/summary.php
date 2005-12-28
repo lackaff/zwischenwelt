@@ -138,7 +138,7 @@ GROUP BY `user`.`id`");
 				?>
 				<tr>
 					<td nowrap><?=cText::Wiki("spell",$spell->type)?><a href="<?=Query("?sid=?&x=?&y=?&infospelltype=".$spell->type)?>"><?=$gSpellType[$spell->type]->name?></a></td>
-					<td nowrap>auf <?=($spell->targettype==MTARGET_AREA)?opos2txt($spell):nick($spell->target)?></td>
+					<td nowrap>auf <?=($spell->targettype==MTARGET_AREA)?opos2txt($spell):nick($spell->target,"Server",true)?></td>
 					<td nowrap>noch <?=Duration2Text($spell->lasts-time())?></td>
 					<td nowrap><?=$effect?></td>
 					<?php if ($gUser->admin) {?>
@@ -161,7 +161,7 @@ GROUP BY `user`.`id`");
 				?>
 				<tr>
 					<td nowrap><?=cText::Wiki("spell",$spell->type)?> <a href="<?=Query("?sid=?&x=?&y=?&infospelltype=".$spell->type)?>"><?=$gSpellType[$spell->type]->name?></a></td>
-					<td nowrap>von <?=nick($spell->owner)?></td>
+					<td nowrap>von <?=nick($spell->owner,"Server",true)?></td>
 					<td nowrap>noch <?=Duration2Text($spell->lasts-time())?></td>
 					<td nowrap><?=$effect?></td>
 					<?php if ($gUser->admin) {?>

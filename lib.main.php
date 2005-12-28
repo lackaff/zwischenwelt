@@ -546,10 +546,16 @@ function getSlotAddonFromSupportFields($b){ // id or object
 
 
 // returns username or "Server" if 0,  see also cArmy::GetArmyOwnerName()
-function nick($id=0,$fallback="Server"){
+//if aslink = true <a..>NICK</a> will be returned
+function nick($id=0,$fallback="Server",$aslink=false){
 	if($id==0)return $fallback;
 	$nick=sqlgetone("SELECT `name` FROM `user` WHERE 1 AND `id`=".intval($id)." LIMIT 1");
 	if(empty($nick))return $fallback;
+	else if($aslink){
+		$ownerhq = sqlgetobject("SELECT `x`,`y` FROM `building` WHERE `type` = ".kBuilding_HQ." AND `user` = ".intval($id));
+		if(empty($ownerhq))return $nick;
+		else return "<a href=".query("?sid=?&x=".$ownerhq->x."&y=".$ownerhq->y).">$nick</a>";
+	}
 	else return $nick;
 }
 
