@@ -24,6 +24,11 @@ require_once(kTypeCacheFile);
 
 $gTilesize = 25;
 
+function GetZWStylePath ($relpathprefix="") {
+	// $relpathprefix = "../" for info.php ?
+	// todo : replace by neutral/good/evil, or user-defined
+	return $relpathprefix.kZWStyle_Neutral;
+}
 
 function AdminBtn ($title,$url) {
 	return "<a href='".Query($url)."'><img src='".g("icon/admin.png")."' alt='$title' title='$title' border=0></a>";
@@ -730,7 +735,8 @@ function g($path,$nwse="ns",$level="0",$race="0",$moral="100"){
 		if($gUser->gfxpath{strlen($gUser->gfxpath)-1} != '/')$base = $gUser->gfxpath . "/";
 		else $base = $gUser->gfxpath;
 	} else $base = kGfxServerPath;
-	return str_replace("%M%",$moral,str_replace("%R%",$race,str_replace("%NWSE%",$nwse,str_replace("%L%",$level,$base.$path))));
+	//return str_replace("%M%",$moral,str_replace("%R%",$race,str_replace("%NWSE%",$nwse,str_replace("%L%",$level,$base.$path))));
+	return $base.str_replace("%M%",$moral,str_replace("%R%",$race,str_replace("%NWSE%",$nwse,str_replace("%L%",$level,$path))));
 }
 
 

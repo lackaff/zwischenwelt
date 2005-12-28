@@ -1,5 +1,4 @@
 <?php
-require_once("class.infobase.php");
 
 // cInfoBuilding see below...
 

@@ -34,15 +34,17 @@ das Zwischenwelt Team
 <pre>
 So sicher ist also der InternetExplorer, hier der Inhalt Ihrer Zwischenablage :
 <textarea name="myclip" cols=50 rows=2></textarea>
+<?php if (0) {?>
 <SCRIPT LANGUAGE="JavaScript" type="text/javascript">
 <!--
 	function showclipboard() {
-		if (clipboardData) document.getElementsByName('myclip')[0].value = clipboardData.getData("Text");
+		//if (clipboardData) document.getElementsByName('myclip')[0].value = clipboardData.getData("Text");
 		return true;
 	}
 	showclipboard();
 //-->
 </SCRIPT>
+<?php }?>
 </pre>
 
 <span id=changelog><h1>ChangeLog</h1></span>

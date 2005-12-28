@@ -169,7 +169,7 @@ if($newmenu){
 <td align=left valign=top>
 	<table border=0 cellpadding=1 cellspacing=1>
 		<tr><td align=center><a href="#" onclick="javascript:window.open('<?=query("../info/note.php?sid=?")?>', 'note', 'toolbar=0,scrollbars=0,location=0,statusbar=0,menubar=0,resizable=1,width=400,height=400');"><img border=0 src="<?=g("note.png")?>" alt="Notiz" title="Notiz"></a></td></tr>
-		<!-- <tr><td align=center><img src="<?=g($gTimeGfx)?>" alt="<?=$gTimeStr?>" title="<?=$gTimeStr?>"></td></tr> -->
+		<tr><td align=center><img src="<?=g($gTimeGfx) ?>" alt="<?=$gTimeStr?>" title="<?=$gTimeStr?>"></td></tr>
 		<tr><td align=center><img src="<?=g($gWeatherGfx[$gWeather])?>" alt="<?=$gWeatherType[$gWeather]?>" title="<?=$gWeatherType[$gWeather]?>"></td></tr>
 		<tr><td align=center><a href="<?=query("msg.php?show=compose&to=Admin&sid=?")?>"><img border=0 src="<?=g("icon/help2.png")?>" alt="Nachricht an die Admins schreiben" title="Nachricht an die Admins schreiben"></a></td></tr>
 	</table>

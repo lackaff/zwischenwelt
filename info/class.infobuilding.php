@@ -1,4 +1,6 @@
 <?php
+require_once("class.infobase.php");
+require_once("../lib.main.php");
 require_once("../lib.building.php");
 require_once("../lib.technology.php");
 require_once("../lib.transfer.php");

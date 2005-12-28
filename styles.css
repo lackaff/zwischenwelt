@@ -42,24 +42,6 @@ A:active {
 	 border:1px solid black;
 }
 
-.map * {
-	FONT-FAMILY: monospace;
-	FONT-SIZE: 9pt;
-	FONT-WEIGHT: normal;
-}
-.map th {
-	FONT-FAMILY: monospace;
-	FONT-SIZE: 7pt;
-	FONT-WEIGHT: normal;
-}
-.map {
-	border:1px solid black;
-	empty-cells:show;
-}
-.mapnav {
-	border:1px solid black;
-}
-
 table info{
 	border:0.5px solid grey;
 }
