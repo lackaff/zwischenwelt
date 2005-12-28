@@ -1,4 +1,4 @@
-// available map-params : gCX,gCY,gLeft,gTop,gSID,gThisUserID,gGFXBase,gBig,gXMid,gYMid
+// available map-params : gCX,gCY,gLeft,gTop,gSID,gThisUserID,gGFXBase,gBig,gXMid,gYMid,gMapMode
 // available map-data : gTerrain,gBuildings,gArmies,gItems,gPlans,gOre??
 // available globals : gTerrainTypes,gBuildingTypes...
 // see also mapnavi_globals.js.php
@@ -43,8 +43,8 @@ kJSPlanField_priority = i++;
 
 // createmap is called as soon as loading is complete
 var gXMid,gYMid;
-function CreateMap() {
-	var row,x,y,i,j;
+
+function MapInit() {
 	gXMid=Math.floor(gCX/2);
 	gYMid=Math.floor(gCY/2);
 	
@@ -69,17 +69,24 @@ function CreateMap() {
 	for (i in gArmies) {
 		gArmies[i] = gArmies[i].split(",");
 		var units = gArmies[i][kJSArmyField_units].split("|");
+		units.pop();
 		gArmies[i][kJSArmyField_units] = new Array();
 		for (j in units) {
 			var type_amount_pair = units[j].split(":");
 			if (gArmies[i][kJSArmyField_units][type_amount_pair[0]] == undefined)
 				gArmies[i][kJSArmyField_units][type_amount_pair[0]] = 0;
-			gArmies[i][kJSArmyField_units][type_amount_pair[0]] += type_amount_pair[1]; 
+			gArmies[i][kJSArmyField_units][type_amount_pair[0]] += parseInt(type_amount_pair[1]); 
 		}
 	}
 	
+	CreateMap();
+}
+
+function CreateMap() {
+	var row,x,y,i,j;
+	
 	var mapstyle = "style=\"width:'+((2+gCX)*gTilesize)+'px;\"";
-	var maphtml = "<table class=\"map\" border=0 cellpadding=0 cellspacing=0 "+mapstyle+">\n";
+	var maphtml = "<table class=\"map\" border=0 cellpadding=0 cellspacing=0 "+mapstyle+" onMouseout=\"KillTip()\">\n";
 	
 	// top row
 	row = "";
@@ -95,7 +102,7 @@ function CreateMap() {
 		var myclass = (y<gYMid ? "n" : (y==gYMid?"":"S"));
 		row = "";
 		row += "<th class=\"mapborder_"+myclass+"w\" onClick=\"nav(-1,0)\">"+(y+gTop)+"</th>\n";
-		for (x=0;x<gCX;++x) row += "<td class=\"mapcell\" id=\"cell_"+x+"_"+y+"\">"+GetCellHTML(x,y)+"</td>\n";
+		for (x=0;x<gCX;++x) row += "<td class=\"mapcell\">"+GetCellHTML(x,y)+"</td>\n";
 		row += "<th class=\"mapborder_"+myclass+"e\" onClick=\"nav(1,0)\">"+(y+gTop)+"</th>\n";
 		maphtml += "\n<tr>"+row+"</tr>\n";
 	}
@@ -108,8 +115,9 @@ function CreateMap() {
 		row += "<th class=\"mapborder_"+myclass+"\" onClick=\"nav("+(x<0?-1:(x>=gCX?1:0))+",1)\">"+(x+gLeft)+"</th>\n";
 	}
 	maphtml += "\n<tr>"+row+"</tr>\n";
+	maphtml += "</table>";
+	maphtml += "<span class=\"maptip\" onMouseover=\"KillTip()\" name=\""+kMapTipName+"\" style=\"position:absolute;top:0px;left:0px; visibility:hidden;\"></span>";
 	
-	maphtml += '</table>';
 	var tab_topright = "bla";
 	
 	var tab_pre = "";
@@ -136,10 +144,10 @@ function CreateMap() {
 
 	/*
 	tab_pre += "<table class=\"tabs\" cellspacing=0 cellpadding=0><tr>\n";
-	tab_pre += "<td class=\"activetab\"><a href=\"\">Normal</a></td>\n";
-	tab_pre += "<td class=\"inactivetab\"><a href=\"\">Pläne</a></td>\n";
-	tab_pre += "<td class=\"inactivetab\"><a href=\"\">Bauzeit</a></td>\n";
-	tab_pre += "<td class=\"inactivetab\"><a href=\"\">HP</a></td>\n";
+	tab_pre += "<td class=\""+(gMapMode==kJSMapMode_Normal?"":"in"	)+"activetab\"><a href=\"javascript:SetMapMode(kJSMapMode_Normal)\">Normal</a></td>\n";
+	tab_pre += "<td class=\""+(gMapMode==kJSMapMode_Plan?"":"in"	)+"activetab\"><a href=\"javascript:SetMapMode(kJSMapMode_Plan)\">Pläne</a></td>\n";
+	tab_pre += "<td class=\""+(gMapMode==kJSMapMode_Bauzeit?"":"in"	)+"activetab\"><a href=\"javascript:SetMapMode(kJSMapMode_Bauzeit)\">Bauzeit</a></td>\n";
+	tab_pre += "<td class=\""+(gMapMode==kJSMapMode_HP?"":"in"		)+"activetab\"><a href=\"javascript:SetMapMode(kJSMapMode_HP)\">HP</a></td>\n";
 	tab_pre += "<td class=\"tabfillerright\" width=\"100%\" align=\"right\">"+tab_topright+"</td>\n";
 	tab_pre += "</tr><tr>\n";
 	tab_pre += "<td class=\"tabpane\" colspan=5><div>\n";
@@ -149,6 +157,33 @@ function CreateMap() {
 	return true;
 }
 
+function SetMapMode (newmode) {
+	if (gMapMode == newmode) return;
+	gMapMode = newmode;
+	CreateMap();
+}
+
+
+function GetTerrainPic (terraintype,relx,rely) {
+	var nwsecode = 0;
+	if (terraintype == GetTerrainType(relx,rely-1)) nwsecode += kNWSE_N;
+	if (terraintype == GetTerrainType(relx-1,rely)) nwsecode += kNWSE_W;
+	if (terraintype == GetTerrainType(relx,rely+1)) nwsecode += kNWSE_S;
+	if (terraintype == GetTerrainType(relx+1,rely)) nwsecode += kNWSE_E;
+	return g_nwse(gTerrainType[terraintype].gfx,nwsecode);
+}
+function GetBuildingPic (building,relx,rely) {
+	var buildingtype = building[kJSBuildingField_type];
+	var level = building[kJSBuildingField_level];
+	if (level < 10) level = 0; else level = 1;
+	var nwsecode = 0;
+	if (buildingtype == GetBuildingType(relx,rely-1)) nwsecode += kNWSE_N;
+	if (buildingtype == GetBuildingType(relx-1,rely)) nwsecode += kNWSE_W;
+	if (buildingtype == GetBuildingType(relx,rely+1)) nwsecode += kNWSE_S;
+	if (buildingtype == GetBuildingType(relx+1,rely)) nwsecode += kNWSE_E;
+	return g3(gBuildingType[buildingtype].gfx,nwsecode,level);
+}
+
 function GetCellHTML (relx,rely) {
 	if (relx < 0 || rely < 0 || relx >= gCX || rely >= gCY) return "x";
 	var layers = new Array();
@@ -156,12 +191,7 @@ function GetCellHTML (relx,rely) {
 	// terrain
 	var backgroundcolor = false;
 	var terraintype = GetTerrainType(relx,rely);
-	var nwsecode = 0;
-	if (terraintype == GetTerrainType(relx,rely-1)) nwsecode += kNWSE_N;
-	if (terraintype == GetTerrainType(relx-1,rely)) nwsecode += kNWSE_W;
-	if (terraintype == GetTerrainType(relx,rely+1)) nwsecode += kNWSE_S;
-	if (terraintype == GetTerrainType(relx+1,rely)) nwsecode += kNWSE_E;
-	layers[layers.length] = g_nwse(gTerrainType[terraintype].gfx,nwsecode);
+	layers[layers.length] = GetTerrainPic(terraintype,relx,rely);
 	
 	// building
 	var building = SearchPos(gBuildings,relx,rely);
@@ -169,22 +199,27 @@ function GetCellHTML (relx,rely) {
 		if (building[kJSBuildingField_construction] > 0) {
 			layers[layers.length] = g(kConstructionPic);
 		} else {
-			nwsecode = 0;
-			var buildingtype = building[kJSBuildingField_type];
-			var level = building[kJSBuildingField_level];
-			if (level < 10) level = 0; else level = 1;
-			if (buildingtype == GetBuildingType(relx,rely-1)) nwsecode += kNWSE_N;
-			if (buildingtype == GetBuildingType(relx-1,rely)) nwsecode += kNWSE_W;
-			if (buildingtype == GetBuildingType(relx,rely+1)) nwsecode += kNWSE_S;
-			if (buildingtype == GetBuildingType(relx+1,rely)) nwsecode += kNWSE_E;
-			layers[layers.length] = g3(gBuildingType[buildingtype].gfx,nwsecode,level);
+			layers[layers.length] = GetBuildingPic(building,relx,rely);
 			if (building[kJSBuildingField_user] > 0) backgroundcolor = gLocalUsers[building[kJSBuildingField_user]].color;
+		}
+		if (gMapMode==kJSMapMode_HP) {
+			var hp = building[kJSBuildingField_hp];
+			var type = building[kJSBuildingField_type];
+			var level = building[kJSBuildingField_level];
+			backgroundcolor = GradientRYG(GetFraction(hp,calcMaxBuildingHp(type,level)))
 		}
 	}
 	
 	// plan
 	var plan = SearchPos(gPlans,relx,rely);
-	if (plan) layers[layers.length] = g(kTransCP);
+	if (plan) {
+		if (gMapMode==kJSMapMode_Plan) {
+			backgroundcolor = "red";
+			layers[layers.length] = g3(gBuildingType[plan[kJSPlanField_type]].gfx,0,0);
+		} else {
+			layers[layers.length] = g(kTransCP);
+		}
+	}
 	
 	// item
 	var item = SearchPos(gItems,relx,rely);
@@ -207,9 +242,14 @@ function GetCellHTML (relx,rely) {
 	
 	
 	var i,res = "";
-	if (backgroundcolor) res += "<div background-color=\""+backgroundcolor+"\">";
-	for (i in layers) res += '<div style="background-image:url('+layers[i]+');">';
+	if (backgroundcolor) res += "<div style=\"\">";
+	for (i in layers) {
+		var bg = (i==0)?("background-color:"+backgroundcolor+";"):"";
+		res += "<div style=\"background-image:url("+layers[i]+"); "+bg+"\">";
+	}
+	res += "<div id=\"cell_"+relx+"_"+rely+"\" onClick=\"mapclick("+relx+","+rely+")\" onMouseover=\"mapover("+relx+","+rely+")\">";
 	if (relx == gXMid && rely == gYMid) res += "<img src='gfx/crosshair.png'>";
+	res += '</div>';
 	for (i in layers) res += '</div>';
 	if (backgroundcolor) res += '</div>';
 	
@@ -220,6 +260,96 @@ function GetCellHTML (relx,rely) {
 	//res = "<div onClick='m("+relx+","+rely+")'>"+res+"</div>";
 	//if (relx == 0 && rely == 0) alert(res);
 	return res;
+}
+
+function mapclick (relx,rely) {
+	//debuglog("c"+relx+","+rely);
+	KillTip();	
+}
+
+function mapover (relx,rely) {
+	// generate tip text
+	var i;
+	var tiptext = relx+","+rely+"<br>";
+
+	// terrain
+	var terraintype = GetTerrainType(relx,rely);
+	tiptext += "<img src=\""+GetTerrainPic(terraintype,relx,rely)+"\">"+gTerrainType[terraintype].name+"<br>";
+	
+	// building
+	var building = SearchPos(gBuildings,relx,rely);
+	if (building) {
+		var buildingtype = building[kJSBuildingField_type];
+		var hp = building[kJSBuildingField_hp];
+		var level = building[kJSBuildingField_level];
+		var user = building[kJSBuildingField_user];
+		tiptext += "<img src=\""+GetBuildingPic(building,relx,rely)+"\">";
+		tiptext += gBuildingType[buildingtype].name + " Stufe "+level;
+		if (user > 0) tiptext += " von "+gLocalUsers[user].name;
+		tiptext += " HP : "+hp+"/"+gBuildingType[buildingtype].maxhp;
+		tiptext += "<br>";
+		// backgroundcolor = GradientRYG(GetFraction(hp,calcMaxBuildingHp(type,level)))
+	}
+	
+	// plan
+	var plan = SearchPos(gPlans,relx,rely);
+	if (plan) {
+		tiptext += "<img src=\""+g(kTransCP)+"\">";
+		tiptext += "<img src=\""+g3(gBuildingType[plan[kJSPlanField_type]].gfx,0,0)+"\">";
+		tiptext += "<br>";
+	}
+	
+	// item
+	var item = SearchPos(gItems,relx,rely);
+	if (item) {
+		tiptext += "<img src=\""+g(gItemType[item[kJSItemField_type]].gfx)+"\">";
+		tiptext += gItemType[item[kJSItemField_type]].name+":"+item[kJSItemField_amount];
+		tiptext += "<br>";
+	}
+	
+	// army
+	var army = SearchPos(gArmies,relx,rely);
+	if (army) {
+		var user = army[kJSArmyField_user];
+		for (i in army[kJSArmyField_units]) tiptext += "<img src=\""+g(gUnitType[i].gfx)+"\">"+army[kJSArmyField_units][i];
+		if (user > 0) tiptext += " von "+gLocalUsers[user].name;
+		tiptext += "<br>";
+	}
+	
+	// find a suitable position
+	var x,y;
+	x = kMapTip_xoff + kJSMapTileSize*(relx+1);
+	y = kMapTip_yoff + kJSMapTileSize*(rely+1);
+	// spawn tip
+	document.getElementsByName(kMapTipName)[0].style.visibility = "visible";
+	document.getElementsByName(kMapTipName)[0].style.position = "absolute";
+	document.getElementsByName(kMapTipName)[0].style.left = x+"px";
+	document.getElementsByName(kMapTipName)[0].style.top = y+"px";
+	document.getElementsByName(kMapTipName)[0].innerHTML = tiptext;
+}
+
+function KillTip () {
+	document.getElementsByName(kMapTipName)[0].style.visibility = "hidden";
+}
+
+function debuglog (text) {
+	document.getElementsByName("mapdebug")[0].innerHTML = text+"<br>"+document.getElementsByName("mapdebug")[0].innerHTML;
+}
+
+	
+function GetFraction (cur,max) { return (cur <= 0.0 || max == 0)?0.0:((cur >= max)?1.0:(cur / max)); }
+function GradientRYG (factor) { // red-yellow-green
+	var dist = Math.abs(factor - 0.5)*2.0;
+	factor = 0.5 + 0.5*((factor>0.5)?1.0:(-1.0))*dist*dist;
+	var r = 255.0*Math.min(1.0,2.0-factor*2.0);
+	var g = 255.0*Math.min(1.0,factor*2.0);
+	r = r.toString(16); if (r.length == 1) r = "0"+r; if (r.length > 2) r = "ff";
+	g = g.toString(16); if (g.length == 1) g = "0"+g; if (g.length > 2) g = "ff";
+	return "#"+r+g+"00";
+}
+function calcMaxBuildingHp(type,level) {
+	var maxhp = gBuildingType[type].maxhp;
+	return Math.ceil(maxhp + maxhp/100*1.5*level);
 }
 
 function SearchPos (arr,relx,rely) {
@@ -291,7 +421,7 @@ function nav(x,y) {
 	var scroll = 5;
 	x = gLeft + gXMid + x * scroll;
 	y = gTop + gYMid + y * scroll;
-	location.href = "?sid="+gSID+"&x="+x+"&y="+y;
+	location.href = "?sid="+gSID+"&x="+x+"&y="+y+"&mode="+gMapMode;
 }
 
 

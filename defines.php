@@ -40,6 +40,7 @@ $gRes = my_array_combine($gResNames,$gResFields);
 //list of things that can be done by people, worker adjustment
 $gAdjust = array_merge($gRes,array("Reparieren"=>"repair"));
 
+define("kMapTileSize",25);
 define("kMapScript","mapjs7.php");
 define("kMapNaviScript","mapnavi7.php");
 define("kZWStyle_Neutral","zwstyle.css");

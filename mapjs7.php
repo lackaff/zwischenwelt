@@ -63,11 +63,11 @@ gCX = <?=$gCX?>;
 gCY = <?=$gCY?>;
 gLeft = <?=$gLeft?>;
 gTop = <?=$gTop?>;
-gTilesize = <?=$gTilesize?>;
 gSID = "<?=$gSID?>";
 gThisUserID = "<?=$gUser->id?>";
 gGFXBase = "<?=$gGFXBase?>";
 gBig = <?=isset($f_big)?"true":"false"?>;
+gMapMode = <?=isset($f_mode)?intval($f_mode):kJSMapMode_Normal?>;
 <?php
 $gTerrain = sqlgettable("SELECT * FROM `terrain` WHERE ".$xylimit." ORDER BY `y`,`x`");
 echo 'gTerrain = "';
@@ -140,8 +140,7 @@ $gLocalGuildIDs = array_unique($gLocalGuildIDs);
 ?>
 //-->
 </SCRIPT>
-</head><body id="mapbody" onLoad="CreateMap()">
+</head><body id="mapbody" onLoad="MapInit()">
 <span id="mapzone">JavaScript needed</span>
-<br><br>
-
+<?php if (1) {?><div name="mapdebug"></span><?php }?>
 </body></html>

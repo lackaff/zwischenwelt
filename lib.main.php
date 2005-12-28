@@ -22,8 +22,6 @@ require_once(kTypeCacheFile);
 
 //vardump($gTerrainType);
 
-$gTilesize = 25;
-
 function GetZWStylePath ($relpathprefix="") {
 	// $relpathprefix = "../" for info.php ?
 	// todo : replace by neutral/good/evil, or user-defined

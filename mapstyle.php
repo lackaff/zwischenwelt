@@ -24,8 +24,8 @@ else $gfxpath = "";
 
 ?>
 
-.map th { width:<?=$gTilesize?>px; height:<?=$gTilesize?>px; }
-.map td { width:<?=$gTilesize?>px; height:<?=$gTilesize?>px; background-position:1px 1px; background-repeat:no-repeat;}
+.map th { width:<?=kMapTileSize?>px; height:<?=kMapTileSize?>px; }
+.map td { width:<?=kMapTileSize?>px; height:<?=kMapTileSize?>px; background-position:1px 1px; background-repeat:no-repeat;}
 .map div { width:100%; height:100%; background-position:1px 1px; background-repeat:no-repeat;}
 .ramme { background-image:url(<?=g("ramme.png")?>); }
 .wp { background-color:#00FF00; }

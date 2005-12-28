@@ -360,7 +360,7 @@ function getWindowWidth()
 	return 0;
 }
 
-var mapwidth = Math.floor((getWindowWidth()-2*40)/<?=$gTilesize?>);
+var mapwidth = Math.floor((getWindowWidth()-2*40)/<?=kMapTileSize?>);
 //alert(mapwidth+" "+getWindowWidth());
 
 <?php if (isset($f_big)) { /* navi */?>
@@ -441,7 +441,7 @@ alert("Der Knopf Pläne zeigt Baupläne als fertige Gebäude an,\n damit man eine ü
 	</table>
 </td><td valign="top" align="right"><?=$f_mode?("modus : ".$f_mode):""?></td></tr></table>
 
-<table class="map" border=0 cellpadding="0" cellspacing="0" bgcolor='#66AA55' style="width:<?=(2+$gCX)*$gTilesize?>px;table-layout:fixed">
+<table class="map" border=0 cellpadding="0" cellspacing="0" bgcolor='#66AA55' style="width:<?=(2+$gCX)*kMapTileSize?>px;table-layout:fixed">
 	<tr><th></th>
 	<?php for ($x=$gLeft;$x<$gLeft+$gCX;$x++) {?><th><?=($x>=0&&$x<=9)?"&nbsp;$x":$x?></th><?php }?>
 	<th></th></tr>

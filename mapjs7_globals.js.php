@@ -15,7 +15,15 @@ kConstructionPlanPic = "<?=kConstructionPlanPic?>";
 kConstructionPic = "<?=kConstructionPic?>";
 kTransCP = "<?=kTransCP?>"; // transparent construction plan
 
+kJSMapMode_Normal = 0;
+kJSMapMode_Plan = 1;
+kJSMapMode_Bauzeit = 2;
+kJSMapMode_HP = 3;
 
+kJSMapTileSize = <?=kMapTileSize?>;
+kMapTip_xoff = 50;
+kMapTip_yoff = 60;
+kMapTipName = "maptip";
 
 function UnitTypeHasNWSE (unittype) {
 	return unittype == <?=kUnitType_HyperBlob?>;
