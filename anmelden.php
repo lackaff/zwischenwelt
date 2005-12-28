@@ -16,7 +16,7 @@ if(isset($f_selfcall))
 {
 	if(isset($f_name)) {
 		$f_name = addslashes(trim($f_name));
-		if(ereg('^[a-zA-Z][a-zA-Z0-9 \.-]+$',$f_name) === FALSE)$errstr .= "Der Name enthält ungültige Zeichen. Namen müssen mit Buchstaben beginnen und bestehen nahezu nur aus Buchstaben.<br>";
+		if(ereg('^[a-zA-Z][a-zA-Z0-9 \.-]+$',$f_name) === FALSE)$errstr .= "Der Name enth&auml;lt ung&uumlml;ltige Zeichen. Namen m&uuml;ssen mit Buchstaben beginnen und bestehen nahezu nur aus Buchstaben.<br>";
 	} else $errstr .= 'Bitte einen Loginnamen angeben.<br>';
 	
 	if(strpos($f_mail,'@') && strpos($f_mail,'.')) $f_mail = addslashes($f_mail);
@@ -34,14 +34,14 @@ if(isset($f_selfcall))
 		$r = sql("SELECT `id` FROM `user` WHERE `name`='$f_name' OR `mail`='$f_mail'");
 		if(mysql_num_rows($r))
 		{
-			echo "<hr>sorry den usernamen oder die mailadresse gibts leider schon.<hr>";
+			echo "<hr>Sorry, den Usernamen oder die Mailadresse gibt es leider schon.<hr>";
 		}
 		else
 		{
 			$r = sql("SELECT `name` FROM `pending` WHERE `name`='$f_name' OR `mail`='$f_mail'");
 			if(mysql_num_rows($r))
 			{
-				echo "<hr>sorry unter dem usernamen oder der mailadresse hat sich schon jemand angemeldet.<hr>";
+				echo "<hr>Sorry, unter dem Usernamen oder der Mailadresse hat sich schon jemand angemeldet.<hr>";
 			}
 			else
 			{
@@ -59,7 +59,9 @@ if(isset($f_selfcall))
 				sql("INSERT INTO `pending` SET ".obj2sql($newpending)." , `pass`=PASSWORD('".addslashes($f_pass)."')");
 				mail($f_mail, "Zwischenwelt Registratur", "Um den Account freizuschalten bitte folgenden Link aufrufen: http://zwischenwelt.org/anmelden.php?key=$key","From: zwischenwelt@net-play.de\r\nReply-To: zwischenwelt@net-play.de\r\nX-Mailer: PHP/" . phpversion()); 
 				mail("zwischenwelt@net-play.de","neue Anmeldung","name=$f_name\nmail=$f_mail\nfrom=$f_from\ntext=$f_text","From: zwischenwelt@net-play.de\r\nReply-To: zwischenwelt@net-play.de\r\nX-Mailer: PHP/" . phpversion());
-				echo '<hr>hat geklappt, sie haben post :).<hr><b style="color:red">manchmal kann es mit dem mails etwas dauern, also keine panik.</b><hr>';
+				echo '<hr>Es hat geklappt, sie haben Post :).<hr><b style="color:red">Manchmal kann es mit dem Mails etwas dauern, also keine Panik.</b><hr>';
+				include("footer.php");
+				exit;
 			}
 		}
 	} else echo '<hr><p style="color:red">Es sind Fehler aufgetreten:<br>'.$errstr.'</p><hr>';
@@ -116,7 +118,9 @@ else if(isset($f_key))
 		sql("INSERT INTO `building` SET ".obj2sql($o));
 		
 		sql("DELETE FROM `pending` WHERE `key`='$f_key'");
-		echo "<hr>alles ok, der account ist nun freigeschaltet.<hr>";
+		echo "<hr>Alles ok, der Account ist nun freigeschaltet. Sie k&ouml;nnen<hr>";
+		include("footer.php");
+		exit;
 		/*
 		addDirectory($newuserid,"root",0);
 		$id = sqlgetone("SELECT id from message where `subject` = 'root' AND `unread` = '-1' AND `from` = '".$newuserid."' ");
@@ -153,7 +157,9 @@ http://zwischenwelt.net-play.de/forum/phpBB2/index.php<br>
 	}
 	else
 	{
-		echo "<hr>irgendwas ist schiefgelaufen. der key ist total falsch.<hr>";
+		echo "<hr>Irgendwas ist schiefgelaufen. der Key ist falsch.<hr>";
+		include("footer.php");
+		exit;
 	}
 }
 ?>
@@ -183,5 +189,5 @@ http://zwischenwelt.net-play.de/forum/phpBB2/index.php<br>
 <b>Mit der Anmeldung stimmt man den <a href="http://zwischenwelt.milchkind.net/zwwiki/index.php/Regeln">Regeln</a> zu!!!</b>
 <br>
 <br>
-Wenn bei der Anmeldung etwas nicht geklappt hat, keine Panik, sondern einfach eine eMail an "hagish (ääääät) schattenkind.net"
+Wenn bei der Anmeldung etwas nicht geklappt hat, keine Panik, sondern einfach eine eMail an "hagish (&auml;t) schattenkind.net"
 <?php include("footer.php"); ?>
