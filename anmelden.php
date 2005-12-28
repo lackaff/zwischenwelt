@@ -105,6 +105,16 @@ else if(isset($f_key))
 		sql("INSERT INTO `user` SET ".obj2sql($newuser));
 		$newuserid = mysql_insert_id();
 
+		//set a hq at a random position
+		list($x,$y) = FindRandomStartplace();
+		$o = null;
+		$o->user = $newuserid;
+		$o->type = 1;
+		$o->hp = 5000;
+		$o->x = $x;
+		$o->y = $y;
+		sql("INSERT INTO `building` SET ".obj2sql($o));
+		
 		sql("DELETE FROM `pending` WHERE `key`='$f_key'");
 		echo "<hr>alles ok, der account ist nun freigeschaltet.<hr>";
 		/*
