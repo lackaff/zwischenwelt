@@ -140,7 +140,7 @@ $gLocalGuildIDs = array_unique($gLocalGuildIDs);
 ?>
 //-->
 </SCRIPT>
-</head><body onLoad="CreateMap()">
+</head><body id="mapbody" onLoad="CreateMap()">
 <span id="mapzone">JavaScript needed</span>
 <br><br>
 

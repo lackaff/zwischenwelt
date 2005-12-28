@@ -111,7 +111,32 @@ function CreateMap() {
 	
 	maphtml += '</table>';
 	var tab_topright = "bla";
-	var tab_pre = "<table class=\"tabs\" cellspacing=0 cellpadding=0><tr>\n";
+	
+	var tab_pre = "";
+	tab_pre += "<div id=\"panel\">";
+	tab_pre += "	<div id=\"header\">";
+	tab_pre += "		<ul>";
+	tab_pre += "			<li id=\"current\"><a href=\"#\">Normal</a></li>";
+	tab_pre += "			<li><a href=\"#\">Pl&auml;ne</a></li>";
+	tab_pre += "			<li><a href=\"#\">Bauzeit</a></li>";
+	tab_pre += "			<li><a href=\"#\">HP</a></li>";
+	tab_pre += "		</ul>";
+	tab_pre += "		<div id=\"icons\">";
+	tab_pre += "			<a href=\"#\"><img border=0 src=\"gfx/icon/help.png\"></a>";
+	tab_pre += "			<a href=\"#\"><img border=0 src=\"gfx/icon/help.png\"></a>";
+	tab_pre += "			<a href=\"#\"><img border=0 src=\"gfx/icon/help.png\"></a>";
+	tab_pre += "			<a href=\"#\"><img border=0 src=\"gfx/icon/help.png\"></a>";
+	tab_pre += "			<span>(2,33)</span>";
+	tab_pre += "		</div>";
+	tab_pre += "	</div>";
+	tab_pre += "	<div id=\"map\">";
+		
+	var tab_post = "";
+	tab_post += "	</div>";
+	tab_post += "</div>";
+
+	/*
+	tab_pre += "<table class=\"tabs\" cellspacing=0 cellpadding=0><tr>\n";
 	tab_pre += "<td class=\"activetab\"><a href=\"\">Normal</a></td>\n";
 	tab_pre += "<td class=\"inactivetab\"><a href=\"\">Pläne</a></td>\n";
 	tab_pre += "<td class=\"inactivetab\"><a href=\"\">Bauzeit</a></td>\n";
@@ -120,7 +145,7 @@ function CreateMap() {
 	tab_pre += "</tr><tr>\n";
 	tab_pre += "<td class=\"tabpane\" colspan=5><div>\n";
 	var tab_post = "\n</div></td></tr></table>\n";
-	
+	*/
 	document.getElementById("mapzone").innerHTML = tab_pre + maphtml + tab_post;
 	return true;
 }
