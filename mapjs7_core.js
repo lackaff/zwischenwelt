@@ -124,10 +124,10 @@ function CreateMap() {
 	tab_pre += "<div id=\"panel\">";
 	tab_pre += "	<div id=\"header\">";
 	tab_pre += "		<ul>";
-	tab_pre += "			<li id=\"current\"><a href=\"#\">Normal</a></li>";
-	tab_pre += "			<li><a href=\"#\">Pl&auml;ne</a></li>";
-	tab_pre += "			<li><a href=\"#\">Bauzeit</a></li>";
-	tab_pre += "			<li><a href=\"#\">HP</a></li>";
+	tab_pre += "			<li "+(gMapMode==kJSMapMode_Normal?	"id=\"current\"":"")+"><a href=\"javascript:SetMapMode(kJSMapMode_Normal)\">Normal</a></li>";
+	tab_pre += "			<li "+(gMapMode==kJSMapMode_Plan?	"id=\"current\"":"")+"><a href=\"javascript:SetMapMode(kJSMapMode_Plan)\">Pl&auml;ne</a></li>";
+	tab_pre += "			<li "+(gMapMode==kJSMapMode_Bauzeit?"id=\"current\"":"")+"><a href=\"javascript:SetMapMode(kJSMapMode_Bauzeit)\">Bauzeit</a></li>";
+	tab_pre += "			<li "+(gMapMode==kJSMapMode_HP?		"id=\"current\"":"")+"><a href=\"javascript:SetMapMode(kJSMapMode_HP)\">HP</a></li>";
 	tab_pre += "		</ul>";
 	tab_pre += "		<div id=\"icons\">";
 	tab_pre += "			<a href=\"#\"><img alt=\"bigmap\" title=\"bigmap\" border=0 src=\"gfx/icon/bigmap.png\"></a>";
@@ -144,8 +144,8 @@ function CreateMap() {
 
 	/*
 	tab_pre += "<table class=\"tabs\" cellspacing=0 cellpadding=0><tr>\n";
-	tab_pre += "<td class=\""+(gMapMode==kJSMapMode_Normal?"":"in"	)+"activetab\"><a href=\"javascript:SetMapMode(kJSMapMode_Normal)\">Normal</a></td>\n";
-	tab_pre += "<td class=\""+(gMapMode==kJSMapMode_Plan?"":"in"	)+"activetab\"><a href=\"javascript:SetMapMode(kJSMapMode_Plan)\">Pläne</a></td>\n";
+	tab_pre += "<td "+(gMapMode==kJSMapMode_Normal?	"id=\"current\"":"")+"><a href=\"javascript:SetMapMode(kJSMapMode_Normal)\">Normal</a></td>\n";
+	tab_pre += "<td class=\""+(gMapMode==kJSMapMode_Plan?	"":"in"	)+"activetab\"><a href=\"javascript:SetMapMode(kJSMapMode_Plan)\">Pläne</a></td>\n";
 	tab_pre += "<td class=\""+(gMapMode==kJSMapMode_Bauzeit?"":"in"	)+"activetab\"><a href=\"javascript:SetMapMode(kJSMapMode_Bauzeit)\">Bauzeit</a></td>\n";
 	tab_pre += "<td class=\""+(gMapMode==kJSMapMode_HP?"":"in"		)+"activetab\"><a href=\"javascript:SetMapMode(kJSMapMode_HP)\">HP</a></td>\n";
 	tab_pre += "<td class=\"tabfillerright\" width=\"100%\" align=\"right\">"+tab_topright+"</td>\n";
