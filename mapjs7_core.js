@@ -122,10 +122,9 @@ function CreateMap() {
 	tab_pre += "			<li><a href=\"#\">HP</a></li>";
 	tab_pre += "		</ul>";
 	tab_pre += "		<div id=\"icons\">";
-	tab_pre += "			<a href=\"#\"><img border=0 src=\"gfx/icon/help.png\"></a>";
-	tab_pre += "			<a href=\"#\"><img border=0 src=\"gfx/icon/help.png\"></a>";
-	tab_pre += "			<a href=\"#\"><img border=0 src=\"gfx/icon/help.png\"></a>";
-	tab_pre += "			<a href=\"#\"><img border=0 src=\"gfx/icon/help.png\"></a>";
+	tab_pre += "			<a href=\"#\"><img alt=\"bigmap\" title=\"bigmap\" border=0 src=\"gfx/icon/bigmap.png\"></a>";
+	tab_pre += "			<a href=\"#\"><img alt=\"minimap2\" title=\"minimap2\" border=0 src=\"gfx/icon/minimap2.png\"></a>";
+	tab_pre += "			<a href=\"#\"><img alt=\"minimap\" title=\"minimap\" border=0 src=\"gfx/icon/minimap.png\"></a>";
 	tab_pre += "			<span>(2,33)</span>";
 	tab_pre += "		</div>";
 	tab_pre += "	</div>";
