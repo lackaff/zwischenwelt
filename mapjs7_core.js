@@ -16,7 +16,7 @@ gArmies = new Array(); // filled with function, for string security
 gTerrainPatchTypeMap = new Array(); // generated from gTerrainPatchType
 gTerrainMap = false; // generated from MapInit
 var gXMid,gYMid;
-gNWSEDebug = true; // shows typeid and connect-to infos in maptip
+gNWSEDebug = false; // shows typeid and connect-to infos in maptip
 
 kMapTipName = "maptip";
 kMapTip_xoff = 29;
@@ -298,9 +298,9 @@ function mapclick (relx,rely) {
 	KillTip();
 	if (gBig) {
 		//opener.parent.info.location.href = "info/info.php?x="+(x+gLeft)+"&y="+(y+gTop)+"&sid="+gSID;
-		opener.parent.navi.map(x+gLeft,y+gTop);
+		opener.parent.navi.map(relx+gLeft,rely+gTop);
 	} else {
-		parent.navi.map(x+gLeft,y+gTop);
+		parent.navi.map(relx+gLeft,rely+gTop);
 	}
 }
 
