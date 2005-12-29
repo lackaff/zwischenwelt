@@ -11,7 +11,7 @@ foreach($t as $o)if($o->c==$o->cmax){
   $y = $o->segy;
   $type = $o->type;
   sql("REPLACE `terrainsegment64` SET `x`=($x),`y`=($y),`type`=($type)");
-  sql("DELETE FROM `terrain` WHERE floor(`x`/64)=($x) AND floor(`y`/64)=($y) AND `type`=$type");
+  sql("DELETE FROM `terrain` WHERE `x`>=(($x)*64) AND `x`<(($x+1)*64) AND `y`>=(($y)*64) AND `y`<(($y+1)*64) AND `type`=$type");
   ++$count;echo "$count / $size <br>\n";
 }
 echo "done<br>\n";
@@ -25,9 +25,23 @@ foreach($t as $o)if($o->c==$o->cmax){
   $y = $o->segy;
   $type = $o->type;
   sql("REPLACE `terrainsegment4` SET `x`=($x),`y`=($y),`type`=($type)");
-  sql("DELETE FROM `terrain` WHERE floor(`x`/4)=($x) AND floor(`y`/4)=($y) AND `type`=$type");
+  sql("DELETE FROM `terrain` WHERE `x`>=(($x)*4) AND `x`<(($x+1)*4) AND `y`>=(($y)*4) AND `y`<(($y+1)*4) AND `type`=$type");
   ++$count;echo "$count / $size <br>\n";
 }
 echo "done<br>\n";
+
+echo "merging 16x16 4er to 1x1 64er segments<br>\n";
+$t = sqlgettable("SELECT count(*) AS c, 16*16 AS `cmax`, t.type, floor(`x`/16) AS segx, floor(`y`/16) AS segy FROM `terrainsegment4` t GROUP BY segx, segy,type HAVING c=cmax");
+$size = sizeof($t);$count = 0;
+foreach($t as $o)if($o->c==$o->cmax){
+  $x = $o->segx;
+  $y = $o->segy;
+  $type = $o->type;
+  sql("REPLACE `terrainsegment64` SET `x`=($x),`y`=($y),`type`=($type)");
+  sql("DELETE FROM `terrainsegment4` WHERE `x`>=(($x)*16) AND `x`<(($x+1)*16) AND `y`>=(($y)*16) AND `y`<(($y+1)*16) AND `type`=$type");
+  ++$count;echo "$count / $size <br>\n";
+}
+echo "done<br>\n";
+
 
 ?>
