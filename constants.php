@@ -4,6 +4,16 @@ define("kURL_Nethack","http://zwischenwelt.org/telnet.html");
 define("kURL_Chess","http://zwischenwelt.org/~hagish/occ/");
 define("kURL_Wiki","http://zwischenwelt.milchkind.net/zwwiki/index.php/");
 
+define("kMapNaviGotoCat_Pos",1);
+define("kMapNaviGotoCat_Mark",2);
+define("kMapNaviGotoCat_Own",3);
+define("kMapNaviGotoCat_Guild",4);
+define("kMapNaviGotoCat_Friends",5);
+define("kMapNaviGotoCat_Enemies",6);
+define("kMapNaviGotoCat_Search",7);
+define("kMapNaviGotoCat_Random",8);
+define("kMapNaviGotoCat_Hellhole",9);
+
 define("kNWSE_N",1);
 define("kNWSE_W",2);
 define("kNWSE_S",4);

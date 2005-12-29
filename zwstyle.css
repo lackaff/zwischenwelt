@@ -62,52 +62,7 @@
 #map {
 	float:left;
 	margin-top:5px;
-	margin-left:15px;
-}
-
-/* ***** TABS ***** */
-
-.tabs {
-	border-left    : 1px solid black;
-}
-.tabfillerright {
-	border-bottom    : 1px solid black;
-}
-
-.tabpane {
-	BACKGROUND-COLOR : #efd39c;
-	border-right    : 1px solid black;
-	border-bottom    : 1px solid black;
-}
-
-.tabs A {
-	height:100%;
-	float            : left;
-	BACKGROUND-COLOR : #deb67b;
-	font-size        : x-small;
-	font-weight      : bold;
-	text-decoration  : none;
-	border-right    : 1px solid black;
-	padding-left  : 5px;
-	padding-right : 5px;
-	padding-top   : 4px;
-}
-.inactivetab {
-	border-top    	 : 1px solid black;
-	border-bottom    : 1px solid black;
-}
-.activetab {
-	border-top    	 : 1px solid black;
-	border-bottom    : 1px solid #efd39c;
-}
-
-.tabs A:hover { BACKGROUND-COLOR : #FFFFFF; }
-.tabs A:link, .tabs A:visited, .tabs A:active, .tabs A:hover { color: black; }
-.activetab A {
-	BACKGROUND-COLOR : #efd39c;
-}
-.tabpane > div {
-	padding : 8px;
+	margin-left:5px;
 }
 
 
@@ -117,30 +72,37 @@
 	border:1px solid black;
 }
 
-table.map { BACKGROUND-COLOR: #66AA55; table-layout:fixed; border:1px solid black; empty-cells:show;}
-.map * {
+table.map { BACKGROUND-COLOR: #66AA55; table-layout:fixed; border:1px solid black; empty-cells:show; }
+
+.mapcell div { width:100%; height:100%; background-position:center; background-repeat:no-repeat; }
+.mapcell > div { width:27px; height:27px;}
+.mapborder * {
 	FONT-FAMILY: monospace;
 	FONT-SIZE: 9pt;
 	FONT-WEIGHT: normal;
-}
-.map th { 
-	width:25px; height:25px; 
-	background-position:2px 2px; background-repeat:no-repeat; 
+	text-decoration: none;
+	overflow:hidden;
 	cursor:pointer;
-	FONT-FAMILY: monospace;
-	FONT-SIZE: 9pt;
-	FONT-WEIGHT: normal;
 }
-.map td { width:25px; height:25px; background-position:1px 1px; background-repeat:no-repeat;}
-.map div { width:100%; height:100%; background-position:1px 1px; background-repeat:no-repeat;}
-.mapborder_n { background-image: url(gfx/scroll/n.png); clip:rect(0px, 0px, 0px, 0px); }
-.mapborder_nw_edge { background-image: url(gfx/scroll/nw.png) }
-.mapborder_ne_edge { background-image: url(gfx/scroll/ne.png) }
-.mapborder_s { background-image: url(gfx/scroll/s.png) } 
-.mapborder_sw_edge { background-image: url(gfx/scroll/sw.png) } 
-.mapborder_se_edge { background-image: url(gfx/scroll/se.png) } 
-.mapborder_w { background-image: url(gfx/scroll/w.png) } 
-.mapborder_e { background-image: url(gfx/scroll/e.png) } 
+.mapborder div { background-position:center; background-repeat:no-repeat; }
+.mapborder_nw_edge { width:23px; height:23px; }
+.mapborder_se_edge { width:23px; height:23px; }
+.mapborder_n { background-image: url(gfx/scroll/n.png); }
+.mapborder_s { background-image: url(gfx/scroll/s.png); }
+.mapborder_w { background-image: url(gfx/scroll/w.png); }
+.mapborder_e { background-image: url(gfx/scroll/e.png); }
+.mapborder_nw_edge { background-image: url(gfx/scroll/nw.png); }
+.mapborder_ne_edge { background-image: url(gfx/scroll/ne.png); }
+.mapborder_sw_edge { background-image: url(gfx/scroll/sw.png); }
+.mapborder_se_edge { background-image: url(gfx/scroll/se.png); }
+.mapborder_n span { visibility:hidden; }
+.mapborder_s span { visibility:hidden; }
+.mapborder_w span { visibility:hidden; }
+.mapborder_e span { visibility:hidden; }
+.mapborder_nw_edge span { visibility:hidden; }
+.mapborder_ne_edge span { visibility:hidden; }
+.mapborder_sw_edge span { visibility:hidden; }
+.mapborder_se_edge span { visibility:hidden; }
 
 .maptip {
 	border:1px solid black;
@@ -150,55 +112,10 @@ table.map { BACKGROUND-COLOR: #66AA55; table-layout:fixed; border:1px solid blac
 	font-weight      : bold;
 	text-decoration  : none;
 }
-.maptip img {
-	border:1px solid black;
-}
-
-/*
-display:Wert;
-Für Wert einen der folgenden Werte notieren.
-block = Erzwingt einen Block - das Element erzeugt eine neue Zeile.
-inline = Erzwingt die Anzeige im Text - das Element wird im laufenden Textfluss angezeigt.
-list-item = wie block, jedoch mit einem Aufzählungszeichen (Bullet) davor.
-marker = deklariert automatisch generierten Text für das Element.
-run-in und compact = bewirken, dass das Element kontext-abhängig als Block-Element oder als Inline-Element dargestellt wird.
-none = Element wird nicht angezeigt und es wird auch kein Platzhalter freigelassen.
-
-visibility:hidden;
-visibility:visible;
-Für Wert einen der folgenden Werte notieren:
-hidden = Der Inhalt des Element wird zunächst versteckt (nicht angezeigt).
-visible = Der Inhalt des Element wird zunächst angezeigt (Normaleinstellung).
-
-line-height:0pt; font-size:0pt; font-weight:0;
-clip:rect(Wert1 Wert2 Wert3 Wert4);
-
-cursor:Wert;
-Zugeordnetes Element erhält beim Überfahren mit der Maus einen anderen Cursor. Für Wert einen der folgenden Werte notieren:
-auto = automatischer Cursor (Normaleinstellung).
-default = Plattformunabhängiger Standard-Cursor.
-crosshair = Cursor in Form eines einfachen Fadenkreuzes.
-pointer = Cursor in Form eines Zeigers.
-move = Cursor in Form eines Kreuzes, das die Fähigkeit zum Bewegen des Elements signalisiert.
-n-resize = Cursor in Form Pfeils, der nach oben zeigt (n = Norden).
-ne-resize = Cursor in Form Pfeils, der nach rechts oben zeigt (ne = Nordost).
-e-resize = Cursor in Form Pfeils, der nach rechts zeigt (e = Osten).
-se-resize = Cursor in Form Pfeils, der nach rechts unten zeigt (se = Südost).
-s-resize = Cursor in Form Pfeils, der nach unten zeigt (s = Süden).
-sw-resize = Cursor in Form Pfeils, der nach links unten zeigt (sw = Südwest).
-w-resize = Cursor in Form Pfeils, der nach links zeigt (w = Westen).
-nw-resize = Cursor in Form Pfeils, der nach links oben zeigt (nw = Nordwest).
-text = Cursor in einer Form, die normalen Text symbolisiert.
-wait = Cursor in Form eines Symbols, das einen Wartezustand signalisiert.
-help = Cursor in Form Symbols, das Hilfe zu dem Element signalisiert.
-url([URI]) = Beliebiger Cursor, URI sollte eine GIF- oder JPG-Grafik sein.
-
-
-.tabs A:link, 
-.tabs A:visited,
-.tabs A:active, 
-.tabs A:hover
-*/
+.maptip p { margin:1px; float:none; }
+.maptip img { border:1px solid black; }
+.maptippic { float:left; }
+.maptip span { line-height:10pt; }
 
 
 /* ***** old stuff ***** */

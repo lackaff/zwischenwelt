@@ -9,6 +9,42 @@ Lock();
 $gCX = isset($f_cx)?(min(200,max(0,intval($f_cx)))|1):11;
 $gCY = isset($f_cy)?(min(200,max(0,intval($f_cy)))|1):11;
 
+$gMapMarks = sqlgettable("SELECT * FROM `mapmark` WHERE `user` = ".$gUser->id." ORDER BY `name`","id");
+// show army pos
+if (isset($f_gotocat)) {
+	$foundobject = false;
+	switch ($f_gotocat) {
+		case kMapNaviGotoCat_Pos: break; // handled by $f_pos
+		case kMapNaviGotoCat_Mark: 
+			$foundobject = sqlgetobject("SELECT `x`,`y` FROM `mapmark` WHERE `user` = ".$gUser->id." AND `id` = ".intval($f_gotoparam));
+		break;
+		case kMapNaviGotoCat_Own:
+		case kMapNaviGotoCat_Guild:
+		case kMapNaviGotoCat_Friends:
+		case kMapNaviGotoCat_Enemies:
+			if ($f_gotocat2 > 0) { // if cat2>0 then armytype else userid
+				$foundobject = sqlgetobject("SELECT * FROM `army` WHERE `id` = ".intval($f_gotoparam));
+				$f_army = $foundobject->id;
+			} else $foundobject = sqlgetobject("SELECT `x`,`y` FROM `building` WHERE `user` = ".intval($f_gotoparam)." AND `type` = ".kBuilding_HQ);
+		break;
+		case kMapNaviGotoCat_Search:
+			// todo : on change of searchtext-field in navi : reset search-number
+			// todo : list usernames, userguild, armynames, bodenschatz-type, hellholes-monstertype..
+		break;
+		case kMapNaviGotoCat_Random: // i thought this might be funny =)
+			$f_x = rand(intval($gGlobal["minimap_left"]),intval($gGlobal["minimap_right"]));
+			$f_y = rand(intval($gGlobal["minimap_top"]),intval($gGlobal["minimap_bottom"]));
+		break;
+		case kMapNaviGotoCat_Hellhole: // admin feature for tracking movable/nonstandard hellholes
+			$foundobject = sqlgetobject("SELECT `x`,`y` FROM `hellhole` WHERE `id` = ".intval($f_gotoparam));
+		break;
+	}
+	if ($foundobject) {
+		$f_x = $foundobject->x;
+		$f_y = $foundobject->y;
+	}
+}
+	
 if (isset($f_pos) && eregi("((-|\\+)?[0-9]+)[^0-9+\\-]*((-|\\+)?[0-9]+)",$f_pos,$r)) {
 	$f_x = intval($r[1]);
 	$f_y = intval($r[3]);
@@ -59,10 +95,11 @@ if($gUser && $gUser->usegfxpath && !empty($gUser->gfxpath)){
 <script src="mapjs7_core.js?v=1" type="text/javascript"></script>
 <script src="<?="mapjs7_globals.js.php".$styleparam?>" type="text/javascript"></script>
 <SCRIPT LANGUAGE="JavaScript" type="text/javascript"><!--
-gCX = <?=$gCX?>;
-gCY = <?=$gCY?>;
+gCX = <?=intval($gCX)?>;
+gCY = <?=intval($gCY)?>;
 gLeft = <?=$gLeft?>;
 gTop = <?=$gTop?>;
+gScroll = <?=$gScroll?>;
 gSID = "<?=$gSID?>";
 gThisUserID = "<?=$gUser->id?>";
 gGFXBase = "<?=$gGFXBase?>";
@@ -71,7 +108,7 @@ gMapMode = <?=isset($f_mode)?intval($f_mode):kJSMapMode_Normal?>;
 <?php
 $gTerrain = sqlgettable("SELECT * FROM `terrain` WHERE ".$xylimit." ORDER BY `y`,`x`");
 echo 'gTerrain = "';
-$i = 0; // g
+$i = 0;
 for ($y=-1;$y<$gCY+1;++$y) {
 	for ($x=-1;$x<$gCX+1;++$x) {
 		if ($gTerrain[$i]->x - $gLeft == $x && $gTerrain[$i]->y - $gTop == $y) {
@@ -97,18 +134,6 @@ foreach ($gBuildings as $o) {
 }
 echo "\";\n";
 
-$gArmies = sqlgettable("SELECT * FROM `army` WHERE ".$xylimit);
-echo 'gArmies = "';
-foreach ($gArmies as $o) {
-	$gLocalUserIDs[] = $o->user;
-	$units = cUnit::GetUnits($o->id);
-	$units_js = ""; foreach ($units as $u) $units_js .= $u->type.":".floor($u->amount)."|";
-	$items_js = "";// $items = cUnit::GetUnits($o->id);
-	$flags_js = 0;// $flags = subset for walking, fighting, shooting...
-	echo $o->x.",".$o->y.",".$o->type.",".$o->user.",".$units_js.",".$items_js.",".$flags_js.";";
-}
-echo "\";\n";
-
 $gItems = sqlgettable("SELECT * FROM `item` WHERE `army` = 0 AND `building` = 0 AND ".$xylimit);
 echo 'gItems = "';
 foreach ($gItems as $o) {
@@ -123,14 +148,35 @@ foreach ($gPlans as $o) {
 }
 echo "\";\n";
 
+function obj2jsparams ($obj,$fields) {
+	$res = array();
+	$fields = explode(",",$fields);
+	foreach ($fields as $field) { $v = $obj->{$field}; $res[] = is_numeric($v)?$v:("\"".addslashes($v)."\""); }
+	return implode(",",$res);
+}
+
+$gArmies = sqlgettable("SELECT * FROM `army` WHERE ".$xylimit);
+foreach ($gArmies as $o) {
+	$gLocalUserIDs[] = $o->user;
+	$units = cUnit::GetUnits($o->id);
+	$o->units = array(); 
+	foreach ($units as $u) $o->units[] = $u->type.":".floor($u->amount);
+	$o->units = implode("|",$o->units);
+	$o->items = array(); // TODO
+	$o->items = implode("|",$o->items);
+	$o->flags = 0;// TODO : subset for walking, fighting, shooting...
+	echo "jsArmy(".obj2jsparams($o,"id,x,y,name,type,user,units,items,flags").");\n";
+}
+
 $gLocalUserIDs = array_unique($gLocalUserIDs);
 if (count($gLocalUserIDs)>0)
 		$gLocalUsers = sqlgettable("SELECT `id`,`guild`,`color`,`name` FROM `user` WHERE `id` IN (".implode(",",$gLocalUserIDs).")");
 else	$gLocalUsers = array();
 foreach ($gLocalUsers as $o) {
 	$gLocalGuildIDs[] = $o->guild;
-	echo "gLocalUsers[".$o->id."] = lu(".intval($o->guild).",'".addslashes($o->color)."','".addslashes($o->name)."');\n";
+	echo "jsUser(".obj2jsparams($o,"id,guild,color,name").");\n";
 }
+
 
 // collect data
 // $gBodenschaetze = sqlgettable("SELECT * FROM `bodenschatz` WHERE ".$xylimit);
