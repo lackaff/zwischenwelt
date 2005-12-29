@@ -73,7 +73,7 @@ $form = new cTableEditForm("?sid=?&id=$f_id","BuildingType $f_id editieren",
 			new cTableEditTextField("buildingtype","id",$f_id,"OrderVal","orderval"),
 			
 			new cTableEditCheckedField("buildingtype","id",$f_id,"special","special"),
-			new cTableEditCheckedField("buildingtype","id",$f_id,"Rahmne","border"),
+			new cTableEditCheckedField("buildingtype","id",$f_id,"Rahmen","border"),
 			new cTableEditCheckedField("buildingtype","id",$f_id,"override terrain movable","movable_override_terrain"),
 			new cTableEditTextField("buildingtype","id",$f_id,"Mod A","mod_a"),
 			new cTableEditTextField("buildingtype","id",$f_id,"Mod V","mod_v"),
@@ -91,8 +91,8 @@ $form = new cTableEditForm("?sid=?&id=$f_id","BuildingType $f_id editieren",
 		*/
 		new cTableEditListFlagField("buildingtype","id",$f_id,"Need near: Building","neednear_building",$buildings2),
 		new cTableEditListFlagField("buildingtype","id",$f_id,"Brauche: Building","require_building",$buildings2),
-		new cTableEditListFlagField("buildingtype","id",$f_id,"Darf nicht: Building","exclude_building",$buildings2)
-
+		new cTableEditListFlagField("buildingtype","id",$f_id,"Darf nicht: Building","exclude_building",$buildings2),
+		new cTableEditRadioField("buildingtype","id",$f_id,"wird bei Fertigstellung zu Terrain","convert_into_terrain",$terrains),
 	))
 );
 

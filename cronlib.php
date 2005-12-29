@@ -72,10 +72,17 @@ function CompleteBuild ($building) { // object
 	if (!$building) return;
 	global $gBuildingType;
 	
-	$upgradeto = sqlgetone("SELECT `level`+`upgrades` AS `upgto` FROM `building` 
-    WHERE `user`=".intval($building->user)." AND `type`=".intval($building->type)." AND `construction`=0 ORDER BY `upgto` ASC LIMIT 1");
-  echo "building complete, $upgradeto upgrades planned<br>\n";
-	sql("UPDATE `building` SET `construction`=0,`upgrades`=".intval($upgradeto)." WHERE `id`=".$building->id);
+	if($gBuildingType[$building->type]->convert_into_terrain>0){
+		$terrain = $gBuildingType[$building->type]->convert_into_terrain;
+		echo "building complete, create terrain $terrain<br>\n";
+		setTerrain($building->x,$building->y,$terrain);
+		sql("DELETE FROM `building` WHERE `id`=".$building->id);
+	} else {	
+		$upgradeto = sqlgetone("SELECT `level`+`upgrades` AS `upgto` FROM `building` 
+			WHERE `user`=".intval($building->user)." AND `type`=".intval($building->type)." AND `construction`=0 ORDER BY `upgto` ASC LIMIT 1");
+		echo "building complete, $upgradeto upgrades planned<br>\n";
+		sql("UPDATE `building` SET `construction`=0,`upgrades`=".intval($upgradeto)." WHERE `id`=".$building->id);
+	}
 	
 	RegenSurroundingNWSE($building->x,$building->y);
 	
