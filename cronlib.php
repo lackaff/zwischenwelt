@@ -1,4 +1,4 @@
-<?
+<?php
 require_once("lib.main.php");
 require_once("lib.army.php");
 require_once("lib.construction.php");
@@ -72,7 +72,10 @@ function CompleteBuild ($building) { // object
 	if (!$building) return;
 	global $gBuildingType;
 	
-	sql("UPDATE `building` SET `construction` = 0 WHERE `id` = ".$building->id);
+	$upgradeto = sqlgetone("SELECT `level`+`upgrades` AS `upgto` FROM `building` 
+    WHERE `user`=".intval($building->user)." AND `type`=".intval($building->type)." AND `construction`=0 ORDER BY `upgto` ASC LIMIT 1");
+  echo "building complete, $upgradeto upgrades planned<br>\n";
+	sql("UPDATE `building` SET `construction`=0,`upgrades`=".intval($upgradeto)." WHERE `id`=".$building->id);
 	
 	RegenSurroundingNWSE($building->x,$building->y);
 	
