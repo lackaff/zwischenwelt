@@ -61,7 +61,7 @@ function HackNWSE (buildingtype,nwsecode,relx,rely) {
 	var inverseconnect = false;
 	if (buildingtype == <?=kBuilding_Gate?> || 
 		buildingtype == <?=kBuilding_GB?> ) 
-			inverseconnect = new Array("",<?=kBuilding_Path?>);
+			inverseconnect = new Array("",<?=kBuilding_Path?>,<?=kBuilding_Gate?>,<?=kBuilding_GB?>);
 	if (buildingtype == <?=kBuilding_Bridge?>) dualnwse = true;
 	if (buildingtype == <?=kBuilding_SeaGate?>) dualnwse = true;
 	if (inverseconnect) dualnwse = true; 
