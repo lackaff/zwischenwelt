@@ -70,7 +70,7 @@ $xmid = ($gCX-1)/2;
 $ymid = ($gCY-1)/2;
 $gLeft = $gX - ($gCX-1)/2;
 $gTop = $gY - ($gCY-1)/2;
-$gScroll = floor($gCX/2);
+$gScroll = isset($f_scroll)?$f_scroll:floor($gCX/2);
 
 $xylimit = "`x` >= ".($gLeft-1)." AND `x` < ".($gLeft+$gCX+1)." AND 
 			`y` >= ".($gTop-1)." AND `y` < ".($gTop+$gCY+1);
@@ -101,7 +101,7 @@ gLeft = <?=$gLeft?>;
 gTop = <?=$gTop?>;
 gScroll = <?=$gScroll?>;
 gSID = "<?=$gSID?>";
-gThisUserID = "<?=$gUser->id?>";
+gThisUserID = <?=intval($gUser->id)?>;
 gGFXBase = "<?=$gGFXBase?>";
 gBig = <?=isset($f_big)?"true":"false"?>;
 gMapMode = <?=isset($f_mode)?intval($f_mode):kJSMapMode_Normal?>;
@@ -130,7 +130,15 @@ $gBuildings = sqlgettable("SELECT * FROM `building` WHERE ".$xylimit);
 echo 'gBuildings = "';
 foreach ($gBuildings as $o) {
 	$gLocalUserIDs[] = $o->user;
-	echo $o->x.",".$o->y.",".$o->type.",".$o->user.",".$o->level.",".floor($o->hp).",".($o->construction).";";
+	$o->jsflags = 0;
+	$o->hp = floor($o->hp);
+	
+	if ($o->type == kBuilding_Portal) {
+		if (intval(GetBParam($o->id,"target"))>0) $o->jsflags |= kJSMapBuildingFlag_Open;
+	} else {
+		if (cBuilding::BuildingOpenForUser($o,$gUser->id)) $o->jsflags |= kJSMapBuildingFlag_Open;
+	}
+	echo obj2jsparams($o,"x,y,type,user,level,hp,construction,jsflags").";";
 }
 echo "\";\n";
 
@@ -159,11 +167,12 @@ $gArmies = sqlgettable("SELECT * FROM `army` WHERE ".$xylimit);
 foreach ($gArmies as $o) {
 	$gLocalUserIDs[] = $o->user;
 	$units = cUnit::GetUnits($o->id);
-	$o->units = array(); 
-	foreach ($units as $u) $o->units[] = $u->type.":".floor($u->amount);
-	$o->units = implode("|",$o->units);
-	$o->items = array(); // TODO
-	$o->items = implode("|",$o->items);
+	$o->units = ""; 
+	foreach ($units as $u) $o->units .= $u->type.":".floor($u->amount)."|";
+	$o->items = ""; // TODO
+	$items = sqlgettable("SELECT * FROM `item` WHERE `army` = ".$o->id);
+	foreach ($items as $u) $o->items .= $u->type.":".floor($u->amount)."|";
+	foreach ($gRes as $n=>$f) if ($o->$f >= 1) $o->items .= $gRes2ItemType[$f].":".floor($o->$f)."|";
 	$o->flags = 0;// TODO : subset for walking, fighting, shooting...
 	echo "jsArmy(".obj2jsparams($o,"id,x,y,name,type,user,units,items,flags").");\n";
 }

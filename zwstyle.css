@@ -18,7 +18,7 @@
 }
 #header ul {
   margin:0;
-  padding:10px 10px 0;
+  padding:2px 10px 0;
   list-style:none;
 }
 #header li {
@@ -103,6 +103,21 @@ table.map { BACKGROUND-COLOR: #66AA55; table-layout:fixed; border:1px solid blac
 .mapborder_ne_edge span { visibility:hidden; }
 .mapborder_sw_edge span { visibility:hidden; }
 .mapborder_se_edge span { visibility:hidden; }
+
+.mapscroll input { 
+	width:20px; 
+	height:10px; 
+	border:0px; 
+	text-align:right;
+}
+.mapscroll a {
+	color: black;
+	FONT-FAMILY: monospace;
+	font-size        : x-small;
+	font-weight      : bold;
+	text-decoration  : none;
+}
+.mapscroll a:hover { color:#00ff00; }
 
 .maptip {
 	border:1px solid black;

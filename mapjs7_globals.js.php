@@ -15,12 +15,80 @@ kConstructionPlanPic = "<?=kConstructionPlanPic?>";
 kConstructionPic = "<?=kConstructionPic?>";
 kTransCP = "<?=kTransCP?>"; // transparent construction plan
 
+kJSMapBuildingFlag_Open = <?=kJSMapBuildingFlag_Open?>;
+kJSMapBuildingFlag_Tax = <?=kJSMapBuildingFlag_Tax?>;
+kJSMapArmyFlag_Moving_N = <?=kJSMapArmyFlag_Moving_N?>;
+kJSMapArmyFlag_Moving_W = <?=kJSMapArmyFlag_Moving_W?>;
+kJSMapArmyFlag_Moving_S = <?=kJSMapArmyFlag_Moving_S?>;
+kJSMapArmyFlag_Moving_E = <?=kJSMapArmyFlag_Moving_E?>;
+kJSMapArmyFlag_Fighting_N = <?=kJSMapArmyFlag_Fighting_N?>;
+kJSMapArmyFlag_Fighting_W = <?=kJSMapArmyFlag_Fighting_W?>;
+kJSMapArmyFlag_Fighting_S = <?=kJSMapArmyFlag_Fighting_S?>;
+kJSMapArmyFlag_Fighting_E = <?=kJSMapArmyFlag_Fighting_E?>;
+kJSMapArmyFlag_Shooting = <?=kJSMapArmyFlag_Shooting?>;
+
+
 
 //kJSMapTileSize = <?=kMapTileSize?>;
 kJSMapTileSize = 27;
 
+// HACK: (hyperblob)
 function UnitTypeHasNWSE (unittype) {
 	return unittype == <?=kUnitType_HyperBlob?>;
+}
+
+// HACK: hardcode a few connect-to-building entries
+function HackCon () {
+	gBuildingType[<?=kBuilding_Gate		?>].connectto_building.push(<?=kBuilding_Wall?>);
+	gBuildingType[<?=kBuilding_Wall		?>].connectto_building.push(<?=kBuilding_Gate?>);
+	gBuildingType[<?=kBuilding_Path		?>].connectto_building.push(<?=kBuilding_Gate?>);
+	gBuildingType[<?=kBuilding_GB		?>].connectto_building.push(<?=kBuilding_Path?>);
+	gBuildingType[<?=kBuilding_Path		?>].connectto_building.push(<?=kBuilding_GB?>);
+	gBuildingType[<?=kBuilding_Bridge	?>].connectto_building.push(<?=kBuilding_Path?>);
+	gBuildingType[<?=kBuilding_Path		?>].connectto_building.push(<?=kBuilding_Bridge?>);
+	gBuildingType[<?=kBuilding_SeaWall	?>].connectto_building.push(<?=kBuilding_SeaGate?>);
+	gBuildingType[<?=kBuilding_SeaGate	?>].connectto_building.push(<?=kBuilding_SeaWall?>);
+	
+	gBuildingType[<?=kBuilding_Steg		?>].connectto_building.push(<?=kBuilding_Harbor?>);
+	gBuildingType[<?=kBuilding_Harbor	?>].connectto_terrain.push(<?=kTerrain_Sea?>);
+	gTerrainType[<?=kTerrain_Sea		?>].connectto_building.push(<?=kBuilding_Harbor?>);
+}
+
+// HACK: special nwse for path,gates,bridge...  also in UpdateBuildingNWSE()
+function HackNWSE (buildingtype,nwsecode,relx,rely) {
+	var singlenwse = false;
+	var dualnwse = false;
+	var inverseconnect = false;
+	if (buildingtype == <?=kBuilding_Gate?> || 
+		buildingtype == <?=kBuilding_GB?> ) 
+			inverseconnect = new Array("",<?=kBuilding_Path?>);
+	if (buildingtype == <?=kBuilding_Bridge?>) dualnwse = true;
+	if (buildingtype == <?=kBuilding_SeaGate?>) dualnwse = true;
+	if (inverseconnect) dualnwse = true; 
+	if (dualnwse) {
+		var hhit = 0,vhit = 0;  
+		if ((nwsecode & (kNWSE_N|kNWSE_S)) == (kNWSE_N|kNWSE_S)) return kNWSE_N|kNWSE_S; // double match
+		if ((nwsecode & (kNWSE_W|kNWSE_E)) == (kNWSE_W|kNWSE_E)) return kNWSE_W|kNWSE_E; // double match
+		if ((nwsecode & (kNWSE_N|kNWSE_S)) != 0) vhit++; // single match
+		if ((nwsecode & (kNWSE_W|kNWSE_E)) != 0) hhit++; // single match
+		if (inverseconnect) {
+			if (InArray(GetBuildingType(relx,rely-1),inverseconnect)) hhit++;
+			if (InArray(GetBuildingType(relx,rely+1),inverseconnect)) hhit++;
+			if (InArray(GetBuildingType(relx-1,rely),inverseconnect)) vhit++;
+			if (InArray(GetBuildingType(relx+1,rely),inverseconnect)) vhit++;
+		}
+		if (vhit >= hhit) return kNWSE_N|kNWSE_S;
+		return kNWSE_W|kNWSE_E;
+	}
+	if (buildingtype == <?=kBuilding_Harbor?>) singlenwse = true;
+	if (singlenwse) {
+		if (nwsecode & kNWSE_N) return kNWSE_N;
+		if (nwsecode & kNWSE_W) return kNWSE_W;
+		if (nwsecode & kNWSE_S) return kNWSE_S;
+		if (nwsecode & kNWSE_E) return kNWSE_E;
+		return kNWSE_N;
+	}
+	return nwsecode;
 }
 
 <?php
@@ -88,6 +156,7 @@ php2js_objarray("gTerrainType",$gTerrainType,"name,speed,buildable,gfx,mod_a,mod
 php2js_objarray("gBuildingType",$gBuildingType,"name,maxhp,speed,gfx,mod_a,mod_v,mod_f,connectto_terrain,connectto_building,neednear_building,require_building,exclude_building,border,movable_flag,movable_override_terrain");
 php2js_objarray("gUnitType",$gUnitType,"name,orderval,a,v,f,r,speed,gfx");
 php2js_objarray("gItemType",$gItemType,"name,gfx");
+php2js_objarray("gTerrainPatchType",$gTerrainPatchType,"id,gfx,here,up,down,left,right");
 // bodenschaetze (ressources,perks,specials,deposit...)
 
 php2js_objectfunction("jsUser","id,guild,color,name","gUsers","id");
@@ -96,6 +165,58 @@ php2js_parser("jsParseBuildings","x,y,type,user,level,hp,construction,jsflags","
 php2js_parser("jsParseItems","x,y,type,amount","gItems");
 php2js_parser("jsParsePlans","x,y,type,priority","gPlans");
 
+
+
+/*
+
+
+
+
+// bauzeit
+if ($f_mode == "bauzeit") {
+	require_once("lib.construction.php");
+	$gMapContent = array_fill(0,$gCY,array_fill(0,$gCX,false));
+	for ($x=0;$x<$gCX;++$x)
+	for ($y=0;$y<$gCY;++$y) {
+		if (//$gMapClassesBG[$y][$x] == "t1-0" && 
+			(!isset($gMapClasses[$y][$x]) || $gMapClasses[$y][$x] == false || $gMapClasses[$y][$x] == "tcp")) {
+			$tf = GetBuildDistFactor(GetBuildDistance($x+$gLeft,$y+$gTop,$gUser->id));
+			$gMapBorder[$y][$x] = GradientRYG(1.0-GetFraction($tf-1.0,1.0),1.0);
+			$gMapContent[$y][$x] = ($tf<10)?sprintf("%0.1f",$tf):"";
+		}
+	}
+}
+
+
+// waypoints & paths
+if ($f_mode != "bauzeit" && isset($f_army) && $f_army>0) {
+	$gMapContent = array_fill(0,$gCY,array_fill(0,$gCX,false));
+	$army = sqlgetobject("SELECT * FROM `army` WHERE `id`=".intval($f_army)." LIMIT 1");
+	$army->units = cUnit::GetUnits($army->id);
+	if($army){
+		$gWaypoints = sqlgettable("SELECT * FROM `waypoint` WHERE `army` = ".intval($f_army)." ORDER BY `priority`");
+		for ($i=0,$imax=count($gWaypoints);$i<$imax-1;$i++) {
+			$x1 = $gWaypoints[$i]->x;
+			$y1 = $gWaypoints[$i]->y;
+			$x2 = $gWaypoints[$i+1]->x;
+			$y2 = $gWaypoints[$i+1]->y;
+			for ($x=$x1,$y=$y1;$x!=$x2||$y!=$y2;) {
+				list($x,$y) = GetNextStep($x,$y,$x1,$y1,$x2,$y2);
+				if ($x >= $gLeft && $x-$gLeft < $gCX && $y >= $gTop && $y-$gTop < $gCY) 
+					//$gMapClasses[$y-$gTop][$x-$gLeft] = $gMapBlocked[$x-$gLeft][$y-$gTop]?"pathb":"path";
+					$gMapClasses[$y-$gTop][$x-$gLeft] = (cArmy::GetPosSpeed($x,$y,$army->user,$army->units) == 0)?"pathb":"path";
+			}
+		}
+		foreach($gWaypoints as $o) if ($o->x >= $gLeft && $o->x-$gLeft < $gCX && $o->y >= $gTop && $o->y-$gTop < $gCY) {
+			$x = $o->x-$gLeft;
+			$y = $o->y-$gTop;
+			$gMapContent[$y][$x] = $o->priority;
+			//$gMapClasses[$y][$x] = $gMapBlocked[$x][$y]?"pathb":"wp";
+			$gMapClasses[$y][$x] = (cArmy::GetPosSpeed($o->x,$o->y,$army->user,$army->units) == 0)?"pathb":"wp";
+		}
+	}
+}
+*/
 
 /* // css notes
 
@@ -146,4 +267,68 @@ url([URI]) = Beliebiger Cursor, URI sollte eine GIF- oder JPG-Grafik sein.
 .tabs A:active, 
 .tabs A:hover
 */
+
+
+if (0) {?>
+	.wp { background-color:#00FF00; }
+	.pathb { background-color:#FF8888; }
+	.path { background-color:#88FF88; }
+	.cp { background-image:url(<?=g(kConstructionPlanPic)?>); }
+	.tcp { background-image:url(<?=g(kTransCP)?>); }
+	.con { background-image:url(<?=g(kConstructionPic)?>); }
+	.gr { background-image:url(<?=g("grass.png")?>); }
+
+	define("kMapColor_Hilight","#FFFFFF");
+	define("kMapColor_Neutral_User","#66AA55");
+
+	document.getElementById("age").innerHTML = gAge + " =)";
+	
+	gHalloWeltInterval = window.setInterval("HalloWeltStep()",50);
+	window.clearInterval(gHalloWeltInterval);
+	
+	parseInt(..);
+
+	function getWindowWidth()
+	{
+		if (window.innerWidth)return window.innerWidth;
+		else if (document.documentElement && document.documentElement.clientWidth != 0)return document.documentElement.clientWidth;
+		else if (document.body)return document.body.clientWidth;
+		return 0;
+	}
+
+	var mapwidth = Math.floor((getWindowWidth()-2*40)/<?=$gTilesize?>);
+	//alert(mapwidth+" "+getWindowWidth());
+
+	<?php if (isset($f_big)) { // navi ?>
+	function nav(x,y) {
+		var scroll = document.getElementsByName("mapscroll")[0].value;
+		x = <?=intval($f_x)?> + x * scroll;
+		y = <?=intval($f_y)?> + y * scroll;
+		location.href = "<?=Query("?sid=?&big=?&army=?&mode=?&cx=?&cy=?&")?>x="+(x)+"&y="+(y); 
+	}
+	<?php } // endif?>
+	function getmode() { return "<?=$f_mode?>";}
+	function getleft() { return <?=$gLeft?>;}
+	function gettop() { return <?=$gTop?>;}
+	function getx() { return <?=$gX?>;}
+	function gety() { return <?=$gY?>;}
+	function getcx() { return <?=$gCX?>;}
+	function getcy() { return <?=$gCY?>;}
+	function m(x,y) {
+		<?php if (isset($f_big)) {?>
+		//opener.parent.info.location.href = "info/info.php?x="+(x+<?=$gLeft?>)+"&y="+(y+<?=$gTop?>)+"&sid=<?=$gSID?>";
+		opener.parent.navi.map(x+<?=$gLeft?>,y+<?=$gTop?>);
+		<?php } else {?>
+		parent.navi.map(x+<?=$gLeft?>,y+<?=$gTop?>);
+		<?php }?>
+	}
+	<?php if (!isset($f_naviset)) {?>
+	if (parent.navi != null && parent.navi.updatepos != null)
+		parent.navi.updatepos(<?=$gX?>,<?=$gY?>);
+	<?php }?>
+	<?php if ($f_mode == "bauplan" && $concount == 0 && 0) {?> 
+	alert("Der Knopf Pläne zeigt Baupläne als fertige Gebäude an,\n damit man eine übersicht hat, was man wo geplant hat.");
+	<?php }?>
+	<?php 
+}
 ?>

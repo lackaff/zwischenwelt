@@ -2,7 +2,12 @@
 // generates "tmp/types.php"
 
 function val_out($val){
-	if(is_array($val))return 'array('.implode(",",$val).')';
+	if(is_array($val)) {
+		$imploded = implode(",",$val);
+		if ($imploded == "") 
+				return "array()";
+		else	return 'array(0=>'.$imploded.')';
+	}
 	else return '"'.addslashes($val).'"';
 }
 
@@ -15,7 +20,7 @@ function objarr_out ($arr) {
 function array_out_numkey ($arr) {
 	$res = array();
 	foreach ($arr as $key=>$val){
-		$res[] = intval($key).'=>arr2obj(array('.objarr_out(obj2arr($val))."))";
+		$res[] = "\n".intval($key).'=>arr2obj(array('.objarr_out(obj2arr($val))."))";
 	}
 	return implode(",",$res);
 }
@@ -63,7 +68,7 @@ function GenerateTypesPHP () {
 	foreach($gBuildingType as $id=>$o){
 		$gBuildingType[$id]->cssclass = "b".$o->id."-%R%-%L%-%NWSE%";
 		$gBuildingType[$id]->connectto_terrain = explode(",",trim($gBuildingType[$id]->connectto_terrain,","));
-		$gBuildingType[$id]->connectto_building = explode(",",trim($gBuildingType[$id]->connectto_building,","));
+		$gBuildingType[$id]->connectto_building = explode(",",trim($id.",".$gBuildingType[$id]->connectto_building,","));
 		$gBuildingType[$id]->neednear_building = explode(",",trim($gBuildingType[$id]->neednear_building,","));
 		$gBuildingType[$id]->require_building = explode(",",trim($gBuildingType[$id]->require_building,","));
 		$gBuildingType[$id]->exclude_building = explode(",",trim($gBuildingType[$id]->exclude_building,","));
@@ -73,7 +78,7 @@ function GenerateTypesPHP () {
 	$gTerrainType = sqlgettable("SELECT * FROM `terraintype` ORDER BY `id` ASC","id");
 	foreach($gTerrainType as $id=>$o){
 		$gTerrainType[$id]->connectto_terrain = explode(",",trim($id.",".$gTerrainType[$id]->connectto_terrain,","));
-		$gTerrainType[$id]->connectto_building = explode(",",trim($id.",".$gTerrainType[$id]->connectto_building,","));
+		$gTerrainType[$id]->connectto_building = explode(",",trim($gTerrainType[$id]->connectto_building,","));
 	}	
 	fwrite($fp,'$gTerrainType = array('.array_out_numkey($gTerrainType).");\n");
 

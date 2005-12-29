@@ -14,6 +14,19 @@ define("kMapNaviGotoCat_Search",7);
 define("kMapNaviGotoCat_Random",8);
 define("kMapNaviGotoCat_Hellhole",9);
 
+define("kJSMapBuildingFlag_Open",(1<<0));
+define("kJSMapBuildingFlag_Tax",(1<<1)); // todo
+
+define("kJSMapArmyFlag_Moving_N",(1<<0)); // todo
+define("kJSMapArmyFlag_Moving_W",(1<<1)); // todo
+define("kJSMapArmyFlag_Moving_S",(1<<2)); // todo
+define("kJSMapArmyFlag_Moving_E",(1<<3)); // todo
+define("kJSMapArmyFlag_Fighting_N",(1<<4)); // todo
+define("kJSMapArmyFlag_Fighting_W",(1<<5)); // todo
+define("kJSMapArmyFlag_Fighting_S",(1<<6)); // todo
+define("kJSMapArmyFlag_Fighting_E",(1<<7)); // todo
+define("kJSMapArmyFlag_Shooting",(1<<8)); // todo
+
 define("kNWSE_N",1);
 define("kNWSE_W",2);
 define("kNWSE_S",4);

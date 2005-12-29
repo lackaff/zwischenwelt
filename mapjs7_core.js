@@ -4,11 +4,19 @@
 // see also mapnavi_globals.js.php
 
 // TODO : tor-zu- -> tor-offen
+// TODO : user anzeig : gilde, punktestand, rang...
+// TODO : armee - anzeige : gilde,sprechblasen ?
+// TODO : tore : auf/zu grafik + tip (für wen auf/zu/zoll...)
+// TODO : portal : tip (verbunden mit für wen zoll/auf/zu)
+
 
 // the order in which fields are filled from mapjs7.php
-var gUsers = new Array(); // filled with function, for string security
-var gArmies = new Array(); // filled with function, for string security
+gUsers = new Array(); // filled with function, for string security
+gArmies = new Array(); // filled with function, for string security
+gTerrainPatchTypeMap = new Array(); // generated from gTerrainPatchType
+gTerrainMap = false; // generated from MapInit
 var gXMid,gYMid;
+gNWSEDebug = true; // shows typeid and connect-to infos in maptip
 
 kMapTipName = "maptip";
 kMapTip_xoff = 29;
@@ -17,11 +25,12 @@ kJSMapMode_Normal = 0;
 kJSMapMode_Plan = 1;
 kJSMapMode_Bauzeit = 2;
 kJSMapMode_HP = 3;
-
+gLoading = true; // set to true when navi is clicked
+gAllLoaded = false; // mouselistener protection
 
 // executed onLoad, parse data, CreateMap() when finished
 function MapInit() {
-	var i;
+	var i,j,x,y;
 	gXMid=Math.floor(gCX/2);
 	gYMid=Math.floor(gCY/2);
 	
@@ -34,17 +43,85 @@ function MapInit() {
 	
 	// parse and summarize units in armies (summoned units are added to normal units)
 	for (i in gArmies) {
-		var units = gArmies[i].units.split("|");
-		gArmies[i].units = new Array();
-		for (j in units) {
-			var type_amount_pair = units[j].split(":");
-			if (gArmies[i].units[type_amount_pair[0]] == undefined)
-				gArmies[i].units[type_amount_pair[0]] = 0;
-			gArmies[i].units[type_amount_pair[0]] += parseInt(type_amount_pair[1]); 
+		gArmies[i].units = ParseTypeAmountList(gArmies[i].units);
+		gArmies[i].items = ParseTypeAmountList(gArmies[i].items);
+	}
+	
+	for (i in gTerrainType) {
+		gTerrainType[i].connectto_terrain = gTerrainType[i].connectto_terrain.split(",");
+		gTerrainType[i].connectto_building = gTerrainType[i].connectto_building.split(",");
+	}
+	for (i in gBuildingType) {
+		gBuildingType[i].connectto_terrain = gBuildingType[i].connectto_terrain.split(",");
+		gBuildingType[i].connectto_building = gBuildingType[i].connectto_building.split(",");
+	}
+	HackCon(); // HACK : hardcoded connections, see mapjs7_globals.js.php
+	
+	for (i in gTerrainPatchType) {
+		var x = gTerrainPatchType[i];
+		if (gTerrainPatchTypeMap[x.here] == undefined)
+			gTerrainPatchTypeMap[x.here] = new Array();
+		gTerrainPatchTypeMap[x.here].push(x);	
+	}
+	
+	// construct terrain map
+	var termap_raw = new Array(gCY+2);
+	var termap_nwse = new Array(gCY+2);
+	
+	// first pass, simple nwse (with connect to building/terrain...)
+	for (y=-1;y<gCY+1;++y) {
+		termap_raw[y+1] = new Array(gCX+2);
+		termap_nwse[y+1] = new Array(gCX+2);
+		for (x=-1;x<gCX+1;++x) {
+			var terraintype = GetTerrainType(x,y);
+			termap_raw[y+1][x+1] = gTerrainType[terraintype].gfx;
+			termap_nwse[y+1][x+1] = GetNWSE(gTerrainType[terraintype],x,y);
 		}
 	}
 	
+	// second pass : terrain patches
+	for (x=-1;x<gCX+1;++x) for (y=-1;y<gCY+1;++y) {
+		var type = GetTerrainType(x,y);
+		if (!KeyInArray(type,gTerrainPatchTypeMap)) continue;
+		var patches = gTerrainPatchTypeMap[type];
+		for (i in patches) {
+			var o = patches[i];
+			if(	(o.left	==0 || (o.left	>0 && GetTerrainType(x-1,y) == o.left)) &&
+				(o.right==0 || (o.right	>0 && GetTerrainType(x+1,y) == o.right)) &&
+				(o.up	==0 || (o.up	>0 && GetTerrainType(x,y-1) == o.up)) &&
+				(o.down	==0 || (o.down	>0 && GetTerrainType(x,y+1) == o.down)) ) {
+				termap_raw[y+1][x+1] = o.gfx;
+				if (o.left	>0 && x >= 0)	termap_nwse[y+1][x+1-1] |= kNWSE_E;
+				if (o.right	>0 && x < gCX)	termap_nwse[y+1][x+1+1] |= kNWSE_W;
+				if (o.up	>0 && y >= 0)	termap_nwse[y+1-1][x+1] |= kNWSE_S;
+				if (o.down	>0 && y < gCY)	termap_nwse[y+1+1][x+1] |= kNWSE_N;
+			}
+		}
+	}
+	
+	// compile to terrainmap
+	gTerrainMap = new Array(gCY+2);
+	for (y=-1;y<gCY+1;++y) {
+		gTerrainMap[y+1] = new Array(gCX+2);
+		for (x=-1;x<gCX+1;++x)
+			gTerrainMap[y+1][x+1] = g_nwse(termap_raw[y+1][x+1],termap_nwse[y+1][x+1]);
+	}
+	
 	CreateMap();
+	gLoading = false;
+}
+
+function ParseTypeAmountList (list) {
+	var arr = list.split("|");
+	arr.pop();
+	var i,res = new Array();
+	for (i in arr) {
+		var type_amount_pair = arr[i].split(":");
+		if (res[type_amount_pair[0]] == undefined)
+			res[type_amount_pair[0]] = 0;
+		res[type_amount_pair[0]] += parseInt(type_amount_pair[1]);
+	}
+	return res;
 }
 
 // createmap is called as soon as loading is complete
@@ -73,7 +150,12 @@ function CreateMap() {
 	
 	maphtml += "</table>";
 	
-	
+	var tab_corner = "";
+	tab_corner += "<span class=\"mapscroll\">";
+	tab_corner += "<span class=\"mapscroll_minus\"><a href=\"javascript:mapscroll_minus()\">-</a></span>";
+	tab_corner += "<span class=\"mapscroll_plus\"><a href=\"javascript:mapscroll_plus()\">+</a></span>";
+	tab_corner += "<input type=\"text\" name=\"mapscroll\" value=\""+gScroll+"\">";
+	tab_corner += "</span>";
 	var tab_pre = "";
 	tab_pre += "<div id=\"panel\">";
 	tab_pre += "	<div id=\"header\">";
@@ -84,10 +166,12 @@ function CreateMap() {
 	tab_pre += "			<li "+(gMapMode==kJSMapMode_HP?		"id=\"current\"":"")+"><a href=\"javascript:SetMapMode(kJSMapMode_HP)\">HP</a></li>";
 	tab_pre += "		</ul>";
 	tab_pre += "		<div id=\"icons\">";
-	tab_pre += "			<a href=\"#\"><img alt=\"bigmap\" title=\"bigmap\" border=0 src=\"gfx/icon/bigmap.png\"></a>";
-	tab_pre += "			<a href=\"#\"><img alt=\"minimap2\" title=\"minimap2\" border=0 src=\"gfx/icon/minimap2.png\"></a>";
-	tab_pre += "			<a href=\"#\"><img alt=\"minimap\" title=\"minimap\" border=0 src=\"gfx/icon/minimap.png\"></a>";
-	tab_pre += "			<span>(2,33)</span>";
+	tab_pre += "			<a href=\"javascript:OpenMap(1)\"><img alt=\"bigmap\" title=\"bigmap\" border=0 src=\"gfx/icon/bigmap.png\"></a>";
+	tab_pre += "			<a href=\"javascript:OpenMap(2)\"><img alt=\"minimap2\" title=\"minimap2\" border=0 src=\"gfx/icon/minimap2.png\"></a>";
+	tab_pre += "			<a href=\"javascript:OpenMap(3)\"><img alt=\"minimap\" title=\"minimap\" border=0 src=\"gfx/icon/minimap.png\"></a>";
+	tab_pre += "			<a href=\"javascript:OpenMap(4)\"><img alt=\"diplomap\" title=\"diplomap\" border=0 src=\"gfx/icon/minimap.png\"></a>";
+	tab_pre += "			<a href=\"javascript:OpenMap(5)\"><img alt=\"creepmap\" title=\"creepmap\" border=0 src=\"gfx/icon/minimap.png\"></a>";
+	tab_pre += "			<span>"+tab_corner+"</span>";
 	tab_pre += "		</div>";
 	tab_pre += "	</div>";
 	tab_pre += "	<div id=\"map\">";
@@ -115,31 +199,21 @@ function CreateMap() {
 	return true;
 }
 
+function OpenMap (type) {
+	alert("todo:open map now");
+}
+
+function mapscroll_plus() {
+	document.getElementsByName('mapscroll')[0].value *= 2;
+}
+function mapscroll_minus() {
+	document.getElementsByName('mapscroll')[0].value = Math.floor(document.getElementsByName('mapscroll')[0].value / 2);
+}
+	
 function SetMapMode (newmode) {
 	if (gMapMode == newmode) return;
 	gMapMode = newmode;
 	CreateMap();
-}
-
-
-function GetTerrainPic (terraintype,relx,rely) {
-	var nwsecode = 0;
-	if (terraintype == GetTerrainType(relx,rely-1)) nwsecode += kNWSE_N;
-	if (terraintype == GetTerrainType(relx-1,rely)) nwsecode += kNWSE_W;
-	if (terraintype == GetTerrainType(relx,rely+1)) nwsecode += kNWSE_S;
-	if (terraintype == GetTerrainType(relx+1,rely)) nwsecode += kNWSE_E;
-	return g_nwse(gTerrainType[terraintype].gfx,nwsecode);
-}
-function GetBuildingPic (building,relx,rely) {
-	var buildingtype = building.type;
-	var level = building.level;
-	if (level < 10) level = 0; else level = 1;
-	var nwsecode = 0;
-	if (buildingtype == GetBuildingType(relx,rely-1)) nwsecode += kNWSE_N;
-	if (buildingtype == GetBuildingType(relx-1,rely)) nwsecode += kNWSE_W;
-	if (buildingtype == GetBuildingType(relx,rely+1)) nwsecode += kNWSE_S;
-	if (buildingtype == GetBuildingType(relx+1,rely)) nwsecode += kNWSE_E;
-	return g3(gBuildingType[buildingtype].gfx,nwsecode,level);
 }
 
 function GetCellHTML (relx,rely) {
@@ -149,8 +223,7 @@ function GetCellHTML (relx,rely) {
 	
 	// terrain
 	var backgroundcolor = false;
-	var terraintype = GetTerrainType(relx,rely);
-	layers[layers.length] = GetTerrainPic(terraintype,relx,rely);
+	layers[layers.length] = GetTerrainPic(relx,rely);
 	
 	// building
 	var building = SearchPos(gBuildings,relx,rely);
@@ -204,7 +277,7 @@ function GetCellHTML (relx,rely) {
 		var bg = (i==0)?("background-color:"+backgroundcolor+";"):"";
 		res += "<div style=\"background-image:url("+layers[i]+"); "+bg+"\">";
 	}
-	res += "<div id=\"cell_"+relx+"_"+rely+"\" onClick=\"mapclick("+relx+","+rely+")\" onMouseover=\"mapover("+relx+","+rely+")\">";
+	res += "<div name=\"mouselistener\" id=\"cell_"+relx+"_"+rely+"\" onClick=\"mapclick("+relx+","+rely+")\" onMouseover=\"if (gAllLoaded) if (!gLoading) mapover("+relx+","+rely+")\">";
 	if (relx == gXMid && rely == gYMid) res += "<img src='gfx/crosshair.png'>";
 	res += '</div>';
 	for (i in layers) res += '</div>';
@@ -220,15 +293,24 @@ function GetCellHTML (relx,rely) {
 }
 
 function mapclick (relx,rely) {
+	if (gLoading) return;
 	//debuglog("c"+relx+","+rely);
-	KillTip();	
+	KillTip();
+	if (gBig) {
+		//opener.parent.info.location.href = "info/info.php?x="+(x+gLeft)+"&y="+(y+gTop)+"&sid="+gSID;
+		opener.parent.navi.map(x+gLeft,y+gTop);
+	} else {
+		parent.navi.map(x+gLeft,y+gTop);
+	}
 }
 
 function KillTip () {
+	if (gLoading) return;
 	document.getElementsByName(kMapTipName)[0].style.visibility = "hidden";
 }
 
 function mapover (relx,rely) {
+	if (gLoading) return;
 	// todo : if (GetTool() != lupe) { KillTip(); return; }
 
 	// generate tip text
@@ -237,18 +319,24 @@ function mapover (relx,rely) {
 
 	// terrain
 	var terraintype = GetTerrainType(relx,rely);
-	tiptext += "<tr><td nowrap><img src=\""+GetTerrainPic(terraintype,relx,rely)+"\"></td><td nowrap colspan=2>";
+	tiptext += "<tr><td nowrap align=\"left\"><img src=\""+GetTerrainPic(relx,rely)+"\"></td><td nowrap colspan=2>";
 	tiptext += "<span>"+(relx+","+rely)+"</span><br>";
 	tiptext += "<span>"+gTerrainType[terraintype].name+"</span>";
+	if (gNWSEDebug) tiptext += "<br><span>type="+terraintype+"</span>";
+	if (gNWSEDebug) tiptext += "<br><span>tc="+gTerrainType[terraintype].connectto_terrain.join(",")+"</span>";
+	if (gNWSEDebug) tiptext += "<br><span>bc="+gTerrainType[terraintype].connectto_building.join(",")+"</span>";
 	tiptext += "</td></tr>";
 	
 	// building
 	var building = SearchPos(gBuildings,relx,rely);
 	if (building) {
-		tiptext += "<tr><td nowrap><img src=\""+GetBuildingPic(building,relx,rely)+"\"></td><td nowrap colspan=2>";
+		tiptext += "<tr><td nowrap><img src=\""+GetBuildingPic(building,relx,rely)+"\"></td><td nowrap colspan=2 align=\"left\">";
 		tiptext += "<span>"+gBuildingType[building.type].name + " Stufe "+building.level + "</span><br>";
 		tiptext += "<span>"+"HP : "+building.hp+"/"+calcMaxBuildingHp(building.type,building.level) + "</span><br>";
 		if (building.user > 0) tiptext += "<span>"+gUsers[building.user].name + "</span>";
+		if (gNWSEDebug) tiptext += "<br><span>type="+building.type+"flags="+building.jsflags+"</span>";
+		if (gNWSEDebug) tiptext += "<br><span>tc="+gBuildingType[building.type].connectto_terrain.join(",")+"</span>";
+		if (gNWSEDebug) tiptext += "<br><span>bc="+gBuildingType[building.type].connectto_building.join(",")+"</span>";
 		// backgroundcolor = GradientRYG(GetFraction(hp,calcMaxBuildingHp(type,level)))
 		tiptext += "</td></tr>";
 	}
@@ -270,7 +358,7 @@ function mapover (relx,rely) {
 		var item = items[i];
 		tiptext += "<tr><td nowrap>";
 		tiptext += "<img class=\"maptippic\" src=\""+g(gItemType[item.type].gfx)+"\"></td><td nowrap colspan=2>";
-		tiptext += "<span>"+gItemType[item.type].name+":"+item.amount+"</span>";
+		tiptext += "<span>"+gItemType[item.type].name+":"+TausenderTrenner(item.amount)+"</span>";
 		tiptext += "</td></tr>";
 	}
 	
@@ -281,7 +369,12 @@ function mapover (relx,rely) {
 		tiptext += "<span>"+army.name+"</span><br>";
 		if (army.user > 0) tiptext += "<span>"+gUsers[army.user].name+"</span><br>";
 		tiptext += "<span>";
-		for (i in army.units) tiptext += "<img src=\""+g(gUnitType[i].gfx)+"\">"+army.units[i];
+		if (army.units.length > 0) for (i in army.units)
+			tiptext += "<img src=\""+g(gUnitType[i].gfx)+"\">"+TausenderTrenner(army.units[i]);
+		tiptext += "</span><br>";
+		tiptext += "<span>";
+		if (army.items.length > 0) for (i in army.items)
+			tiptext += "<img src=\""+g(gItemType[i].gfx)+"\">"+TausenderTrenner(army.items[i]);
 		tiptext += "</span>";
 		tiptext += "</td></tr>";
 	}
@@ -309,11 +402,8 @@ function mapover (relx,rely) {
 	}
 }
 
-function debuglog (text) {
-	document.getElementsByName("mapdebug")[0].innerHTML = text+"<br>"+document.getElementsByName("mapdebug")[0].innerHTML;
-}
+// utilities
 
-	
 function GetFraction (cur,max) { return (cur <= 0.0 || max == 0)?0.0:((cur >= max)?1.0:(cur / max)); }
 function GradientRYG (factor) { // red-yellow-green
 	var dist = Math.abs(factor - 0.5)*2.0;
@@ -328,37 +418,6 @@ function calcMaxBuildingHp(type,level) {
 	var maxhp = gBuildingType[type].maxhp;
 	return Math.ceil(maxhp + maxhp/100*1.5*level);
 }
-
-function SearchPos (arr,relx,rely) {
-	var i; for (i in arr) {
-		if (arr[i].x == relx + gLeft && 
-			arr[i].y == rely + gTop) return arr[i];
-	}
-	return false;
-}
-
-function SearchPosArr (arr,relx,rely) {
-	var res = new Array();
-	var i; for (i in arr) {
-		if (arr[i].x == relx + gLeft && 
-			arr[i].y == rely + gTop) res.push(arr[i]);
-	}
-	return res;
-}
-
-function GetBuildingType (relx,rely) {
-	var building = SearchPos(gBuildings,relx,rely);
-	if (building == false) return 0;
-	return building.type;
-}
-
-function GetTerrainType (relx,rely) {
-	if (relx < -1 || rely < -1 || relx >= gCX+1 || rely >= gCY+1) return kDefaultTerrainID;
-	var terraintype = gTerrain[rely+1][relx+1];
-	if (terraintype == 0) return kDefaultTerrainID;
-	return terraintype;
-}
-
 function GetArmyUnitType (relx,rely) {
 	var army = SearchPos(gArmies,relx,rely);
 	if (!army) return 0;
@@ -369,6 +428,99 @@ function GetArmyUnitType (relx,rely) {
 			maxtype = i;
 		}
 	return maxtype;
+}
+function NWSECodeToStr (code) {
+	var out = "";
+	if(code & kNWSE_N) out += "n";
+	if(code & kNWSE_W) out += "w";
+	if(code & kNWSE_S) out += "s";
+	if(code & kNWSE_E) out += "e";
+	return out;
+}
+function InArray(needle,haystack) {
+	// != ""  :   javascript : "".split(",") liefert ein array mit EINEM ELEMENT : dem leeren string  -> rausfiltern
+	var i;for (i in haystack) if (haystack[i] == needle && haystack[i] != "") return true;
+	return false;
+}
+function KeyInArray(needle,haystack) {
+	var i;for (i in haystack) if (i == needle) return true;
+	return false;
+}
+function TausenderTrenner (nummertext) {
+	nummertext = ""+nummertext;
+	var blocks = Math.floor((nummertext.length+2)/3);
+	var i,j,res = "";
+	for (i=0;i<blocks;++i) {
+		if (3*i+0 < nummertext.length) res = nummertext[nummertext.length-1 - (3*i+0)]+res;
+		if (3*i+1 < nummertext.length) res = nummertext[nummertext.length-1 - (3*i+1)]+res;
+		if (3*i+2 < nummertext.length) res = nummertext[nummertext.length-1 - (3*i+2)]+res;
+		if (3*i+3 < nummertext.length) res = "."+res;
+	}
+	return res;
+}
+
+// type at position
+
+function SearchPos (arr,relx,rely) {
+	var i; for (i in arr) {
+		if (arr[i].x == relx + gLeft && 
+			arr[i].y == rely + gTop) return arr[i];
+	}
+	return false;
+}
+function SearchPosArr (arr,relx,rely) {
+	var res = new Array();
+	var i; for (i in arr) {
+		if (arr[i].x == relx + gLeft && 
+			arr[i].y == rely + gTop) res.push(arr[i]);
+	}
+	return res;
+}
+function GetBuildingType (relx,rely) {
+	var building = SearchPos(gBuildings,relx,rely);
+	if (building == false) return 0;
+	return building.type;
+}
+function GetTerrainType (relx,rely) {
+	if (relx < -1 || rely < -1 || relx >= gCX+1 || rely >= gCY+1) return kDefaultTerrainID;
+	var terraintype = gTerrain[rely+1][relx+1];
+	if (terraintype == 0) return kDefaultTerrainID;
+	return terraintype;
+}
+
+// terrain/building pic + nwse
+
+function GetNWSE (typeobj,relx,rely) {
+	var nwsecode = 0;
+	var ct = typeobj.connectto_terrain;
+	var cb = typeobj.connectto_building;
+	if (InArray(GetTerrainType(relx,rely-1),ct) || InArray(GetBuildingType(relx,rely-1),cb)) nwsecode += kNWSE_N;
+	if (InArray(GetTerrainType(relx-1,rely),ct) || InArray(GetBuildingType(relx-1,rely),cb)) nwsecode += kNWSE_W;
+	if (InArray(GetTerrainType(relx,rely+1),ct) || InArray(GetBuildingType(relx,rely+1),cb)) nwsecode += kNWSE_S;
+	if (InArray(GetTerrainType(relx+1,rely),ct) || InArray(GetBuildingType(relx+1,rely),cb)) nwsecode += kNWSE_E;
+	return nwsecode;
+}
+function GetTerrainPic (relx,rely) {
+	if (gTerrainMap) return gTerrainMap[rely+1][relx+1];
+	var terraintype = GetTerrainType(relx,rely);
+	var nwsecode = GetNWSE(gTerrainType[terraintype],relx,rely);
+	return g_nwse(gTerrainType[terraintype].gfx,nwsecode);
+}
+function GetBuildingPic (building,relx,rely) {
+	var type = building.type;
+	var level = building.level;
+	if (level < 10) level = 0; else level = 1;
+	var nwsecode = GetNWSE(gBuildingType[type],relx,rely);
+	var gfx = gBuildingType[type].gfx;
+	
+	// TODO: FIXME: HACK: (gates&portal)  also in mapstyle_buildings.php and GetBuildingCSS()
+	if (building.jsflags & kJSMapBuildingFlag_Open) 
+		gfx = gfx.split("-zu-").join("-offen-"); 
+		
+	// HACK: special nwse for path,gates,bridge...  also in UpdateBuildingNWSE()
+	nwsecode = HackNWSE(type,nwsecode,relx,rely); // see mapjs7_globals.js.php
+		
+	return g3(gfx,nwsecode,level);
 }
 
 // simple,fast versions of g
@@ -389,122 +541,25 @@ function g5 (path,nwse,level,race,moral) {
 	// return str_replace("%M%",$moral,str_replace("%R%",$race,str_replace("%NWSE%",$nwse,str_replace("%L%",$level,$base.$path))));
 }
 
-function NWSECodeToStr (code) {
-	var out = "";
-	if(code & kNWSE_N) out += "n";
-	if(code & kNWSE_W) out += "w";
-	if(code & kNWSE_S) out += "s";
-	if(code & kNWSE_E) out += "e";
-	return out;
-}
-
+// interaction
 
 function nav(x,y) {
+	gLoading = true;
+	gAllLoaded = false;
+	// alle elemente mit javascript-mouseover deaktivieren, um javascript fehler beim laden zu verhindern
+	var i,mouselistener = document.getElementsByName("mouselistener");
+	for (i in mouselistener) mouselistener[i].onMouseover = "";
+	gScroll = parseInt(document.getElementsByName("mapscroll")[0].value);
 	if (x < 0) x = -1; else if (x > 0) x = 1;
 	if (y < 0) y = -1; else if (y > 0) y = 1;
-	//var scroll = document.getElementsByName("myscroll")[0].value; TODO : restore
-	var scroll = gScroll;
-	x = gLeft + gXMid + x * scroll;
-	y = gTop + gYMid + y * scroll;
-	location.href = "?sid="+gSID+"&x="+x+"&y="+y+"&mode="+gMapMode;
+	x = gLeft + gXMid + x * gScroll;
+	y = gTop + gYMid + y * gScroll;
+	location.href = "?sid="+gSID+"&x="+x+"&y="+y+"&mode="+gMapMode+"&scroll="+gScroll;
 }
 
-
-/*
-
-.wp { background-color:#00FF00; }
-.pathb { background-color:#FF8888; }
-.path { background-color:#88FF88; }
-.cp { background-image:url(<?=g(kConstructionPlanPic)?>); }
-.tcp { background-image:url(<?=g(kTransCP)?>); }
-.con { background-image:url(<?=g(kConstructionPic)?>); }
-.gr { background-image:url(<?=g("grass.png")?>); }
-
-
-
-	define("kMapColor_Hilight","#FFFFFF");
-	define("kMapColor_Neutral_User","#66AA55");
-
-	document.getElementById("age").innerHTML = gAge + " =)";
-	
-	gHalloWeltInterval = window.setInterval("HalloWeltStep()",50);
-	window.clearInterval(gHalloWeltInterval);
-	
-	parseInt(..);
-
-	<td valign="top" align="left">
-		<!--Navigation-->
-		<table class="mapnav" cellpadding="0" cellspacing="0"><?php
-		?><tr><?php
-		?><td><img src="<?=g("scroll/nw.png")?>" onClick="nav(-1,-1)"></td><?php
-		?><td><img src="<?=g("scroll/n.png")?>" onClick="nav(0,-1)"></td><?php
-		?><td><img src="<?=g("scroll/ne.png")?>" onClick="nav(1,-1)"></td><?php
-		?></tr><tr><?php
-		?><td><img src="<?=g("scroll/w.png")?>" onClick="nav(-1,0)"></td><?php
-		?><td><img src="<?=g("scroll/r.png")?>" onClick="nav(0,0)"></td><?php
-		?><td><img src="<?=g("scroll/e.png")?>" onClick="nav(1,0)"></td><?php
-		?></tr><tr><?php
-		?><td><img src="<?=g("scroll/sw.png")?>" onClick="nav(-1,1)"></td><?php
-		?><td><img src="<?=g("scroll/s.png")?>" onClick="nav(0,1)"></td><?php
-		?><td><img src="<?=g("scroll/se.png")?>" onClick="nav(1,1)"></td><?php
-		?></tr><?php
-		?></table>
-		<FORM METHOD="POST" ACTION="<?=Query(kMapScript."?sid=?&big=?&cx=$gCX&cy=$gCY")?>">
-		<INPUT TYPE="hidden" NAME="sid" VALUE="<?=$gSID?>">
-		<INPUT TYPE="hidden" NAME="x" VALUE="0" style="width:30px">
-		<INPUT TYPE="hidden" NAME="y" VALUE="0" style="width:30px">
-		<INPUT TYPE="text" NAME="pos" VALUE="0" style="width:60px">
-		<INPUT TYPE="submit" VALUE="Goto">
-		scroll:
-		<a href="javascript:void(document.getElementsByName('myscroll')[0].value = Math.floor(document.getElementsByName('myscroll')[0].value / 2))">-</a>
-		<a href="javascript:void(document.getElementsByName('myscroll')[0].value *= 2)">+</a>
-		<INPUT TYPE="text" NAME="myscroll" VALUE="<?=$gScroll?>" style="width:30px">
-		</FORM>
-	</td>
-	
-
-
-function getWindowWidth()
-{
-	if (window.innerWidth)return window.innerWidth;
-	else if (document.documentElement && document.documentElement.clientWidth != 0)return document.documentElement.clientWidth;
-	else if (document.body)return document.body.clientWidth;
-	return 0;
+function debuglog (text) {
+	document.getElementsByName("mapdebug")[0].innerHTML = text+"<br>"+document.getElementsByName("mapdebug")[0].innerHTML;
 }
 
-var mapwidth = Math.floor((getWindowWidth()-2*40)/<?=$gTilesize?>);
-//alert(mapwidth+" "+getWindowWidth());
-
-<?php if (isset($f_big)) { // navi ?>
-function nav(x,y) {
-	var scroll = document.getElementsByName("myscroll")[0].value;
-	x = <?=intval($f_x)?> + x * scroll;
-	y = <?=intval($f_y)?> + y * scroll;
-	location.href = "<?=Query("?sid=?&big=?&army=?&mode=?&cx=?&cy=?&")?>x="+(x)+"&y="+(y); 
-}
-<?php } // endif?>
-function getmode() { return "<?=$f_mode?>";}
-function getleft() { return <?=$gLeft?>;}
-function gettop() { return <?=$gTop?>;}
-function getx() { return <?=$gX?>;}
-function gety() { return <?=$gY?>;}
-function getcx() { return <?=$gCX?>;}
-function getcy() { return <?=$gCY?>;}
-function m(x,y) {
-	<?php if (isset($f_big)) {?>
-	//opener.parent.info.location.href = "info/info.php?x="+(x+<?=$gLeft?>)+"&y="+(y+<?=$gTop?>)+"&sid=<?=$gSID?>";
-	opener.parent.navi.map(x+<?=$gLeft?>,y+<?=$gTop?>);
-	<?php } else {?>
-	parent.navi.map(x+<?=$gLeft?>,y+<?=$gTop?>);
-	<?php }?>
-}
-<?php if (!isset($f_naviset)) {?>
-if (parent.navi != null && parent.navi.updatepos != null)
-	parent.navi.updatepos(<?=$gX?>,<?=$gY?>);
-<?php }?>
-<?php if ($f_mode == "bauplan" && $concount == 0 && 0) {?> 
-alert("Der Knopf Pläne zeigt Baupläne als fertige Gebäude an,\n damit man eine übersicht hat, was man wo geplant hat.");
-<?php }?>
-
-*/
-
+gAllLoaded = true; 
+// scheiss race conditions beim navigieren im mouseover, krieg ich sogar hiermit nicht ganz weg...

@@ -371,25 +371,6 @@ $gWPArmy = 0;
 
 <!--mapcontrols-->
 <table>
-<tr><td valign=top>
-
-<!--Navigation-->
-<table class="mapnav" cellpadding="0" cellspacing="0"><?php
-?><tr><?php
-?><td><img src="<?=g("scroll/nw.png")?>" onClick="nav(-1,-1)"></td><?php
-?><td><img src="<?=g("scroll/n.png")?>" onClick="nav(0,-1)"></td><?php
-?><td><img src="<?=g("scroll/ne.png")?>" onClick="nav(1,-1)"></td><?php
-?></tr><tr><?php
-?><td><img src="<?=g("scroll/w.png")?>" onClick="nav(-1,0)"></td><?php
-?><td><img src="<?=g("scroll/r.png")?>" onClick="nav(0,0)"></td><?php
-?><td><img src="<?=g("scroll/e.png")?>" onClick="nav(1,0)"></td><?php
-?></tr><tr><?php
-?><td><img src="<?=g("scroll/sw.png")?>" onClick="nav(-1,1)"></td><?php
-?><td><img src="<?=g("scroll/s.png")?>" onClick="nav(0,1)"></td><?php
-?><td><img src="<?=g("scroll/se.png")?>" onClick="nav(1,1)"></td><?php
-?></tr><?php
-?></table>
-
 </td><td valign=top>
 		
 		<FORM METHOD=GET ACTION="<?=Query(kMapScript."?sid=?&big=?&cx=$gCX&cy=$gCY")?>" target="map" onSubmit="resettool()">
@@ -398,10 +379,6 @@ $gWPArmy = 0;
 		<INPUT TYPE="hidden" NAME="y" VALUE="0" style="width:30px">
 		<INPUT TYPE="text" NAME="pos" VALUE="0" style="width:60px">
 		<INPUT TYPE="submit" VALUE="Goto">
-		scroll:
-		<a href="javascript:void(document.getElementsByName('myscroll')[0].value = Math.floor(document.getElementsByName('myscroll')[0].value / 2))">-</a>
-		<a href="javascript:void(document.getElementsByName('myscroll')[0].value *= 2)">+</a>
-		<INPUT TYPE="text" NAME="myscroll" VALUE="<?=$gScroll?>" style="width:30px">
 		</FORM>
 		
 		<?php 
@@ -435,9 +412,6 @@ $gWPArmy = 0;
 		<a href="javascript:MiniMap2()">MiniMap2</a>
 		<a href="javascript:DiploMap()">DiploMap</a>
 		<a href="javascript:CreepMap()">CreepMap</a>
-		<a href="javascript:PlanMap()">Pläne</a>
-		<a href="javascript:BauzeitMap()">Bauzeit</a>
-		<a href="javascript:HPMap()">HP</a>
 		<?=cText::Wiki("MapModi")?>
 </td>
 </tr>
