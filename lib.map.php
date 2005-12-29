@@ -278,29 +278,29 @@ class cMap {
 		$this->x = $x;$this->y = $y;
 		$this->dx = $dx;$this->dy = $dy;
 		
-		$lseg64 = sqlgettable("SELECT * FROM `terrainsegment64` 
-			WHERE `x`>=($x64) AND `x`<($x64+$dx64) AND `y`>=($y64) AND `y`<($y64+$dy64)");
-		$lseg4  = sqlgettable("SELECT * FROM `terrainsegment4`  
-			WHERE `x`>=($x4) AND `x`<($x4+$dx4) AND `y`>=($y4) AND `y`<($y4+$dy4)");
-		
-		$this->seg64 = array();
-		$this->seg4 = array();
-		foreach($lseg64 as $o)$this->seg64[$o->x][$o->y] = $o;
-		foreach($lseg4 as $o)$this->seg4[$o->x][$o->y] = $o;
-		unset($lseg64);
-		unset($lseg4);
-		
-		$l = sqlgettable("SELECT * FROM `terrain` WHERE `x`>=($x) AND `x`<($x+$dx) AND `y`>=($y) AND `y`<($y+$dy)");
+		$l = sqlgettable("SELECT * FROM `terrain` WHERE `x`>=($x) AND `x`<($x+$dx) AND `y`>=($y) AND `y`<($y+$dy) AND `type`!=".kTerrain_Grass);
+		$this->seg1 = array();
 		foreach($l as $o)$this->seg1[$o->x][$o->y] = $o;
 		unset($l);
+
+		$lseg64 = sqlgettable("SELECT * FROM `terrainsegment64` 
+			WHERE `x`>=($x64) AND `x`<($x64+$dx64) AND `y`>=($y64) AND `y`<($y64+$dy64)");
+		$this->seg64 = array();
+		foreach($lseg64 as $o)$this->seg64[$o->x][$o->y] = $o;
+		unset($lseg64);
+
+		$lseg4  = sqlgettable("SELECT * FROM `terrainsegment4`  
+			WHERE `x`>=($x4) AND `x`<($x4+$dx4) AND `y`>=($y4) AND `y`<($y4+$dy4)");
+		$this->seg4 = array();
+		foreach($lseg4 as $o)$this->seg4[$o->x][$o->y] = $o;
+		unset($lseg4);
 		
 		$this->army = sqlgettable("SELECT * FROM `army` WHERE `x`>=($x) AND `x`<($x+$dx) AND `y`>=($y) AND `y`<($y+$dy)");
 		$this->item = sqlgettable("SELECT * FROM `item` WHERE `x`>=($x) AND `x`<($x+$dx) AND `y`>=($y) AND `y`<($y+$dy)");
 		$this->building = sqlgettable("SELECT * FROM `building` WHERE `x`>=($x) AND `x`<($x+$dx) AND `y`>=($y) AND `y`<($y+$dy)");
 		
+		//echo "[1:($x,$y,$dx,$dy,".sizeof($this->seg1).") 64:($x64,$y64,$dx64,$dy64,".sizeof($this->seg64).") 4:($x4,$y4,$dx4,$dy4,".sizeof($this->seg4).")]";
 		//print_r($this);
-		
-		echo "[1:($x,$y,$dx,$dy) 64:($x64,$y64,$dx64,$dy64) 4:($x4,$y4,$dx4,$dy4)]";
 	}
 	
 	function getTerrainTypeAt($x,$y){
@@ -309,9 +309,12 @@ class cMap {
 		$x4 = floor($x/4);$y4 = floor($y/4);
 
 		$type = kTerrain_Grass;
+		
 		if(!empty($this->seg64[$x64][$y64]))$type = $this->seg64[$x64][$y64]->type;
 		if(!empty($this->seg4[$x4][$y4]))$type = $this->seg4[$x4][$y4]->type;
 		if(!empty($this->seg1[$x][$y]))$type = $this->seg1[$x][$y]->type;
+		
+		//if($type != kTerrain_Grass)echo "[$x,$y,".($this->seg1[$x][$y]->type)."]";
 		
 		return $type;
 	}

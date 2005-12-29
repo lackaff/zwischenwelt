@@ -98,6 +98,7 @@ function renderMinimap($top,$left,$bottom,$right,$filename,$mode="normal",$segme
 	$color_bodenschatz2 = hex2imgcolor($im,"#FFFFFF");
 	imagefill($im,0,0,$background_color);
 	
+	//echo "draw terrain<br>\n";
 	//draw terrain
 	for($xx=0;$xx<$sx;++$xx)for($yy=0;$yy<$sy;++$yy){
 		$sleft = $left + $xx*$segment;
@@ -105,11 +106,12 @@ function renderMinimap($top,$left,$bottom,$right,$filename,$mode="normal",$segme
 		$sright = $sleft + $segment;
 		$sbottom = $stop + $segment;
 		
-		$map = getMapAtPosition($stop,$sleft,$segment,$segment);
-		for($xxx=$stop;$xxx<$stop+$segment;++$xxx)for($yyy=$sleft;$yyy<$sleft+$segment;++$yyy){
+		$map = getMapAtPosition($sleft,$stop,$segment,$segment);
+		for($xxx=$sleft;$xxx<$sleft+$segment;++$xxx)for($yyy=$stop;$yyy<$stop+$segment;++$yyy){
 			$type = $map->getTerrainTypeAt($xxx,$yyy);
-			if($type != kTerrain_Grass)
+			if($type != kTerrain_Grass){
 				imagesetpixel($im, $xxx-$left,$yyy-$top,$gTerrainType[$type]->imgcolor);
+			}
 		}
 	/*		
 		$l = sqlgettable("SELECT `x`,`y`,`type` FROM `terrain` WHERE `x`>=$sleft AND `x`<$sright AND `y`>=$stop AND `y`<$sbottom");
@@ -120,6 +122,7 @@ function renderMinimap($top,$left,$bottom,$right,$filename,$mode="normal",$segme
 	//unset($l);
 	
 	if ($mode == "creep") {
+		//echo "draw creep<br>\n";
 		array_walk($gUnitType,"renderMinimap_walkgetmonsterpic");
 		$gHellholes = sqlgettable("SELECT `x`,`y`,`type`,`radius` FROM `hellhole`");
 		foreach ($gHellholes as $o) {
@@ -131,9 +134,10 @@ function renderMinimap($top,$left,$bottom,$right,$filename,$mode="normal",$segme
 		}
 	}
 	
-	$l = sqlgettable("SELECT `x`,`y`,`user`,`type` FROM `building` WHERE `x`>=$left AND `x`<=$right AND `y`>=$top AND `y`<=$bottom");
+	//$l = sqlgettable("SELECT `x`,`y`,`user`,`type` FROM `building` WHERE `x`>=$left AND `x`<=$right AND `y`>=$top AND `y`<=$bottom");
 	
 	if (0 && $mode != "creep") {
+		//echo "draw ressources<br>\n";
 		array_walk($gBuildingType,"renderMinimap_walkgetbodenschatzpic");
 		$bs_size = 23;
 		foreach($l as $o) if ($o->user == 0 && in_array($o->type,$gBodenSchatzBuildings)) {
@@ -142,7 +146,8 @@ function renderMinimap($top,$left,$bottom,$right,$filename,$mode="normal",$segme
 		}
 	}
 
-	foreach($l as $x) {
+	//echo "draw buildings<br>\n";
+	foreach($map->building as $x) {
 		if ($x->user == 0 && in_array($x->type,$gBodenSchatzBuildings)) {
 			imagesetpixel($im, $x->x-$left,		$x->y-$top,$color_bodenschatz);
 			imagesetpixel($im, $x->x-$left-1,		$x->y-$top-1,$color_bodenschatz);
@@ -172,11 +177,12 @@ function renderMinimap($top,$left,$bottom,$right,$filename,$mode="normal",$segme
 			imagesetpixel($im,$x->x-$left,$x->y-$top,$color);
 		}
 	}
-	unset($l);
+	//unset($l);
 	
 	// armeen
-	$l = sqlgettable("SELECT `x`,`y` FROM `army` WHERE $left<=`x` AND `x`<=($right) AND $top<=`y` AND `y`<=($bottom)");
-	foreach($l as $x) {
+	//$l = sqlgettable("SELECT `x`,`y` FROM `army` WHERE $left<=`x` AND `x`<=($right) AND $top<=`y` AND `y`<=($bottom)");
+	//echo "draw armies<br>\n";
+	foreach($map->army as $x) {
 		imagesetpixel($im, $x->x-$left,$x->y-$top,$color_red);
 		imagesetpixel($im, $x->x+1-$left,$x->y-$top,$color_red);
 		imagesetpixel($im, $x->x-$left,$x->y+1-$top,$color_red);
@@ -184,6 +190,7 @@ function renderMinimap($top,$left,$bottom,$right,$filename,$mode="normal",$segme
 	}
 	
 	// portale
+	//echo "draw portals<br>\n";
 	$l = sqlgettable("SELECT `x`,`y` FROM `building` WHERE `type` = 23 AND $left<=`x` AND `x`<=($right) AND $top<=`y` AND `y`<=($bottom)");
 	foreach($l as $x) {
 		imagefilledrectangle($im,$x->x-$left-2,$x->y-$top-2,$x->x-$left+2,$x->y-$top+2,$color_portal3);
