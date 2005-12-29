@@ -94,6 +94,7 @@ $form = new cTableEditForm("?sid=?&id=$f_id","BuildingType $f_id editieren",
 		new cTableEditListFlagField("buildingtype","id",$f_id,"Darf nicht: Building","exclude_building",$buildings2),
 		new cTableEditRadioField("buildingtype","id",$f_id,"wird bei Fertigstellung zu Terrain","convert_into_terrain",$terrains),
 	))
+	,"buildingtype","id",$f_id,Query("listall.php?sid=?")
 );
 
 

@@ -8,10 +8,20 @@ class cTableEdit {
 //formular
 class cTableEditForm extends cTableEdit {
 	var $child,$queryurl,$title;
-	function cTableEditForm($queryurl,$title,$te){
+	var $deletetable,$deletekey,$deletekeyvalue,$deletejumptourl;
+	var $deletebutton;
+	/**
+	*set the delete... paremeters to get a simple table row delete button
+	*/
+	function cTableEditForm($queryurl,$title,$te,$deletetable="",$deletekey="",$deletekeyvalue="",$deletejumptourl=""){
 		$this->child = $te;
 		$this->queryurl = $queryurl;
 		$this->title = $title;
+		$this->deletetable = $deletetable;
+		$this->deletekey = $deletekey;
+		$this->deletekeyvalue = $deletekeyvalue;
+		$this->deletejumptourl = $deletejumptourl;
+		$this->deletebutton = !empty($deletetable) && !empty($deletekey) && !empty($deletekeyvalue) && !empty($deletejumptourl);
 	}
 	function Show($base=""){
 		?>
@@ -19,13 +29,25 @@ class cTableEditForm extends cTableEdit {
 			<table border=1>
 				<tr><th align=center><?=$this->title?></td></tr>
 				<tr><td><?=$this->child->Show($base."/form")?></td></tr>
-				<tr><td align=center><input type=submit name="<?=$base?>/submit" value="übernehmen"></td></tr>
+				<tr><td align=center>
+					<?php if($this->deletebutton){ ?>
+					sicher? <input type=checkbox name="<?=$base?>/delete_ok" value="ok">
+					<input type=submit name="<?=$base?>/delete" value="L&ouml;schen">
+					| <?php } ?>
+					<input type=submit name="<?=$base?>/submit" value="&Uuml;bernehmen">
+				</td></tr>
 			</table>
 		<form>
 		<?php
 	}
 	function HandleInput($base=""){
-		if(isset($_REQUEST["$base/submit"])){
+		if(isset($_REQUEST["$base/delete"])){
+			if($this->deletebutton && $_REQUEST["$base/delete_ok"] == "ok"){
+				//handle delete of one row
+				sql("DELETE FROM `".addslashes($this->deletetable)."` WHERE `".addslashes($this->deletekey)."`='".addslashes($this->deletekeyvalue)."'");
+				Redirect($this->deletejumptourl);
+			}
+		} else if(isset($_REQUEST["$base/submit"])){
 			//vardump($_REQUEST);
 			$this->child->HandleInput("$base/form");
 		}

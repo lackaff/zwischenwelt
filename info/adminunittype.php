@@ -68,6 +68,7 @@ new cTableEditForm("?sid=?&id=$f_id","UnitType $f_id editieren",
 			new cTableEditRadioField("unittype","id",$f_id,"Gebäude","buildingtype",$buildings)
 		))
 	))
+	,"unittype","id",$f_id,Query("listall.php?sid=?")
 );
 
 

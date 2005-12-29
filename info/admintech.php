@@ -8,19 +8,6 @@ require_once("../lib.tableedit.php");
 
 AdminLock();
 
-if (isset($f_killtech)) {
-	sql("DELETE FROM `technologytype` WHERE `id` = ".intval($f_id)." LIMIT 1");
-	
-	// regenerate typecache
-	require_once("../generate_types.php");
-	require(kTypeCacheFile);
-	
-	require_once("header.php"); 
-	echo "GEKILLT..";
-	require_once("footer.php"); 
-	exit();
-}
-
 $buildings = array();
 $build = sqlgettable("SELECT `id`,`name` FROM `buildingtype` WHERE `special`=0");
 foreach ($build as $b) {
@@ -58,6 +45,7 @@ new cTableEditForm("?sid=?&id=$f_id","TechnologyType $f_id editieren",
 			new cTableEditRadioField("technologytype","id",$f_id,"Gruppe","group",$groups)
 		))
 	))
+	,"technologytype","id",$f_id,Query("listall.php?sid=?")
 );
 
 
@@ -68,9 +56,7 @@ require(kTypeCacheFile);
 
 require_once("header.php"); 
 $form->Show();
-echo '<td>	SYNTAX : type&gt;minlevel+inc  OR  type&lt;maxlevel+inc   inc can be float : "4&gt;5+0.5"  for id 4 at least level 5<br>
-			<br>
-			<a href="'.Query("?sid=?&id=?&killtech=1").'">(delete entry)</a></td>';
+echo '<td>	SYNTAX : type&gt;minlevel+inc  OR  type&lt;maxlevel+inc   inc can be float : "4&gt;5+0.5"  for id 4 at least level 5<br></td>';
 
 require_once("footer.php"); 
 

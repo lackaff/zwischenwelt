@@ -24,6 +24,7 @@ class cInfoHospital extends cInfoBuilding {
 						$o->descr="edit me";
 						sql("INSERT INTO `terraintype` SET ".obj2sql($o));
 						echo "terrain created .. please edit and refresh cached types<br>";
+						Redirect(query("adminterrain.php?id=".mysql_insert_id()."&sid=?"));
 					break;
 					
 					case "building":
@@ -33,6 +34,7 @@ class cInfoHospital extends cInfoBuilding {
 						$o->special=1;
 						sql("INSERT INTO `buildingtype` SET ".obj2sql($o));
 						echo "building created .. please edit and refresh cached types<br>";
+						Redirect(query("adminbuildingtype.php?id=".mysql_insert_id()."&sid=?"));
 					break;
 					
 					case "unit":
@@ -42,6 +44,7 @@ class cInfoHospital extends cInfoBuilding {
 						$o->buildingtype=$gObject->id;
 						sql("INSERT INTO `unittype` SET ".obj2sql($o));
 						echo "unit created .. please edit and refresh cached types<br>";
+						Redirect(query("adminunittype.php?id=".mysql_insert_id()."&sid=?"));
 					break;
 					
 					case "technology":
@@ -51,6 +54,7 @@ class cInfoHospital extends cInfoBuilding {
 						$o->buildingtype=$gObject->id;
 						sql("INSERT INTO `technologytype` SET ".obj2sql($o));
 						echo "tech created .. please edit and refresh cached types<br>";
+						Redirect(query("admintech.php?id=".mysql_insert_id()."&sid=?"));
 					break;
 					
 					case "technologygroup":
@@ -60,6 +64,7 @@ class cInfoHospital extends cInfoBuilding {
 						$o->buildingtype=$gObject->id;
 						sql("INSERT INTO `technologygroup` SET ".obj2sql($o));
 						echo "techgroup created .. please edit and refresh cached types<br>";
+						Redirect(query("admintechgroup.php?id=".mysql_insert_id()."&sid=?"));
 					break;
 					
 					default:
@@ -109,7 +114,7 @@ class cInfoHospital extends cInfoBuilding {
 		<ul>
 			<li><a href="../sqlerror.log" target="_blank">SQLerror.log</a></li>
 			<li><a href="../script/viewerror.php" target="_blank">PHPerror.log</a></li>
-			<li><a href="<?=Query("../listall.php?sid=?")?>">list all terrain/building/unit/technology types (usefull for searching something to edit)</a></li>
+			<li><a href="<?=Query("listall.php?sid=?")?>">list all terrain/building/unit/technology types (usefull for searching something to edit)</a></li>
 			<li><a href="../lastcron.html" target="_blank">lastcron</a></li>
 			<li><a href="<?=Query("../cvsup.php?sid=?")?>">cvsup</a></li>
 			<li><a href="<?=Query("adminglobal.php?sid=?")?>">Globale Einstellungen</a></li>

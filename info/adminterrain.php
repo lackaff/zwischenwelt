@@ -8,8 +8,6 @@ require_once("../lib.tableedit.php");
 
 AdminLock();
 
-
-
 $flags = array(
 	kTerrain_Flag_Moveable_Land => "Land",
 	kTerrain_Flag_Moveable_Wood => "Wald",
@@ -44,6 +42,7 @@ $form = new cTableEditForm("?sid=?&id=$f_id","TerrainType $f_id editieren",
 		new cTableEditListFlagField("terraintype","id",$f_id,"verbindet sich mit Terrain","connectto_terrain",$connectto_terrain),
 		new cTableEditListFlagField("terraintype","id",$f_id,"verbindet sich mit Building","connectto_building",$connectto_building)
 	))
+	,"terraintype","id",$f_id,Query("listall.php?sid=?")
 );
 
 
