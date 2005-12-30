@@ -374,7 +374,7 @@ function GetCellHTML (relx,rely) {
 			layers[layers.length] = g(kConstructionPic);
 		} else {
 			layers[layers.length] = GetBuildingPic(building,relx,rely);
-			if (building.user > 0) backgroundcolor = gUsers[building.user].color;
+			if (building.user > 0 && gBuildingType[building.type].border) backgroundcolor = gUsers[building.user].color;
 		}
 		if (gMapMode==kJSMapMode_HP) {
 			backgroundcolor = GradientRYG(GetFraction(building.hp,calcMaxBuildingHp(building.type,building.level)))
