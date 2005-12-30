@@ -13,9 +13,22 @@ define("kMapNaviGotoCat_Enemies",6);
 define("kMapNaviGotoCat_Search",7);
 define("kMapNaviGotoCat_Random",8);
 define("kMapNaviGotoCat_Hellhole",9);
+$gMapNaviGotoCatNames = array(
+	kMapNaviGotoCat_Po			=> "Pos",
+	kMapNaviGotoCat_Mark		=> "MapMark",
+	kMapNaviGotoCat_Own			=> "Eigene",
+	kMapNaviGotoCat_Guild		=> "Gilde",
+	kMapNaviGotoCat_Friends		=> "Freunde",
+	kMapNaviGotoCat_Enemies		=> "Feinde",
+	kMapNaviGotoCat_Search		=> "Suche",
+	kMapNaviGotoCat_Random		=> "Zufall",
+	kMapNaviGotoCat_Hellhole	=> "Hellhole",
+	);
+$gMapNaviGotoCat_AdminOnly = array(0=>kMapNaviGotoCat_Hellhole);
 
 define("kJSMapBuildingFlag_Open",(1<<0));
 define("kJSMapBuildingFlag_Tax",(1<<1)); // todo
+define("kJSMapBuildingFlag_Locked",(1<<2)); // (portal cannot be used) todo 
 
 define("kJSMapArmyFlag_Moving_N",(1<<0)); // todo
 define("kJSMapArmyFlag_Moving_W",(1<<1)); // todo

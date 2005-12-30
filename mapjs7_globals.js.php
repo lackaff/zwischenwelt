@@ -27,7 +27,7 @@ kJSMapArmyFlag_Fighting_S = <?=kJSMapArmyFlag_Fighting_S?>;
 kJSMapArmyFlag_Fighting_E = <?=kJSMapArmyFlag_Fighting_E?>;
 kJSMapArmyFlag_Shooting = <?=kJSMapArmyFlag_Shooting?>;
 
-
+gMapModiHelp = "<?=addslashes(cText::Wiki("MapModi"))?>";
 
 //kJSMapTileSize = <?=kMapTileSize?>;
 kJSMapTileSize = 27;
@@ -161,16 +161,13 @@ php2js_objarray("gTerrainPatchType",$gTerrainPatchType,"id,gfx,here,up,down,left
 
 php2js_objectfunction("jsUser","id,guild,color,name","gUsers","id");
 php2js_objectfunction("jsArmy","id,x,y,name,type,user,units,items,jsflags","gArmies","id");
-php2js_parser("jsParseBuildings","x,y,type,user,level,hp,construction,jsflags","gBuildings");
+// php2js_parser("jsParseBuildings","x,y,type,user,level,hp,construction,jsflags","gBuildings"); // special for speed
 php2js_parser("jsParseItems","x,y,type,amount","gItems");
 php2js_parser("jsParsePlans","x,y,type,priority","gPlans");
 
 
 
 /*
-
-
-
 
 // bauzeit
 if ($f_mode == "bauzeit") {
@@ -298,37 +295,6 @@ if (0) {?>
 
 	var mapwidth = Math.floor((getWindowWidth()-2*40)/<?=$gTilesize?>);
 	//alert(mapwidth+" "+getWindowWidth());
-
-	<?php if (isset($f_big)) { // navi ?>
-	function nav(x,y) {
-		var scroll = document.getElementsByName("mapscroll")[0].value;
-		x = <?=intval($f_x)?> + x * scroll;
-		y = <?=intval($f_y)?> + y * scroll;
-		location.href = "<?=Query("?sid=?&big=?&army=?&mode=?&cx=?&cy=?&")?>x="+(x)+"&y="+(y); 
-	}
-	<?php } // endif?>
-	function getmode() { return "<?=$f_mode?>";}
-	function getleft() { return <?=$gLeft?>;}
-	function gettop() { return <?=$gTop?>;}
-	function getx() { return <?=$gX?>;}
-	function gety() { return <?=$gY?>;}
-	function getcx() { return <?=$gCX?>;}
-	function getcy() { return <?=$gCY?>;}
-	function m(x,y) {
-		<?php if (isset($f_big)) {?>
-		//opener.parent.info.location.href = "info/info.php?x="+(x+<?=$gLeft?>)+"&y="+(y+<?=$gTop?>)+"&sid=<?=$gSID?>";
-		opener.parent.navi.map(x+<?=$gLeft?>,y+<?=$gTop?>);
-		<?php } else {?>
-		parent.navi.map(x+<?=$gLeft?>,y+<?=$gTop?>);
-		<?php }?>
-	}
-	<?php if (!isset($f_naviset)) {?>
-	if (parent.navi != null && parent.navi.updatepos != null)
-		parent.navi.updatepos(<?=$gX?>,<?=$gY?>);
-	<?php }?>
-	<?php if ($f_mode == "bauplan" && $concount == 0 && 0) {?> 
-	alert("Der Knopf Pläne zeigt Baupläne als fertige Gebäude an,\n damit man eine übersicht hat, was man wo geplant hat.");
-	<?php }?>
 	<?php 
 }
 ?>

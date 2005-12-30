@@ -122,17 +122,20 @@ if (!isset($f_building) && !isset($f_army) && isset($f_do)) switch ($f_do) {
 				cItem::SpawnItem($f_x,$f_y,$f_type,$f_anzahl,isset($f_quest)?$f_quest:0);
 			?>
 			<script language="javascript">
-				parent.navi.SetCellClass(<?=$f_x?>,<?=$f_y?>,"<?="item_".$f_type?>");
+				parent.map.JSInsertItem(<?="$f_x,$f_y,$f_type,$f_anzahl"?>);
 			</script>
 			<?php
 		break;
 		case "adminsetarmy":// admin command
 			if (!$gUser->admin)break;
 			require_once("../lib.army.php");
-			cArmy::SpawnArmy($f_x,$f_y,cUnit::Simple($f_unit,$f_anzahl),false,-1,$f_user,$f_quest,0,-1);
+			$units = cUnit::Simple($f_unit,$f_anzahl);
+			$newarmy = cArmy::SpawnArmy($f_x,$f_y,$units,false,-1,$f_user,$f_quest,0,-1);
+			$jsunits = ""; 
+			foreach ($units as $u) $jsunits .= $u->type.":".floor($u->amount)."|";
 			?>
 			<script language="javascript">
-				parent.navi.SetCellClass(<?=$f_x?>,<?=$f_y?>,"<?="unit_".$f_unit?>");
+				parent.map.JSInsertArmy(<?=$newarmy->id?>,<?="$f_x,$f_y"?>,"<?=$newarmy->name?>",<?=$newarmy->type?>,<?=$newarmy->user?>,<?=$jsunits?>,"",0);
 			</script>
 			<?php
 		break;
@@ -142,10 +145,7 @@ if (!isset($f_building) && !isset($f_army) && isset($f_do)) switch ($f_do) {
 			$cssclassarr = zap($f_x,$f_y);
 			?>
 			<script language="javascript">
-				parent.navi.SetCellClass(<?=intval($f_x)?>,<?=intval($f_y)?>,"t0_1");
-				<?php foreach ($cssclassarr as $o) {?>
-				parent.navi.SetCellClass(<?=$o->x?>,<?=$o->y?>,"<?=$o->css?>");
-				<?php }?>
+				parent.map.JSZap(<?=intval($f_x)?>,<?=intval($f_y)?>);
 			</script>
 			<?php
 		break;
@@ -179,10 +179,7 @@ if (!isset($f_building) && !isset($f_army) && isset($f_do)) switch ($f_do) {
 				$cssclassarr = RegenSurroundingNWSE($f_x,$f_y,true);
 				?>
 				<script language="javascript">
-					parent.navi.SetCellClass(<?=$f_x?>,<?=$f_y?>,"<?="gr"?>");
-					<?php foreach ($cssclassarr as $o) {?>
-					parent.navi.SetCellClass(<?=$o->x?>,<?=$o->y?>,"<?=$o->css?>");
-					<?php }?>
+					parent.map.JSRuin(<?=intval($f_x)?>,<?=intval($f_y)?>);
 				</script>
 				<?php
 			}
@@ -192,7 +189,7 @@ if (!isset($f_building) && !isset($f_army) && isset($f_do)) switch ($f_do) {
 			sql("DELETE FROM `item` WHERE `x`=".intval($f_x)." AND `y`=".intval($f_y));
 			?>
 			<script language="javascript">
-				parent.navi.SetCellClass(<?=$f_x?>,<?=$f_y?>,"<?="gr"?>");
+				parent.map.JSRemoveItems(<?=intval($f_x)?>,<?=intval($f_y)?>);
 			</script>
 			<?php
 		break;
@@ -204,10 +201,7 @@ if (!isset($f_building) && !isset($f_army) && isset($f_do)) switch ($f_do) {
 			$cssclassarr = RegenSurroundingNWSE($f_x,$f_y,true);
 			?>
 			<script language="javascript">
-				parent.navi.SetCellClass(<?=$f_x?>,<?=$f_y?>,"<?="gr"?>");
-				<?php foreach ($cssclassarr as $o) {?>
-				parent.navi.SetCellClass(<?=$o->x?>,<?=$o->y?>,"<?=$o->css?>");
-				<?php }?>
+				parent.map.JSAdminClear(<?=intval($f_x)?>,<?=intval($f_y)?>);
 			</script>
 			<?php
 		break;
@@ -217,7 +211,7 @@ if (!isset($f_building) && !isset($f_army) && isset($f_do)) switch ($f_do) {
 			cArmy::DeleteArmy($army);
 			?>
 			<script language="javascript">
-				parent.navi.SetCellClass(<?=$f_x?>,<?=$f_y?>,"<?="gr"?>");
+				parent.map.JSRemoveArmy(<?=intval($f_x)?>,<?=intval($f_y)?>);
 			</script>
 			<?php
 		break;
@@ -302,10 +296,7 @@ if (!isset($f_building) && !isset($f_army) && isset($f_do)) switch ($f_do) {
 				$cssclassarr = RegenAreaNWSE($minx,$miny,$maxx,$maxy,true);
 				?>
 				<script language="javascript">
-					<?php foreach ($cssclassarr as $o) {?>
-					parent.navi.SetCellClass(<?=$o->x?>,<?=$o->y?>,"<?=$o->css?>");
-					<?php }?>
-					parent.navi.addpatch("<?=implode("|",$patch)?>|");
+					parent.map.JSSetTerrain(<?=intval($f_x)?>,<?=intval($f_y)?>,<?=intval($f_terrain)?>,<?=$brushrad?>);
 				</script>
 				<?php
 			}
@@ -356,9 +347,7 @@ if (!isset($f_building) && !isset($f_army) && isset($f_do)) switch ($f_do) {
 				$cssclassarr = RegenAreaNWSE($minx,$miny,$maxx,$maxy,true);
 				?>
 				<script language="javascript">
-					<?php foreach ($cssclassarr as $o) {?>
-					parent.navi.SetCellClass(<?=$o->x?>,<?=$o->y?>,"<?=$o->css?>");
-					<?php }?>
+					parent.map.JSSetBuilding(<?=intval($f_x)?>,<?=intval($f_y)?>,<?=intval($f_btype)?>,<?=$brushrad?>);
 					parent.navi.addpatch("<?=implode("|",$patch)?>|");
 				</script>
 				<?php

@@ -83,6 +83,8 @@ function Moral2HtmlIcon($moral){
 function changeUserMoral($userid,$deltamoral){
 	$deltamoral = intval(round($deltamoral));
 	$userid = intval($userid);
+	// TODO :  moral = GREATEST(0,SMALLEST(200,moral+deltamoral)) oder so...
+	// sonst hat superstarke moralaenderung keinerlei auswirkung, wenn sie über das limit kommen würde
 	sql("UPDATE `user` SET `moral`=`moral`+($deltamoral) WHERE `id`=$userid AND (`moral`+($deltamoral))>=0 AND (`moral`+($deltamoral))<=200");
 }
 
@@ -138,6 +140,7 @@ function UserHasBuilding ($user,$type,$level=0) {
 }
 
 // $o must be building object, returns css-class for map
+// TODO: DOOMED, OBSOLETE
 function GetBuildingCSS ($o,$blocked) {
 	global $gBuildingType;
 	if (!isset($o->level) || $o->level < 10)
@@ -238,6 +241,7 @@ function DrawBar ($cur,$max,$color="green",$bgcolor="#eeeeee",$border=false) {
 	<?php
 }
 
+// TODO: DOOMED, OBSOLETE, SIMPLIFY ME
 function GetBuildingPic ($type,$level,$nwse="",$l=0)
 {
 	global $gBuildingType,$gUser;

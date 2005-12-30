@@ -227,7 +227,7 @@ class cInfoArmy extends cInfoBase {
 				?>
 				<script language="javascript">
 					<?php for ($i=max(0,$pathlen-40);$i<$pathlen;$i++) { list($x,$y,$speed) = $path[$i];?>
-						parent.navi.SetCellClass(<?=$x?>,<?=$y?>,"<?=$speed?"path":"pathb"?>");
+						parent.navi.JSAddWP(<?=$army->id?>,<?=$x?>,<?=$y?>,"<?=$speed?"false":"true"?>");
 					<?php }?>
 					<?php for ($i=0;$i<$newwplen;++$i) { 
 						list($x,$y) = $newwps[$i]; 
@@ -235,7 +235,7 @@ class cInfoArmy extends cInfoBase {
 						if ($speed == 0 && !$blocked)
 							$blocked = array($x,$y);
 						?>
-						parent.navi.SetCellClass(<?=$x?>,<?=$y?>,"<?=$speed?"wp":"pathb"?>");
+						parent.navi.JSAddWPLinePoint(<?=$army->id?>,<?=$x?>,<?=$y?>,"<?=$speed?"false":"true"?>");
 					<?php }?>
 				</script>
 				<?php

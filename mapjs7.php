@@ -101,9 +101,10 @@ gLeft = <?=$gLeft?>;
 gTop = <?=$gTop?>;
 gScroll = <?=$gScroll?>;
 gSID = "<?=$gSID?>";
+gActiveArmy = <?=isset($f_army)?intval($f_army):0?>;
 gThisUserID = <?=intval($gUser->id)?>;
 gGFXBase = "<?=$gGFXBase?>";
-gBig = <?=isset($f_big)?"true":"false"?>;
+gBig = <?=(isset($f_big) && $f_big)?1:0?>;
 gMapMode = <?=isset($f_mode)?intval($f_mode):kJSMapMode_Normal?>;
 <?php
 $gTerrain = sqlgettable("SELECT * FROM `terrain` WHERE ".$xylimit." ORDER BY `y`,`x`");
@@ -197,5 +198,5 @@ $gLocalGuildIDs = array_unique($gLocalGuildIDs);
 </SCRIPT>
 </head><body id="mapbody" onLoad="MapInit()">
 <span id="mapzone">JavaScript needed</span>
-<?php if (1) {?><div name="mapdebug"></span><?php }?>
+<?php if (0) {?><div name="mapdebug"></div><?php }?>
 </body></html>

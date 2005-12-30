@@ -1,20 +1,26 @@
-// available map-params : gCX,gCY,gLeft,gTop,gSID,gThisUserID,gGFXBase,gBig,gXMid,gYMid,gMapMode,gScroll
+// available map-params : gCX,gCY,gLeft,gTop,gSID,gThisUserID,gGFXBase,gBig,gXMid,gYMid,gMapMode,gScroll,gActiveArmy
 // available map-data : gTerrain,gBuildings,gArmies,gItems,gPlans,gOre??
 // available globals : gTerrainTypes,gBuildingTypes...
 // see also mapnavi_globals.js.php
 
-// TODO : tor-zu- -> tor-offen
+// TODO : wegpunkte-anzeige ?? GetNextStep in js coden...
 // TODO : user anzeig : gilde, punktestand, rang...
 // TODO : armee - anzeige : gilde,sprechblasen ?
-// TODO : tore : auf/zu grafik + tip (für wen auf/zu/zoll...)
-// TODO : portal : tip (verbunden mit für wen zoll/auf/zu)
+// TODO : portal : maptip : schloss/lock grafik, wenn nicht benutzbar ?
+// TODO : localusers : FOF auslesen -> namen einfärben in maptip
+// TODO : gebäude hp-balken + farbe im maptip
+// TODO : tool : goto owner (of army, building...)
+// TODO : creepmap + diplomap icons (baummonster+fähnchen/diplomatenhut)
 
 
 // the order in which fields are filled from mapjs7.php
 gUsers = new Array(); // filled with function, for string security
 gArmies = new Array(); // filled with function, for string security
+gBuildingsCache = false;
 gTerrainPatchTypeMap = new Array(); // generated from gTerrainPatchType
-gTerrainMap = false; // generated from MapInit
+gTerrainMap = false; // generated from CompileTerrain()
+gTerrainMap_raw = false; // generated from CompileTerrain()
+gTerrainMap_nwse = false; // generated from CompileTerrain()
 var gXMid,gYMid;
 gNWSEDebug = false; // shows typeid and connect-to infos in maptip
 
@@ -27,36 +33,122 @@ kJSMapMode_Bauzeit = 2;
 kJSMapMode_HP = 3;
 gLoading = true; // set to true when navi is clicked
 gAllLoaded = false; // mouselistener protection
+gBigMap = false;
+gLastDebugTime = 0;
+gProfileLastLine = "";
+
+
+// obsolete interface
+function getmode() { return gMode;}
+function getleft() { return gLeft;}
+function gettop() { return gTop;}
+function getx() { return gLeft+gXMid;}
+function gety() { return gTop+gYMid;}
+function getcx() { return gCX;}
+function getcy() { return gCY;}
+
+
+// new interface
+function JSInsertPlan (x,y,type,priority) {
+	var res = new Object();
+	res.x = x;
+	res.y = y;
+	res.type = type;
+	res.priority = priority;
+	gPlans.push(res);
+	RefreshCell(x-gLeft,y-gTop);
+}
+function JSRemovePlan (x,y) {
+	var i;
+	for (i in gPlans) if (gPlans[i].x == x && gPlans[i].y == y) {
+		gPlans[i] = false;
+		RefreshCell(x-gLeft,y-gTop);
+		return;
+	}
+}
+function JSInsertItem (x,y,type,amount) {}
+function JSInsertArmy (id,x,y,name,type,user,units,items,jsflags) {}
+function JSZap (x,y) {}
+function JSRuin (x,y) {}
+function JSRemoveItems (x,y) {}
+function JSAdminClear (x,y) {}
+function JSRemoveArmy (x,y) {}
+function JSSetTerrain (x,y,type,brushrad) { /* ./infoadmincmd.php:298:  ... more params : line,terraformer-limit.. */ }
+function JSSetBuilding (x,y,type,brushrad) { /* ./infoadmincmd.php:352:  ... more params : line,level.. */ }
+function JSAddWP (armyid,x,y,blocked) {}
+function JSAddWPLinePoint (armyid,x,y,blocked) {} // the dots...
+
+
+
+// speedup
+function jsParseBuildings () {
+	var i;
+	gBuildings = gBuildings.split(";");	
+	gBuildings.pop();
+	for (i in gBuildings) {
+		gBuildings[i] = gBuildings[i].split(",");
+		var res = new Object();
+		res.x = gBuildings[i][0];
+		res.y = gBuildings[i][1];
+		res.type = gBuildings[i][2];
+		res.user = gBuildings[i][3];
+		res.level = gBuildings[i][4];
+		res.hp = gBuildings[i][5];
+		res.construction = gBuildings[i][6];
+		res.jsflags = gBuildings[i][7];			
+		gBuildingsCache[res.y-gTop+1][res.x-gLeft+1] = res;
+	}
+}
 
 // executed onLoad, parse data, CreateMap() when finished
 function MapInit() {
+	profiling("starting init");
+	
 	var i,j,x,y;
 	gXMid=Math.floor(gCX/2);
 	gYMid=Math.floor(gCY/2);
 	
+	profiling("parse terrain");
 	// parse data
 	gTerrain = gTerrain.split(";");							
 	for (i in gTerrain) gTerrain[i] = gTerrain[i].split(",");
+	
+	profiling("parse buildings");
+	// special for speed
+	gBuildingsCache = new Array(gCY+2);
+	for (y=0;y<gCY+2;++y) {
+		gBuildingsCache[y] = new Array(gCX+2);
+		for (x=0;x<gCX+2;++x) gBuildingsCache[y][x] = false;
+	}
 	jsParseBuildings();
+	
+	
+	profiling("parse items");
 	jsParseItems();
+	profiling("parse plans");
 	jsParsePlans();
 	
+	profiling("parse armies");
 	// parse and summarize units in armies (summoned units are added to normal units)
 	for (i in gArmies) {
 		gArmies[i].units = ParseTypeAmountList(gArmies[i].units);
 		gArmies[i].items = ParseTypeAmountList(gArmies[i].items);
 	}
+	profiling("parse gTerrainType");
 	
 	for (i in gTerrainType) {
 		gTerrainType[i].connectto_terrain = gTerrainType[i].connectto_terrain.split(",");
 		gTerrainType[i].connectto_building = gTerrainType[i].connectto_building.split(",");
 	}
+	
+	profiling("parse gBuildingType");
 	for (i in gBuildingType) {
 		gBuildingType[i].connectto_terrain = gBuildingType[i].connectto_terrain.split(",");
 		gBuildingType[i].connectto_building = gBuildingType[i].connectto_building.split(",");
 	}
 	HackCon(); // HACK : hardcoded connections, see mapjs7_globals.js.php
 	
+	profiling("parse gTerrainPatchType");
 	for (i in gTerrainPatchType) {
 		var x = gTerrainPatchType[i];
 		if (gTerrainPatchTypeMap[x.here] == undefined)
@@ -64,21 +156,36 @@ function MapInit() {
 		gTerrainPatchTypeMap[x.here].push(x);	
 	}
 	
-	// construct terrain map
-	var termap_raw = new Array(gCY+2);
-	var termap_nwse = new Array(gCY+2);
+	gTerrainMap = new Array(gCY+2);
+	gTerrainMap_raw = new Array(gCY+2);
+	gTerrainMap_nwse = new Array(gCY+2);
+	for (y=-1;y<gCY+1;++y) {
+		gTerrainMap[y+1] = new Array(gCX+2);
+		gTerrainMap_raw[y+1] = new Array(gCX+2);
+		gTerrainMap_nwse[y+1] = new Array(gCX+2);
+	}
+	CompileTerrain();
 	
+	profiling("construct create map");
+	CreateMap();
+	profiling("done");profiling(""); // double call to finish output
+	gLoading = false;
+}
+
+function CompileTerrain () {
+	// construct terrain map
+	
+	profiling("construct terrain, pass1");
 	// first pass, simple nwse (with connect to building/terrain...)
 	for (y=-1;y<gCY+1;++y) {
-		termap_raw[y+1] = new Array(gCX+2);
-		termap_nwse[y+1] = new Array(gCX+2);
 		for (x=-1;x<gCX+1;++x) {
 			var terraintype = GetTerrainType(x,y);
-			termap_raw[y+1][x+1] = gTerrainType[terraintype].gfx;
-			termap_nwse[y+1][x+1] = GetNWSE(gTerrainType[terraintype],x,y);
+			gTerrainMap_raw[y+1][x+1] = gTerrainType[terraintype].gfx;
+			gTerrainMap_nwse[y+1][x+1] = GetNWSE(gTerrainType[terraintype],x,y);
 		}
 	}
 	
+	profiling("construct terrain, pass2");
 	// second pass : terrain patches
 	for (x=-1;x<gCX+1;++x) for (y=-1;y<gCY+1;++y) {
 		var type = GetTerrainType(x,y);
@@ -90,25 +197,21 @@ function MapInit() {
 				(o.right==0 || (o.right	>0 && GetTerrainType(x+1,y) == o.right)) &&
 				(o.up	==0 || (o.up	>0 && GetTerrainType(x,y-1) == o.up)) &&
 				(o.down	==0 || (o.down	>0 && GetTerrainType(x,y+1) == o.down)) ) {
-				termap_raw[y+1][x+1] = o.gfx;
-				if (o.left	>0 && x >= 0)	termap_nwse[y+1][x+1-1] |= kNWSE_E;
-				if (o.right	>0 && x < gCX)	termap_nwse[y+1][x+1+1] |= kNWSE_W;
-				if (o.up	>0 && y >= 0)	termap_nwse[y+1-1][x+1] |= kNWSE_S;
-				if (o.down	>0 && y < gCY)	termap_nwse[y+1+1][x+1] |= kNWSE_N;
+				gTerrainMap_raw[y+1][x+1] = o.gfx;
+				if (o.left	>0 && x >= 0)	gTerrainMap_nwse[y+1][x+1-1] |= kNWSE_E;
+				if (o.right	>0 && x < gCX)	gTerrainMap_nwse[y+1][x+1+1] |= kNWSE_W;
+				if (o.up	>0 && y >= 0)	gTerrainMap_nwse[y+1-1][x+1] |= kNWSE_S;
+				if (o.down	>0 && y < gCY)	gTerrainMap_nwse[y+1+1][x+1] |= kNWSE_N;
 			}
 		}
 	}
 	
+	profiling("construct terrain, compile");
 	// compile to terrainmap
-	gTerrainMap = new Array(gCY+2);
 	for (y=-1;y<gCY+1;++y) {
-		gTerrainMap[y+1] = new Array(gCX+2);
 		for (x=-1;x<gCX+1;++x)
-			gTerrainMap[y+1][x+1] = g_nwse(termap_raw[y+1][x+1],termap_nwse[y+1][x+1]);
+			gTerrainMap[y+1][x+1] = g_nwse(gTerrainMap_raw[y+1][x+1],gTerrainMap_nwse[y+1][x+1]);
 	}
-	
-	CreateMap();
-	gLoading = false;
 }
 
 function ParseTypeAmountList (list) {
@@ -124,18 +227,25 @@ function ParseTypeAmountList (list) {
 	return res;
 }
 
+function RefreshCell (relx,rely) {
+	if (relx < 0 || rely < 0 || relx >= gCX || rely >= gCY) return;
+	document.getElementById("cell_"+relx+"_"+rely).innerHTML = GetCellHTML(relx,rely);
+}
+
 // createmap is called as soon as loading is complete
 function CreateMap() {
 	var row,x,y,i,j;
 	
 	var maphtml = "<table class=\"map\" border=0 cellpadding=0 cellspacing=0 onMouseout=\"KillTip()\">\n";
 	
+	
 	// maptiles
 	for (y=-1;y<gCY+1;++y) {
+		profiling("construct map row "+y);
 		row = "";
 		for (x=-1;x<gCX+1;++x) if (x >= 0 && x < gCX && y >= 0 && y < gCY) {
 			// cell
-			row += "<td class=\"mapcell\">"+GetCellHTML(x,y)+"</td>\n";
+			row += "<td class=\"mapcell\" id=\"cell_"+x+"_"+y+"\">"+GetCellHTML(x,y)+"</td>\n";
 		} else {
 			// border
 			var myclass = "mapborder_" + (y<gYMid ? "n" : (y==gYMid?"":"s")) + (x<gXMid ? "w" : (x==gXMid?"":"e"));
@@ -149,6 +259,8 @@ function CreateMap() {
 	}
 	
 	maphtml += "</table>";
+	
+	profiling("construct map tabs");
 	
 	var tab_corner = "";
 	tab_corner += "<span class=\"mapscroll\">";
@@ -169,8 +281,8 @@ function CreateMap() {
 	tab_pre += "			<a href=\"javascript:OpenMap(1)\"><img alt=\"bigmap\" title=\"bigmap\" border=0 src=\"gfx/icon/bigmap.png\"></a>";
 	tab_pre += "			<a href=\"javascript:OpenMap(2)\"><img alt=\"minimap2\" title=\"minimap2\" border=0 src=\"gfx/icon/minimap2.png\"></a>";
 	tab_pre += "			<a href=\"javascript:OpenMap(3)\"><img alt=\"minimap\" title=\"minimap\" border=0 src=\"gfx/icon/minimap.png\"></a>";
-	tab_pre += "			<a href=\"javascript:OpenMap(4)\"><img alt=\"diplomap\" title=\"diplomap\" border=0 src=\"gfx/icon/minimap.png\"></a>";
-	tab_pre += "			<a href=\"javascript:OpenMap(5)\"><img alt=\"creepmap\" title=\"creepmap\" border=0 src=\"gfx/icon/minimap.png\"></a>";
+	tab_pre += "			<a href=\"javascript:OpenMap(4)\"><img alt=\"creepmap\" title=\"creepmap\" border=0 src=\"gfx/icon/creepmap.png\"></a>";
+	tab_pre += "			<a href=\"javascript:OpenMap(5)\"><img alt=\"diplomap\" title=\"diplomap\" border=0 src=\"gfx/icon/diplomap.png\"></a>";
 	tab_pre += "			<span>"+tab_corner+"</span>";
 	tab_pre += "		</div>";
 	tab_pre += "	</div>";
@@ -194,14 +306,35 @@ function CreateMap() {
 	
 	var maptiphtml = "<span class=\"maptip\" onMouseover=\"KillTip()\" name=\""+kMapTipName+"\" style=\"position:absolute;top:0px;left:0px; visibility:hidden;\"></span>";
 	
+	profiling("sending html to browser");
 	
 	document.getElementById("mapzone").innerHTML = tab_pre + maphtml + tab_post + maptiphtml;
 	return true;
 }
 
 function OpenMap (type) {
-	alert("todo:open map now");
+	var x = gLeft+gXMid;
+	var y = gTop+gYMid;
+	if (type == 1) { // bigmap
+		var army = 0;
+		//if (document.getElementsByName("army")[0] != null)
+		//	army = document.getElementsByName("army")[0].value;
+		// "BigMap"+Math.abs(x)+Math.abs(y)
+		gBigMap = window.open("mapjs7.php?sid="+gSID+"&cx=50&cy=50&big=1&army="+gActiveArmy+"&mode="+gMapMode+"&x="+x+"&y="+y,"BigMap");
+	} else if (type == 2) { //minimap2
+		window.open("minimap2.php?sid="+gSID+"&crossx="+x+"&crossy="+y,"MiniMap","location=no,menubar=no,toolbar=no,status=no,resizable=yes,scrollbars=yes");
+	} else if (type == 3) { //minimap
+		window.open("minimap.php?sid="+gSID+"&cx="+x+"&cy="+y,"MiniMap","location=no,menubar=no,toolbar=no,status=no,resizable=yes,scrollbars=yes");
+	} else if (type == 4) { //creepmap
+		window.open("minimap.php?mode=creep&sid="+gSID+"&cx="+x+"&cy="+y,"CreepMap","location=no,menubar=no,toolbar=no,status=no,resizable=yes,scrollbars=yes");
+	} else if (type == 5) { //diplomap
+		window.open("minimap.php?mode=guild&diplomap=1&sid="+gSID+"&cx="+x+"&cy="+y,"DiploMap","location=no,menubar=no,toolbar=no,status=no,resizable=yes,scrollbars=yes");
+	} else if (type == 100) { //hugemap
+		if (!confirm("Sicher ? Die HugeMap ist riesig und hat 200*200 felder, die BigMap 50*50...")) return;
+		window.open("<?=kMapScript?>?sid="+gSID+"&cx=200&cy=200&big=1&x="+x+"&y="+y,"HugeMap");
+	}
 }
+
 
 function mapscroll_plus() {
 	document.getElementsByName('mapscroll')[0].value *= 2;
@@ -226,7 +359,7 @@ function GetCellHTML (relx,rely) {
 	layers[layers.length] = GetTerrainPic(relx,rely);
 	
 	// building
-	var building = SearchPos(gBuildings,relx,rely);
+	var building = GetBuilding(relx,rely);
 	if (building) {
 		if (building.construction > 0) {
 			layers[layers.length] = g(kConstructionPic);
@@ -277,7 +410,7 @@ function GetCellHTML (relx,rely) {
 		var bg = (i==0)?("background-color:"+backgroundcolor+";"):"";
 		res += "<div style=\"background-image:url("+layers[i]+"); "+bg+"\">";
 	}
-	res += "<div name=\"mouselistener\" id=\"cell_"+relx+"_"+rely+"\" onClick=\"mapclick("+relx+","+rely+")\" onMouseover=\"if (gAllLoaded) if (!gLoading) mapover("+relx+","+rely+")\">";
+	res += "<div name=\"mouselistener\" onClick=\"mapclick("+relx+","+rely+")\" onMouseover=\"if (gAllLoaded) if (!gLoading) mapover("+relx+","+rely+")\">";
 	if (relx == gXMid && rely == gYMid) res += "<img src='gfx/crosshair.png'>";
 	res += '</div>';
 	for (i in layers) res += '</div>';
@@ -328,7 +461,7 @@ function mapover (relx,rely) {
 	tiptext += "</td></tr>";
 	
 	// building
-	var building = SearchPos(gBuildings,relx,rely);
+	var building = GetBuilding(relx,rely);
 	if (building) {
 		tiptext += "<tr><td nowrap><img src=\""+GetBuildingPic(building,relx,rely)+"\"></td><td nowrap colspan=2 align=\"left\">";
 		tiptext += "<span>"+gBuildingType[building.type].name + " Stufe "+building.level + "</span><br>";
@@ -346,7 +479,7 @@ function mapover (relx,rely) {
 	if (plan) {
 		tiptext += "<tr><td nowrap>";
 		tiptext += "<img src=\""+g(kTransCP)+"\"></td><td nowrap>";
-		tiptext += "<img src=\""+g3(gBuildingType[plan.type].gfx,0,0)+"\"></td><td nowrap>";
+		tiptext += "<img src=\""+g3(gBuildingType[plan.type].gfx,HackNWSE(plan.type,0,relx,rely),0)+"\"></td><td nowrap>";
 		tiptext += "<span>Bauplan</span><br>";
 		tiptext += "<span>"+gBuildingType[plan.type].name+"</span>";
 		tiptext += "</td></tr>";
@@ -477,7 +610,7 @@ function SearchPosArr (arr,relx,rely) {
 	return res;
 }
 function GetBuildingType (relx,rely) {
-	var building = SearchPos(gBuildings,relx,rely);
+	var building = GetBuilding(relx,rely);
 	if (building == false) return 0;
 	return building.type;
 }
@@ -487,6 +620,11 @@ function GetTerrainType (relx,rely) {
 	if (terraintype == 0) return kDefaultTerrainID;
 	return terraintype;
 }
+function GetBuilding (relx,rely) {
+	if (relx < -1 || rely < -1 || relx >= gCX+1 || rely >= gCY+1) return false;
+	return gBuildingsCache[rely+1][relx+1];
+}
+
 
 // terrain/building pic + nwse
 
@@ -554,11 +692,28 @@ function nav(x,y) {
 	if (y < 0) y = -1; else if (y > 0) y = 1;
 	x = gLeft + gXMid + x * gScroll;
 	y = gTop + gYMid + y * gScroll;
-	location.href = "?sid="+gSID+"&x="+x+"&y="+y+"&mode="+gMapMode+"&scroll="+gScroll;
+	navabs(x,y);
+}
+
+function navabs (x,y) {
+	location.href = "?sid="+gSID+"&x="+x+"&big="+gBig+"&y="+y+"&cx="+gCX+"&cy="+gCY+"&mode="+gMapMode+"&scroll="+gScroll+"&army="+gActiveArmy;
+}
+
+
+function profiling (text) {
+	return; // no more profiling needed, building-speedup did a fine job !
+	var curdate = new Date();
+	var curtime = curdate.getTime();
+	var timediff = (gLastDebugTime==0)?0:(curtime - gLastDebugTime);
+	gLastDebugTime = curtime;
+	if (timediff > 0)
+		gProfileLastLine += "...took "+(Math.ceil(timediff/10)/100)+" seconds.<br>";
+	debuglog(gProfileLastLine);
+	gProfileLastLine = text;
 }
 
 function debuglog (text) {
-	document.getElementsByName("mapdebug")[0].innerHTML = text+"<br>"+document.getElementsByName("mapdebug")[0].innerHTML;
+	document.getElementsByName("mapdebug")[0].innerHTML = text+document.getElementsByName("mapdebug")[0].innerHTML;
 }
 
 gAllLoaded = true; 

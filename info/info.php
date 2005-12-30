@@ -159,12 +159,12 @@ if (!isset($f_building) && !isset($f_army) && isset($f_do)) {
 					
 					$mycon->priority = intval(sqlgetone("SELECT MAX(`priority`) FROM `construction` WHERE `user` = ".$gUser->id)) + 1;
 					$r = sql("SELECT `id` FROM `construction` WHERE `x`=".$mycon->x." AND `y`=".$mycon->y." AND `user`=".$mycon->user);
-					if(mysql_num_rows($r) == 0)sql("INSERT INTO `construction` SET ".obj2sql($mycon));
+					if(mysql_num_rows($r) == 0)	sql("INSERT INTO `construction` SET ".obj2sql($mycon));
 						
 						
 					?>
 					<script language="javascript">
-						parent.navi.SetCellClass(<?=intval($f_x)?>,<?=intval($f_y)?>,"cp");
+						parent.map.JSInsertPlan(<?=$mycon->x?>,<?=$mycon->y?>,<?=$mycon->type?>,0);
 					</script>
 					<?php
 				}
@@ -179,7 +179,7 @@ if (!isset($f_building) && !isset($f_army) && isset($f_do)) {
 					echo "Bauplan abgebrochen <!-- 2 -->";
 					?>
 					<script language="javascript">
-						parent.navi.SetCellClass(<?=$con->x?>,<?=$con->y?>,"gr");
+						parent.map.JSRemovePlan(<?=intval($f_x)?>,<?=intval($f_y)?>);
 					</script>
 					<?php
 				}
@@ -195,7 +195,7 @@ if (!isset($f_building) && !isset($f_army) && isset($f_do)) {
 					echo "Bauplan abgebrochen <!-- 2 -->";
 					?>
 					<script language="javascript">
-						parent.navi.SetCellClass(<?=$con->x?>,<?=$con->y?>,"gr");
+						parent.map.JSRemovePlan(<?=$con->x?>,<?=$con->y?>);
 					</script>
 					<?php
 				}

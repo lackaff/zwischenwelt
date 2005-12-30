@@ -5,109 +5,9 @@ require_once("lib.guild.php");
 require_once("lib.construction.php");
 Lock();
 
+// TODO : gAllUsers is only used for admin
 $gAllUsers = sqlgettable("SELECT `id`,`name` FROM `user` ORDER BY `name`","id");
 
-
-if (isset($f_createbodenschatz)) {
-	sql("DELETE FROM `building` WHERE `type` IN (".implode(",",$gBodenSchatzBuildings).")");;
-
-	function GetRandBodenSchatz ($ter) {
-		$possible = array();
-		if (in_array($ter,array(0=>kTerrain_River,kTerrain_Sea,kTerrain_DeepSea))) {
-			$possible[] = kBodenSchatz_Fisch;
-		}
-		if (in_array($ter,array(0=>kTerrain_Forest,kTerrain_TreeStumps,kTerrain_YoungForest))) {
-			$possible[] = kBodenSchatz_EichenHolz;
-			$possible[] = kBodenSchatz_Wild;
-			$possible[] = kBodenSchatz_Fruechte;	
-		}
-		if (in_array($ter,array(0=>kTerrain_Grass,kTerrain_Flowers))) {
-			$possible[] = kBodenSchatz_Wild;
-			$possible[] = kBodenSchatz_Fruechte;	
-			$possible[] = kBodenSchatz_Weizen;	
-			$possible[] = kBodenSchatz_Kristalle;	
-			$possible[] = kBodenSchatz_Erz;	
-			$possible[] = kBodenSchatz_Marmor;	
-			$possible[] = kBodenSchatz_Granit;	
-		}
-		if (in_array($ter,array(0=>kTerrain_Swamp,kTerrain_Desert))) {
-			$possible[] = kBodenSchatz_Kristalle;
-			$possible[] = kBodenSchatz_Fruechte;	
-		}
-		if (in_array($ter,array(0=>kTerrain_Rubble))) {
-			$possible[] = kBodenSchatz_Kristalle;	
-			$possible[] = kBodenSchatz_Erz;	
-			$possible[] = kBodenSchatz_Marmor;	
-			$possible[] = kBodenSchatz_Granit;	
-		}
-		if (count($possible) == 0) return false;
-		return $possible[array_rand($possible)];
-	}
-	
-	$left = $gGlobal["minimap_left"];
-	$right = $gGlobal["minimap_right"];
-	$top = $gGlobal["minimap_top"];
-	$bottom = $gGlobal["minimap_bottom"];
-	$step = 64;
-	$maxplayerdist = $step;
-	$jitter = $step/2;
-	$insertcount = 0;
-	for ($x=$left+$step/2;$x<=$right-$step/2;$x+=$step)
-	for ($y=$top+$step/2;$y<=$bottom-$step/2;$y+=$step) {
-		if (rand(1,4) == 1) continue;
-		
-		if (!sqlgetone("SELECT 1 FROM `building` WHERE
-			`x` >= ".intval($x)." - $maxplayerdist AND 
-			`x` <= ".intval($x)." + $maxplayerdist AND 
-			`y` >= ".intval($y)." - $maxplayerdist AND 
-			`y` <= ".intval($y)." + $maxplayerdist AND 
-			`user` > 0 LIMIT 1")) continue;
-			
-		for ($i=0;$i<300;$i++) {
-			$x2 = $x + rand(-$jitter,+$jitter);
-			$y2 = $y + rand(-$jitter,+$jitter);
-			
-			$ter = sqlgetone("SELECT `type` FROM `terrain` WHERE `x` = ".intval($x2)." AND `y` = ".intval($y2)." LIMIT 1");
-			if (!$ter) $ter = kTerrain_Grass;
-			$bs = GetRandBodenSchatz($ter);
-			if (!$bs) continue;
-			
-			$b = sqlgetobject("SELECT * FROM `building` WHERE `x` = ".intval($x2)." AND `y` = ".intval($y2)." LIMIT 1");
-			if ($b && $b->user == 0) { sql("DELETE FROM `building` WHERE `id` = ".$b->id); $b = false; }
-			if ($b) continue;
-			break;
-		}
-		if ($b) continue;
-		if (!$bs) continue;
-		
-		echo "($x2,$y2),BODENSCHATZ:".$gBuildingType[$bs]->name."<br>";
-		$newbodenschatz = false;
-		$newbodenschatz->type = $bs;
-		$newbodenschatz->x = $x2;
-		$newbodenschatz->y = $y2;
-		$newbodenschatz->hp = $gBuildingType[$newbodenschatz->type]->maxhp;
-		sql("INSERT INTO `building` SET ".obj2sql($newbodenschatz));
-		$insertcount++;
-	}
-	echo "$insertcount Bodenschätze<br>";
-}
-
-if (isset($f_regennwse)) {
-	require_once("lib.map.php");
-	
-	$gAllTerrain = sqlgettable("SELECT * FROM `terrain`");
-	foreach ($gAllTerrain as $o)
-		UpdateTerrainNWSE($o);
-	echo "<br>";
-	echo count($gAllTerrain)." terrain tiles analysed<br>";
-	
-	$gAllBuildings = sqlgettable("SELECT * FROM `building`");
-	foreach ($gAllBuildings as $o)
-		UpdateBuildingNWSE($o);
-	echo "<br>";
-	echo count($gAllBuildings)." buildings analysed<br>";
-	exit;
-}
 if (isset($f_regenmini)) {  
 	@unlink("tmp/pngmap-guild.png");
 	@unlink("tmp/pngmapcreep.png");
@@ -121,32 +21,6 @@ if (isset($f_regentypes)) {
 	require_once(kTypeCacheFile);
 }
 
-// see mapstyles.php and mapstyles.css,
-if (isset($f_regencss)) {
-	// generate css file
-	rob_ob_start();
-	include("mapstyle.php");
-	$outbuf = rob_ob_end();
-	$outbuf = str_replace("\r","",$outbuf);
-	$myfile = fopen("mapstyle.css","w");
-	fputs($myfile,$outbuf);
-	fclose($myfile);
-}
-
-if (isset($f_do) && $f_do == "setmapmode")
-{
-	$gUser->mapmode = intval($f_mapmode);
-	sql("UPDATE `user` SET `mapmode` = ".$gUser->mapmode." WHERE `id` = ".$gUser->id);
-	Redirect(RegenQuery(array("x","y","sid")));
-}
-
-
-// dont change x,y below here
-$gCX = isset($f_cx)?(min(200,max(0,intval($f_cx)))|1):11;
-$gCY = isset($f_cy)?(min(200,max(0,intval($f_cy)))|1):11;
-$gScroll = floor($gCX/2);
-
-$gWPArmy = 0;
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/transitional.dtd">
 <html>
@@ -159,11 +33,14 @@ $gWPArmy = 0;
 	var curtoolparam = 0;
 	var bigmap = null;
 	function nav (x,y) {
-		var scroll = document.getElementsByName("myscroll")[0].value;
-		navabs(x*scroll+parent.map.getx(),y*scroll+parent.map.gety(),x==0&&y==0);
+		parent.map.nav(x,y);
+		//var scroll = document.getElementsByName("myscroll")[0].value;
+		//navabs(x*scroll+parent.map.getx(),y*scroll+parent.map.gety(),x==0&&y==0);
 	}
 	function navabs (x,y,cancelmode) {
+		parent.map.navabs(x,y);
 		//resettool();
+		/*
 		var army = 0;
 		if (document.getElementsByName("army")[0] != null)
 			army = document.getElementsByName("army")[0].value;
@@ -172,76 +49,20 @@ $gWPArmy = 0;
 		document.getElementsByName("pos")[0].value = x+","+y;
 		var mode = cancelmode?0:parent.map.getmode();//kMapScript
 		parent.map.location.href = parent.map.location.pathname+"<?=Query("?sid=?&big=?&naviset=1&cx=$gCX&cy=$gCY")?>&mode="+mode+"&x="+x+"&y="+y+"&army="+army;
+		*/
 		// todo : hilightplayer
 	}
-	function HugeMap () {
-		var x = parent.map.getx();
-		var y = parent.map.gety();
-		if (!confirm("Sicher ? Die HugeMap ist riesig und hat 200*200 felder, die BigMap 50*50...")) return;
-		window.open("<?=kMapScript?>?sid="+gSID+"&cx=200&cy=200&big=1&x="+x+"&y="+y,"HugeMap");
-	}
-	function BigMap () {
-		var army = 0;
-		if (document.getElementsByName("army")[0] != null)
-			army = document.getElementsByName("army")[0].value;
-		var x = parent.map.getx();
-		var y = parent.map.gety();
-		// "BigMap"+Math.abs(x)+Math.abs(y)
-		var mode = parent.map.getmode();
-		bigmap = window.open("<?=kMapScript?>?sid="+gSID+"&cx=50&cy=50&big=1&army="+army+"&mode="+mode+"&x="+x+"&y="+y,"BigMap");
-	}
-	function MiniMap () {
-		var x = parent.map.getx();
-		var y = parent.map.gety();
-		window.open("minimap.php?sid="+gSID+"&cx="+x+"&cy="+y,"MiniMap","location=no,menubar=no,toolbar=no,status=no,resizable=yes,scrollbars=yes");
-	}
-	function MiniMap2 () {
-		var x = parent.map.getx();
-		var y = parent.map.gety();
-		window.open("minimap2.php?sid="+gSID+"&crossx="+x+"&crossy="+y,"MiniMap","location=no,menubar=no,toolbar=no,status=no,resizable=yes,scrollbars=yes");
-	}
-	function CreepMap () {
-		var x = parent.map.getx();
-		var y = parent.map.gety();
-		window.open("minimap.php?mode=creep&sid="+gSID+"&cx="+x+"&cy="+y,"CreepMap","location=no,menubar=no,toolbar=no,status=no,resizable=yes,scrollbars=yes");
-	}
-	function DiploMap () {
-		var x = parent.map.getx();
-		var y = parent.map.gety();
-		window.open("minimap.php?mode=guild&diplomap=1&sid="+gSID+"&cx="+x+"&cy="+y,"DiploMap","location=no,menubar=no,toolbar=no,status=no,resizable=yes,scrollbars=yes");
-	}
-	function PlanMap () {
-		var x = parent.map.getx();
-		var y = parent.map.gety();
-		var mode = parent.map.getmode();
-		if (mode == "bauplan")
-				parent.map.location.href = "<?=Query(kMapScript."?sid=?&big=?&cx=$gCX&cy=$gCY")?>&x="+x+"&y="+y;
-		else	parent.map.location.href = "<?=Query(kMapScript."?sid=?&big=?&cx=$gCX&cy=$gCY&mode=bauplan")?>&x="+x+"&y="+y;
-	}
-	function BauzeitMap () {
-		var x = parent.map.getx();
-		var y = parent.map.gety();
-		var mode = parent.map.getmode();
-		if (mode == "bauzeit")
-				parent.map.location.href = "<?=Query(kMapScript."?sid=?&big=?&cx=$gCX&cy=$gCY")?>&x="+x+"&y="+y;
-		else	parent.map.location.href = "<?=Query(kMapScript."?sid=?&big=?&cx=$gCX&cy=$gCY&mode=bauzeit")?>&x="+x+"&y="+y;
-	}
-	function HPMap () {
-		var x = parent.map.getx();
-		var y = parent.map.gety();
-		var mode = parent.map.getmode();
-		if (mode == "health")
-				parent.map.location.href = "<?=Query(kMapScript."?sid=?&big=?&cx=$gCX&cy=$gCY")?>&x="+x+"&y="+y;
-		else	parent.map.location.href = "<?=Query(kMapScript."?sid=?&big=?&cx=$gCX&cy=$gCY&mode=health")?>&x="+x+"&y="+y;
-	}
+	
 	function updatepos (x,y) {
 		resettool();
+		/*
 		if (document.getElementsByName("x")[0] != null)
 			document.getElementsByName("x")[0].value = x;
 		if (document.getElementsByName("y")[0] != null)
 			document.getElementsByName("y")[0].value = y;
 		if (document.getElementsByName("pos")[0] != null)
-			document.getElementsByName("pos")[0].value = x+","+y;			
+			document.getElementsByName("pos")[0].value = x+","+y;
+		*/
 	}
 	function settool (tool,param,gfx) {
 		curtool = tool;
@@ -351,6 +172,8 @@ $gWPArmy = 0;
 		return true;
 	}
 	function SetCellClass (x,y,classname) {
+		// ignored so far to prevent error... need more arguments
+		/*
 		if (bigmap && !bigmap.closed) {
 			var x2 = x - bigmap.getleft();
 			var y2 = y - bigmap.gettop();
@@ -363,6 +186,7 @@ $gWPArmy = 0;
 		//alert("SetCellClass ("+x+","+y+","+classname+")");
 		//document.getElementsByTagName("td")[<?=$gCX?>*y+x].attributes['class'].nodeValue = classname;
 		parent.map.document.getElementsByTagName("div")[<?=$gCX?>*y+x].className = classname;
+		*/
 	}
 	//SetCellClass(54,32,"cp");
 	//SetCellClass(55,33,"cp");

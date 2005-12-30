@@ -22,6 +22,7 @@ function FindRandomStartplace () {
 //checks if the position is in an buildable area
 //will be used to limit new hq in an area in the middle of the world
 //min max are stored in the globals table
+// TODO : error message when attemting to set HQ outside !!!
 function isPositionInBuildableRange($x,$y){
 	global $gGlobal;
 	$minx = $gGlobal["hq_min_x"];
@@ -31,11 +32,13 @@ function isPositionInBuildableRange($x,$y){
 	return ($x>=$minx && $x<=$maxx) && ($y>=$miny && $y<=$maxy);
 }
 
+// TODO: OBSOLETE ???
 function TypeCheck ($arr) {
 	if (count($arr) == 0) return "1";
 	return "`type` = ".implode(" OR `type` = ",$arr);
 }
 
+// TODO: DOOMED, OBSOLETE
 function UpdateTerrainNWSE ($o) {
 	global $gTerrainType;
 	
@@ -92,6 +95,7 @@ function UpdateTerrainNWSE ($o) {
 	return $code;
 }
 
+// TODO: DOOMED, OBSOLETE
 function UpdateBuildingNWSE ($o) {
 	$types = array();
 	$code = "";
@@ -172,12 +176,14 @@ function UpdateBuildingNWSE ($o) {
 	return $code;
 }
 
+// TODO: DOOMED, OBSOLETE
 function RegenSurroundingNWSE ($x,$y,$report_css_change=false) {
 	$x = intval($x);
 	$y = intval($y);
 	return RegenAreaNWSE($x-1,$y-1,$x+1,$y+1,$report_css_change);
 }
 
+// TODO: DOOMED, OBSOLETE
 function RegenAreaNWSE ($x1,$y1,$x2,$y2,$report_css_change=false) {
 	$xylimit = "`x` >= ".intval($x1)." AND `x` <= ".intval($x2)." AND 
 				`y` >= ".intval($y1)." AND `y` <= ".intval($y2);
@@ -208,8 +214,7 @@ function RegenAreaNWSE ($x1,$y1,$x2,$y2,$report_css_change=false) {
 	return $cssclassarr;
 }
 
-		
-		
+// TODO: OBSOLETE ??
 function	terraingen($x,$y,$type,$dur,$ang,$step,$line,$split=0) {
 	$x = intval($x);
 	$y = intval($y);
