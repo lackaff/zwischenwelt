@@ -12,7 +12,6 @@ define("kMapNaviGotoCat_Friends",5);
 define("kMapNaviGotoCat_Enemies",6);
 define("kMapNaviGotoCat_Search",7);
 define("kMapNaviGotoCat_Random",8);
-define("kMapNaviGotoCat_Random2",9);
 define("kMapNaviGotoCat_Hellhole",10);
 $gMapNaviGotoCatNames = array(
 	kMapNaviGotoCat_Pos			=> "Pos",
@@ -22,8 +21,7 @@ $gMapNaviGotoCatNames = array(
 	kMapNaviGotoCat_Friends		=> "Freunde",
 	kMapNaviGotoCat_Enemies		=> "Feinde",
 	kMapNaviGotoCat_Search		=> "Suche",
-	kMapNaviGotoCat_Random		=> "ZufallPos",
-	kMapNaviGotoCat_Random2		=> "ZufallGeb",
+	kMapNaviGotoCat_Random		=> "Zufall",
 	kMapNaviGotoCat_Hellhole	=> "Hellhole",
 	);
 $gMapNaviGotoCat_AdminOnly = array(0=>kMapNaviGotoCat_Hellhole);

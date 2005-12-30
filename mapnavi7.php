@@ -142,43 +142,139 @@ if (isset($f_regentypes)) {
 		parent.map.location.href = parent.map.location.href;
 		parent.navi.location.href = parent.navi.location.href;
 	}
+	<?php
+	function GetUserStuffList ($user) {
+		$user = intval($user);
+		global $gArmyType;
+		// armies by armytype
+		$res = array();
+		foreach ($gArmyType as $o) {
+			$arr = sqlgettable("SELECT * FROM `army` WHERE `user` = ".$user." AND `type` = ".$o->id." ORDER BY `name`","id","name");
+			if (count($arr) > 0) $res[$o->name] = $arr;
+		}
+		return $res;
+	}
+	function GetGuildStuffList ($guild) {
+		$guild = intval($guild);
+		global $gArmyType,$gUser;
+		if ($guild == 0 || $guild == kGuild_Weltbank) return false;
+		$res = array();
+		$res["Mitglieder"] = sqlgettable("SELECT * FROM `user` WHERE `guild` = ".$guild." ORDER BY `name`","id","name");
+		foreach ($gArmyType as $o) {
+			$gildenarmeen = sqlgettable("SELECT `army`.* FROM `army`,`user` WHERE `army`.`user` = `user`.`id` AND `user`.`guild` = ".$guild." AND `army`.`type` = ".$o->id." ORDER BY `name`","id");
+			$controllable = array();
+			foreach ($gildenarmeen as $a)
+				if (cArmy::CanControllArmy($a,$gUser))
+					$controllable[$a->id] = $a->name;
+			if (count($controllable) > 0) $res[$o->name] = $controllable;
+		}
+		return $res;
+	}
+	
+	$gGotoCats = array(
+		kMapNaviGotoCat_Pos			=> 0,
+		kMapNaviGotoCat_Mark		=> sqlgettable("SELECT * FROM `mapmark` WHERE `user` = ".$gUser->id." ORDER BY `name`","id","name"),
+		kMapNaviGotoCat_Own			=> GetUserStuffList($gUser->id),
+		kMapNaviGotoCat_Guild		=> GetGuildStuffList($gUser->guild),
+		kMapNaviGotoCat_Friends		=> sqlgettable("SELECT `user`.* FROM `fof_user`,`user` WHERE `class` = ".kFOF_Friend." AND `master` = ".$gUser->id." AND `other` = `user`.id ORDER BY `name`","id","name"),
+		kMapNaviGotoCat_Enemies		=> sqlgettable("SELECT `user`.* FROM `fof_user`,`user` WHERE `class` = ".kFOF_Enemy." AND `master` = ".$gUser->id." AND `other` = `user`.id ORDER BY `name`","id","name"),
+		kMapNaviGotoCat_Search		=> 0,
+		kMapNaviGotoCat_Random		=> array("Gebäude","Landschaft","Position"),
+		kMapNaviGotoCat_Hellhole	=> 0,
+	);
+	echo "gGotoCats = new Array();\n";
+	foreach ($gGotoCats as $key => $val) if ($gUser->admin || !in_array($key,$gMapNaviGotoCat_AdminOnly)) {
+		if (is_array($val)) {
+			echo "gGotoCats[".$key."] = new Array();\n";
+			foreach ($val as $key2 => $val2) {
+				$key2_call = is_numeric($key2) ? ("[".$key2."]") : (".".$key2);
+				if (is_array($val2)) {
+					echo "gGotoCats[".$key."]".$key2_call." = new Array();\n";
+					foreach ($val2 as $key3 => $val3) {
+						if (is_numeric($val3)) 
+								echo "gGotoCats[".$key."]".$key2_call."[".$key3."] = ".($val3).";\n";
+						else	echo "gGotoCats[".$key."]".$key2_call."[".$key3."] = \"".addslashes($val3)."\";\n";
+					}
+				} else if (is_numeric($val2)) 
+						echo "gGotoCats[".$key."]".$key2_call." = ".($val2).";\n";
+				else	echo "gGotoCats[".$key."]".$key2_call." = \"".addslashes($val2)."\";\n";
+			}
+		} else if (is_numeric($val)) 
+				echo "gGotoCats[".$key."] = ".($val).";\n";
+		else	echo "gGotoCats[".$key."] = \"".addslashes($val)."\";\n";
+	}
+	//$hellholes = $gUser->admin?sqlgettable("SELECT * FROM `hellhole` WHERE `ai_type` > 0 ORDER BY `id`"):array(); // todo : unhardcode
+	//$hellholetypename = array(1=>"orkdorf",2=>"megablob"); // todo : unhardcode
+	// $hellholetypename[$o->ai_type]
+	?>
 	gGotoCat = <?=kMapNaviGotoCat_Pos?>;
-	gMarks = new Array();
+	gMarks = new Array( "a", "v", "b", "s");
 	gOwnCats2 = new Array( "Armee","Karawane","Arbeiter","Maschiene","Schiff" );
 	gOwnCats3 = new Array( "" );
 	function GetName (name) { return document.getElementsByName(name)[0]; }
 	function Hide (name) { GetName(name).style.display = "none"; }
 	function Show (name) { GetName(name).style.display = "inline"; }
-	function ShowList (name,list) { Show(name); /*set options from array*/ }
+	function ShowList (name,list) {
+		Show(name); /*set options from array*/
+		var options = GetName(name);
+		while (options.length > 0) options[options.length-1] = null;
+		if (list) {
+			var i;
+			for (i in list) {
+				var NeuerEintrag = new Option(list[i],i);
+				options[options.length] = NeuerEintrag;
+			}
+		}
+	}
+	function HideList1 () { Hide("gotocat2"); }
+	function HideList2 () { Hide("gotocat2"); Hide("gotocat3"); }
+	function ShowList1 () { ShowList("gotocat2",gGotoCats[gGotoCat]); }
+	function ShowList2 () {
+		var i = 0,field;
+		var sublist = new Array();
+		for (field in gGotoCats[gGotoCat]) {
+			sublist[i++] = field;
+		}
+		ShowList("gotocat2",sublist);
+	}
+	
 	function ChangeGotoCat () {
 		// hide old cat
 		if (gGotoCat == <?=kMapNaviGotoCat_Pos?>)		{ Hide("pos"); }
-		if (gGotoCat == <?=kMapNaviGotoCat_Mark?>)		{ Hide("gotocat2"); }
-		if (gGotoCat == <?=kMapNaviGotoCat_Own?>)		{ Hide("gotocat2"); Hide("gotocat3"); }
-		if (gGotoCat == <?=kMapNaviGotoCat_Guild?>)		{ Hide("gotocat2"); Hide("gotocat3"); }
-		if (gGotoCat == <?=kMapNaviGotoCat_Friends?>)	{ Hide("gotocat2"); }
-		if (gGotoCat == <?=kMapNaviGotoCat_Enemies?>)	{ Hide("gotocat2"); }
+		if (gGotoCat == <?=kMapNaviGotoCat_Mark?>)		{ HideList1(); }
+		if (gGotoCat == <?=kMapNaviGotoCat_Own?>)		{ HideList2(); }
+		if (gGotoCat == <?=kMapNaviGotoCat_Guild?>)		{ HideList2(); }
+		if (gGotoCat == <?=kMapNaviGotoCat_Friends?>)	{ HideList1(); }
+		if (gGotoCat == <?=kMapNaviGotoCat_Enemies?>)	{ HideList1(); }
 		if (gGotoCat == <?=kMapNaviGotoCat_Search?>)	{ Hide("search"); }
-		if (gGotoCat == <?=kMapNaviGotoCat_Random?>) 	{ }
-		if (gGotoCat == <?=kMapNaviGotoCat_Hellhole?>)	{ Hide("gotocat2"); }
+		if (gGotoCat == <?=kMapNaviGotoCat_Random?>) 	{ HideList1(); }
+		if (gGotoCat == <?=kMapNaviGotoCat_Hellhole?>)	{ HideList1(); }
 		
 		gGotoCat = GetName("gotocat").value;
 		
 		// show new cat
 		if (gGotoCat == <?=kMapNaviGotoCat_Pos?>) 		{ Show("pos"); }
-		if (gGotoCat == <?=kMapNaviGotoCat_Mark?>)		{ ShowList("gotocat2",gMarks); }
-		if (gGotoCat == <?=kMapNaviGotoCat_Own?>)		{ ShowList("gotocat2",gOwnCats2); ShowList("gotocat3",gOwnCats3[1]); }
-		if (gGotoCat == <?=kMapNaviGotoCat_Guild?>)		{ ShowList("gotocat2",gOwnCats2); ShowList("gotocat3",gOwnCats3[1]); }
-		if (gGotoCat == <?=kMapNaviGotoCat_Friends?>)	{ ShowList("gotocat2",gMarks); }
-		if (gGotoCat == <?=kMapNaviGotoCat_Enemies?>)	{ ShowList("gotocat2",gMarks); }
+		if (gGotoCat == <?=kMapNaviGotoCat_Mark?>)		{ ShowList1(); }
+		if (gGotoCat == <?=kMapNaviGotoCat_Own?>)		{ ShowList2(); }
+		if (gGotoCat == <?=kMapNaviGotoCat_Guild?>)		{ ShowList2(); }
+		if (gGotoCat == <?=kMapNaviGotoCat_Friends?>)	{ ShowList1(); }
+		if (gGotoCat == <?=kMapNaviGotoCat_Enemies?>)	{ ShowList1(); }
 		if (gGotoCat == <?=kMapNaviGotoCat_Search?>)	{ Show("search"); }
-		if (gGotoCat == <?=kMapNaviGotoCat_Random?>)	{ }
-		if (gGotoCat == <?=kMapNaviGotoCat_Hellhole?>)	{ ShowList("gotocat2",gMarks); }
+		if (gGotoCat == <?=kMapNaviGotoCat_Random?>)	{ ShowList1(); }
+		if (gGotoCat == <?=kMapNaviGotoCat_Hellhole?>)	{ ShowList1(); }
 		ChangeGotoCat2();
-		ChangeGotoCat3();
 	}
-	function ChangeGotoCat2 () { }
-	function ChangeGotoCat3 () { }
+	function ChangeGotoCat2 () {
+		if (gGotoCat != <?=kMapNaviGotoCat_Own?> &&
+			gGotoCat != <?=kMapNaviGotoCat_Guild?>) return;
+		var cat2 = GetName("gotocat2").value;
+		var i = 0,field;
+		var sublist = new Array();
+		for (field in gGotoCats[gGotoCat]) if (i++ == cat2) {
+			sublist = gGotoCats[gGotoCat][field];
+		}
+		ShowList("gotocat3",sublist);
+	}
 //-->
 </SCRIPT>
 </head><body onLoad="ChangeGotoCat()">
@@ -189,22 +285,20 @@ if (isset($f_regentypes)) {
 		<?php 
 		$gArmy = cArmy::getMyArmies(TRUE,$gUser);
 		$gMapMarks = sqlgettable("SELECT * FROM `mapmark` WHERE `user` = ".$gUser->id." ORDER BY `name`","id");
-		$hellholes = $gUser->admin?sqlgettable("SELECT * FROM `hellhole` WHERE `ai_type` > 0 ORDER BY `id`"):array(); // todo : unhardcode
-		$hellholetypename = array(1=>"orkdorf",2=>"megablob"); // todo : unhardcode
-		// $hellholetypename[$o->ai_type]
 		?>
 		<?php if (count($gArmy) > 0 || count($gMapMarks) > 0 || count($hellholes) > 0) {?>
 		<FORM METHOD=GET ACTION="<?=Query(kMapScript."?sid=?&big=?&cx=$gCX&cy=$gCY")?>" target="map">
 		<INPUT TYPE="hidden" NAME="sid" VALUE="<?=$gSID?>">
 		<SELECT NAME="gotocat" onChange="ChangeGotoCat()">
-			<?php foreach($gMapNaviGotoCatNames as $id => $name) {?>
+			<?php foreach($gMapNaviGotoCatNames as $id => $name) 
+				if ($gUser->admin || !in_array($id,$gMapNaviGotoCat_AdminOnly)) {?>
 				<OPTION VALUE=<?=$id?>><?=$name?></OPTION>
 			<?php }?>
 		</SELECT>
 		<INPUT TYPE="text" NAME="pos" VALUE="" style="width:90px;display:none;">
 		<INPUT TYPE="text" NAME="search" VALUE="" style="width:90px;display:none;" >
 		<SELECT NAME="gotocat2" onChange="ChangeGotoCat2()" style="display:none;"></SELECT>
-		<SELECT NAME="gotocat3" onChange="ChangeGotoCat3()" style="display:none;"></SELECT>
+		<SELECT NAME="gotocat3" style="display:none;"></SELECT>
 		<INPUT TYPE="submit" NAME="armygoto" VALUE="&gt;">
 		</FORM>
 		<?php }?>

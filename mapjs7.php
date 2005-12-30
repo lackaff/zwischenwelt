@@ -11,41 +11,55 @@ $gCY = isset($f_cy)?(min(200,max(0,intval($f_cy)))|1):11;
 
 // show army pos
 if (isset($f_gotocat)) {
+	//echo "gotocat = $f_gotocat , gotocat2 = $f_gotocat2 , gotocat3 = $f_gotocat3 <br>";
 	$foundobject = false;
+	if ($f_gotocat != kMapNaviGotoCat_Pos) unset($f_pos);
 	switch ($f_gotocat) {
 		case kMapNaviGotoCat_Pos: break; // handled by $f_pos
 		case kMapNaviGotoCat_Mark: 
-			$foundobject = sqlgetobject("SELECT `x`,`y` FROM `mapmark` WHERE `user` = ".$gUser->id." AND `id` = ".intval($f_gotoparam));
+			$foundobject = sqlgetobject("SELECT `x`,`y` FROM `mapmark` WHERE `user` = ".$gUser->id." AND `id` = ".intval($f_gotocat2));
 		break;
 		case kMapNaviGotoCat_Own:
+			$foundobject = sqlgetobject("SELECT * FROM `army` WHERE `id` = ".intval($f_gotocat3));
+			$f_army = $foundobject->id;
+		break;
 		case kMapNaviGotoCat_Guild:
+			if ($f_gotocat2 > 0) { // if cat2>0 then armytype else userid
+				$foundobject = sqlgetobject("SELECT * FROM `army` WHERE `id` = ".intval($f_gotocat3));
+				$f_army = $foundobject->id;
+			} else $foundobject = sqlgetobject("SELECT `x`,`y` FROM `building` WHERE `user` = ".intval($f_gotocat3)." AND `type` = ".kBuilding_HQ);
+		break;
 		case kMapNaviGotoCat_Friends:
 		case kMapNaviGotoCat_Enemies:
-			if ($f_gotocat2 > 0) { // if cat2>0 then armytype else userid
-				$foundobject = sqlgetobject("SELECT * FROM `army` WHERE `id` = ".intval($f_gotoparam));
-				$f_army = $foundobject->id;
-			} else $foundobject = sqlgetobject("SELECT `x`,`y` FROM `building` WHERE `user` = ".intval($f_gotoparam)." AND `type` = ".kBuilding_HQ);
+			$foundobject = sqlgetobject("SELECT `x`,`y` FROM `building` WHERE `user` = ".intval($f_gotocat2)." AND `type` = ".kBuilding_HQ);
 		break;
 		case kMapNaviGotoCat_Search:
 			// todo : on change of searchtext-field in navi : reset search-number
 			// todo : list usernames, userguild, armynames, bodenschatz-type, hellholes-monstertype..
+			$foundobject = sqlgetobject("SELECT `id` FROM `user` WHERE `name` LIKE '%".addslashes($f_search)."%' ORDER BY RAND() LIMIT 1");
+			if ($foundobject) $foundobject = sqlgetobject("SELECT `x`,`y` FROM `building` WHERE `user` = ".$foundobject->id." AND `type` = ".kBuilding_HQ);
 		break;
 		case kMapNaviGotoCat_Random: // i thought this might be funny =)
-			$f_x = rand(intval($gGlobal["minimap_left"]),intval($gGlobal["minimap_right"]));
-			$f_y = rand(intval($gGlobal["minimap_top"]),intval($gGlobal["minimap_bottom"]));
-			unset($f_pos);
-		break;
-		case kMapNaviGotoCat_Random2: // i thought this might be funny =)
-			$foundobject = sqlgetobject("SELECT `x`,`y` FROM `building` ORDER BY RAND() LIMIT 1");
+			switch ($f_gotocat2) {
+				case 0: // gebaeude
+					$foundobject = sqlgetobject("SELECT `x`,`y` FROM `building` ORDER BY RAND() LIMIT 1");
+				break;
+				case 1: // landschaft
+					$foundobject = sqlgetobject("SELECT `x`,`y` FROM `terrain` ORDER BY RAND() LIMIT 1");
+				break;
+				case 2: // pos
+					$f_x = rand(intval($gGlobal["minimap_left"]),intval($gGlobal["minimap_right"]));
+					$f_y = rand(intval($gGlobal["minimap_top"]),intval($gGlobal["minimap_bottom"]));
+				break;
+			}
 		break;
 		case kMapNaviGotoCat_Hellhole: // admin feature for tracking movable/nonstandard hellholes
-			$foundobject = sqlgetobject("SELECT `x`,`y` FROM `hellhole` WHERE `id` = ".intval($f_gotoparam));
+			$foundobject = sqlgetobject("SELECT `x`,`y` FROM `hellhole` WHERE `id` = ".intval($f_gotocat2));
 		break;
 	}
 	if ($foundobject) {
 		$f_x = $foundobject->x;
 		$f_y = $foundobject->y;
-		unset($f_pos);
 	}
 }
 	
