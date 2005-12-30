@@ -3,7 +3,11 @@ require_once("lib.main.php");
 require_once("lib.army.php");
 require_once("lib.guild.php");
 require_once("lib.construction.php");
+require_once("lib.tabs.php");
 Lock();
+
+// todo : not-yet-buildable  buildings shown as tools, but marked as unavailable... 
+// todo : prices as toolstips for buildings and spells
 
 // TODO : gAllUsers is only used for admin
 $gAllUsers = sqlgettable("SELECT `id`,`name` FROM `user` ORDER BY `name`","id");
@@ -25,7 +29,7 @@ if (isset($f_regentypes)) {
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/transitional.dtd">
 <html>
 <head>
-<link rel="stylesheet" type="text/css" href="styles.css"></link>
+<link rel="stylesheet" type="text/css" href="<?=GetZWStylePath()?>"></link>
 <SCRIPT LANGUAGE="JavaScript">
 <!--
 	var gSID = "<?=$gSID?>";
@@ -203,14 +207,12 @@ if (isset($f_regentypes)) {
 				echo "gGotoCats[".$key."] = ".($val).";\n";
 		else	echo "gGotoCats[".$key."] = \"".addslashes($val)."\";\n";
 	}
+	// TODO : fuer admins die hellhole liste wieder aktivieren (orkdorf,hyperblob)
 	//$hellholes = $gUser->admin?sqlgettable("SELECT * FROM `hellhole` WHERE `ai_type` > 0 ORDER BY `id`"):array(); // todo : unhardcode
 	//$hellholetypename = array(1=>"orkdorf",2=>"megablob"); // todo : unhardcode
 	// $hellholetypename[$o->ai_type]
 	?>
 	gGotoCat = <?=kMapNaviGotoCat_Pos?>;
-	gMarks = new Array( "a", "v", "b", "s");
-	gOwnCats2 = new Array( "Armee","Karawane","Arbeiter","Maschiene","Schiff" );
-	gOwnCats3 = new Array( "" );
 	function GetName (name) { return document.getElementsByName(name)[0]; }
 	function Hide (name) { GetName(name).style.display = "none"; }
 	function Show (name) { GetName(name).style.display = "inline"; }
@@ -280,31 +282,42 @@ if (isset($f_regentypes)) {
 </head><body onLoad="ChangeGotoCat()">
 
 <!--mapcontrols-->
-<table>
-</td><td valign=top>
-		<?php 
-		$gArmy = cArmy::getMyArmies(TRUE,$gUser);
-		$gMapMarks = sqlgettable("SELECT * FROM `mapmark` WHERE `user` = ".$gUser->id." ORDER BY `name`","id");
-		?>
-		<?php if (count($gArmy) > 0 || count($gMapMarks) > 0 || count($hellholes) > 0) {?>
-		<FORM METHOD=GET ACTION="<?=Query(kMapScript."?sid=?&big=?&cx=$gCX&cy=$gCY")?>" target="map">
-		<INPUT TYPE="hidden" NAME="sid" VALUE="<?=$gSID?>">
-		<SELECT NAME="gotocat" onChange="ChangeGotoCat()">
-			<?php foreach($gMapNaviGotoCatNames as $id => $name) 
-				if ($gUser->admin || !in_array($id,$gMapNaviGotoCat_AdminOnly)) {?>
-				<OPTION VALUE=<?=$id?>><?=$name?></OPTION>
-			<?php }?>
-		</SELECT>
-		<INPUT TYPE="text" NAME="pos" VALUE="" style="width:90px;display:none;">
-		<INPUT TYPE="text" NAME="search" VALUE="" style="width:90px;display:none;" >
-		<SELECT NAME="gotocat2" onChange="ChangeGotoCat2()" style="display:none;"></SELECT>
-		<SELECT NAME="gotocat3" style="display:none;"></SELECT>
-		<INPUT TYPE="submit" NAME="armygoto" VALUE="&gt;">
-		</FORM>
-		<?php }?>
-</td>
-</tr>
-</table>
+<div class="mapnavigoto">
+<FORM METHOD=GET ACTION="<?=Query(kMapScript."?sid=?&big=?&cx=$gCX&cy=$gCY")?>" target="map">
+<INPUT TYPE="hidden" NAME="sid" VALUE="<?=$gSID?>">
+<SELECT NAME="gotocat" onChange="ChangeGotoCat()">
+	<?php foreach($gMapNaviGotoCatNames as $id => $name) 
+		if ($gUser->admin || !in_array($id,$gMapNaviGotoCat_AdminOnly)) {?>
+		<OPTION VALUE=<?=$id?>><?=$name?></OPTION>
+	<?php }?>
+</SELECT>
+<INPUT TYPE="text" NAME="pos" VALUE="" style="width:90px;display:none;">
+<INPUT TYPE="text" NAME="search" VALUE="" style="width:90px;display:none;" >
+<SELECT NAME="gotocat2" onChange="ChangeGotoCat2()" style="display:none;"></SELECT>
+<SELECT NAME="gotocat3" style="display:none;"></SELECT>
+<INPUT TYPE="submit" NAME="armygoto" VALUE="&gt;">
+</FORM>
+</div>
+
+
+<?php 
+// $gBuildingGroups
+$gNaviToolTabs = array();
+$gNaviToolTabs[] = array("tools","wp,lupe,abbrechen...");
+
+foreach ($gBuildingGroups as $name => $buildingtypeids) {
+	if ($buildingtypeids) {
+		$header = "<img src=\"".g($gBuildingType[$buildingtypeids[0]]->gfx,"we",1)."\">";
+		$toolshtml = "blaaa ".implode(",",$buildingtypeids);
+	} else $toolshtml = "rest";
+	$header = "pic-here:".$name;
+	$gNaviToolTabs[] = array($header,$toolshtml);
+}
+
+// PrintTabs("mapnavitools",$gNaviToolTabs,"current-tool");
+?>
+
+
 <!-- tools -->
 <table><tr><td valign="middle" align="center" bgcolor="green" width="40">
 	<img name="curtoolpic" class="picframe" src="<?=isset($f_curtoolgfx)?g($f_curtoolgfx):g("tool_look.png")?>">

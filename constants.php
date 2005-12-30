@@ -4,6 +4,8 @@ define("kURL_Nethack","http://zwischenwelt.org/telnet.html");
 define("kURL_Chess","http://zwischenwelt.org/~hagish/occ/");
 define("kURL_Wiki","http://zwischenwelt.milchkind.net/zwwiki/index.php/");
 
+
+
 define("kMapNaviGotoCat_Pos",1);
 define("kMapNaviGotoCat_Mark",2);
 define("kMapNaviGotoCat_Own",3);
@@ -372,6 +374,14 @@ define("kQuestFlag_RepeatOnFinish",					(1<<3));
 define("kBuildingRequirenment_NearRadius",2);
 define("kHQ_Upgrade_BaseTime",43200);
 
+$gBuildingGroups = array(
+	"Gebauede" => false, // contains the whole rest
+	"Produktion" => array(0=>kBuilding_Baracks,kBuilding_Farm,kBuilding_Lumberjack,kBuilding_StoneProd,kBuilding_IronMine),
+	"Infrastruktur" => array(0=>kBuilding_Path,kBuilding_Wall,kBuilding_Gate,kBuilding_Bridge,kBuilding_GB,kBuilding_Portal),
+	"Hafen" => array(0=>kBuilding_Harbor,kBuilding_Werft,kBuilding_SeaWall,kBuilding_SeaGate,kBuilding_Steg),
+	"Deko" => array(0=>kBuilding_Sign,kBuilding_Brunnen,kBuilding_Chessboard,kBuilding_Tavern,kBuilding_Teehaus,kBuilding_Gaertner,
+					kBuilding_Spielhalle,kBuilding_Platz,kBuilding_Leuchtturm),
+);
 define("kBuilding_HQ",1);
 define("kBuilding_MagicTower",2);
 define("kBuilding_Path",3);
@@ -383,6 +393,9 @@ define("kBuilding_Farm",9);
 define("kBuilding_Hospital",10);
 define("kBuilding_Garage",11); // werkstatt
 define("kBuilding_Smith",12);
+define("kBuilding_Lumberjack",13);
+define("kBuilding_StoneProd",14);
+define("kBuilding_IronMine",15);
 define("kBuilding_Market",16);
 define("kBuilding_Gate",17);
 define("kBuilding_Bridge",18);
@@ -392,12 +405,18 @@ define("kBuilding_Hellhole",21);
 define("kBuilding_Chessboard",22);
 define("kBuilding_Portal",23);
 define("kBuilding_GB",24); // gatebridge
-define("kBuilding_Tavern",51);
-define("kBuilding_SeaWall",49);
+define("kBuilding_Brunnen",25); 
+define("kBuilding_Teehaus",43);
+define("kBuilding_Gaertner",44);
 define("kBuilding_Werft",46);
 define("kBuilding_Harbor",47);
-define("kBuilding_SeaGate",50);
 define("kBuilding_Steg",48);
+define("kBuilding_SeaWall",49);
+define("kBuilding_SeaGate",50);
+define("kBuilding_Tavern",51);
+define("kBuilding_Spielhalle",64);
+define("kBuilding_Platz",65);
+define("kBuilding_Leuchtturm",66);
 
 define("kRuinStartHp",1);
 define("kActionCmd_Build",1); // einheitenproduktion

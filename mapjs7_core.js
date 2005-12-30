@@ -112,7 +112,9 @@ function MapInit() {
 	gXMid=Math.floor(gCX/2);
 	gYMid=Math.floor(gCY/2);
 	
-	parent.navi.updatepos(gLeft+gXMid,gTop+gYMid);
+	if (!gBig && parent.navi != null) {
+		parent.navi.updatepos(gLeft+gXMid,gTop+gYMid);
+	}
 	
 	profiling("parse terrain");
 	// parse data
@@ -275,15 +277,15 @@ function CreateMap() {
 	tab_corner += "<input type=\"text\" name=\"mapscroll\" value=\""+gScroll+"\">";
 	tab_corner += "</span>";
 	var tab_pre = "";
-	tab_pre += "<div id=\"panel\">";
-	tab_pre += "	<div id=\"header\">";
+	tab_pre += "<div class=\"tabs\">";
+	tab_pre += "	<div class=\"tabheader\">";
 	tab_pre += "		<ul>";
-	tab_pre += "			<li "+(gMapMode==kJSMapMode_Normal?	"id=\"current\"":"")+"><a href=\"javascript:SetMapMode(kJSMapMode_Normal)\">Normal</a></li>";
-	tab_pre += "			<li "+(gMapMode==kJSMapMode_Plan?	"id=\"current\"":"")+"><a href=\"javascript:SetMapMode(kJSMapMode_Plan)\">Pl&auml;ne</a></li>";
-	tab_pre += "			<li "+(gMapMode==kJSMapMode_Bauzeit?"id=\"current\"":"")+"><a href=\"javascript:SetMapMode(kJSMapMode_Bauzeit)\">Bauzeit</a></li>";
-	tab_pre += "			<li "+(gMapMode==kJSMapMode_HP?		"id=\"current\"":"")+"><a href=\"javascript:SetMapMode(kJSMapMode_HP)\">HP</a></li>";
+	tab_pre += "			<li class=\""+(gMapMode==kJSMapMode_Normal?	"activetab":"inactivetab")+"\"><a class=\"tabhead\" href=\"javascript:SetMapMode(kJSMapMode_Normal)\">Normal</a></li>";
+	tab_pre += "			<li class=\""+(gMapMode==kJSMapMode_Plan?	"activetab":"inactivetab")+"\"><a class=\"tabhead\" href=\"javascript:SetMapMode(kJSMapMode_Plan)\">Pl&auml;ne</a></li>";
+	tab_pre += "			<li class=\""+(gMapMode==kJSMapMode_Bauzeit?"activetab":"inactivetab")+"\"><a class=\"tabhead\" href=\"javascript:SetMapMode(kJSMapMode_Bauzeit)\">Bauzeit</a></li>";
+	tab_pre += "			<li class=\""+(gMapMode==kJSMapMode_HP?		"activetab":"inactivetab")+"\"><a class=\"tabhead\" href=\"javascript:SetMapMode(kJSMapMode_HP)\">HP</a></li>";
 	tab_pre += "		</ul>";
-	tab_pre += "		<div id=\"icons\">";
+	tab_pre += "		<div class=\"corner\">";
 	tab_pre += "			<span>"+gMapModiHelp+"</span>";
 	tab_pre += "			<a href=\"javascript:OpenMap(1)\"><img alt=\"bigmap\" title=\"bigmap\" border=0 src=\"gfx/icon/bigmap.png\"></a>";
 	tab_pre += "			<a href=\"javascript:OpenMap(2)\"><img alt=\"minimap2\" title=\"minimap2\" border=0 src=\"gfx/icon/minimap2.png\"></a>";
@@ -293,7 +295,7 @@ function CreateMap() {
 	tab_pre += "			<span>"+tab_corner+"</span>";
 	tab_pre += "		</div>";
 	tab_pre += "	</div>";
-	tab_pre += "	<div id=\"map\">";
+	tab_pre += "	<div class=\"tabpane\">";
 		
 	var tab_post = "";
 	tab_post += "	</div>";
@@ -438,9 +440,11 @@ function mapclick (relx,rely) {
 	KillTip();
 	if (gBig) {
 		//opener.parent.info.location.href = "info/info.php?x="+(x+gLeft)+"&y="+(y+gTop)+"&sid="+gSID;
-		opener.parent.navi.map(relx+gLeft,rely+gTop);
+		if (opener != null && opener.parent != null && opener.parent.navi != null)
+			opener.parent.navi.map(relx+gLeft,rely+gTop);
 	} else {
-		parent.navi.map(relx+gLeft,rely+gTop);
+		if (parent.navi != null)
+			parent.navi.map(relx+gLeft,rely+gTop);
 	}
 }
 
