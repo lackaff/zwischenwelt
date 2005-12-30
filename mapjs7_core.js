@@ -453,7 +453,7 @@ function mapover (relx,rely) {
 	// terrain
 	var terraintype = GetTerrainType(relx,rely);
 	tiptext += "<tr><td nowrap align=\"left\"><img src=\""+GetTerrainPic(relx,rely)+"\"></td><td nowrap colspan=2>";
-	tiptext += "<span>"+(relx+","+rely)+"</span><br>";
+	tiptext += "<span>"+((relx+gLeft)+","+(rely+gTop))+"</span><br>";
 	tiptext += "<span>"+gTerrainType[terraintype].name+"</span>";
 	if (gNWSEDebug) tiptext += "<br><span>type="+terraintype+"</span>";
 	if (gNWSEDebug) tiptext += "<br><span>tc="+gTerrainType[terraintype].connectto_terrain.join(",")+"</span>";
