@@ -11,6 +11,10 @@
 // TODO : gebäude hp-balken + farbe im maptip
 // TODO : tool : goto owner (of army, building...)
 // TODO : creepmap + diplomap icons (baummonster+fähnchen/diplomatenhut)
+// TODO : schild-text im tooltip ?
+// TODO : brücken an fluss ausrichten !
+// TODO : tor nwse bug : connect-to-building : self rausschmeissen
+// TODO : tooltip : einheiten reihenfolge stimmt nicht (orderval ?)
 
 
 // the order in which fields are filled from mapjs7.php
@@ -107,6 +111,8 @@ function MapInit() {
 	var i,j,x,y;
 	gXMid=Math.floor(gCX/2);
 	gYMid=Math.floor(gCY/2);
+	
+	parent.navi.updatepos(gLeft+gXMid,gTop+gYMid);
 	
 	profiling("parse terrain");
 	// parse data
@@ -278,6 +284,7 @@ function CreateMap() {
 	tab_pre += "			<li "+(gMapMode==kJSMapMode_HP?		"id=\"current\"":"")+"><a href=\"javascript:SetMapMode(kJSMapMode_HP)\">HP</a></li>";
 	tab_pre += "		</ul>";
 	tab_pre += "		<div id=\"icons\">";
+	tab_pre += "			<span>"+gMapModiHelp+"</span>";
 	tab_pre += "			<a href=\"javascript:OpenMap(1)\"><img alt=\"bigmap\" title=\"bigmap\" border=0 src=\"gfx/icon/bigmap.png\"></a>";
 	tab_pre += "			<a href=\"javascript:OpenMap(2)\"><img alt=\"minimap2\" title=\"minimap2\" border=0 src=\"gfx/icon/minimap2.png\"></a>";
 	tab_pre += "			<a href=\"javascript:OpenMap(3)\"><img alt=\"minimap\" title=\"minimap\" border=0 src=\"gfx/icon/minimap.png\"></a>";
@@ -355,8 +362,8 @@ function GetCellHTML (relx,rely) {
 	var layers = new Array();
 	
 	// terrain
-	var backgroundcolor = false;
 	layers[layers.length] = GetTerrainPic(relx,rely);
+	var backgroundcolor = HackBackgroundColor(relx,rely);
 	
 	// building
 	var building = GetBuilding(relx,rely);
@@ -692,11 +699,12 @@ function nav(x,y) {
 	if (y < 0) y = -1; else if (y > 0) y = 1;
 	x = gLeft + gXMid + x * gScroll;
 	y = gTop + gYMid + y * gScroll;
-	navabs(x,y);
+	navabs(x,y,0);
 }
 
-function navabs (x,y) {
-	location.href = "?sid="+gSID+"&x="+x+"&big="+gBig+"&y="+y+"&cx="+gCX+"&cy="+gCY+"&mode="+gMapMode+"&scroll="+gScroll+"&army="+gActiveArmy;
+function navabs (x,y,cancelmode) {
+	var mode = cancelmode?kJSMapMode_Normal:gMapMode;
+	location.href = "?sid="+gSID+"&x="+x+"&big="+gBig+"&y="+y+"&cx="+gCX+"&cy="+gCY+"&mode="+mode+"&scroll="+gScroll+"&army="+gActiveArmy;
 }
 
 

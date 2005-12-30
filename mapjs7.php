@@ -9,7 +9,6 @@ Lock();
 $gCX = isset($f_cx)?(min(200,max(0,intval($f_cx)))|1):11;
 $gCY = isset($f_cy)?(min(200,max(0,intval($f_cy)))|1):11;
 
-$gMapMarks = sqlgettable("SELECT * FROM `mapmark` WHERE `user` = ".$gUser->id." ORDER BY `name`","id");
 // show army pos
 if (isset($f_gotocat)) {
 	$foundobject = false;
@@ -34,6 +33,10 @@ if (isset($f_gotocat)) {
 		case kMapNaviGotoCat_Random: // i thought this might be funny =)
 			$f_x = rand(intval($gGlobal["minimap_left"]),intval($gGlobal["minimap_right"]));
 			$f_y = rand(intval($gGlobal["minimap_top"]),intval($gGlobal["minimap_bottom"]));
+			unset($f_pos);
+		break;
+		case kMapNaviGotoCat_Random2: // i thought this might be funny =)
+			$foundobject = sqlgetobject("SELECT `x`,`y` FROM `building` ORDER BY RAND() LIMIT 1");
 		break;
 		case kMapNaviGotoCat_Hellhole: // admin feature for tracking movable/nonstandard hellholes
 			$foundobject = sqlgetobject("SELECT `x`,`y` FROM `hellhole` WHERE `id` = ".intval($f_gotoparam));
@@ -42,10 +45,11 @@ if (isset($f_gotocat)) {
 	if ($foundobject) {
 		$f_x = $foundobject->x;
 		$f_y = $foundobject->y;
+		unset($f_pos);
 	}
 }
 	
-if (isset($f_pos) && eregi("((-|\\+)?[0-9]+)[^0-9+\\-]*((-|\\+)?[0-9]+)",$f_pos,$r)) {
+if (isset($f_pos) && $f_pos != "" && eregi("((-|\\+)?[0-9]+)[^0-9+\\-]*((-|\\+)?[0-9]+)",$f_pos,$r)) {
 	$f_x = intval($r[1]);
 	$f_y = intval($r[3]);
 }

@@ -54,6 +54,38 @@ function HackCon () {
 	gTerrainType[<?=kTerrain_Sea		?>].connectto_building.push(<?=kBuilding_Harbor?>);
 }
 
+// give water a blue background(=gridlines), green lines on water suck !
+function HackBackgroundColor (relx,rely) {
+	var terraintype = GetTerrainType(relx,rely);
+	var nwsecode = gTerrainMap_nwse[rely+1][relx+1];
+	var nwsecount = (nwsecode & 1) + ((nwsecode & 2)/2) + ((nwsecode & 4)/4) + ((nwsecode & 8)/8);
+	var terraintype = GetTerrainType(relx,rely);
+	//if (terraintype == <?=kTerrain_River?>) return "#0000ff";
+	if (terraintype == <?=kTerrain_Sea?> && nwsecount >= 3) return "#3060E0";
+	if (terraintype == <?=kTerrain_DeepSea?>) return "#284cbb";
+	if (terraintype == <?=kTerrain_Swamp?>) return "#419db5";
+	//if (terraintype == <?=kTerrain_Swamp?>) return "#0000ff";
+	/*
+	define("kTerrain_Grass",1);
+	define("kTerrain_River",2);
+	define("kTerrain_Mountain",3);
+	define("kTerrain_Hole",5);
+	define("kTerrain_Sea",6);
+	define("kTerrain_Forest",4);
+	define("kTerrain_Field",8);
+	define("kTerrain_Flowers",10);
+	define("kTerrain_Rubble",11);
+	define("kTerrain_TreeStumps",12);
+	define("kTerrain_YoungForest",13);
+	define("kTerrain_SnowyMountain",15);
+	define("kTerrain_Swamp",16);
+	define("kTerrain_Oasis",9);
+	define("kTerrain_Desert",7);
+	define("kTerrain_DeepSea",18);
+	*/
+	return false;
+}
+
 // HACK: special nwse for path,gates,bridge...  also in UpdateBuildingNWSE()
 function HackNWSE (buildingtype,nwsecode,relx,rely) {
 	var singlenwse = false;

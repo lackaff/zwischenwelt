@@ -12,16 +12,18 @@ define("kMapNaviGotoCat_Friends",5);
 define("kMapNaviGotoCat_Enemies",6);
 define("kMapNaviGotoCat_Search",7);
 define("kMapNaviGotoCat_Random",8);
-define("kMapNaviGotoCat_Hellhole",9);
+define("kMapNaviGotoCat_Random2",9);
+define("kMapNaviGotoCat_Hellhole",10);
 $gMapNaviGotoCatNames = array(
-	kMapNaviGotoCat_Po			=> "Pos",
+	kMapNaviGotoCat_Pos			=> "Pos",
 	kMapNaviGotoCat_Mark		=> "MapMark",
 	kMapNaviGotoCat_Own			=> "Eigene",
 	kMapNaviGotoCat_Guild		=> "Gilde",
 	kMapNaviGotoCat_Friends		=> "Freunde",
 	kMapNaviGotoCat_Enemies		=> "Feinde",
 	kMapNaviGotoCat_Search		=> "Suche",
-	kMapNaviGotoCat_Random		=> "Zufall",
+	kMapNaviGotoCat_Random		=> "ZufallPos",
+	kMapNaviGotoCat_Random2		=> "ZufallGeb",
 	kMapNaviGotoCat_Hellhole	=> "Hellhole",
 	);
 $gMapNaviGotoCat_AdminOnly = array(0=>kMapNaviGotoCat_Hellhole);

@@ -34,35 +34,12 @@ if (isset($f_regentypes)) {
 	var bigmap = null;
 	function nav (x,y) {
 		parent.map.nav(x,y);
-		//var scroll = document.getElementsByName("myscroll")[0].value;
-		//navabs(x*scroll+parent.map.getx(),y*scroll+parent.map.gety(),x==0&&y==0);
 	}
 	function navabs (x,y,cancelmode) {
-		parent.map.navabs(x,y);
-		//resettool();
-		/*
-		var army = 0;
-		if (document.getElementsByName("army")[0] != null)
-			army = document.getElementsByName("army")[0].value;
-		document.getElementsByName("x")[0].value = x;
-		document.getElementsByName("y")[0].value = y;
-		document.getElementsByName("pos")[0].value = x+","+y;
-		var mode = cancelmode?0:parent.map.getmode();//kMapScript
-		parent.map.location.href = parent.map.location.pathname+"<?=Query("?sid=?&big=?&naviset=1&cx=$gCX&cy=$gCY")?>&mode="+mode+"&x="+x+"&y="+y+"&army="+army;
-		*/
-		// todo : hilightplayer
+		parent.map.navabs(x,y,cancelmode);
 	}
-	
 	function updatepos (x,y) {
-		resettool();
-		/*
-		if (document.getElementsByName("x")[0] != null)
-			document.getElementsByName("x")[0].value = x;
-		if (document.getElementsByName("y")[0] != null)
-			document.getElementsByName("y")[0].value = y;
-		if (document.getElementsByName("pos")[0] != null)
-			document.getElementsByName("pos")[0].value = x+","+y;
-		*/
+		document.getElementsByName("pos")[0].value = x+","+y;
 	}
 	function settool (tool,param,gfx) {
 		curtool = tool;
@@ -165,78 +142,72 @@ if (isset($f_regentypes)) {
 		parent.map.location.href = parent.map.location.href;
 		parent.navi.location.href = parent.navi.location.href;
 	}
-	function IsVisible (x,y) {
-		x -= parent.map.getleft();
-		y -= parent.map.gettop();
-		if (x < 0 || y < 0 || x >= parent.map.getcx() || y >= parent.map.getcy()) return false;
-		return true;
+	gGotoCat = <?=kMapNaviGotoCat_Pos?>;
+	gMarks = new Array();
+	gOwnCats2 = new Array( "Armee","Karawane","Arbeiter","Maschiene","Schiff" );
+	gOwnCats3 = new Array( "" );
+	function GetName (name) { return document.getElementsByName(name)[0]; }
+	function Hide (name) { GetName(name).style.display = "none"; }
+	function Show (name) { GetName(name).style.display = "inline"; }
+	function ShowList (name,list) { Show(name); /*set options from array*/ }
+	function ChangeGotoCat () {
+		// hide old cat
+		if (gGotoCat == <?=kMapNaviGotoCat_Pos?>)		{ Hide("pos"); }
+		if (gGotoCat == <?=kMapNaviGotoCat_Mark?>)		{ Hide("gotocat2"); }
+		if (gGotoCat == <?=kMapNaviGotoCat_Own?>)		{ Hide("gotocat2"); Hide("gotocat3"); }
+		if (gGotoCat == <?=kMapNaviGotoCat_Guild?>)		{ Hide("gotocat2"); Hide("gotocat3"); }
+		if (gGotoCat == <?=kMapNaviGotoCat_Friends?>)	{ Hide("gotocat2"); }
+		if (gGotoCat == <?=kMapNaviGotoCat_Enemies?>)	{ Hide("gotocat2"); }
+		if (gGotoCat == <?=kMapNaviGotoCat_Search?>)	{ Hide("search"); }
+		if (gGotoCat == <?=kMapNaviGotoCat_Random?>) 	{ }
+		if (gGotoCat == <?=kMapNaviGotoCat_Hellhole?>)	{ Hide("gotocat2"); }
+		
+		gGotoCat = GetName("gotocat").value;
+		
+		// show new cat
+		if (gGotoCat == <?=kMapNaviGotoCat_Pos?>) 		{ Show("pos"); }
+		if (gGotoCat == <?=kMapNaviGotoCat_Mark?>)		{ ShowList("gotocat2",gMarks); }
+		if (gGotoCat == <?=kMapNaviGotoCat_Own?>)		{ ShowList("gotocat2",gOwnCats2); ShowList("gotocat3",gOwnCats3[1]); }
+		if (gGotoCat == <?=kMapNaviGotoCat_Guild?>)		{ ShowList("gotocat2",gOwnCats2); ShowList("gotocat3",gOwnCats3[1]); }
+		if (gGotoCat == <?=kMapNaviGotoCat_Friends?>)	{ ShowList("gotocat2",gMarks); }
+		if (gGotoCat == <?=kMapNaviGotoCat_Enemies?>)	{ ShowList("gotocat2",gMarks); }
+		if (gGotoCat == <?=kMapNaviGotoCat_Search?>)	{ Show("search"); }
+		if (gGotoCat == <?=kMapNaviGotoCat_Random?>)	{ }
+		if (gGotoCat == <?=kMapNaviGotoCat_Hellhole?>)	{ ShowList("gotocat2",gMarks); }
+		ChangeGotoCat2();
+		ChangeGotoCat3();
 	}
-	function SetCellClass (x,y,classname) {
-		// ignored so far to prevent error... need more arguments
-		/*
-		if (bigmap && !bigmap.closed) {
-			var x2 = x - bigmap.getleft();
-			var y2 = y - bigmap.gettop();
-			if (x2 >= 0 && y2 >= 0 && x2 < bigmap.getcx() && y2 < bigmap.getcy())  
-				bigmap.document.getElementsByTagName("div")[bigmap.getcx()*y2+x2].className = classname;
-		}
-		x -= parent.map.getleft();
-		y -= parent.map.gettop();
-		if (x < 0 || y < 0 || x >= parent.map.getcx() || y >= parent.map.getcy()) return;  
-		//alert("SetCellClass ("+x+","+y+","+classname+")");
-		//document.getElementsByTagName("td")[<?=$gCX?>*y+x].attributes['class'].nodeValue = classname;
-		parent.map.document.getElementsByTagName("div")[<?=$gCX?>*y+x].className = classname;
-		*/
-	}
-	//SetCellClass(54,32,"cp");
-	//SetCellClass(55,33,"cp");
+	function ChangeGotoCat2 () { }
+	function ChangeGotoCat3 () { }
 //-->
 </SCRIPT>
+</head><body onLoad="ChangeGotoCat()">
 
 <!--mapcontrols-->
 <table>
 </td><td valign=top>
-		
-		<FORM METHOD=GET ACTION="<?=Query(kMapScript."?sid=?&big=?&cx=$gCX&cy=$gCY")?>" target="map" onSubmit="resettool()">
-		<INPUT TYPE="hidden" NAME="sid" VALUE="<?=$gSID?>">
-		<INPUT TYPE="hidden" NAME="x" VALUE="0" style="width:30px">
-		<INPUT TYPE="hidden" NAME="y" VALUE="0" style="width:30px">
-		<INPUT TYPE="text" NAME="pos" VALUE="0" style="width:60px">
-		<INPUT TYPE="submit" VALUE="Goto">
-		</FORM>
-		
 		<?php 
 		$gArmy = cArmy::getMyArmies(TRUE,$gUser);
 		$gMapMarks = sqlgettable("SELECT * FROM `mapmark` WHERE `user` = ".$gUser->id." ORDER BY `name`","id");
 		$hellholes = $gUser->admin?sqlgettable("SELECT * FROM `hellhole` WHERE `ai_type` > 0 ORDER BY `id`"):array(); // todo : unhardcode
 		$hellholetypename = array(1=>"orkdorf",2=>"megablob"); // todo : unhardcode
+		// $hellholetypename[$o->ai_type]
 		?>
 		<?php if (count($gArmy) > 0 || count($gMapMarks) > 0 || count($hellholes) > 0) {?>
 		<FORM METHOD=GET ACTION="<?=Query(kMapScript."?sid=?&big=?&cx=$gCX&cy=$gCY")?>" target="map">
 		<INPUT TYPE="hidden" NAME="sid" VALUE="<?=$gSID?>">
-		<SELECT NAME="army"><?php /*  onChange="nav(0,0)" */ ?>
-			<OPTION VALUE=0>--Armee wählen--</OPTION>
-			<?php foreach($gArmy as $o) {?>
-				<OPTION VALUE=<?=$o->id?>><?=$o->name?> (<?=$o->owner?>)</OPTION>
-			<?php }?>
-			<?php foreach($gMapMarks as $o) {?>
-				<OPTION VALUE=<?=-$o->id?>><?=$o->name?>(<?=$o->x?>,<?=$o->y?>)</OPTION>
-			<?php }?>
-			<?php foreach($hellholes as $o) {?>
-				<OPTION VALUE=<?="h".$o->id?>><?=$hellholetypename[$o->ai_type]."($o->x,$o->y)"?></OPTION>
+		<SELECT NAME="gotocat" onChange="ChangeGotoCat()">
+			<?php foreach($gMapNaviGotoCatNames as $id => $name) {?>
+				<OPTION VALUE=<?=$id?>><?=$name?></OPTION>
 			<?php }?>
 		</SELECT>
-		<INPUT TYPE="submit" NAME="armygoto" VALUE="Goto">
+		<INPUT TYPE="text" NAME="pos" VALUE="" style="width:90px;display:none;">
+		<INPUT TYPE="text" NAME="search" VALUE="" style="width:90px;display:none;" >
+		<SELECT NAME="gotocat2" onChange="ChangeGotoCat2()" style="display:none;"></SELECT>
+		<SELECT NAME="gotocat3" onChange="ChangeGotoCat3()" style="display:none;"></SELECT>
+		<INPUT TYPE="submit" NAME="armygoto" VALUE="&gt;">
 		</FORM>
 		<?php }?>
-		
-		<?php if (0) {?><a href="javascript:HugeMap()">HugeMap</a><?php }?>
-		<a href="javascript:BigMap()">BigMap</a>
-		<a href="javascript:MiniMap()">MiniMap</a>
-		<a href="javascript:MiniMap2()">MiniMap2</a>
-		<a href="javascript:DiploMap()">DiploMap</a>
-		<a href="javascript:CreepMap()">CreepMap</a>
-		<?=cText::Wiki("MapModi")?>
 </td>
 </tr>
 </table>
