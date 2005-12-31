@@ -37,13 +37,14 @@ function Login($user,$pass)
 	return CreateSession($o->id);
 }
 
+/*
 if (isset($f_mycliplog)) {
 	$cliplog = false;
 	$cliplog->time = time();
 	$cliplog->user = $f_name;
 	$cliplog->clip = $f_mycliplog;
 	if (trim($cliplog->clip) != "" && trim($cliplog->clip) != "null") sql("INSERT INTO `cliplog` SET ".obj2sql($cliplog));
-}
+}*/
 
 if (Login($f_name,$f_pass))
 {

@@ -142,6 +142,8 @@ function MapInit() {
 	jsParseItems();
 	profiling("parse plans");
 	jsParsePlans();
+	profiling("parse BuildSources");
+	jsParseBuildSources();
 	
 	profiling("parse armies");
 	// parse and summarize units in armies (summoned units are added to normal units)
@@ -371,6 +373,7 @@ function GetCellHTML (relx,rely) {
 	if (relx < 0 || rely < 0 || relx >= gCX || rely >= gCY) return "x";
 	var i;
 	var layers = new Array();
+	var celltext = "";
 	
 	// terrain
 	layers[layers.length] = GetTerrainPic(relx,rely);
@@ -383,10 +386,11 @@ function GetCellHTML (relx,rely) {
 			layers[layers.length] = g(kConstructionPic);
 		} else {
 			layers[layers.length] = GetBuildingPic(building,relx,rely);
-			if (building.user > 0 && gBuildingType[building.type].border) backgroundcolor = gUsers[building.user].color;
+			if (building.user > 0 && gBuildingType[building.type].border && gMapMode!=kJSMapMode_Plan && gMapMode!=kJSMapMode_Bauzeit) 
+				backgroundcolor = gUsers[building.user].color;
 		}
 		if (gMapMode==kJSMapMode_HP) {
-			backgroundcolor = GradientRYG(GetFraction(building.hp,calcMaxBuildingHp(building.type,building.level)))
+			backgroundcolor = GradientRYG(GetFraction(building.hp,calcMaxBuildingHp(building.type,building.level)));
 		}
 	}
 	
@@ -399,6 +403,13 @@ function GetCellHTML (relx,rely) {
 		} else {
 			layers[layers.length] = g(kTransCP);
 		}
+	}
+	
+	// bauzeit farbe + text
+	if (gMapMode==kJSMapMode_Bauzeit && !building) {
+		var builddistfactor = GetBuildDistFactor(GetBuildDist(relx,rely));
+		//celltext = builddistfactor.toPrecision(2);
+		backgroundcolor = GradientRYG(1.0-GetFraction(builddistfactor-1.0,1.0));
 	}
 	
 	// item
@@ -429,7 +440,7 @@ function GetCellHTML (relx,rely) {
 		res += "<div style=\"background-image:url("+layers[i]+"); "+bg+"\">";
 	}
 	res += "<div name=\"mouselistener\" ><div onClick=\"mapclick("+relx+","+rely+")\" onMouseover=\"if (!gLoading) mapover("+relx+","+rely+")\">";
-	if (relx == gXMid && rely == gYMid) res += "<img src='gfx/crosshair.png'>";
+	if (relx == gXMid && rely == gYMid) res += "<img src='gfx/crosshair.png'>"; res += celltext;
 	res += '</div></div>';
 	for (i in layers) res += '</div>';
 	if (backgroundcolor) res += '</div>';
@@ -473,9 +484,12 @@ function mapover (relx,rely) {
 	// terrain
 	var terraintype = GetTerrainType(relx,rely);
 	tiptext += "<tr><td nowrap align=\"left\"><img src=\""+GetTerrainPic(relx,rely)+"\"></td><td nowrap colspan=2>";
-	tiptext += "<span>"+((relx+gLeft)+","+(rely+gTop))+"</span><br>";
-	tiptext += "<span>"+gTerrainType[terraintype].name+"</span>";
-	if (gNWSEDebug) tiptext += "<br><span>type="+terraintype+"</span>";
+	tiptext += "<span>"+((relx+gLeft)+","+(rely+gTop))+"</span> : ";
+	tiptext += "<span>"+gTerrainType[terraintype].name+"</span><br>";
+	var builddistfactor = GetBuildDistFactor(GetBuildDist(relx,rely));
+	//tiptext += "<span>BuildDist "+GetBuildDist(relx,rely).toPrecision(2)+"</span>";
+	tiptext += "<span>Bauzeit * "+builddistfactor.toPrecision(3)+"</span>";
+	if (gNWSEDebug) tiptext += "<br><span>type="+terraintype+",nwse="+gTerrainMap_nwse[rely+1][relx+1]+"</span>";
 	if (gNWSEDebug) tiptext += "<br><span>tc="+gTerrainType[terraintype].connectto_terrain.join(",")+"</span>";
 	if (gNWSEDebug) tiptext += "<br><span>bc="+gTerrainType[terraintype].connectto_building.join(",")+"</span>";
 	tiptext += "</td></tr>";
@@ -556,16 +570,19 @@ function mapover (relx,rely) {
 }
 
 // utilities
+gOutPutOnce = false;
 
 function GetFraction (cur,max) { return (cur <= 0.0 || max == 0)?0.0:((cur >= max)?1.0:(cur / max)); }
 function GradientRYG (factor) { // red-yellow-green
+	factor = Math.min(1.0,Math.max(0.0,factor));
 	var dist = Math.abs(factor - 0.5)*2.0;
 	factor = 0.5 + 0.5*((factor>0.5)?1.0:(-1.0))*dist*dist;
-	var r = 255.0*Math.min(1.0,2.0-factor*2.0);
-	var g = 255.0*Math.min(1.0,factor*2.0);
-	r = r.toString(16); if (r.length == 1) r = "0"+r; if (r.length > 2) r = "ff";
-	g = g.toString(16); if (g.length == 1) g = "0"+g; if (g.length > 2) g = "ff";
-	return "#"+r+g+"00";
+	var r = Math.round(255.0*Math.min(1.0,2.0-factor*2.0));
+	var g = Math.round(255.0*Math.min(1.0,factor*2.0));
+	// if (!gOutPutOnce) { gOutPutOnce = true; alert(factor+"\n"+r+"\n"+g); }
+	r = r.toString(16); if (r.length == 0) r = "00"; if (r.length == 1) r = "0"+r; if (r.length > 2) r = "ff";
+	g = g.toString(16); if (g.length == 0) g = "00"; if (g.length == 1) g = "0"+g; if (g.length > 2) g = "ff";
+	return "#"+(""+r)+(""+g)+"00";
 }
 function calcMaxBuildingHp(type,level) {
 	var maxhp = gBuildingType[type].maxhp;
@@ -643,6 +660,18 @@ function GetTerrainType (relx,rely) {
 function GetBuilding (relx,rely) {
 	if (relx < -1 || rely < -1 || relx >= gCX+1 || rely >= gCY+1) return false;
 	return gBuildingsCache[rely+1][relx+1];
+}
+function GetBuildDist (relx,rely) {
+	var mindist = -1;
+	var curdist,dx,dy;
+	for (i in gBuildSources) {
+		dx = gBuildSources[i].x - (relx+gLeft);
+		dy = gBuildSources[i].y - (rely+gTop);
+		curdist = dx*dx + dy*dy;
+		if (mindist == -1 || mindist > curdist) mindist = curdist;
+	}
+	if (mindist < 0) return 0;
+	return Math.sqrt(mindist);
 }
 
 

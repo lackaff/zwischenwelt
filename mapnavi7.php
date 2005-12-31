@@ -221,6 +221,9 @@ if (isset($f_regentypes)) {
 			case 4:
 				urladd = "&do=setwaypoint&army="+army+"&button_route=1";
 			break;
+			case 20:
+				urladd = "&do=quickmagic&spellid="+curtoolparam;
+			break;
 			case 5:
 				urladd = "&do=cancel";
 			break;
@@ -270,7 +273,7 @@ if (isset($f_regentypes)) {
 		} else lineinit = false;
 		
 		//parent.info.location.href = "info/info.php?blind=1&x="+x+"&y="+y+urladd+"&sid=<?=$gSID?>";
-		if (curtool == 0) parent.info.location.href = "info/info.php?x="+x+"&y="+y+urladd+"&sid=<?=$gSID?>";
+		if (curtool == 0 || curtool == 20) parent.info.location.href = "info/info.php?x="+x+"&y="+y+urladd+"&sid=<?=$gSID?>";
 		else parent.dummy.location.href = "info/info.php?blind=1&x="+x+"&y="+y+urladd+"&sid=<?=$gSID?>";
 	}
 	function clearline () { lineinit = false; }

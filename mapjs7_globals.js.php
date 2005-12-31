@@ -32,6 +32,14 @@ gMapModiHelp = "<?=addslashes(cText::Wiki("MapModi"))?>";
 //kJSMapTileSize = <?=kMapTileSize?>;
 kJSMapTileSize = 27;
 
+
+// equals the php function GetBuildDistFactor in lib.construction.php
+function GetBuildDistFactor (dist) {
+	if (dist <= 4.0)
+			return 1.0;
+	else	return 1.0  + (dist-4.0) * 0.1;
+}
+
 // HACK: (hyperblob)
 function UnitTypeHasNWSE (unittype) {
 	return unittype == <?=kUnitType_HyperBlob?>;
@@ -58,10 +66,15 @@ function HackCon () {
 function HackBackgroundColor (relx,rely) {
 	var terraintype = GetTerrainType(relx,rely);
 	var nwsecode = gTerrainMap_nwse[rely+1][relx+1];
+	var nwseadcount = 0; // adjacted nwse
+	if ((nwsecode & 3) == 3) ++nwseadcount;
+	if ((nwsecode & 9) == 9) ++nwseadcount;
+	if ((nwsecode & 6) == 6) ++nwseadcount;
+	if ((nwsecode & 12) == 12) ++nwseadcount;
 	var nwsecount = (nwsecode & 1) + ((nwsecode & 2)/2) + ((nwsecode & 4)/4) + ((nwsecode & 8)/8);
 	var terraintype = GetTerrainType(relx,rely);
 	//if (terraintype == <?=kTerrain_River?>) return "#0000ff";
-	if (terraintype == <?=kTerrain_Sea?> && nwsecount >= 3) return "#3060E0";
+	if (terraintype == <?=kTerrain_Sea?> && nwseadcount >= 1) return "#3060E0";
 	if (terraintype == <?=kTerrain_DeepSea?>) return "#284cbb";
 	if (terraintype == <?=kTerrain_Swamp?>) return "#419db5";
 	//if (terraintype == <?=kTerrain_Swamp?>) return "#0000ff";
@@ -196,6 +209,7 @@ php2js_objectfunction("jsArmy","id,x,y,name,type,user,units,items,jsflags","gArm
 // php2js_parser("jsParseBuildings","x,y,type,user,level,hp,construction,jsflags","gBuildings"); // special for speed
 php2js_parser("jsParseItems","x,y,type,amount","gItems");
 php2js_parser("jsParsePlans","x,y,type,priority","gPlans");
+php2js_parser("jsParseBuildSources","x,y","gBuildSources");
 
 
 

@@ -55,7 +55,16 @@ if (!isset($f_building) && !isset($f_army) && isset($f_do)) {
 		case "choose_cast":
 			$pastinclude="magic.php";
 		break;
+		case "quickmagic":
 		case "cast_spell":
+			if ($f_do == "quickmagic") {
+				// $f_tower = MagicAutoChooseTower($gUser->id); // TODO : implement me...
+				$f_tower = sqlgetone("SELECT `id` FROM `building` WHERE `user` = ".intval($gUser->id)." ORDER BY `mana` DESC");
+				// $spelltypeid = intval($f_spellid);
+				$spelltype = $gSpellType[intval($f_spellid)];
+				$f_count[$spelltype->id] = 1;
+				$f_target = $spelltype->target;
+			}
 			$pastinclude="magic.php";
 			//$gSpellType = sqlgettable("SELECT * FROM `spelltype` WHERE `target`=".intval($f_target)." OR `target`=".MTARGET_PLAYER,"id");
 			$result = 0;
@@ -76,6 +85,7 @@ if (!isset($f_building) && !isset($f_army) && isset($f_do)) {
 					echo "<span style='color:$col'>$result</span><br>";
 				}
 			}
+			// TODO : terrain feedback
 		break;
 		case "delwaypoint":
 			require_once("../lib.army.php");

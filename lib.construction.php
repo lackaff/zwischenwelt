@@ -8,11 +8,12 @@ require_once("lib.technology.php");
 
 // distance from hq, silo or harbor  // TODO :unhardcode
 function GetBuildDistance ($x,$y,$userid=0) { 
-	global $gUser; if ($userid == 0) $userid = $gUser->id;
+	global $gUser,$gBuildDistanceSources; 
+	if ($userid == 0) $userid = $gUser->id;
 	$x = intval($x);
 	$y = intval($y);
-	return floatval(sqlgetone("SELECT MIN(SQRT((`x`-$x)*(`x`-$x) + (`y`-$y)*(`y`-$y)))
-		FROM `building` WHERE `user` = ".intval($userid)." AND `construction` = 0 AND `type` IN (".kBuilding_HQ.",".kBuilding_Silo.",".kBuilding_Harbor.")"));
+	return sqrt(floatval(sqlgetone("SELECT MIN(((`x`-$x)*(`x`-$x) + (`y`-$y)*(`y`-$y)))
+		FROM `building` WHERE `user` = ".intval($userid)." AND `construction` = 0 AND `type` IN (".implode(",",$gBuildDistanceSources).")")));
 }
 
 

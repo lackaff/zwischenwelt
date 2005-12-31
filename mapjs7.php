@@ -125,6 +125,7 @@ gGFXBase = "<?=$gGFXBase?>";
 gBig = <?=(isset($f_big) && $f_big)?1:0?>;
 gMapMode = <?=isset($f_mode)?intval($f_mode):kJSMapMode_Normal?>;
 <?php
+// terrain
 $gTerrain = sqlgettable("SELECT * FROM `terrain` WHERE ".$xylimit." ORDER BY `y`,`x`");
 echo 'gTerrain = "';
 $i = 0;
@@ -145,6 +146,7 @@ echo "\";\n";
 $gLocalUserIDs = array();
 $gLocalGuildIDs = array();
 
+// buildings
 $gBuildings = sqlgettable("SELECT * FROM `building` WHERE ".$xylimit);
 echo 'gBuildings = "';
 foreach ($gBuildings as $o) {
@@ -161,6 +163,7 @@ foreach ($gBuildings as $o) {
 }
 echo "\";\n";
 
+// items
 $gItems = sqlgettable("SELECT * FROM `item` WHERE `army` = 0 AND `building` = 0 AND ".$xylimit);
 echo 'gItems = "';
 foreach ($gItems as $o) {
@@ -168,6 +171,7 @@ foreach ($gItems as $o) {
 }
 echo "\";\n";
 
+// plans
 $gPlans = sqlgettable("SELECT * FROM `construction` WHERE ".$xylimit." AND `user` = ".$gUser->id);
 echo 'gPlans = "';
 foreach ($gPlans as $o) {
@@ -182,6 +186,7 @@ function obj2jsparams ($obj,$fields) {
 	return implode(",",$res);
 }
 
+// armies
 $gArmies = sqlgettable("SELECT * FROM `army` WHERE ".$xylimit);
 foreach ($gArmies as $o) {
 	$gLocalUserIDs[] = $o->user;
@@ -196,6 +201,8 @@ foreach ($gArmies as $o) {
 	echo "jsArmy(".obj2jsparams($o,"id,x,y,name,type,user,units,items,flags").");\n";
 }
 
+
+// local users
 $gLocalUserIDs = array_unique($gLocalUserIDs);
 if (count($gLocalUserIDs)>0)
 		$gLocalUsers = sqlgettable("SELECT `id`,`guild`,`color`,`name` FROM `user` WHERE `id` IN (".implode(",",$gLocalUserIDs).")");
@@ -205,6 +212,35 @@ foreach ($gLocalUsers as $o) {
 	echo "jsUser(".obj2jsparams($o,"id,guild,color,name").");\n";
 }
 
+// build distance sources
+// MIN(SQRT((`x`-$x)*(`x`-$x) + (`y`-$y)*(`y`-$y)))
+$bd_sources = sqlgettable("SELECT * FROM `building` WHERE `user` = ".intval($gUser->id)." AND `construction` = 0 AND `type` IN (".implode(",",$gBuildDistanceSources).")");
+// now pic out the relevant ones for this map frame...
+$bd_relevant_sources = array(); // two dimensional [$gCY+2][$gCX+2]
+foreach ($bd_sources as $o) {
+	// zone x is relative x coord limited to one unit outside the visible range
+	$zonex = max(-1,min($gCX,($o->x-$gLeft)));
+	$zoney = max(-1,min($gCY,($o->y-$gTop)));
+	if ($zonex >= 0 && $zonex < $gCX && $zoney >= 0 && $zoney < $gCX) {
+		// inside -> ok
+		$bd_relevant_sources[$zoney+1][$zonex+1] = $o;
+	} else {
+		// edgexy is the therest tile inside visible range
+		$edgex = max(0,min($gCX-1,($zonex)));
+		$edgey = max(0,min($gCY-1,($zoney)));
+		if (isset(		$bd_relevant_sources[$edgey+1][$edgex+1])) continue; // a source is at the edge, no need to look beyond
+		$o->dist = ($edgex-$zonex)*($edgex-$zonex) + ($edgey-$zoney)*($edgey-$zoney); // quadratic distance is enough
+		if (!isset(	$bd_relevant_sources[$zoney+1][$zonex+1]) ||
+					$bd_relevant_sources[$zoney+1][$zonex+1]->dist > $o->dist)
+					$bd_relevant_sources[$zoney+1][$zonex+1] = $o;
+	}
+}
+echo 'gBuildSources = "';
+foreach ($bd_relevant_sources as $arr) foreach ($arr as $o) echo ($o->x).",".($o->y).";";
+echo "\";\n";
+
+// -41,174
+// gBuildSources = "-124,158;-29,167;-48,151;-111,183;-101,177;-81,184;-110,182;-93,181;-107,180;-60,247;-52,191;-84,175;";
 
 // collect data
 // $gBodenschaetze = sqlgettable("SELECT * FROM `bodenschatz` WHERE ".$xylimit);
