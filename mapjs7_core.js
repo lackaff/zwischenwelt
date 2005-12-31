@@ -37,9 +37,11 @@ kJSMapMode_Bauzeit = 2;
 kJSMapMode_HP = 3;
 gLoading = true; // set to true when navi is clicked
 gAllLoaded = false; // mouselistener protection
-gBigMap = false;
+gBigMapWindow = false;
 gLastDebugTime = 0;
 gProfileLastLine = "";
+
+gBaseLoaded = false; // wether or not the mapjs7.php javascript has finished loading -> when calling MapInit();
 
 
 // obsolete interface
@@ -82,6 +84,12 @@ function JSSetBuilding (x,y,type,brushrad) { /* ./infoadmincmd.php:352:  ... mor
 function JSAddWP (armyid,x,y,blocked) {}
 function JSAddWPLinePoint (armyid,x,y,blocked) {} // the dots...
 
+function JSUpdateNaviPos () { 
+	if (!gBaseLoaded) return;
+	if (!gAllLoaded) return;
+	if (gBig != null && !gBig && parent.navi != null && parent.navi.updatepos != null)
+		parent.navi.updatepos(gLeft+gXMid,gTop+gYMid);
+}
 
 
 // speedup
@@ -106,15 +114,14 @@ function jsParseBuildings () {
 
 // executed onLoad, parse data, CreateMap() when finished
 function MapInit() {
+	gBaseLoaded = true;
 	profiling("starting init");
 	
 	var i,j,x,y;
 	gXMid=Math.floor(gCX/2);
 	gYMid=Math.floor(gCY/2);
 	
-	if (!gBig && parent.navi != null) {
-		parent.navi.updatepos(gLeft+gXMid,gTop+gYMid);
-	}
+	JSUpdateNaviPos();
 	
 	profiling("parse terrain");
 	// parse data
@@ -178,6 +185,8 @@ function MapInit() {
 	CreateMap();
 	profiling("done");profiling(""); // double call to finish output
 	gLoading = false;
+	
+	JSUpdateNaviPos();
 }
 
 function CompileTerrain () {
@@ -329,7 +338,7 @@ function OpenMap (type) {
 		//if (document.getElementsByName("army")[0] != null)
 		//	army = document.getElementsByName("army")[0].value;
 		// "BigMap"+Math.abs(x)+Math.abs(y)
-		gBigMap = window.open("mapjs7.php?sid="+gSID+"&cx=50&cy=50&big=1&army="+gActiveArmy+"&mode="+gMapMode+"&x="+x+"&y="+y,"BigMap");
+		gBigMapWindow = window.open("mapjs7.php?sid="+gSID+"&cx=50&cy=50&big=1&army="+gActiveArmy+"&mode="+gMapMode+"&x="+x+"&y="+y,"BigMap");
 	} else if (type == 2) { //minimap2
 		window.open("minimap2.php?sid="+gSID+"&crossx="+x+"&crossy="+y,"MiniMap","location=no,menubar=no,toolbar=no,status=no,resizable=yes,scrollbars=yes");
 	} else if (type == 3) { //minimap
@@ -419,9 +428,9 @@ function GetCellHTML (relx,rely) {
 		var bg = (i==0)?("background-color:"+backgroundcolor+";"):"";
 		res += "<div style=\"background-image:url("+layers[i]+"); "+bg+"\">";
 	}
-	res += "<div name=\"mouselistener\" onClick=\"mapclick("+relx+","+rely+")\" onMouseover=\"if (gAllLoaded) if (!gLoading) mapover("+relx+","+rely+")\">";
+	res += "<div name=\"mouselistener\" ><div onClick=\"mapclick("+relx+","+rely+")\" onMouseover=\"if (!gLoading) mapover("+relx+","+rely+")\">";
 	if (relx == gXMid && rely == gYMid) res += "<img src='gfx/crosshair.png'>";
-	res += '</div>';
+	res += '</div></div>';
 	for (i in layers) res += '</div>';
 	if (backgroundcolor) res += '</div>';
 	
@@ -693,11 +702,11 @@ function g5 (path,nwse,level,race,moral) {
 // interaction
 
 function nav(x,y) {
+	// alle elemente mit javascript-mouseover deaktivieren, um javascript fehler beim laden zu verhindern
+	var i,mouselistener = document.getElementsByName("mouselistener"); // killemall (anti death race condition)
+	for (i in mouselistener) mouselistener[i].innerHTML = "";
 	gLoading = true;
 	gAllLoaded = false;
-	// alle elemente mit javascript-mouseover deaktivieren, um javascript fehler beim laden zu verhindern
-	var i,mouselistener = document.getElementsByName("mouselistener");
-	for (i in mouselistener) mouselistener[i].onMouseover = "";
 	gScroll = parseInt(document.getElementsByName("mapscroll")[0].value);
 	if (x < 0) x = -1; else if (x > 0) x = 1;
 	if (y < 0) y = -1; else if (y > 0) y = 1;

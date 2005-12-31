@@ -374,19 +374,12 @@ define("kQuestFlag_RepeatOnFinish",					(1<<3));
 define("kBuildingRequirenment_NearRadius",2);
 define("kHQ_Upgrade_BaseTime",43200);
 
-$gBuildingGroups = array(
-	"Gebauede" => false, // contains the whole rest
-	"Produktion" => array(0=>kBuilding_Baracks,kBuilding_Farm,kBuilding_Lumberjack,kBuilding_StoneProd,kBuilding_IronMine),
-	"Infrastruktur" => array(0=>kBuilding_Path,kBuilding_Wall,kBuilding_Gate,kBuilding_Bridge,kBuilding_GB,kBuilding_Portal),
-	"Hafen" => array(0=>kBuilding_Harbor,kBuilding_Werft,kBuilding_SeaWall,kBuilding_SeaGate,kBuilding_Steg),
-	"Deko" => array(0=>kBuilding_Sign,kBuilding_Brunnen,kBuilding_Chessboard,kBuilding_Tavern,kBuilding_Teehaus,kBuilding_Gaertner,
-					kBuilding_Spielhalle,kBuilding_Platz,kBuilding_Leuchtturm),
-);
 define("kBuilding_HQ",1);
 define("kBuilding_MagicTower",2);
 define("kBuilding_Path",3);
 define("kBuilding_BROID",4);
 define("kBuilding_Wall",5);
+define("kBuilding_House",6);
 define("kBuilding_Silo",7); // lager
 define("kBuilding_Baracks",8);
 define("kBuilding_Farm",9);
@@ -408,15 +401,45 @@ define("kBuilding_GB",24); // gatebridge
 define("kBuilding_Brunnen",25); 
 define("kBuilding_Teehaus",43);
 define("kBuilding_Gaertner",44);
+define("kBuilding_Observatorium",45);
 define("kBuilding_Werft",46);
 define("kBuilding_Harbor",47);
 define("kBuilding_Steg",48);
 define("kBuilding_SeaWall",49);
 define("kBuilding_SeaGate",50);
 define("kBuilding_Tavern",51);
+define("kBuilding_Galgen",52);
 define("kBuilding_Spielhalle",64);
 define("kBuilding_Platz",65);
 define("kBuilding_Leuchtturm",66);
+
+$gBuildingTypeGroups = array( // used by for mapnavi tabs
+	"Gebäude" => array(0=>kBuilding_House,-1), // -1 is replaced by the whole rest
+	/*"Produktion" => array(0=>	kBuilding_Farm,
+								kBuilding_Lumberjack,
+								kBuilding_StoneProd,
+								kBuilding_IronMine),*/
+	"Infrastruktur" => array(0=>kBuilding_Path,
+								kBuilding_Wall,
+								kBuilding_Gate,
+								kBuilding_Bridge,
+								kBuilding_GB,
+								kBuilding_Portal,
+								kBuilding_Platz,
+								kBuilding_Sign,
+								kBuilding_SeaWall,
+								kBuilding_SeaGate,
+								kBuilding_Steg),
+	"Deko" => array(0=>			kBuilding_Brunnen,
+								kBuilding_Chessboard,
+								kBuilding_Tavern,
+								kBuilding_Teehaus,
+								kBuilding_Gaertner,
+								kBuilding_Spielhalle,
+								kBuilding_Leuchtturm,
+								kBuilding_Galgen,
+								kBuilding_Observatorium),
+);
 
 define("kRuinStartHp",1);
 define("kActionCmd_Build",1); // einheitenproduktion

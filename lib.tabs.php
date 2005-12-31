@@ -7,7 +7,8 @@ $gTabPaneNumber = 0;
 // $tabs : array of $pair : $pair[0] = header-image/text/html, $pair[1] = content
 // $corner : html for the right-top corner (cover in spans !)
 // selected is compared to the keys of the $tabs array, can be numeric or associative
-function PrintTabs ($cssclass,$tabs,$corner="",$selected=0) {
+// $jschangecallback : if not false, then this is javascript function is called at tabchange jschangecallback(tabnum)
+function PrintTabs ($cssclass,$tabs,$corner="",$jschangecallback=false,$selected=0) {
 	// internally for the javascript new numbers are used ($i)
 	global $gTabPaneNumber;
 	?>
@@ -23,6 +24,7 @@ function PrintTabs ($cssclass,$tabs,$corner="",$selected=0) {
 		}
 		heads[tabnum].className = "activetab";
 		panes[tabnum].style.display = "inline";
+		<?php if ($jschangecallback) {?> <?=$jschangecallback?>(tabnum); <?php }?>
 	}
 	//-->
 	</SCRIPT>
@@ -31,14 +33,15 @@ function PrintTabs ($cssclass,$tabs,$corner="",$selected=0) {
 		<div class="tabheader">
 			<ul>
 				<?php $i = 0; foreach ($tabs as $id => $pair) {?>
-				<li name="tabhead<?=$gTabPaneNumber?>" class="<?=$selected==$id?"activetab":"inactivetab"?>"
-					onClick="TabPane<?=$gTabPaneNumber?>Activate(<?=$i?>)"><span class="tabhead"><?=$pair[0]?></span></li>
+				<li name="tabhead<?=$gTabPaneNumber?>" 
+					class="<?=$selected==$id?"activetab":"inactivetab"?>" 
+					onClick="TabPane<?=$gTabPaneNumber?>Activate(<?=$i?>)"><span class="tabhead"><?=($pair[0])?></span></li>
 				<?php ++$i; } // endforeach?>
 			</ul>
 			<div class="corner"><?=$corner?></div>
 		</div>
-		<?php $i = 0; foreach ($tabs as $id => $pair) {?>
-			<div class="tabpane" name="tabpane<?=$gTabPaneNumber?>" <?=$selected==$id?"":"style=\"display:none;\""?>><?=$pair[1]?></div>
+		<?php $i = 0;  foreach ($tabs as $id => $pair) {?>
+		<div class="tabpane" name="tabpane<?=$gTabPaneNumber?>" <?=$selected==$id?"":"style=\"display:none;\""?>><?=($pair[1])?></div>
 		<?php ++$i; } // endforeach?>
 	</div>
 	</div>

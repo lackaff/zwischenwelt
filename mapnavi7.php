@@ -32,120 +32,6 @@ if (isset($f_regentypes)) {
 <link rel="stylesheet" type="text/css" href="<?=GetZWStylePath()?>"></link>
 <SCRIPT LANGUAGE="JavaScript">
 <!--
-	var gSID = "<?=$gSID?>";
-	var curtool = 0;
-	var curtoolparam = 0;
-	var bigmap = null;
-	function nav (x,y) {
-		parent.map.nav(x,y);
-	}
-	function navabs (x,y,cancelmode) {
-		parent.map.navabs(x,y,cancelmode);
-	}
-	function updatepos (x,y) {
-		document.getElementsByName("pos")[0].value = x+","+y;
-	}
-	function settool (tool,param,gfx) {
-		curtool = tool;
-		curtoolparam = param;
-		document.getElementsByName("curtoolpic")[0].src = gfx;
-	}
-	function resettool () {
-		if (curtool == 3 || curtool == 4)
-		if (curtool != 10)
-			settool(0,0,'<?=g("tool_look.png")?>');
-	}
-	var lineinit = false;
-	var linex = 0;
-	var liney = 0;
-	function addpatch (text) {
-		//if (document.getElementsByName("patchcheck")[0].checked)
-		//	document.getElementsByName("patch")[0].value += text;
-	}
-	function map (x,y) {
-		if (curtool == 9) {
-			document.getElementsByName("notizblock")[0].value += "  "+x+","+y;
-			return;
-		}	
-		if (curtool == 10) {
-			navabs(x,y,false);
-			return;
-		}	
-		var urladd = "";
-		var army = 0;
-		if (document.getElementsByName("army")[0] != null)
-			army = document.getElementsByName("army")[0].value;
-		
-		switch(curtool){
-			case 1:
-				urladd = "&do=build&build["+curtoolparam+"]=bauen";
-			break;
-			case 2:
-				urladd = "&do=adminsetterrain&terrain="+curtoolparam+"&brushrad="+document.getElementsByName("brushrad")[0].value;
-			break;
-			case 3:
-				urladd = "&do=setwaypoint&army="+army+"&button_wp=1";
-			break;
-			case 4:
-				urladd = "&do=setwaypoint&army="+army+"&button_route=1";
-			break;
-			case 5:
-				urladd = "&do=cancel";
-			break;
-			case 6:
-				urladd = "&do=adminsetbuilding&btype="+curtoolparam+
-				"&blevel="+document.getElementsByName("sellevel")[0].value+
-				"&buser="+document.getElementsByName("seluser")[0].value+
-				"&quest="+document.getElementsByName("selquest")[0].value;
-			break;
-			case 7:
-				urladd = "&do=adminsetarmy&unit="+curtoolparam+
-					"&brushrad="+document.getElementsByName("brushrad")[0].value+
-					"&anzahl="+document.getElementsByName("sellevel")[0].value+
-					"&user="+document.getElementsByName("seluser")[0].value+
-					"&quest="+document.getElementsByName("selquest")[0].value;
-			break;
-			case 8:
-				urladd = "&do=adminsetitem&type="+curtoolparam+
-					"&anzahl="+document.getElementsByName("sellevel")[0].value+
-					"&brushrad="+document.getElementsByName("brushrad")[0].value+
-					"&quest="+document.getElementsByName("selquest")[0].value;
-			break;
-			case 11:
-				urladd = "&do=adminzap";
-			break;
-			case 12:
-				urladd = "&do=adminruin";
-			break;
-			case 13:
-				urladd = "&do=adminremovearmy";
-			break;
-			case 14:
-				urladd = "&do=adminremoveitems";
-			break;
-			case 15:
-				urladd = "&do=adminclear";
-			break;
-		}
-		if (document.getElementsByName("line")[0] != null && document.getElementsByName("line")[0].checked) {
-			if (lineinit)
-				urladd += "&linex="+linex+"&liney="+liney;
-			if (lineinit && !document.getElementsByName("line2")[0].checked)
-					lineinit = false;
-			else	lineinit = true;
-			linex = x;
-			liney = y;
-		} else lineinit = false;
-		
-		//parent.info.location.href = "info/info.php?blind=1&x="+x+"&y="+y+urladd+"&sid=<?=$gSID?>";
-		if (curtool == 0) parent.info.location.href = "info/info.php?x="+x+"&y="+y+urladd+"&sid=<?=$gSID?>";
-		else parent.dummy.location.href = "info/info.php?blind=1&x="+x+"&y="+y+urladd+"&sid=<?=$gSID?>";
-	}
-	function clearline () { lineinit = false; }
-	function myreload () { 
-		parent.map.location.href = parent.map.location.href;
-		parent.navi.location.href = parent.navi.location.href;
-	}
 	<?php
 	function GetUserStuffList ($user) {
 		$user = intval($user);
@@ -277,13 +163,136 @@ if (isset($f_regentypes)) {
 		}
 		ShowList("gotocat3",sublist);
 	}
+	
+	var gSID = "<?=$gSID?>";
+	var curtool = 0;
+	var curtoolparam = 0;
+	var bigmap = null;
+	var lineinit = false;
+	var linex = 0;
+	var liney = 0;
+	function nav (x,y) {
+		parent.map.nav(x,y);
+	}
+	function navabs (x,y,cancelmode) {
+		parent.map.navabs(x,y,cancelmode);
+	}
+	function updatepos (x,y) {
+		document.getElementsByName("pos")[0].value = x+","+y;
+	}
+	function settool (tool,param,gfx) {
+		curtool = tool;
+		curtoolparam = param;
+		document.getElementsByName("curtoolpic")[0].src = gfx;
+	}
+	function resettool () {
+		//if (curtool == 3 || curtool == 4)
+		//if (curtool != 10)
+		settool(0,0,'<?=g("tool_look.png")?>');
+	}
+	function addpatch (text) {
+		//if (document.getElementsByName("patchcheck")[0].checked)
+		//	document.getElementsByName("patch")[0].value += text;
+	}
+	function map (x,y) {
+		if (curtool == 9) {
+			document.getElementsByName("notizblock")[0].value += "  "+x+","+y;
+			return;
+		}	
+		if (curtool == 10) {
+			navabs(x,y,false);
+			return;
+		}	
+		var urladd = "";
+		var army = 0;
+		if (document.getElementsByName("army")[0] != null)
+			army = document.getElementsByName("army")[0].value;
+		
+		switch(curtool){
+			case 1:
+				urladd = "&do=build&build["+curtoolparam+"]=bauen";
+			break;
+			case 2:
+				urladd = "&do=adminsetterrain&terrain="+curtoolparam+"&brushrad="+document.getElementsByName("brushrad")[0].value;
+			break;
+			case 3:
+				urladd = "&do=setwaypoint&army="+army+"&button_wp=1";
+			break;
+			case 4:
+				urladd = "&do=setwaypoint&army="+army+"&button_route=1";
+			break;
+			case 5:
+				urladd = "&do=cancel";
+			break;
+			case 6:
+				urladd = "&do=adminsetbuilding&btype="+curtoolparam+
+				"&blevel="+document.getElementsByName("sellevel")[0].value+
+				"&buser="+document.getElementsByName("seluser")[0].value+
+				"&quest="+document.getElementsByName("selquest")[0].value;
+			break;
+			case 7:
+				urladd = "&do=adminsetarmy&unit="+curtoolparam+
+					"&brushrad="+document.getElementsByName("brushrad")[0].value+
+					"&anzahl="+document.getElementsByName("sellevel")[0].value+
+					"&user="+document.getElementsByName("seluser")[0].value+
+					"&quest="+document.getElementsByName("selquest")[0].value;
+			break;
+			case 8:
+				urladd = "&do=adminsetitem&type="+curtoolparam+
+					"&anzahl="+document.getElementsByName("sellevel")[0].value+
+					"&brushrad="+document.getElementsByName("brushrad")[0].value+
+					"&quest="+document.getElementsByName("selquest")[0].value;
+			break;
+			case 11:
+				urladd = "&do=adminzap";
+			break;
+			case 12:
+				urladd = "&do=adminruin";
+			break;
+			case 13:
+				urladd = "&do=adminremovearmy";
+			break;
+			case 14:
+				urladd = "&do=adminremoveitems";
+			break;
+			case 15:
+				urladd = "&do=adminclear";
+			break;
+		}
+		if (document.getElementsByName("line")[0] != null && document.getElementsByName("line")[0].checked) {
+			if (lineinit)
+				urladd += "&linex="+linex+"&liney="+liney;
+			if (lineinit && !document.getElementsByName("line2")[0].checked)
+					lineinit = false;
+			else	lineinit = true;
+			linex = x;
+			liney = y;
+		} else lineinit = false;
+		
+		//parent.info.location.href = "info/info.php?blind=1&x="+x+"&y="+y+urladd+"&sid=<?=$gSID?>";
+		if (curtool == 0) parent.info.location.href = "info/info.php?x="+x+"&y="+y+urladd+"&sid=<?=$gSID?>";
+		else parent.dummy.location.href = "info/info.php?blind=1&x="+x+"&y="+y+urladd+"&sid=<?=$gSID?>";
+	}
+	function clearline () { lineinit = false; }
+	function myreload () { 
+		parent.map.location.href = parent.map.location.href;
+		parent.navi.location.href = parent.navi.location.href;
+	}
+	function ToolTabChange (tabnum) {
+		if (tabnum == 0) resettool();
+	}
+	function MyOnLoad () {
+		ChangeGotoCat();
+		if (parent.map != null && parent.map.JSUpdateNaviPos != null)
+			parent.map.JSUpdateNaviPos();
+	}
 //-->
 </SCRIPT>
-</head><body onLoad="ChangeGotoCat()">
+</head><body onLoad="MyOnLoad()">
 
 <!--mapcontrols-->
 <div class="mapnavigoto">
-<FORM METHOD=GET ACTION="<?=Query(kMapScript."?sid=?&big=?&cx=$gCX&cy=$gCY")?>" target="map">
+<FORM METHOD=GET ACTION="<?=Query(kMapScript."?sid=?&big=?&cx=$gCX&cy=$gCY")?>" target="map" onSubmit="resettool()">
 <INPUT TYPE="hidden" NAME="sid" VALUE="<?=$gSID?>">
 <SELECT NAME="gotocat" onChange="ChangeGotoCat()">
 	<?php foreach($gMapNaviGotoCatNames as $id => $name) 
@@ -301,67 +310,150 @@ if (isset($f_regentypes)) {
 
 
 <?php 
-// $gBuildingGroups
-$gNaviToolTabs = array();
-$gNaviToolTabs[] = array("tools","wp,lupe,abbrechen...");
 
-foreach ($gBuildingGroups as $name => $buildingtypeids) {
-	if ($buildingtypeids) {
-		$header = "<img src=\"".g($gBuildingType[$buildingtypeids[0]]->gfx,"we",1)."\">";
-		$toolshtml = "blaaa ".implode(",",$buildingtypeids);
-	} else $toolshtml = "rest";
-	$header = "pic-here:".$name;
-	$gNaviToolTabs[] = array($header,$toolshtml);
+// prepare the $gBuildingTypeGroups array, replace -1 by all not in list..
+$listed = array();
+foreach ($gBuildingTypeGroups as $buildingtypeids) 
+	foreach ($buildingtypeids as $id)
+		if ($id > 0) $listed[] = $id;
+foreach ($gBuildingTypeGroups as $name => $buildingtypeids) {
+	foreach ($buildingtypeids as $key => $id) {
+		if ($id == -1) {
+			foreach ($gBuildingType as $o) if (!in_array($o->id,$listed))
+				$buildingtypeids[] = $o->id;
+			$gBuildingTypeGroups[$name] = array_unique($buildingtypeids);
+			break;
+		}
+	}
 }
 
-// PrintTabs("mapnavitools",$gNaviToolTabs,"current-tool");
+// construct tabs
+$gNaviToolTabs = array();
+function NaviTool ($pic,$param1,$param2,$tooltip="",$css="") {
+	$res = "";
+	$res .= "<span class=\"".$css."\">";
+	$res .= "<a href=\"javascript:settool(".$param1.",".$param2.",'".$pic."')\">";
+	$res .= "<img src=\"".$pic."\" alt=\"".addslashes($tooltip)."\" title=\"".addslashes($tooltip)."\">";
+	$res .= "</a>";
+	$res .= "</span>\n";
+	return $res;
+}
+
+// general tools tab
+$head = "<img src=\"".g("tool_look.png")."\">";
+$content = "";
+$content .= "<div class=\"mapnavitool_general\">\n";
+$content .= NaviTool(g("tool_look.png"),0,0,"anschauen");
+$content .= NaviTool(g("tool_cancel.png"),5,0,"Bauplan/Wegpunkt löschen");
+$content .= NaviTool(g("tool_wp.png"),3,0,"Wegpunkt setzen");
+$content .= NaviTool(g("tool_route.png"),4,0,"Route berechnen");
+$content .= NaviTool(g("pick.png"),9,0,"Koordinate aufschreiben");
+if ($gUser->admin) {
+	$content .= NaviTool(g("del.png"),11,0,"Zap");
+	$content .= NaviTool(g("del.png"),12,0,"ruin");
+	$content .= NaviTool(g("del.png"),13,0,"rm_army");
+	$content .= NaviTool(g("del.png"),14,0,"rm_items");
+	$content .= NaviTool(g("del.png"),15,0,"clear");
+}
+$content .= NaviTool(g("crosshair.png"),10,0,"Zentrieren");
+$content .= "<br>";
+$content .= "<textarea name=\"notizblock\" rows=2 cols=40></textarea>";
+$content .= "</div>\n";
+
+$gNaviToolTabs[] = array($head,$content);
+
+// building-tabs
+$user_has_hq = UserHasBuilding($gUser->id,kBuilding_HQ);
+if ($user_has_hq) {
+	// normal build menu
+	// obsolete : $buildable = GetBuildlist(0,0,TRUE,FALSE,FALSE,TRUE);
+	foreach ($gBuildingTypeGroups as $name => $buildingtypeids) {
+		$head = "<img src=\"".g($gBuildingType[$buildingtypeids[0]]->gfx,"we",1)."\" alt=\"".$name." title=\"".$name."\">";
+		$content = "<div class=\"mapnavitool_buildings\">";
+		foreach ($buildingtypeids as $id) if ($id != -1 && !$gBuildingType[$id]->special) {
+			if ($gBuildingType[$id]->race != 0 && $gUser->race != $gBuildingType[$id]->race) continue;
+			if ($id == kBuilding_HQ) continue;
+			// HasReq($o->req_geb,$o->req_tech,$gUser->id)
+			$content .= NaviTool(g($gBuildingType[$id]->gfx,"we",1),1,$id,$gBuildingType[$id]->name);
+		}
+		$content .= "</div>\n";
+		$gNaviToolTabs[] = array($head,$content);
+	}
+} else {
+	// no HQ yet...
+	$id = kBuilding_HQ;
+	$head = "<img src=\"".g($gBuildingType[$id]->gfx,"we",1)."\">";
+	$content = "";
+	$content .= NaviTool(g($gBuildingType[$id]->gfx,"we",1),1,$id,$gBuildingType[$id]->name);
+	$gNaviToolTabs[] = array($head,$content);
+}
+
+
+// magic tabs
+$candospells = array();
+$spelltypes = sqlgettable("SELECT * FROM `spelltype` ORDER BY `orderval` ASC");
+foreach ($spelltypes as $spelltype) {
+	if(HasReq($spelltype->req_building,$spelltype->req_tech,$gUser->id,0)){ // TODO : replace 0 by current spell-tech level ?
+		$group = $spelltype->primetech ? $gTechnologyType[$spelltype->primetech]->group : 0;
+		$candospells[$spelltype->target][$spelltype->id] = $spelltype;
+	}
+}
+// (isset($gTechnologyGroup[$groupkey])?g($gTechnologyGroup[$groupkey]->gfx):g("res_mana.gif"))
+foreach ($candospells as $group => $arr) if (count($arr) > 0) {
+	$head = "<img src=\"".g("res_mana.gif")."\">";
+	$content = "<div class=\"mapnavitool_magic\">\n";
+	foreach ($arr as $spelltype)
+		$content .= NaviTool(g($spelltype->gfx),20,$spelltype->id,$spelltype->name);
+	$content .= "</div>\n";
+	$gNaviToolTabs[] = array($head,$content);
+}
+
+// terraforming tab
+if ($gUser->admin || intval($gUser->flags) & kUserFlags_TerraFormer) {
+	$head = "<img src=\"".g("icon/admin.png")."\">";
+	$content = "<div class=\"mapnavitool_terraform\">\n";
+	$content .= "Landschaftsgestaltung: Pinselgrösse:<INPUT TYPE=\"text\" NAME=\"brushrad\" VALUE=\"0\" style=\"width:30px\"><br>\n";
+	foreach($gTerrainType as $o)
+		$content .= NaviTool(g($o->gfx,"ns"),2,$o->id,$o->name);
+	$content .= "</div>\n";
+	$gNaviToolTabs[] = array($head,$content);
+}
+
+
+// admin tabs
+if ($gUser->admin) {
+	$head = "<img src=\"".g("icon/admin.png")."\">";
+	
+	// buildings
+	$content = "<div class=\"mapnavitool_admin\">\n";
+	foreach($gBuildingType as $o)
+		$content .= NaviTool(g($gBuildingType[$o->id]->gfx,"we",1),6,$o->id,$o->name);
+	$content .= "</div>\n";
+	$gNaviToolTabs[] = array($head,$content);
+	
+	// units
+	$content = "<div class=\"mapnavitool_admin\">\n";
+	foreach($gUnitType as $o)
+		$content .= NaviTool(g($gUnitType[$o->id]->gfx),7,$o->id,$o->name);
+	$content .= "</div>\n";
+	$gNaviToolTabs[] = array($head,$content);
+	
+	// items
+	$content = "<div class=\"mapnavitool_admin\">\n";
+	foreach($gItemType as $o)
+		$content .= NaviTool(g($gItemType[$o->id]->gfx),8,$o->id,$o->name);
+	$content .= "</div>\n";
+	$gNaviToolTabs[] = array($head,$content);
+}
+
+$tabcorner = "<div class=\"mapnavi_curtool\"><img name=\"curtoolpic\" src=\"".g("tool_look.png")."\"></div>";
+
+echo "<table width=\"100%\" border=0 cellspacing=0 cellpadding=0><tr><td>\n"; // cage
+PrintTabs("mapnavitools",$gNaviToolTabs,$tabcorner,"ToolTabChange");
+echo "</td></tr></table>\n"; // cage
 ?>
 
-
-<!-- tools -->
-<table><tr><td valign="middle" align="center" bgcolor="green" width="40">
-	<img name="curtoolpic" class="picframe" src="<?=isset($f_curtoolgfx)?g($f_curtoolgfx):g("tool_look.png")?>">
-</td><td>
-	<a href="javascript:settool(0,0,'<?=g("tool_look.png")?>')"><img class="picframe" src="<?=g("tool_look.png")?>"></a>
-	<a href="javascript:settool(5,0,'<?=g("tool_cancel.png")?>')"><img alt="Bauplan abbrechen" title="Bauplan abbrechen" class="picframe" src="<?=g("tool_cancel.png")?>"></a>
-	<a href="javascript:settool(3,0,'<?=g("tool_wp.png")?>')"><img alt="Wegpunkt setzen" title="Wegpunkt setzen" class="picframe" src="<?=g("tool_wp.png")?>"></a>
-	<a href="javascript:settool(4,0,'<?=g("tool_route.png")?>')"><img alt="Route berechnen" title="Route berechnen" class="picframe" src="<?=g("tool_route.png")?>"></a>
-	<a href="javascript:settool(9,0,'<?=g("pick.png")?>')"><img alt="Koordinate aufschreiben" title="Koordinate aufschreiben" class="picframe" src="<?=g("pick.png")?>"></a>
-	<?php if ($gUser->admin) {?> 
-	<a href="javascript:settool(11,0,'<?=g("del.png")?>')"><img alt="Zap" title="Zap" border=0 src="<?=g("del.png")?>"></a>
-	<a href="javascript:settool(12,0,'<?=g("del.png")?>')"><img alt="ruin" title="ruin" border=0 src="<?=g("del.png")?>"></a>
-	<a href="javascript:settool(13,0,'<?=g("del.png")?>')"><img alt="rm_army" title="rm_army" border=0 src="<?=g("del.png")?>"></a>
-	<a href="javascript:settool(14,0,'<?=g("del.png")?>')"><img alt="rm_items" title="rm_items" border=0 src="<?=g("del.png")?>"></a>
-	<a href="javascript:settool(15,0,'<?=g("del.png")?>')"><img alt="clear" title="clear" border=0 src="<?=g("del.png")?>"></a>
-	<?php }?>
-	<a href="javascript:settool(10,0,'<?=g("crosshair.png")?>')"><img alt="Zentrieren" title="Zentrieren" border=0 src="<?=g("crosshair.png")?>"></a>
-	<?php 
-		if (!UserHasBuilding($gUser->id,kBuilding_HQ))
-				$buildable = array(kBuilding_HQ);
-		else	$buildable = GetBuildlist(0,0,TRUE,FALSE,FALSE,TRUE);
-	?>
-	<?php foreach ($buildable as $o) {
-		$name = $gBuildingType[$o]->name;?>
-		<a href="javascript:settool(1,<?=$o?>,'<?=GetBuildingPic($o,0,"ns")?>')"><img alt="<?=$name?>" title="<?=$name?>" class="picframe" src="<?=g($gBuildingType[$o]->gfx,"ns",0,$gUser->race)?>"></a>
-	<?php }?>
-	<a href="javascript:myreload()">(reload)</a><br>
-</td></tr></table>	
-<?php if ($gUser->admin || intval($gUser->flags) & kUserFlags_TerraFormer) {?> 
-	brushrad:<INPUT TYPE="text" NAME="brushrad" VALUE="0" style="width:30px"><br>
-	<?php foreach($gTerrainType as $o) {?>
-	<a href="javascript:settool(2,<?=$o->id?>,'<?=g($o->gfx,"ns")?>')"><img alt="<?=$o->name?>" title="<?=$o->name?>" class="picframe" src="<?=g($o->gfx,"ns")?>"></a>
-	<?php } }?>
 <?php if ($gUser->admin) {?> 
-	<?php foreach($gBuildingType as $o) {?>
-	<a href="javascript:settool(6,<?=$o->id?>,'<?=GetBuildingPic($o->id,1,"ns")?>')"><img alt="<?=$o->name?>" title="<?=$o->name?>" class="picframe" src="<?=GetBuildingPic($o->id,1,"ns")?>"></a>
-	<?php }?>
-	<?php foreach($gUnitType as $o) if ($o->gfx) {?>
-	<a href="javascript:settool(7,<?=$o->id?>,'<?=g($o->gfx)?>')"><img alt="<?=$o->name?>" title="<?=$o->name?>" class="picframe" src="<?=g("$o->gfx")?>?>"></a>
-	<?php }?>
-	<?php foreach($gItemType as $o) if ($o->gfx) {?>
-	<a href="javascript:settool(8,<?=$o->id?>,'<?=g($o->gfx)?>')"><img alt="<?=$o->name?>" title="<?=$o->name?>" class="picframe" src="<?=g("$o->gfx")?>?>"></a>
-	<?php }?>
-	<br>
 	<?php $quests = sqlgettable("SELECT * FROM `quest` ORDER BY `start`");?>
 	<SELECT NAME="selquest">
 		<OPTION VALUE=0>-no_quest-</OPTION>
@@ -374,24 +466,26 @@ foreach ($gBuildingGroups as $name => $buildingtypeids) {
 	</SELECT>
 	line:<INPUT TYPE="checkbox" NAME="line" onChange="clearline()" VALUE="1">
 	<INPUT TYPE="checkbox" NAME="line2" onChange="clearline()" VALUE="1">
+	<br>
 	<a href="<?=Query("?regencss=1&sid=?")?>">(css)</a>
 	<a href="<?=Query("?regennwse=1&sid=?")?>">(nwse)</a>
 	<a href="<?=Query("?regentypes=1&sid=?")?>">(types)</a>
 	<?php if (0) {?><a href="<?=Query("?createbodenschatz=1&sid=?")?>">(bodenschatz)</a><?php }?>
-<?php } // endif admin?>
-	<textarea name="notizblock" rows=2 cols=40></textarea><br>
-	<?php if (0) {?>
-	patch<a href="javascript:void(document.getElementsByName('patch')[0].value = '')">#</a>:
-	<INPUT TYPE="checkbox" NAME="patchcheck" VALUE="1">
-	<textarea name="patch" rows=2 cols=30></textarea>
+	
+<?php }?> 
+<a href="javascript:myreload()">(reload)</a>
+	
+<?php if (0) {?>	
+	<?php foreach($gBuildingType as $o) {?>
+	<a href="javascript:settool(6,<?=$o->id?>,'<?=GetBuildingPic($o->id,1,"ns")?>')"><img alt="<?=$o->name?>" title="<?=$o->name?>" class="picframe" src="<?=GetBuildingPic($o->id,1,"ns")?>"></a>
 	<?php }?>
-	<?php 
-		// same as in mapstyle.php
-		if($gUser && isset($gUser->usegfxpath) && $gUser->usegfxpath){
-			$gfxpath = $gUser->gfxpath;
-			if(!empty($gfxpath))if($gfxpath{strlen($gfxpath)-1} != '/')$gfxpath .= "/";
-		}
-		else $gfxpath = "";
-	?>
+	<?php foreach($gUnitType as $o) if ($o->gfx) {?>
+	<a href="javascript:settool(7,<?=$o->id?>,'<?=g($o->gfx)?>')"><img alt="<?=$o->name?>" title="<?=$o->name?>" class="picframe" src="<?=g("$o->gfx")?>?>"></a>
+	<?php }?>
+	<?php foreach($gItemType as $o) if ($o->gfx) {?>
+	<a href="javascript:settool(8,<?=$o->id?>,'<?=g($o->gfx)?>')"><img alt="<?=$o->name?>" title="<?=$o->name?>" class="picframe" src="<?=g("$o->gfx")?>?>"></a>
+	<?php }?>
+	<br>
+<?php }?>
 </body>
 </html>

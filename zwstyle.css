@@ -1,5 +1,6 @@
 /* ***** Dynamic Tabs ***** */
 
+.tabs { display:inline; }
 .tabheader {
   float:left;
   width:100%;
@@ -16,53 +17,42 @@
   float:left;
   background:url("gfx/tab/left.png") no-repeat left top;
   margin:0;
-  padding:0 0 0 9px;
+  padding:0 0 0 3px;
 }
 .tabheader ul .tabhead {
   float:left;
   display:block;
   background:url("gfx/tab/right.png") no-repeat right top;
-  padding:1px 8px 0px 0px;
+  padding:1px 3px 0px 0px;
   text-decoration:none;
   font-weight:bold;
   color:#765;
 }
+
 /* Commented Backslash Hack
    hides rule from IE5-Mac \*/
 .tabheader .tabhead { float:none; cursor:pointer;}
 /* End IE5-Mac hack */
-.tabheader ul .tabhead:hover {
-  color:#333;
-}
+.tabheader ul .tabhead:hover { color:#333; }
 
-.tabheader .activetab {
-  background-image:url("gfx/tab/left_on.png");
-}
-.tabheader .activetab .tabhead {
-  background-image:url("gfx/tab/right_on.png");
-  color:#333;
-  padding-bottom:1px;
-}
-.tabheader .corner {
-  margin-top:2px;
-  margin-right:2px;
-  float:right;
-}
-.tabheader .corner span {
-  margin-bottom:2px;
-}
-.tabpane {
-	float:left;
-	margin-top:5px;
-	margin-left:5px;
-}
+.tabheader .activetab			{ background-image:url("gfx/tab/left_on.png"); }
+.tabheader .activetab .tabhead	{ background-image:url("gfx/tab/right_on.png"); color:#333; padding-bottom:1px; }
+.tabheader .corner			{ margin-top:2px; margin-right:2px; float:right; }
+.tabheader .corner span		{ margin-bottom:2px; }
+.tabpane { float:left; margin-top:5px; margin-left:5px; }
 
 /* ***** MAP NAVI ***** */
 
-.mapnavigoto FORM {
-	margin-top:0px;
-	margin-bottom:0px;
-}
+.mapnavigoto FORM { margin-top:0px; margin-bottom:0px; }
+.mapnavitools .tabhead { height:28px; }
+.mapnavitools .tabhead img { border:1px solid black; margin:1px; }
+.mapnavitools .tabpane img { border:1px solid black; margin:1px; vertical-align:top; }
+.mapnavi_curtool img { border:3px solid black; }
+.mapnavi_curtool * { vertical-align:middle; text-align:center; }
+.mapnavitool_general {}
+.mapnavitool_general textarea { background:#DDDDDD; }
+.mapnavitool_buildings span { /* background:url("gfx/landschaft/grass.png"); border:3px solid black; */ }
+
 
 /* ***** MAP ***** */
 
