@@ -226,16 +226,13 @@ class cInfoArmy extends cInfoBase {
 				$pathlen = count($path);
 				?>
 				<script language="javascript">
-					<?php for ($i=max(0,$pathlen-40);$i<$pathlen;$i++) { list($x,$y,$speed) = $path[$i];?>
-						parent.navi.JSAddWP(<?=$army->id?>,<?=$x?>,<?=$y?>,"<?=$speed?"false":"true"?>");
-					<?php }?>
 					<?php for ($i=0;$i<$newwplen;++$i) { 
 						list($x,$y) = $newwps[$i]; 
 						$speed = cArmy::GetPosSpeed($x,$y,$army->user,$army->units,false);
 						if ($speed == 0 && !$blocked)
 							$blocked = array($x,$y);
 						?>
-						parent.navi.JSAddWPLinePoint(<?=$army->id?>,<?=$x?>,<?=$y?>,"<?=$speed?"false":"true"?>");
+						parent.map.JSAddWP(<?=$army->id?>,<?=$x?>,<?=$y?>);
 					<?php }?>
 				</script>
 				<?php

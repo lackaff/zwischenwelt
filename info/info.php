@@ -182,6 +182,8 @@ if (!isset($f_building) && !isset($f_army) && isset($f_do)) {
 			}
 		break;
 		case "cancel":
+			// TODO : CANCEL WP of active ARMY  $f_cancel_wp_armyid
+			// $con = sqlgetobject("SELECT * FROM `construction` WHERE `x` = ".intval($f_x)." AND  `y` = ".intval($f_y)." AND `user` = ".$gUser->id);
 			$con = sqlgetobject("SELECT * FROM `construction` WHERE `x` = ".intval($f_x)." AND  `y` = ".intval($f_y)." AND `user` = ".$gUser->id);
 			if ($con) {
 				$con = CancelConstruction($con->id,$gUser->id);

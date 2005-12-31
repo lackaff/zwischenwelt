@@ -119,7 +119,7 @@ gLeft = <?=$gLeft?>;
 gTop = <?=$gTop?>;
 gScroll = <?=$gScroll?>;
 gSID = "<?=$gSID?>";
-gActiveArmy = <?=isset($f_army)?intval($f_army):0?>;
+gActiveArmyID = <?=isset($f_army)?intval($f_army):0?>;
 gThisUserID = <?=intval($gUser->id)?>;
 gGFXBase = "<?=$gGFXBase?>";
 gBig = <?=(isset($f_big) && $f_big)?1:0?>;
@@ -187,7 +187,11 @@ function obj2jsparams ($obj,$fields) {
 }
 
 // armies
+$gActiveArmy = false; // later : load waypoints for this army, but also output army info, even if it is not visible
+if (isset($f_army)) $gActiveArmy = sqlgetobject("SELECT * FROM `army` WHERE `id`=".intval($f_army)." LIMIT 1");
+
 $gArmies = sqlgettable("SELECT * FROM `army` WHERE ".$xylimit);
+if ($gActiveArmy) $gArmies[] = $gActiveArmy;
 foreach ($gArmies as $o) {
 	$gLocalUserIDs[] = $o->user;
 	$units = cUnit::GetUnits($o->id);
@@ -217,6 +221,7 @@ foreach ($gLocalUsers as $o) {
 $bd_sources = sqlgettable("SELECT * FROM `building` WHERE `user` = ".intval($gUser->id)." AND `construction` = 0 AND `type` IN (".implode(",",$gBuildDistanceSources).")");
 // now pic out the relevant ones for this map frame...
 $bd_relevant_sources = array(); // two dimensional [$gCY+2][$gCX+2]
+$debug_sources = false;
 foreach ($bd_sources as $o) {
 	// zone x is relative x coord limited to one unit outside the visible range
 	$zonex = max(-1,min($gCX,($o->x-$gLeft)));
@@ -228,19 +233,49 @@ foreach ($bd_sources as $o) {
 		// edgexy is the therest tile inside visible range
 		$edgex = max(0,min($gCX-1,($zonex)));
 		$edgey = max(0,min($gCY-1,($zoney)));
-		if (isset(		$bd_relevant_sources[$edgey+1][$edgex+1])) continue; // a source is at the edge, no need to look beyond
-		$o->dist = ($edgex-$zonex)*($edgex-$zonex) + ($edgey-$zoney)*($edgey-$zoney); // quadratic distance is enough
-		if (!isset(	$bd_relevant_sources[$zoney+1][$zonex+1]) ||
-					$bd_relevant_sources[$zoney+1][$zonex+1]->dist > $o->dist)
+		if (isset(	$bd_relevant_sources[$edgey+1][$edgex+1])) continue; // a source is at the edge, no need to look beyond
+		$o->dist = ($o->x-$gLeft-$edgex)*($o->x-$gLeft-$edgex) + ($o->y-$gTop-$edgey)*($o->y-$gTop-$edgey); // quadratic distance is enough
+		if ($debug_sources) echo "// $o->x,$o->y : $zonex,$zoney -> $edgex,$edgey : $o->dist ";
+		if (!isset(	$bd_relevant_sources[$zoney+1][$zonex+1]->dist) ||
+					$bd_relevant_sources[$zoney+1][$zonex+1]->dist > $o->dist) {
 					$bd_relevant_sources[$zoney+1][$zonex+1] = $o;
+					if ($debug_sources) echo "GOT\n";
+		} else if ($debug_sources) {
+			$b = $bd_relevant_sources[$zoney+1][$zonex+1];
+			echo "dropped in favor of : $b->x,$b->y,$b->dist\n";
+		}
 	}
 }
 echo 'gBuildSources = "';
 foreach ($bd_relevant_sources as $arr) foreach ($arr as $o) echo ($o->x).",".($o->y).";";
+//foreach ($bd_sources as $o) echo ($o->x).",".($o->y).";";
 echo "\";\n";
 
-// -41,174
-// gBuildSources = "-124,158;-29,167;-48,151;-111,183;-101,177;-81,184;-110,182;-93,181;-107,180;-60,247;-52,191;-84,175;";
+// waypoints
+echo 'gWPs = "';
+if ($gActiveArmy && cArmy::CanControllArmy($gActiveArmy,$gUser)) {
+	$wps = sqlgettable("SELECT * FROM `waypoint` WHERE `army` = ".intval($f_army)." ORDER BY `priority`");
+	// foreach connection between 2 waypoints
+	$curvisible = false;
+	for ($i=0,$imax=count($wps);$i<$imax-1;$i++) {
+		$x1 = $wps[$i]->x;
+		$y1 = $wps[$i]->y;
+		$x2 = $wps[$i+1]->x;
+		$y2 = $wps[$i+1]->y;
+		$lastvisible = $curvisible;
+		$curvisible = false;
+		// filter out if connection is not visible
+		if (max($x1,$x2) < $gLeft)			continue;
+		if (min($x1,$x2) >= $gLeft+$gCX)	continue;
+		if (max($y1,$y2) < $gTop)			continue;
+		if (min($y1,$y2) >= $gTop+$gCY)		continue;
+		$curvisible = true;
+		if (!$lastvisible) echo ";$x1,$y1;";
+		echo "$x2,$y2;";
+	}
+}
+echo "\";\n";
+// TODO : also transmit planned army actions such as pillage, siege... , draw above waypoints (for siege through path)
 
 // collect data
 // $gBodenschaetze = sqlgettable("SELECT * FROM `bodenschatz` WHERE ".$xylimit);

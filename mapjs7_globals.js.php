@@ -40,6 +40,55 @@ function GetBuildDistFactor (dist) {
 	else	return 1.0  + (dist-4.0) * 0.1;
 }
 
+// equals the php function GetNextStep in lib.main.php
+function GetNextStep (x,y,x1,y1,x2,y2) {
+	if (x == x2 && y == y2) return new Array(x,y); // already arrived
+	var minx,maxx,backx,xdif,line_x1,line_x2;
+	var miny,maxy,backy,ydif,line_y1,line_y2;
+	
+	// find back on track, should not happen
+	if (x1 < x2) 
+			{ minx = x1;maxx = x2; } 
+	else	{ minx = x2;maxx = x1; }
+	if (y1 < y2) 
+			{ miny = y1;maxy = y2; } 
+	else	{ miny = y2;maxy = y1; }
+	backx = (x < minx) ? (minx - x) : ( (x > maxx) ? (maxx - x) : 0 );
+	backy = (y < miny) ? (miny - y) : ( (y > maxy) ? (maxy - y) : 0 );
+	if (backx != 0 || backy != 0) {
+		if (Math.abs(backx) > Math.abs(backy)) 
+				return new Array(x+((backx>0)?1:-1),y);
+		else	return new Array(x,y+((backy>0)?1:-1));
+	}
+	
+	// waylength zero
+	if (x1 == x2 && y1 == y2) return new Array(x1,y1);
+	
+	xdif = x2-x1;
+	ydif = y2-y1;
+	if (Math.abs(xdif) >= Math.abs(ydif)) {
+		// horizontal movement
+		line_y1 = (y1+((x-0.5-x1)/xdif)*ydif);
+		line_y2 = (y1+((x+0.5-x1)/xdif)*ydif);
+		miny = Math.round(Math.min(line_y1,line_y2));
+		maxy = Math.round(Math.max(line_y1,line_y2));
+		
+		if (ydif > 0 && y < maxy) return new Array(x,y+1); // move verti
+		if (ydif < 0 && y > miny) return new Array(x,y-1); // move verti
+		return new Array(x+((xdif > 0)?1:-1),y); // move hori
+	} else {
+		// vertical movement
+		line_x1 = (x1+((y-0.5-y1)/ydif)*xdif);
+		line_x2 = (x1+((y+0.5-y1)/ydif)*xdif);
+		minx = Math.round(Math.min(line_x1,line_x2));
+		maxx = Math.round(Math.max(line_x1,line_x2));
+		
+		if (xdif > 0 && x < maxx) return new Array(x+1,y); // move hori
+		if (xdif < 0 && x > minx) return new Array(x-1,y); // move hori
+		return new Array(x,y+((ydif > 0)?1:-1)); // move verti
+	}
+}
+
 // HACK: (hyperblob)
 function UnitTypeHasNWSE (unittype) {
 	return unittype == <?=kUnitType_HyperBlob?>;
@@ -166,7 +215,9 @@ function php2js_parser ($function_name,$fields,$globalarr,$sep_obj=";",$sep_val=
 		var i;
 		<?=$globalarr?> = <?=$globalarr?>.split("<?=addslashes($sep_obj)?>");	
 		<?=$globalarr?>.pop();
-		for (i in <?=$globalarr?>) {
+		for (i in <?=$globalarr?>) if (<?=$globalarr?>[i] == "") {
+			<?=$globalarr?>[i] = false;
+		} else {
 			<?=$globalarr?>[i] = <?=$globalarr?>[i].split("<?=addslashes($sep_val)?>");
 			var res = new Object();
 			<?php $i = 0; foreach ($fields as $field) echo "res.".$field." = ".$globalarr."[i][".($i++)."];";?>
@@ -210,6 +261,7 @@ php2js_objectfunction("jsArmy","id,x,y,name,type,user,units,items,jsflags","gArm
 php2js_parser("jsParseItems","x,y,type,amount","gItems");
 php2js_parser("jsParsePlans","x,y,type,priority","gPlans");
 php2js_parser("jsParseBuildSources","x,y","gBuildSources");
+php2js_parser("jsWPs","x,y","gWPs");
 
 
 

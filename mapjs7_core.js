@@ -1,4 +1,4 @@
-// available map-params : gCX,gCY,gLeft,gTop,gSID,gThisUserID,gGFXBase,gBig,gXMid,gYMid,gMapMode,gScroll,gActiveArmy
+// available map-params : gCX,gCY,gLeft,gTop,gSID,gThisUserID,gGFXBase,gBig,gXMid,gYMid,gMapMode,gScroll,gActiveArmyID
 // available map-data : gTerrain,gBuildings,gArmies,gItems,gPlans,gOre??
 // available globals : gTerrainTypes,gBuildingTypes...
 // see also mapnavi_globals.js.php
@@ -25,6 +25,7 @@ gTerrainPatchTypeMap = new Array(); // generated from gTerrainPatchType
 gTerrainMap = false; // generated from CompileTerrain()
 gTerrainMap_raw = false; // generated from CompileTerrain()
 gTerrainMap_nwse = false; // generated from CompileTerrain()
+gWPMap = false; // generated from CompileWPs
 var gXMid,gYMid;
 gNWSEDebug = false; // shows typeid and connect-to infos in maptip
 
@@ -43,6 +44,57 @@ gProfileLastLine = "";
 
 gBaseLoaded = false; // wether or not the mapjs7.php javascript has finished loading -> when calling MapInit();
 
+function DirToNWSE1 (dx,dy) {
+	if (dy < 0 && dx == 0) return "n";
+	if (dx < 0 && dy == 0) return "w";
+	if (dx > 0 && dy == 0) return "e";
+	if (dy > 0 && dx == 0) return "s";
+	return false;
+}
+
+function CompileWPs () {
+	var i,x,y,dx1,dy1,dx2,dy2,relx,rely;
+	var cur,last,step,foot,head;
+	gWPMap = new Array(gCY); // generated from gWPs
+	for (y=0;y<gCY;++y) {
+		gWPMap[y] = new Array(gCX);
+		for (x=0;x<gCX;++x) gWPMap[y][x] = new Array();
+	}
+	last = false;
+	dx1 = 0; // last offset
+	dy1 = 0;
+	for (i in gWPs) {
+		cur = gWPs[i];
+		cur.x = parseInt(cur.x);
+		cur.y = parseInt(cur.y);
+		// wp-source : "1,1;200,1;;1,200;1,1;"
+		// ;; means invisible path-parts have been cut out, results in one wp being not an object, but false (see parser)
+		// here we process path-parts, (connections) consisting of two waypoints
+		if (!last || !cur) { last = cur; continue; }
+		for (x=last.x,y=last.y;x!=cur.x||y!=cur.y;) {
+			step = GetNextStep(x,y,last.x,last.y,cur.x,cur.y);
+			dx2 = step[0] - x; 
+			dy2 = step[1] - y;
+			// step[0,1] is the next pos,  x,y  is the current pos, write arrow for current pos (here)
+			relx = x - gLeft;
+			rely = y - gTop;
+			//alert("last:"+last.x+","+last.y+"\ncur:"+cur.x+","+cur.y+"\nrel:"+relx+","+rely+"\nd:"+dx2+","+dy2);
+			if (dx1 != 0 || dy1 != 0) if (relx >= 0 && rely >= 0 && relx < gCX && rely < gCY) {
+				foot = DirToNWSE1(-dx1,-dy1); // direction coming here
+				head = DirToNWSE1(dx2,dy2); // direction going from here to next
+				// TODO : check if blocked -> red or green
+				if (foot) gWPMap[relx][rely].push(g("mapwp/foot_"+foot+".png")); else alert("dead foot "+dx1+"."+dy1);
+				if (head) gWPMap[relx][rely].push(g("mapwp/head_"+head+".png")); else alert("dead head "+dx2+"."+dy2);
+			}
+			if (x == step[0] && y == step[1]) { alert("endless!"); break; }
+			x = step[0];
+			y = step[1];
+			dx1 = dx2;
+			dy1 = dy2;
+		}
+		last = cur;
+	}
+}
 
 // obsolete interface
 function getmode() { return gMode;}
@@ -55,6 +107,7 @@ function getcy() { return gCY;}
 
 
 // new interface
+function JSGetActiveArmyID() { return gActiveArmyID; }
 function JSInsertPlan (x,y,type,priority) {
 	var res = new Object();
 	res.x = x;
@@ -81,8 +134,15 @@ function JSAdminClear (x,y) {}
 function JSRemoveArmy (x,y) {}
 function JSSetTerrain (x,y,type,brushrad) { /* ./infoadmincmd.php:298:  ... more params : line,terraformer-limit.. */ }
 function JSSetBuilding (x,y,type,brushrad) { /* ./infoadmincmd.php:352:  ... more params : line,level.. */ }
-function JSAddWP (armyid,x,y,blocked) {}
-function JSAddWPLinePoint (armyid,x,y,blocked) {} // the dots...
+function JSAddWP (armyid,x,y) { // more
+	if (armyid != gActiveArmyID) return;
+	var newwp = new Object();
+	newwp.x = x;
+	newwp.y = y;
+	gWPs.push(newwp);
+	CompileWPs();
+	CreateMap();
+}
 
 function JSUpdateNaviPos () { 
 	if (!gBaseLoaded) return;
@@ -144,6 +204,10 @@ function MapInit() {
 	jsParsePlans();
 	profiling("parse BuildSources");
 	jsParseBuildSources();
+	profiling("parse Waypoints");
+	jsWPs();
+	profiling("compile Waypoints");
+	CompileWPs();
 	
 	profiling("parse armies");
 	// parse and summarize units in armies (summoned units are added to normal units)
@@ -354,7 +418,7 @@ function OpenMap (type) {
 		//if (document.getElementsByName("army")[0] != null)
 		//	army = document.getElementsByName("army")[0].value;
 		// "BigMap"+Math.abs(x)+Math.abs(y)
-		gBigMapWindow = window.open("mapjs7.php?sid="+gSID+"&cx=50&cy=50&big=1&army="+gActiveArmy+"&mode="+gMapMode+"&x="+x+"&y="+y,"BigMap");
+		gBigMapWindow = window.open("mapjs7.php?sid="+gSID+"&cx=50&cy=50&big=1&army="+gActiveArmyID+"&mode="+gMapMode+"&x="+x+"&y="+y,"BigMap");
 	} else if (type == 2) { //minimap2
 		window.open("minimap2.php?sid="+gSID+"&crossx="+x+"&crossy="+y,"MiniMap","location=no,menubar=no,toolbar=no,status=no,resizable=yes,scrollbars=yes");
 	} else if (type == 3) { //minimap
@@ -446,6 +510,14 @@ function GetCellHTML (relx,rely) {
 		if (army.user > 0) backgroundcolor = gUsers[army.user].color;
 	}
 	
+	// wps
+	for (i in gWPMap[relx][rely]) layers[layers.length] = gWPMap[relx][rely][i];
+	var wp = SearchPos(gWPs,relx,rely);
+	if (wp) {
+		layers[layers.length] = g("mapwp/dot.png");
+		var army = GetActiveArmy();
+		if (army && army.user > 0) backgroundcolor = gUsers[army.user].color;
+	}
 	
 	var i,res = "";
 	if (backgroundcolor) res += "<div style=\"\">";
@@ -530,6 +602,19 @@ function mapover (relx,rely) {
 		tiptext += "<img src=\""+g3(gBuildingType[plan.type].gfx,HackNWSE(plan.type,0,relx,rely),0)+"\"></td><td nowrap>";
 		tiptext += "<span>Bauplan</span><br>";
 		tiptext += "<span>"+gBuildingType[plan.type].name+"</span>";
+		tiptext += "</td></tr>";
+	}
+	
+	// wp
+	var wp = SearchPos(gWPs,relx,rely);
+	if (wp) {
+		var army = GetActiveArmy();
+		var user = (army && army.user > 0)?gUsers[army.user]:false;
+		tiptext += "<tr><td nowrap>";
+		tiptext += "<img src=\""+g("mapwp/dot.png")+"\"></td><td nowrap>";
+		tiptext += "<span>Wegpunkt</span><br>";
+		if (army) tiptext += "<span>"+army.name+"</span><br>";
+		if (user) tiptext += "<span>"+user.name+"</span><br>";
 		tiptext += "</td></tr>";
 	}
 	
@@ -687,6 +772,12 @@ function GetBuildDist (relx,rely) {
 	if (mindist < 0) return 0;
 	return Math.sqrt(mindist);
 }
+function GetActiveArmy () { 
+	for (i in gArmies) 
+		if (gArmies[i].id == gActiveArmyID) 
+			return gArmies[i];
+	return false;
+}
 
 
 // terrain/building pic + nwse
@@ -759,7 +850,7 @@ function nav(x,y,scroll) {
 
 function navabs (x,y,cancelmode) {
 	var mode = cancelmode?kJSMapMode_Normal:gMapMode;
-	location.href = "?sid="+gSID+"&x="+x+"&big="+gBig+"&y="+y+"&cx="+gCX+"&cy="+gCY+"&mode="+mode+"&scroll="+gScroll+"&army="+gActiveArmy;
+	location.href = location.pathname + "?sid="+gSID+"&x="+x+"&big="+gBig+"&y="+y+"&cx="+gCX+"&cy="+gCY+"&mode="+mode+"&scroll="+gScroll+"&army="+gActiveArmyID;
 }
 
 

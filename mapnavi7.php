@@ -54,7 +54,7 @@ if (isset($f_regentypes)) {
 			$gildenarmeen = sqlgettable("SELECT `army`.* FROM `army`,`user` WHERE `army`.`user` = `user`.`id` AND `user`.`guild` = ".$guild." AND `army`.`type` = ".$o->id." ORDER BY `name`","id");
 			$controllable = array();
 			foreach ($gildenarmeen as $a)
-				if (cArmy::CanControllArmy($a,$gUser))
+				if ($a->user != $gUser->id && cArmy::CanControllArmy($a,$gUser))
 					$controllable[$a->id] = $a->name;
 			if (count($controllable) > 0) $res[$o->name] = $controllable;
 		}
@@ -204,9 +204,9 @@ if (isset($f_regentypes)) {
 			return;
 		}	
 		var urladd = "";
-		var army = 0;
-		if (document.getElementsByName("army")[0] != null)
-			army = document.getElementsByName("army")[0].value;
+		var army = parent.map.JSGetActiveArmyID();
+		if (army == 0 && document.getElementsByName("gotocat3")[0] != null)
+			army = document.getElementsByName("gotocat3")[0].value;
 		
 		switch(curtool){
 			case 1:
@@ -225,7 +225,7 @@ if (isset($f_regentypes)) {
 				urladd = "&do=quickmagic&spellid="+curtoolparam;
 			break;
 			case 5:
-				urladd = "&do=cancel";
+				urladd = "&do=cancel&cancel_wp_armyid="+army;
 			break;
 			case 6:
 				urladd = "&do=adminsetbuilding&btype="+curtoolparam+
