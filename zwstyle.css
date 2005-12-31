@@ -105,6 +105,26 @@ table.map { BACKGROUND-COLOR: #66AA55; table-layout:fixed; border:1px solid blac
 .mapborder_sw_edge span { visibility:hidden; }
 .mapborder_se_edge span { visibility:hidden; }
 
+.mapborder_n_big { background-image: url(gfx/scroll/n_big.png); }
+.mapborder_s_big { background-image: url(gfx/scroll/s_big.png); }
+.mapborder_w_big { background-image: url(gfx/scroll/w_big.png); }
+.mapborder_e_big { background-image: url(gfx/scroll/e_big.png); }
+
+.mapborder_n_small { background-image: url(gfx/scroll/n_small.png); }
+.mapborder_s_small { background-image: url(gfx/scroll/s_small.png); }
+.mapborder_w_small { background-image: url(gfx/scroll/w_small.png); }
+.mapborder_e_small { background-image: url(gfx/scroll/e_small.png); }
+
+.mapborder_n_big span { visibility:hidden; }
+.mapborder_s_big span { visibility:hidden; }
+.mapborder_w_big span { visibility:hidden; }
+.mapborder_e_big span { visibility:hidden; }
+
+.mapborder_n_small span { visibility:hidden; }
+.mapborder_s_small span { visibility:hidden; }
+.mapborder_w_small span { visibility:hidden; }
+.mapborder_e_small span { visibility:hidden; }
+
 .mapscroll input { 
 	width:20px; 
 	height:10px; 
@@ -127,6 +147,7 @@ table.map { BACKGROUND-COLOR: #66AA55; table-layout:fixed; border:1px solid blac
 	font-size        : x-small;
 	font-weight      : bold;
 	text-decoration  : none;
+	font-family: verdana;
 }
 .maptip p { margin:1px; float:none; }
 .maptip img { border:1px solid black; }

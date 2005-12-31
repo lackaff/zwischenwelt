@@ -269,10 +269,22 @@ function CreateMap() {
 			// border
 			var myclass = "mapborder_" + (y<gYMid ? "n" : (y==gYMid?"":"s")) + (x<gXMid ? "w" : (x==gXMid?"":"e"));
 			if ((x < 0 || x >= gCX) && (y < 0 || y >= gCY)) myclass += "_edge";
+			
+			// arrows for the big and small steps
+			var step = 5;
+			       if(x+1 == gXMid && y<gYMid){step = 2;myclass = "mapborder_n_small";}
+			else if(x-1 == gXMid && y<gYMid){step = 10;myclass = "mapborder_n_big";}
+			else if(y+1 == gYMid && x<gXMid){step = 2;myclass = "mapborder_w_small";}
+			else if(y-1 == gYMid && x<gXMid){step = 10;myclass = "mapborder_w_big";}
+			else if(x+1 == gXMid && y>gYMid){step = 2;myclass = "mapborder_s_small";}
+			else if(x-1 == gXMid && y>gYMid){step = 10;myclass = "mapborder_s_big";}
+			else if(y+1 == gYMid && x>gXMid){step = 2;myclass = "mapborder_e_small";}
+			else if(y-1 == gYMid && x>gXMid){step = 10;myclass = "mapborder_e_big";}
+			
 			var navx = x<0?-1:(x>=gCX?1:0);
 			var navy = y<0?-1:(y>=gCY?1:0);
 			var text = (x < 0 || x >= gCX) ? (y+gTop) : (x+gLeft);
-			row += "<th class=\"mapborder\"><div class=\""+myclass+"\" onClick=\"nav("+navx+","+navy+")\"><span>"+text+"</span></div></th>\n";
+			row += "<th class=\"mapborder\"><div class=\""+myclass+"\" onClick=\"nav("+navx+","+navy+","+step+")\"><span>"+text+"</span></div></th>\n";
 		}
 		maphtml += "\n<tr>"+row+"</tr>\n";
 	}
@@ -282,11 +294,13 @@ function CreateMap() {
 	profiling("construct map tabs");
 	
 	var tab_corner = "";
-	tab_corner += "<span class=\"mapscroll\">";
+	/*
+	tab_corner += "<span class=\"mapscroll\" style='display:none'>";
 	tab_corner += "<span class=\"mapscroll_minus\"><a href=\"javascript:mapscroll_minus()\">-</a></span>";
 	tab_corner += "<span class=\"mapscroll_plus\"><a href=\"javascript:mapscroll_plus()\">+</a></span>";
 	tab_corner += "<input type=\"text\" name=\"mapscroll\" value=\""+gScroll+"\">";
 	tab_corner += "</span>";
+	*/
 	var tab_pre = "";
 	tab_pre += "<div class=\"tabs\">";
 	tab_pre += "	<div class=\"tabheader\">";
@@ -730,17 +744,16 @@ function g5 (path,nwse,level,race,moral) {
 
 // interaction
 
-function nav(x,y) {
+function nav(x,y,scroll) {
 	// alle elemente mit javascript-mouseover deaktivieren, um javascript fehler beim laden zu verhindern
 	var i,mouselistener = document.getElementsByName("mouselistener"); // killemall (anti death race condition)
 	for (i in mouselistener) mouselistener[i].innerHTML = "";
 	gLoading = true;
 	gAllLoaded = false;
-	gScroll = parseInt(document.getElementsByName("mapscroll")[0].value);
 	if (x < 0) x = -1; else if (x > 0) x = 1;
 	if (y < 0) y = -1; else if (y > 0) y = 1;
-	x = gLeft + gXMid + x * gScroll;
-	y = gTop + gYMid + y * gScroll;
+	x = gLeft + gXMid + x * scroll;
+	y = gTop + gYMid + y * scroll;
 	navabs(x,y,0);
 }
 
