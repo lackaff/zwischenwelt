@@ -511,13 +511,13 @@ function GetCellHTML (relx,rely) {
 	}
 	
 	// wps
-	for (i in gWPMap[relx][rely]) layers[layers.length] = gWPMap[relx][rely][i];
 	var wp = SearchPos(gWPs,relx,rely);
 	if (wp) {
 		layers[layers.length] = g("mapwp/dot.png");
 		var army = GetActiveArmy();
 		if (army && army.user > 0) backgroundcolor = gUsers[army.user].color;
 	}
+	for (i in gWPMap[relx][rely]) layers[layers.length] = gWPMap[relx][rely][i];
 	
 	var i,res = "";
 	if (backgroundcolor) res += "<div style=\"\">";
