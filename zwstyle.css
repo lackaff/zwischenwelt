@@ -1,4 +1,7 @@
 /* ***** Dynamic Tabs ***** */
+.notizblock {
+  width:100%;
+}
 
 .tabs { display:inline; }
 .tabheader {
@@ -45,9 +48,9 @@
 
 .mapnavigoto FORM { margin-top:0px; margin-bottom:0px; }
 .mapnavitools .tabhead { height:28px; }
-.mapnavitools .tabhead img { border:1px solid black; margin:1px; }
-.mapnavitools .tabpane img { border:1px solid black; margin:1px; vertical-align:top; }
-.mapnavi_curtool img { border:3px solid black; }
+.mapnavitools .tabhead img { border:0px solid black; margin:1px; margin-top:6px; }
+.mapnavitools .tabpane img { border:1px solid #dddddd; margin:1px; vertical-align:top; }
+.mapnavi_curtool img { border:0px solid black; }
 .mapnavi_curtool * { vertical-align:middle; text-align:center; }
 .mapnavitool_general {}
 .mapnavitool_general textarea { background:#DDDDDD; }

@@ -416,6 +416,7 @@ define("kBuilding_Leuchtturm",66);
 // build distance factor is dependant on the following buildings
 $gBuildDistanceSources = array(0=>kBuilding_HQ,kBuilding_Silo,kBuilding_Harbor);
 
+$gBuildingTypeGroupsPics = array("Gebäude"=>"tool_house.png","Infrastruktur"=>"tool_street.png","Deko"=>"tool_brunnen.png"); 
 $gBuildingTypeGroups = array( // used by for mapnavi tabs
 	"Gebäude" => array(0=>kBuilding_House,-1), // -1 is replaced by the whole rest
 	/*"Produktion" => array(0=>	kBuilding_Farm,

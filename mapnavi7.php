@@ -358,9 +358,9 @@ if ($gUser->admin) {
 	$content .= NaviTool(g("del.png"),14,0,"rm_items");
 	$content .= NaviTool(g("del.png"),15,0,"clear");
 }
-$content .= NaviTool(g("crosshair.png"),10,0,"Zentrieren");
+$content .= NaviTool(g("tool_crosshair.png"),10,0,"Zentrieren");
 $content .= "<br>";
-$content .= "<textarea name=\"notizblock\" rows=2 cols=40></textarea>";
+$content .= "<textarea class=\"notizblock\" name=\"notizblock\" rows=2 cols=40></textarea>";
 $content .= "</div>\n";
 
 $gNaviToolTabs[] = array($head,$content);
@@ -371,7 +371,7 @@ if ($user_has_hq) {
 	// normal build menu
 	// obsolete : $buildable = GetBuildlist(0,0,TRUE,FALSE,FALSE,TRUE);
 	foreach ($gBuildingTypeGroups as $name => $buildingtypeids) {
-		$head = "<img src=\"".g($gBuildingType[$buildingtypeids[0]]->gfx,"we",1)."\" alt=\"".$name." title=\"".$name."\">";
+		$head = "<img src=\"".g($gBuildingTypeGroupsPics[$name])."\" alt=\"".$name."\" title=\"".$name."\">";
 		$content = "<div class=\"mapnavitool_buildings\">";
 		foreach ($buildingtypeids as $id) if ($id != -1 && !$gBuildingType[$id]->special) {
 			if ($gBuildingType[$id]->race != 0 && $gUser->race != $gBuildingType[$id]->race) continue;
@@ -403,7 +403,7 @@ foreach ($spelltypes as $spelltype) {
 }
 // (isset($gTechnologyGroup[$groupkey])?g($gTechnologyGroup[$groupkey]->gfx):g("res_mana.gif"))
 foreach ($candospells as $group => $arr) if (count($arr) > 0) {
-	$head = "<img src=\"".g("res_mana.gif")."\">";
+	$head = "<img src=\"".g("tool_mana.png")."\">";
 	$content = "<div class=\"mapnavitool_magic\">\n";
 	foreach ($arr as $spelltype)
 		$content .= NaviTool(g($spelltype->gfx),20,$spelltype->id,$spelltype->name);
