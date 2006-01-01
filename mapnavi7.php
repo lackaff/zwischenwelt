@@ -499,7 +499,7 @@ echo "</td></tr></table>\n"; // cage
 	<?php if (0) {?><a href="<?=Query("?createbodenschatz=1&sid=?")?>">(bodenschatz)</a><?php }?>
 	
 <?php }?> 
-<a href="javascript:myreload()">(reload)</a>
+<a href="javascript:myreload()"><img border=0 src="<?=g("icon/reload.png")?>" alt="reload" title="reload"></a>
 	
 <?php if (0) {?>	
 	<?php foreach($gBuildingType as $o) {?>
