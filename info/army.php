@@ -226,16 +226,16 @@ class cInfoArmy extends cInfoBase {
 				$pathlen = count($path);
 				?>
 				<script language="javascript">
-					<?php for ($i=0;$i<$newwplen;++$i) { 
-						list($x,$y) = $newwps[$i]; 
-						$speed = cArmy::GetPosSpeed($x,$y,$army->user,$army->units,false);
-						if ($speed == 0 && !$blocked)
-							$blocked = array($x,$y);
-						?>
-						parent.map.JSAddWP(<?=$army->id?>,<?=$x?>,<?=$y?>);
-					<?php }?>
+					parent.map.jsArmy(<?=cArmy::GetJavaScriptArmyData($army)?>);
+					parent.map.JSActivateArmy(<?=$army->id?>,"<?=cArmy::GetJavaScriptWPs($army->id)?>");
 				</script>
 				<?php
+				for ($i=0;$i<$newwplen;++$i) { 
+					list($x,$y) = $newwps[$i]; 
+					$speed = cArmy::GetPosSpeed($x,$y,$army->user,$army->units,false);
+					if ($speed == 0 && !$blocked)
+						$blocked = array($x,$y);
+				}
 				if ($blocked) {
 					list($x,$y) = $blocked; 
 					?>
@@ -398,8 +398,18 @@ class cInfoArmy extends cInfoBase {
 		$gCanControllArmy =	cArmy::CanControllArmy($gArmy,$gUser);
 		$gArmyAction = sqlgettable("SELECT * FROM `armyaction` WHERE `army` = ".$gArmy->id." ORDER BY `id`");
 		
-		
+		// activate army in map, show wps if own army
+		if (cArmy::CanControllArmy($gArmy,$gUser)) {
+			?>
+			<script language="javascript">
+				parent.map.jsArmy(<?=cArmy::GetJavaScriptArmyData($gArmy)?>);
+				parent.map.JSActivateArmy(<?=$gArmy->id?>,"<?=cArmy::GetJavaScriptWPs($gArmy->id)?>");
+			</script>
+			<?php
+		}
 		?>
+		
+		
 		
 		
 		<?php /* ##### ##### #####      #####      ##### ##### ##### */ ?>

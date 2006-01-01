@@ -722,6 +722,14 @@ function NWSECodeToStr($code){
 }
 
 
+// for export to javascript, list object fields in $fields as comma seperated string (used by mapjs7.php)
+function obj2jsparams ($obj,$fields) {
+	$res = array();
+	$fields = explode(",",$fields);
+	foreach ($fields as $field) { $v = $obj->{$field}; $res[] = is_numeric($v)?$v:("\"".addslashes($v)."\""); }
+	return implode(",",$res);
+}
+
 //retuns the complete path to the graphic given by a relative path from gfx/
 //ie. item/drachenei.png
 //todo: local path replacement

@@ -14,6 +14,7 @@ function PrintTabs ($cssclass,$tabs,$corner="",$jschangecallback=false,$selected
 	?>
 	<SCRIPT LANGUAGE="JavaScript" type="text/javascript"><!--
 	function TabPane<?=$gTabPaneNumber?>Activate (tabnum) {
+		<?php if ($jschangecallback) {?> <?=$jschangecallback?>(tabnum); <?php }?>
 		var i;
 		var heads = document.getElementsByName("tabhead<?=$gTabPaneNumber?>");
 		var panes = document.getElementsByName("tabpane<?=$gTabPaneNumber?>");
@@ -24,7 +25,6 @@ function PrintTabs ($cssclass,$tabs,$corner="",$jschangecallback=false,$selected
 		}
 		heads[tabnum].className = "activetab";
 		panes[tabnum].style.display = "inline";
-		<?php if ($jschangecallback) {?> <?=$jschangecallback?>(tabnum); <?php }?>
 	}
 	//-->
 	</SCRIPT>

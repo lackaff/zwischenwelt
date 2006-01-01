@@ -53,8 +53,11 @@ function DirToNWSE1 (dx,dy) {
 }
 
 function CompileWPs () {
+	gWPMap = false;
+	if (gActiveArmyID == 0) return;
+	var movablemask = GetUnitsMovableMask(gArmies[gActiveArmyID].units);
 	var i,x,y,dx1,dy1,dx2,dy2,relx,rely;
-	var cur,last,step,foot,head;
+	var cur,last,step,foot,head,blocked;
 	gWPMap = new Array(gCY); // generated from gWPs
 	for (y=0;y<gCY;++y) {
 		gWPMap[y] = new Array(gCX);
@@ -83,8 +86,9 @@ function CompileWPs () {
 				foot = DirToNWSE1(-dx1,-dy1); // direction coming here
 				head = DirToNWSE1(dx2,dy2); // direction going from here to next
 				// TODO : check if blocked -> red or green
-				if (foot) gWPMap[relx][rely].push(g("mapwp/foot_"+foot+".png")); else alert("dead foot "+dx1+"."+dy1);
-				if (head) gWPMap[relx][rely].push(g("mapwp/head_"+head+".png")); else alert("dead head "+dx2+"."+dy2);
+				blocked = (GetPosSpeed(relx,rely,movablemask,gActiveArmyID) == 0) ? "b" : ""; // appended to nwse
+				if (foot) gWPMap[relx][rely].push(g("mapwp/foot_"+foot+blocked+".png")); else alert("dead foot "+dx1+"."+dy1);
+				if (head) gWPMap[relx][rely].push(g("mapwp/head_"+head+blocked+".png")); else alert("dead head "+dx2+"."+dy2);
 			}
 			if (x == step[0] && y == step[1]) { alert("endless!"); break; }
 			x = step[0];
@@ -134,23 +138,25 @@ function JSAdminClear (x,y) {}
 function JSRemoveArmy (x,y) {}
 function JSSetTerrain (x,y,type,brushrad) { /* ./infoadmincmd.php:298:  ... more params : line,terraformer-limit.. */ }
 function JSSetBuilding (x,y,type,brushrad) { /* ./infoadmincmd.php:352:  ... more params : line,level.. */ }
-function JSAddWP (armyid,x,y) { // more
-	if (armyid != gActiveArmyID) return;
-	var newwp = new Object();
-	newwp.x = x;
-	newwp.y = y;
-	gWPs.push(newwp);
-	CompileWPs();
-	CreateMap();
-}
 
 function JSUpdateNaviPos () { 
 	if (!gBaseLoaded) return;
 	if (!gAllLoaded) return;
-	if (gBig != null && !gBig && parent.navi != null && parent.navi.updatepos != null)
+	if (gBig != null && !gBig && parent.navi != null && parent.navi.updatepos != null) {
 		parent.navi.updatepos(gLeft+gXMid,gTop+gYMid);
+		parent.navi.SelectArmy(gActiveArmyID);
+	}
 }
 
+function JSActivateArmy (armyid,wps) {
+	gActiveArmyID = armyid;
+	gWPs = wps;
+	jsWPs();
+	ParseArmyData();
+	CompileWPs();
+	CreateMap();
+	JSUpdateNaviPos();
+}
 
 // speedup
 function jsParseBuildings () {
@@ -169,6 +175,15 @@ function jsParseBuildings () {
 		res.construction = gBuildings[i][6];
 		res.jsflags = gBuildings[i][7];			
 		gBuildingsCache[res.y-gTop+1][res.x-gLeft+1] = res;
+	}
+}
+
+function ParseArmyData () {
+	// parse and summarize units in armies (summoned units are added to normal units)
+	var i;
+	for (i in gArmies) {
+		gArmies[i].units = ParseTypeAmountList(gArmies[i].unitstxt);
+		gArmies[i].items = ParseTypeAmountList(gArmies[i].itemstxt);
 	}
 }
 
@@ -204,19 +219,15 @@ function MapInit() {
 	jsParsePlans();
 	profiling("parse BuildSources");
 	jsParseBuildSources();
+	
+	profiling("parse ParseArmyData");
+	ParseArmyData();
 	profiling("parse Waypoints");
 	jsWPs();
 	profiling("compile Waypoints");
 	CompileWPs();
 	
-	profiling("parse armies");
-	// parse and summarize units in armies (summoned units are added to normal units)
-	for (i in gArmies) {
-		gArmies[i].units = ParseTypeAmountList(gArmies[i].units);
-		gArmies[i].items = ParseTypeAmountList(gArmies[i].items);
-	}
 	profiling("parse gTerrainType");
-	
 	for (i in gTerrainType) {
 		gTerrainType[i].connectto_terrain = gTerrainType[i].connectto_terrain.split(",");
 		gTerrainType[i].connectto_building = gTerrainType[i].connectto_building.split(",");
@@ -513,11 +524,13 @@ function GetCellHTML (relx,rely) {
 	// wps
 	var wp = SearchPos(gWPs,relx,rely);
 	if (wp) {
-		layers[layers.length] = g("mapwp/dot.png");
+		var movablemask = GetUnitsMovableMask(gArmies[gActiveArmyID].units);
+		var blocked = (GetPosSpeed(relx,rely,movablemask,gActiveArmyID) == 0) ? "b" : ""; // appended to nwse
+		layers[layers.length] = g("mapwp/dot"+blocked+".png");
 		var army = GetActiveArmy();
 		if (army && army.user > 0) backgroundcolor = gUsers[army.user].color;
 	}
-	for (i in gWPMap[relx][rely]) layers[layers.length] = gWPMap[relx][rely][i];
+	if (gWPMap) for (i in gWPMap[relx][rely]) layers[layers.length] = gWPMap[relx][rely][i];
 	
 	var i,res = "";
 	if (backgroundcolor) res += "<div style=\"\">";
@@ -605,17 +618,26 @@ function mapover (relx,rely) {
 		tiptext += "</td></tr>";
 	}
 	
-	// wp
-	var wp = SearchPos(gWPs,relx,rely);
-	if (wp) {
+	// active army, wps
+	if (gActiveArmyID) {
+		var wp = SearchPos(gWPs,relx,rely);
 		var army = GetActiveArmy();
 		var user = (army && army.user > 0)?gUsers[army.user]:false;
-		tiptext += "<tr><td nowrap>";
-		tiptext += "<img src=\""+g("mapwp/dot.png")+"\"></td><td nowrap>";
-		tiptext += "<span>Wegpunkt</span><br>";
-		if (army) tiptext += "<span>"+army.name+"</span><br>";
-		if (user) tiptext += "<span>"+user.name+"</span><br>";
-		tiptext += "</td></tr>";
+		if (wp || (gWPMap && gWPMap[relx][rely].length > 1)) {
+			tiptext += "<tr><td nowrap>";
+			if (!wp) {
+				tiptext += "<div style=\"background-image:url("+gWPMap[relx][rely][gWPMap[relx][rely].length-2]+");\">";
+				tiptext += "<img src=\""+gWPMap[relx][rely][gWPMap[relx][rely].length-1]+"\">";
+				tiptext += "</div>";
+			} else tiptext += "<img src=\""+g("mapwp/dot.png")+"\">";
+			tiptext += "</td><td nowrap>";
+			if (wp) 
+					tiptext += "<span>Wegpunkt</span><br>";
+			else 	tiptext += "<span>geplanter weg</span><br>";
+			if (army) tiptext += "<span>"+army.name+"</span><br>";
+			if (user) tiptext += "<span>"+user.name+"</span><br>";
+			tiptext += "</td></tr>";
+		}
 	}
 	
 	// item
@@ -777,6 +799,9 @@ function GetActiveArmy () {
 		if (gArmies[i].id == gActiveArmyID) 
 			return gArmies[i];
 	return false;
+}
+function ArmyGetMovableMask (army) {
+	return 0;
 }
 
 

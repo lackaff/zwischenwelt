@@ -273,8 +273,11 @@ if (isset($f_regentypes)) {
 		} else lineinit = false;
 		
 		//parent.info.location.href = "info/info.php?blind=1&x="+x+"&y="+y+urladd+"&sid=<?=$gSID?>";
-		if (curtool == 0 || curtool == 20) parent.info.location.href = "info/info.php?x="+x+"&y="+y+urladd+"&sid=<?=$gSID?>";
-		else parent.dummy.location.href = "info/info.php?blind=1&x="+x+"&y="+y+urladd+"&sid=<?=$gSID?>";
+		// ohne baseurl kommt hier der merkwürdige fehler, dass sich mehrere info/ ansammeln...
+		// vermutlich weil die funktion ueber das map frame aufgerufen wird -> browserbug ?
+		if (curtool == 0 || curtool == 20) 
+				parent.info.location.href = "<?=BASEURL?>/info/info.php?x="+x+"&y="+y+urladd+"&sid=<?=$gSID?>";
+		else	parent.dummy.location.href = "<?=BASEURL?>/info/info.php?blind=1&x="+x+"&y="+y+urladd+"&sid=<?=$gSID?>";
 	}
 	function clearline () { lineinit = false; }
 	function myreload () { 
@@ -288,6 +291,26 @@ if (isset($f_regentypes)) {
 		ChangeGotoCat();
 		if (parent.map != null && parent.map.JSUpdateNaviPos != null)
 			parent.map.JSUpdateNaviPos();
+	}
+	function SelectArmy (armyid) {
+		if (armyid == 0) return;
+		// called from map when an army is activated for waypoint-setting, select it from the dropdown
+		// might be under own gGotoCats[3] or under guild gGotoCats[4], but not gGotoCats[4].Mitglieder
+		var i,j,k,id;
+		for (i=3;i<=4;++i) {
+			k = 0;
+			for (j in gGotoCats[i]) {
+				if (j != "Mitglieder") for (id in gGotoCats[i][j]) if (id == armyid) {
+					GetName("gotocat").value = i;
+					ChangeGotoCat();
+					GetName("gotocat2").value = k;
+					ChangeGotoCat2();
+					GetName("gotocat3").value = armyid;
+					return;
+				}
+				++k;
+			}
+		}
 	}
 //-->
 </SCRIPT>

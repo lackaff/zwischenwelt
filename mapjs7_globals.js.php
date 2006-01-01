@@ -89,6 +89,63 @@ function GetNextStep (x,y,x1,y1,x2,y2) {
 	}
 }
 
+// equals the php function GetUnitsMovableMask in lib.unit.php
+function GetUnitsMovableMask (units) {
+	var mask = 0;
+	var maskset = false;
+	for (i in units) if (units[i] >= 1) {
+		var flag = parseInt(gUnitType[i].movable_flag);
+		mask = (maskset)?(mask & flag):(flag);
+		maskset = true;
+	}
+	return mask;
+}
+
+// equals the php function GetPosSpeed in lib.main.php
+function GetPosSpeed (relx,rely,movablemask,skiparmyid) {
+	// check army
+	var army = SearchPos(gArmies,relx,rely);
+	if (army && army.id != skiparmyid) return 0;
+	
+	// vars
+	var override = true;
+	var b_speed = -1;
+	var t_speed = -1;
+	
+	// check building
+	var building = GetBuilding(relx,rely);
+	if(building) {
+		// is open for user?
+		b_speed = (parseInt(building.jsflags) & kJSMapBuildingFlag_Open) ? gBuildingType[building.type].speed : 0;
+		override = gBuildingType[building.type].movable_override_terrain == 1;
+		if ((movablemask & parseInt(gBuildingType[building.type].movable_flag)) == 0) {
+			b_speed = 0;
+		}
+	}
+	
+	// check terrain
+	var terraintype = GetTerrainType(relx,rely);
+	t_speed = gTerrainType[terraintype].speed;
+	// check movable
+	if ((movablemask & parseInt(gTerrainType[terraintype].movable_flag)) == 0) {
+		t_speed = 0;
+	}
+	
+	//check if building movable overrides terrain
+	if (building && override) {
+		//only building counts, terrain will be ignored
+		speed = b_speed;
+	} else if(building){
+		//building and terrain, no override
+		speed = Math.max(t_speed,b_speed);
+	} else {
+		//only terrain
+		speed = t_speed;
+	}
+
+	return speed;
+}
+
 // HACK: (hyperblob)
 function UnitTypeHasNWSE (unittype) {
 	return unittype == <?=kUnitType_HyperBlob?>;
@@ -250,13 +307,13 @@ function php2js_objarray ($name,$arr,$fields) {
 
 php2js_objarray("gTerrainType",$gTerrainType,"name,speed,buildable,gfx,mod_a,mod_v,mod_f,movable_flag,connectto_terrain,connectto_building");
 php2js_objarray("gBuildingType",$gBuildingType,"name,maxhp,speed,gfx,mod_a,mod_v,mod_f,connectto_terrain,connectto_building,neednear_building,require_building,exclude_building,border,movable_flag,movable_override_terrain");
-php2js_objarray("gUnitType",$gUnitType,"name,orderval,a,v,f,r,speed,gfx");
+php2js_objarray("gUnitType",$gUnitType,"name,orderval,a,v,f,r,speed,gfx,movable_flag");
 php2js_objarray("gItemType",$gItemType,"name,gfx");
 php2js_objarray("gTerrainPatchType",$gTerrainPatchType,"id,gfx,here,up,down,left,right");
 // bodenschaetze (ressources,perks,specials,deposit...)
 
 php2js_objectfunction("jsUser","id,guild,color,name","gUsers","id");
-php2js_objectfunction("jsArmy","id,x,y,name,type,user,units,items,jsflags","gArmies","id");
+php2js_objectfunction("jsArmy","id,x,y,name,type,user,unitstxt,itemstxt,jsflags","gArmies","id");
 // php2js_parser("jsParseBuildings","x,y,type,user,level,hp,construction,jsflags","gBuildings"); // special for speed
 php2js_parser("jsParseItems","x,y,type,amount","gItems");
 php2js_parser("jsParsePlans","x,y,type,priority","gPlans");

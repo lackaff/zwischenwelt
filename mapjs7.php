@@ -179,12 +179,6 @@ foreach ($gPlans as $o) {
 }
 echo "\";\n";
 
-function obj2jsparams ($obj,$fields) {
-	$res = array();
-	$fields = explode(",",$fields);
-	foreach ($fields as $field) { $v = $obj->{$field}; $res[] = is_numeric($v)?$v:("\"".addslashes($v)."\""); }
-	return implode(",",$res);
-}
 
 // armies
 $gActiveArmy = false; // later : load waypoints for this army, but also output army info, even if it is not visible
@@ -194,15 +188,7 @@ $gArmies = sqlgettable("SELECT * FROM `army` WHERE ".$xylimit);
 if ($gActiveArmy) $gArmies[] = $gActiveArmy;
 foreach ($gArmies as $o) {
 	$gLocalUserIDs[] = $o->user;
-	$units = cUnit::GetUnits($o->id);
-	$o->units = ""; 
-	foreach ($units as $u) $o->units .= $u->type.":".floor($u->amount)."|";
-	$o->items = ""; // TODO
-	$items = sqlgettable("SELECT * FROM `item` WHERE `army` = ".$o->id);
-	foreach ($items as $u) $o->items .= $u->type.":".floor($u->amount)."|";
-	foreach ($gRes as $n=>$f) if ($o->$f >= 1) $o->items .= $gRes2ItemType[$f].":".floor($o->$f)."|";
-	$o->flags = 0;// TODO : subset for walking, fighting, shooting...
-	echo "jsArmy(".obj2jsparams($o,"id,x,y,name,type,user,units,items,flags").");\n";
+	echo "jsArmy(".cArmy::GetJavaScriptArmyData($o).");\n";
 }
 
 
@@ -253,27 +239,8 @@ echo "\";\n";
 
 // waypoints
 echo 'gWPs = "';
-if ($gActiveArmy && cArmy::CanControllArmy($gActiveArmy,$gUser)) {
-	$wps = sqlgettable("SELECT * FROM `waypoint` WHERE `army` = ".intval($f_army)." ORDER BY `priority`");
-	// foreach connection between 2 waypoints
-	$curvisible = false;
-	for ($i=0,$imax=count($wps);$i<$imax-1;$i++) {
-		$x1 = $wps[$i]->x;
-		$y1 = $wps[$i]->y;
-		$x2 = $wps[$i+1]->x;
-		$y2 = $wps[$i+1]->y;
-		$lastvisible = $curvisible;
-		$curvisible = false;
-		// filter out if connection is not visible
-		if (max($x1,$x2) < $gLeft)			continue;
-		if (min($x1,$x2) >= $gLeft+$gCX)	continue;
-		if (max($y1,$y2) < $gTop)			continue;
-		if (min($y1,$y2) >= $gTop+$gCY)		continue;
-		$curvisible = true;
-		if (!$lastvisible) echo ";$x1,$y1;";
-		echo "$x2,$y2;";
-	}
-}
+if ($gActiveArmy && cArmy::CanControllArmy($gActiveArmy,$gUser)) 
+	echo cArmy::GetJavaScriptWPs($gActiveArmy->id,$gLeft,$gTop,$gCX,$gCY);
 echo "\";\n";
 // TODO : also transmit planned army actions such as pillage, siege... , draw above waypoints (for siege through path)
 

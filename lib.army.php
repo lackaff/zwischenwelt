@@ -10,6 +10,47 @@ require_once("lib.item.php");
 require_once("lib.unit.php");
 
 class cArmy {
+	function GetJavaScriptArmyData ($army) {
+		if (!is_object($army)) $army = sqlgetobject("SELECT * FROM `army` WHERE `id` = ".intval($army));
+		global $gRes2ItemType,$gRes;
+		$units = cUnit::GetUnits($army->id);
+		$army->unitstxt = ""; 
+		foreach ($units as $u) $army->unitstxt .= $u->type.":".floor($u->amount)."|";
+		$army->itemstxt = "";
+		$items = sqlgettable("SELECT * FROM `item` WHERE `army` = ".$army->id);
+		foreach ($items as $u) $army->itemstxt .= $u->type.":".floor($u->amount)."|";
+		foreach ($gRes as $n=>$f) if ($army->$f >= 1) $army->itemstxt .= $gRes2ItemType[$f].":".floor($army->$f)."|";
+		$o->flags = 0;// TODO : subset for walking, fighting, shooting...
+		return obj2jsparams($army,"id,x,y,name,type,user,unitstxt,itemstxt,flags");
+	}
+	function GetJavaScriptWPs ($armyid,$gLeft=false,$gTop=false,$gCX=false,$gCY=false) {
+		if (is_object($armyid)) $armyid = $armyid->id;
+		$wps = sqlgettable("SELECT * FROM `waypoint` WHERE `army` = ".intval($armyid)." ORDER BY `priority`");
+		$res = "";
+		// foreach connection between 2 waypoints
+		$curvisible = false;
+		for ($i=0,$imax=count($wps);$i<$imax-1;$i++) {
+			$x1 = $wps[$i]->x;
+			$y1 = $wps[$i]->y;
+			$x2 = $wps[$i+1]->x;
+			$y2 = $wps[$i+1]->y;
+			$lastvisible = $curvisible;
+			$curvisible = false;
+			// filter out if connection is not visible
+			if ($gLeft !== false) {
+				if (max($x1,$x2) < $gLeft)			continue;
+				if (min($x1,$x2) >= $gLeft+$gCX)	continue;
+				if (max($y1,$y2) < $gTop)			continue;
+				if (min($y1,$y2) >= $gTop+$gCY)		continue;
+			}
+			$curvisible = true;
+			if (!$lastvisible) $res .= ";$x1,$y1;";
+			$res .= "$x2,$y2;";
+		}
+		return $res;
+	}
+	
+	
 	function CanCreateNewArmy ($userid,$armytype) {
 		global $gArmyType;
 		if ($gArmyType[$armytype]->limit < 0) return true;
