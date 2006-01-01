@@ -16,7 +16,6 @@
 // TODO : tor nwse bug : connect-to-building : self rausschmeissen
 // TODO : tooltip : einheiten reihenfolge stimmt nicht (orderval ?)
 
-
 // the order in which fields are filled from mapjs7.php
 gUsers = new Array(); // filled with function, for string security
 gArmies = new Array(); // filled with function, for string security
@@ -87,8 +86,8 @@ function CompileWPs () {
 				head = DirToNWSE1(dx2,dy2); // direction going from here to next
 				// TODO : check if blocked -> red or green
 				blocked = (GetPosSpeed(relx,rely,movablemask,gActiveArmyID) == 0) ? "b" : ""; // appended to nwse
-				if (foot) gWPMap[relx][rely].push(g("mapwp/foot_"+foot+blocked+".png")); else alert("dead foot "+dx1+"."+dy1);
-				if (head) gWPMap[relx][rely].push(g("mapwp/head_"+head+blocked+".png")); else alert("dead head "+dx2+"."+dy2);
+				if (foot) gWPMap[relx][rely][gWPMap[relx][rely].length] = (g("mapwp/foot_"+foot+blocked+".png")); else alert("dead foot "+dx1+"."+dy1);
+				if (head) gWPMap[relx][rely][gWPMap[relx][rely].length] = (g("mapwp/head_"+head+blocked+".png")); else alert("dead head "+dx2+"."+dy2);
 			}
 			if (x == step[0] && y == step[1]) { alert("endless!"); break; }
 			x = step[0];
@@ -118,7 +117,7 @@ function JSInsertPlan (x,y,type,priority) {
 	res.y = y;
 	res.type = type;
 	res.priority = priority;
-	gPlans.push(res);
+	gPlans[gPlans.length] = res;
 	RefreshCell(x-gLeft,y-gTop);
 }
 function JSRemovePlan (x,y) {
@@ -139,7 +138,8 @@ function JSRemoveArmy (x,y) {}
 function JSSetTerrain (x,y,type,brushrad) { /* ./infoadmincmd.php:298:  ... more params : line,terraformer-limit.. */ }
 function JSSetBuilding (x,y,type,brushrad) { /* ./infoadmincmd.php:352:  ... more params : line,level.. */ }
 
-function JSUpdateNaviPos () { 
+function JSUpdateNaviPos () {
+	//var myarr = new Array(); myarr.pop();
 	if (!gBaseLoaded) return;
 	if (!gAllLoaded) return;
 	if (gBig != null && !gBig && parent.navi != null && parent.navi.updatepos != null) {
@@ -162,7 +162,7 @@ function JSActivateArmy (armyid,wps) {
 function jsParseBuildings () {
 	var i;
 	gBuildings = gBuildings.split(";");	
-	gBuildings.pop();
+	gBuildings.length=gBuildings.length-1;
 	for (i in gBuildings) {
 		gBuildings[i] = gBuildings[i].split(",");
 		var res = new Object();
@@ -243,9 +243,9 @@ function MapInit() {
 	profiling("parse gTerrainPatchType");
 	for (i in gTerrainPatchType) {
 		var x = gTerrainPatchType[i];
-		if (gTerrainPatchTypeMap[x.here] == undefined)
+		if (!gTerrainPatchTypeMap[x.here]) // EX UNDEFINED
 			gTerrainPatchTypeMap[x.here] = new Array();
-		gTerrainPatchTypeMap[x.here].push(x);	
+		gTerrainPatchTypeMap[x.here][gTerrainPatchTypeMap[x.here].length] = x;	
 	}
 	
 	gTerrainMap = new Array(gCY+2);
@@ -310,11 +310,11 @@ function CompileTerrain () {
 
 function ParseTypeAmountList (list) {
 	var arr = list.split("|");
-	arr.pop();
+	arr.length=arr.length-1;
 	var i,res = new Array();
 	for (i in arr) {
 		var type_amount_pair = arr[i].split(":");
-		if (res[type_amount_pair[0]] == undefined)
+		if (!res[type_amount_pair[0]]) // EX UNDEFINED
 			res[type_amount_pair[0]] = 0;
 		res[type_amount_pair[0]] += parseInt(type_amount_pair[1]);
 	}
@@ -569,7 +569,8 @@ function mapclick (relx,rely) {
 
 function KillTip () {
 	if (gLoading) return;
-	document.getElementsByName(kMapTipName)[0].style.visibility = "hidden";
+	//alert();
+	//document.getElementsByName(kMapTipName)[0].style.visibility = "hidden";
 }
 
 function mapover (relx,rely) {
@@ -763,7 +764,7 @@ function SearchPosArr (arr,relx,rely) {
 	var res = new Array();
 	var i; for (i in arr) {
 		if (arr[i].x == relx + gLeft && 
-			arr[i].y == rely + gTop) res.push(arr[i]);
+			arr[i].y == rely + gTop) res[res.length] = arr[i];
 	}
 	return res;
 }

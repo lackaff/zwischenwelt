@@ -153,19 +153,25 @@ function UnitTypeHasNWSE (unittype) {
 
 // HACK: hardcode a few connect-to-building entries
 function HackCon () {
-	gBuildingType[<?=kBuilding_Gate		?>].connectto_building.push(<?=kBuilding_Wall?>);
-	gBuildingType[<?=kBuilding_Wall		?>].connectto_building.push(<?=kBuilding_Gate?>);
-	gBuildingType[<?=kBuilding_Path		?>].connectto_building.push(<?=kBuilding_Gate?>);
-	gBuildingType[<?=kBuilding_GB		?>].connectto_building.push(<?=kBuilding_Path?>);
-	gBuildingType[<?=kBuilding_Path		?>].connectto_building.push(<?=kBuilding_GB?>);
-	gBuildingType[<?=kBuilding_Bridge	?>].connectto_building.push(<?=kBuilding_Path?>);
-	gBuildingType[<?=kBuilding_Path		?>].connectto_building.push(<?=kBuilding_Bridge?>);
-	gBuildingType[<?=kBuilding_SeaWall	?>].connectto_building.push(<?=kBuilding_SeaGate?>);
-	gBuildingType[<?=kBuilding_SeaGate	?>].connectto_building.push(<?=kBuilding_SeaWall?>);
+	<?php 
+	function js_print_legacy_push($arrname,$val) {
+		// internet explorer 5.0 doesn't know push/pop
+		echo $arrname."[".$arrname.".length] = ".$val.";\n";
+	}
+	js_print_legacy_push("gBuildingType[".kBuilding_Gate		."].connectto_building",kBuilding_Wall);
+	js_print_legacy_push("gBuildingType[".kBuilding_Wall		."].connectto_building",kBuilding_Gate);
+	js_print_legacy_push("gBuildingType[".kBuilding_Path		."].connectto_building",kBuilding_Gate);
+	js_print_legacy_push("gBuildingType[".kBuilding_GB		."].connectto_building",kBuilding_Path);
+	js_print_legacy_push("gBuildingType[".kBuilding_Path		."].connectto_building",kBuilding_GB);
+	js_print_legacy_push("gBuildingType[".kBuilding_Bridge	."].connectto_building",kBuilding_Path);
+	js_print_legacy_push("gBuildingType[".kBuilding_Path		."].connectto_building",kBuilding_Bridge);
+	js_print_legacy_push("gBuildingType[".kBuilding_SeaWall	."].connectto_building",kBuilding_SeaGate);
+	js_print_legacy_push("gBuildingType[".kBuilding_SeaGate	."].connectto_building",kBuilding_SeaWall);
 	
-	gBuildingType[<?=kBuilding_Steg		?>].connectto_building.push(<?=kBuilding_Harbor?>);
-	gBuildingType[<?=kBuilding_Harbor	?>].connectto_terrain.push(<?=kTerrain_Sea?>);
-	gTerrainType[<?=kTerrain_Sea		?>].connectto_building.push(<?=kBuilding_Harbor?>);
+	js_print_legacy_push("gBuildingType[".kBuilding_Steg		."].connectto_building",kBuilding_Harbor);
+	js_print_legacy_push("gBuildingType[".kBuilding_Harbor	."].connectto_terrain",kTerrain_Sea);
+	js_print_legacy_push("gTerrainType[".kTerrain_Sea		."].connectto_building",kBuilding_Harbor);
+	?>
 }
 
 // give water a blue background(=gridlines), green lines on water suck !
@@ -271,7 +277,7 @@ function php2js_parser ($function_name,$fields,$globalarr,$sep_obj=";",$sep_val=
 	function <?=$function_name?> () {
 		var i;
 		<?=$globalarr?> = <?=$globalarr?>.split("<?=addslashes($sep_obj)?>");	
-		<?=$globalarr?>.pop();
+		<?=$globalarr?>.length=<?=$globalarr?>.length-1;
 		for (i in <?=$globalarr?>) if (<?=$globalarr?>[i] == "") {
 			<?=$globalarr?>[i] = false;
 		} else {
