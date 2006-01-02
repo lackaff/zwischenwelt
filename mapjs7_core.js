@@ -540,7 +540,7 @@ function GetCellHTML (relx,rely) {
 	var i,res = "";
 	if (backgroundcolor) res += "<div style=\"\">";
 	for (i in layers) {
-		var bg = (i==0 && backgroundcolor)?("background-color:"+backgroundcolor+";"):"";
+		var bg = (i==0 && backgroundcolor && backgroundcolor != "false")?("background-color:"+backgroundcolor+";"):"";
 		res += "<div style=\"background-image:url("+layers[i]+"); "+bg+"\">";
 	}
 	res += "<div id=\"mouselistener_"+rely+"_"+relx+"\" ><div onClick=\"mapclick("+relx+","+rely+")\" onMouseover=\"if (!gLoading) mapover("+relx+","+rely+")\">";
