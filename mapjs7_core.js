@@ -540,6 +540,7 @@ function GetCellHTML (relx,rely) {
 	var i,res = "";
 	if (backgroundcolor) res += "<div style=\"\">";
 	for (i in layers) {
+		// if (i == 0) alert(backgroundcolor);
 		var bg = (i==0 && backgroundcolor && backgroundcolor != "false")?("background-color:"+backgroundcolor+";"):"";
 		res += "<div style=\"background-image:url("+layers[i]+"); "+bg+"\">";
 	}
