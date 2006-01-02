@@ -415,6 +415,11 @@ function CreateMap() {
 	profiling("sending html to browser");
 	
 	document.getElementById("mapzone").innerHTML = tab_pre + maphtml + tab_post + maptiphtml;
+	
+	
+	var maptipnode = document.getElementsByName(kMapTipName)[0];
+	alert("0"+maptipnode);
+	
 	return true;
 }
 
