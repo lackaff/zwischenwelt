@@ -110,7 +110,7 @@ if($gUser && $gUser->usegfxpath && !empty($gUser->gfxpath)){
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/transitional.dtd">
 <html><head>
 <link rel="stylesheet" type="text/css" href="<?=GetZWStylePath()?>"></link>
-<script src="mapjs7_core.js?v=1" type="text/javascript"></script>
+<script src="mapjs7_core.js?v=2" type="text/javascript"></script>
 <script src="<?="mapjs7_globals.js.php".$styleparam?>" type="text/javascript"></script>
 <SCRIPT LANGUAGE="JavaScript" type="text/javascript"><!--
 gCX = <?=intval($gCX)?>;
