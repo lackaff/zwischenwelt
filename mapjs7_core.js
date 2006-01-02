@@ -410,7 +410,7 @@ function CreateMap() {
 	var tab_post = "\n</div></td></tr></table>\n";
 	*/
 	
-	var maptiphtml = "<span class=\"maptip\" onMouseover=\"KillTip()\" name=\""+kMapTipName+"\" style=\"position:absolute;top:0px;left:0px; visibility:hidden;\"></span>";
+	var maptiphtml = "<span class=\"maptip\" onMouseover=\"KillTip()\" name=\""+kMapTipName+"\" style=\"position:absolute;top:0px;left:0px; visibility:hidden;\">&nbsp;</span>";
 	
 	profiling("sending html to browser");
 	
