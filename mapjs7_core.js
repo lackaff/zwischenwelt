@@ -83,8 +83,8 @@ function CompileWPs () {
 				head = DirToNWSE1(dx2,dy2); // direction going from here to next
 				// TODO : check if blocked -> red or green
 				blocked = (GetPosSpeed(relx,rely,movablemask,gActiveArmyID) == 0) ? "b" : ""; // appended to nwse
-				if (foot) gWPMap[relx][rely][gWPMap[relx][rely].length] = (g("mapwp/foot_"+foot+blocked+".png")); else alert("dead foot "+dx1+"."+dy1);
-				if (head) gWPMap[relx][rely][gWPMap[relx][rely].length] = (g("mapwp/head_"+head+blocked+".png")); else alert("dead head "+dx2+"."+dy2);
+				if (foot) gWPMap[relx][rely][gWPMap[relx][rely].length] = (g("mapwp/foot_"+foot+blocked+".gif")); else alert("dead foot "+dx1+"."+dy1);
+				if (head) gWPMap[relx][rely][gWPMap[relx][rely].length] = (g("mapwp/head_"+head+blocked+".gif")); else alert("dead head "+dx2+"."+dy2);
 			}
 			if (x == step[0] && y == step[1]) { alert("endless!"); break; }
 			x = step[0];
@@ -356,6 +356,9 @@ function CreateMap() {
 			var navx = x<0?-1:(x>=gCX?1:0);
 			var navy = y<0?-1:(y>=gCY?1:0);
 			var text = (x < 0 || x >= gCX) ? (y+gTop) : (x+gLeft);
+			//var blindcx = (y<0)?kJSForceIESpace:1;
+			//var blindcy = (x<0)?kJSForceIESpace:1;
+			//var blindgif = (x<0&&y<0)?"":("<img src=\""+g("edit.png")+"\" width="+blindcx+" height="+blindcy+">");
 			row += "<th class=\"mapborder\"><div class=\""+myclass+"\" onClick=\"nav("+navx+","+navy+","+step+")\"><span>"+text+"</span></div></th>\n";
 		}
 		maphtml += "\n<tr>"+row+"</tr>\n";
@@ -410,14 +413,14 @@ function CreateMap() {
 	var tab_post = "\n</div></td></tr></table>\n";
 	*/
 	
-	var maptiphtml = "<span class=\"maptip\" onMouseover=\"KillTip()\" name=\""+kMapTipName+"\" style=\"position:absolute;top:0px;left:0px; visibility:hidden;\">&nbsp;</span>";
+	var maptiphtml = "<span class=\"maptip\" onMouseover=\"KillTip()\" id=\""+kMapTipName+"\" style=\"position:absolute;top:0px;left:0px; visibility:hidden;\">&nbsp;</span>";
 	
 	profiling("sending html to browser");
 	
 	document.getElementById("mapzone").innerHTML = tab_pre + maphtml + tab_post + maptiphtml;
 	
 	
-	var maptipnode = document.getElementsByName(kMapTipName)[0];
+	// var maptipnode = document.getElementById(kMapTipName);
 	//alert("0"+maptipnode);
 	
 	return true;
@@ -528,7 +531,7 @@ function GetCellHTML (relx,rely) {
 	if (wp) {
 		var movablemask = GetUnitsMovableMask(gArmies[gActiveArmyID].units);
 		var blocked = (GetPosSpeed(relx,rely,movablemask,gActiveArmyID) == 0) ? "b" : ""; // appended to nwse
-		layers[layers.length] = g("mapwp/dot"+blocked+".png");
+		layers[layers.length] = g("mapwp/dot"+blocked+".gif");
 		var army = GetActiveArmy();
 		if (army && army.user > 0) backgroundcolor = gUsers[army.user].color;
 	}
@@ -540,8 +543,11 @@ function GetCellHTML (relx,rely) {
 		var bg = (i==0)?("background-color:"+backgroundcolor+";"):"";
 		res += "<div style=\"background-image:url("+layers[i]+"); "+bg+"\">";
 	}
-	res += "<div name=\"mouselistener\" ><div onClick=\"mapclick("+relx+","+rely+")\" onMouseover=\"if (!gLoading) mapover("+relx+","+rely+")\">";
-	if (relx == gXMid && rely == gYMid) res += "<img src='gfx/crosshair.png'>"; res += celltext;
+	res += "<div id=\"mouselistener_"+rely+"_"+relx+"\" ><div onClick=\"mapclick("+relx+","+rely+")\" onMouseover=\"if (!gLoading) mapover("+relx+","+rely+")\">";
+	if (relx == gXMid && rely == gYMid) 
+			res += "<img src='gfx/crosshair.png'>"; 
+	else	res += "<img src=\""+g("1px.gif")+"\" width="+kJSForceIESpaceCX+" height="+kJSForceIESpaceCY+">";
+	res += celltext;
 	res += '</div></div>';
 	for (i in layers) res += '</div>';
 	if (backgroundcolor) res += '</div>';
@@ -632,7 +638,7 @@ function mapover (relx,rely) {
 				tiptext += "<div style=\"background-image:url("+gWPMap[relx][rely][gWPMap[relx][rely].length-2]+");\">";
 				tiptext += "<img src=\""+gWPMap[relx][rely][gWPMap[relx][rely].length-1]+"\">";
 				tiptext += "</div>";
-			} else tiptext += "<img src=\""+g("mapwp/dot.png")+"\">";
+			} else tiptext += "<img src=\""+g("mapwp/dot.gif")+"\">";
 			tiptext += "</td><td nowrap>";
 			if (wp) 
 					tiptext += "<span>Wegpunkt</span><br>";
@@ -676,7 +682,7 @@ function mapover (relx,rely) {
 	x = kMapTip_xoff + kJSMapTileSize*relx;
 	y = kMapTip_yoff + kJSMapTileSize*rely;
 	// spawn tip
-	var maptipnode = document.getElementsByName(kMapTipName)[0];
+	var maptipnode = document.getElementById(kMapTipName);
 	//alert("maptipnode"+maptipnode+","+kMapTipName+","+document.getElementsByName(kMapTipName));
 	//alert("1"+maptipnode);
 	//for (i in maptipnode) alert("2:"+i+"="+maptipnode[i]);
@@ -747,11 +753,12 @@ function KeyInArray(needle,haystack) {
 function TausenderTrenner (nummertext) {
 	nummertext = ""+nummertext;
 	var blocks = Math.floor((nummertext.length+2)/3);
+	//return nummertext+",last="+nummertext.substr(nummertext.length-1,1);
 	var i,j,res = "";
 	for (i=0;i<blocks;++i) {
-		if (3*i+0 < nummertext.length) res = nummertext[nummertext.length-1 - (3*i+0)]+res;
-		if (3*i+1 < nummertext.length) res = nummertext[nummertext.length-1 - (3*i+1)]+res;
-		if (3*i+2 < nummertext.length) res = nummertext[nummertext.length-1 - (3*i+2)]+res;
+		if (3*i+0 < nummertext.length) res = nummertext.substr(nummertext.length-1 - (3*i+0),1)+res;
+		if (3*i+1 < nummertext.length) res = nummertext.substr(nummertext.length-1 - (3*i+1),1)+res;
+		if (3*i+2 < nummertext.length) res = nummertext.substr(nummertext.length-1 - (3*i+2),1)+res;
 		if (3*i+3 < nummertext.length) res = "."+res;
 	}
 	return res;
@@ -869,8 +876,14 @@ function g5 (path,nwse,level,race,moral) {
 
 function nav(x,y,scroll) {
 	// alle elemente mit javascript-mouseover deaktivieren, um javascript fehler beim laden zu verhindern
-	var i,mouselistener = document.getElementsByName("mouselistener"); // killemall (anti death race condition)
-	for (i in mouselistener) mouselistener[i].innerHTML = "";
+	var i,ix,iy,mouselistener;
+	for (iy=0;iy<gCY;++iy)
+	for (ix=0;ix<gCX;++ix) {
+		mouselistener = document.getElementById("mouselistener_"+iy+"_"+ix);
+		mouselistener.innerHTML = "";
+	}
+	//var i,mouselistener = document.getElementsByName("mouselistener"); // killemall (anti death race condition)
+	//for (i in mouselistener) mouselistener[i].innerHTML = "";
 	gLoading = true;
 	gAllLoaded = false;
 	if (x < 0) x = -1; else if (x > 0) x = 1;

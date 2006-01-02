@@ -268,12 +268,12 @@ function	terraingen($x,$y,$type,$dur,$ang,$step,$line,$split=0) {
 /**
 * a interface (cMap) to read and write map data for rect from (x,y) to (x+dx-1,y+dy-1) of the terrain
 */
-function getMapAtPosition($x,$y,$dx,$dy){
-	return new cMap($x,$y,$dx,$dy);
+function getMapAtPosition($x,$y,$dx,$dy,$onlyterrain=false){
+	return new cMap($x,$y,$dx,$dy,$onlyterrain);
 }
 
 class cMap {
-	function cMap($x,$y,$dx,$dy){
+	function cMap($x,$y,$dx,$dy,$onlyterrain=false){
 		$x = intval($x)-1;$y = intval($y)-1;
 		$dx = intval($dx)+2;$dy = intval($dy)+2;
 		$x64 = floor($x/64);$y64 = floor($y/64);
@@ -300,9 +300,12 @@ class cMap {
 		foreach($lseg4 as $o)$this->seg4[$o->x][$o->y] = $o;
 		unset($lseg4);
 		
-		$this->army = sqlgettable("SELECT * FROM `army` WHERE `x`>=($x) AND `x`<($x+$dx) AND `y`>=($y) AND `y`<($y+$dy)");
-		$this->item = sqlgettable("SELECT * FROM `item` WHERE `x`>=($x) AND `x`<($x+$dx) AND `y`>=($y) AND `y`<($y+$dy)");
-		$this->building = sqlgettable("SELECT * FROM `building` WHERE `x`>=($x) AND `x`<($x+$dx) AND `y`>=($y) AND `y`<($y+$dy)");
+		if(!$onlyterrain){
+			$this->army = sqlgettable("SELECT * FROM `army` WHERE `x`>=($x) AND `x`<($x+$dx) AND `y`>=($y) AND `y`<($y+$dy)");
+			$this->item = sqlgettable("SELECT * FROM `item` WHERE `x`>=($x) AND `x`<($x+$dx) AND `y`>=($y) AND `y`<($y+$dy)");
+			$this->building = sqlgettable("SELECT * FROM `building` WHERE `x`>=($x) AND `x`<($x+$dx) AND `y`>=($y) AND `y`<($y+$dy)");
+			$this->construction = sqlgettable("SELECT * FROM `construction` WHERE `x`>=($x) AND `x`<($x+$dx) AND `y`>=($y) AND `y`<($y+$dy)");
+		}
 		
 		//echo "[1:($x,$y,$dx,$dy,".sizeof($this->seg1).") 64:($x64,$y64,$dx64,$dy64,".sizeof($this->seg64).") 4:($x4,$y4,$dx4,$dy4,".sizeof($this->seg4).")]";
 		//print_r($this);

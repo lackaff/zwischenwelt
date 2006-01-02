@@ -473,7 +473,7 @@ if ($gUser->admin) {
 	$gNaviToolTabs[] = array($head,$content);
 }
 
-$tabcorner = "<div class=\"mapnavi_curtool\"><img name=\"curtoolpic\" src=\"".g("tool_look.png")."\"></div>";
+$tabcorner = "<div class=\"mapnavi_curtool\"><img width=23 height=23 name=\"curtoolpic\" src=\"".g("tool_look.png")."\"></div>";
 
 echo "<table width=\"100%\" border=0 cellspacing=0 cellpadding=0><tr><td>\n"; // cage
 PrintTabs("mapnavitools",$gNaviToolTabs,$tabcorner,"ToolTabChange");

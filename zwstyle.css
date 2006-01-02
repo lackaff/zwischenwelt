@@ -133,17 +133,21 @@ table.map { BACKGROUND-COLOR: #66AA55; table-layout:fixed; border:1px solid blac
 }
 .mapscroll a {
 	color: black;
-	FONT-FAMILY: monospace;
+	font-family: monospace;
 	font-size        : x-small;
 	font-weight      : bold;
 	text-decoration  : none;
 }
 .mapscroll a:hover { color:#00ff00; }
 
-.maptip > table {
+.maptip {
+	background-color : #ffeeaa;
 	border:1px solid black;
-	BACKGROUND-COLOR : #ffeeaa;
+}
+.maptip > table {
 	padding:3px;
+}
+.maptip * {
 	font-size        : x-small;
 	font-weight      : bold;
 	text-decoration  : none;

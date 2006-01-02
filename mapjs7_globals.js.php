@@ -31,6 +31,8 @@ gMapModiHelp = "<?=addslashes(cText::Wiki("MapModi"))?>";
 
 //kJSMapTileSize = <?=kMapTileSize?>;
 kJSMapTileSize = 27;
+kJSForceIESpaceCX = kJSMapTileSize;
+kJSForceIESpaceCY = kJSMapTileSize;
 
 
 // equals the php function GetBuildDistFactor in lib.construction.php
