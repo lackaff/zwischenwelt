@@ -247,6 +247,8 @@ echo "\";\n";
 // collect data
 // $gBodenschaetze = sqlgettable("SELECT * FROM `bodenschatz` WHERE ".$xylimit);
 
+echo "// test ???";
+
 $gLocalGuildIDs = array_unique($gLocalGuildIDs);
 // local guilds (+ points...)
 ?>
