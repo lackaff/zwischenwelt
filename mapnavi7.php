@@ -195,6 +195,7 @@ if (isset($f_regentypes)) {
 		//	document.getElementsByName("patch")[0].value += text;
 	}
 	function map (x,y) {
+		updatepos(x,y);
 		if (curtool == 9) {
 			document.getElementsByName("notizblock")[0].value += "  "+x+","+y;
 			return;
