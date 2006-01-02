@@ -418,7 +418,7 @@ function CreateMap() {
 	
 	
 	var maptipnode = document.getElementsByName(kMapTipName)[0];
-	alert("0"+maptipnode);
+	//alert("0"+maptipnode);
 	
 	return true;
 }
@@ -678,11 +678,11 @@ function mapover (relx,rely) {
 	// spawn tip
 	var maptipnode = document.getElementsByName(kMapTipName)[0];
 	//alert("maptipnode"+maptipnode+","+kMapTipName+","+document.getElementsByName(kMapTipName));
-	alert("1"+maptipnode);
-	for (i in maptipnode) alert("2:"+i+"="+maptipnode[i]);
+	//alert("1"+maptipnode);
+	//for (i in maptipnode) alert("2:"+i+"="+maptipnode[i]);
 	maptipnode.innerHTML = tiptext;
 	maptipnode.style.visibility = "visible";
-	alert("3"+maptipnode);
+	//alert("3"+maptipnode);
 	maptipnode.style.position = "absolute";
 	if (gBig) {
 		maptipnode.style.left = (kMapTip_xoff + kJSMapTileSize*(relx+1))+"px";
