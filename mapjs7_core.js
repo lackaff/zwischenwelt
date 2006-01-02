@@ -3,14 +3,11 @@
 // available globals : gTerrainTypes,gBuildingTypes...
 // see also mapnavi_globals.js.php
 
-// TODO : wegpunkte-anzeige ?? GetNextStep in js coden...
 // TODO : user anzeig : gilde, punktestand, rang...
 // TODO : armee - anzeige : gilde,sprechblasen ?
 // TODO : portal : maptip : schloss/lock grafik, wenn nicht benutzbar ?
 // TODO : localusers : FOF auslesen -> namen einfärben in maptip
 // TODO : gebäude hp-balken + farbe im maptip
-// TODO : tool : goto owner (of army, building...)
-// TODO : creepmap + diplomap icons (baummonster+fähnchen/diplomatenhut)
 // TODO : schild-text im tooltip ?
 // TODO : brücken an fluss ausrichten !
 // TODO : tor nwse bug : connect-to-building : self rausschmeissen
@@ -675,6 +672,7 @@ function mapover (relx,rely) {
 	y = kMapTip_yoff + kJSMapTileSize*rely;
 	// spawn tip
 	var maptipnode = document.getElementsByName(kMapTipName)[0];
+	//alert("maptipnode"+maptipnode+","+kMapTipName+","+document.getElementsByName(kMapTipName));
 	maptipnode.innerHTML = tiptext;
 	maptipnode.style.visibility = "visible";
 	maptipnode.style.position = "absolute";

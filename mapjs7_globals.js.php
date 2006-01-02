@@ -328,54 +328,6 @@ php2js_parser("jsWPs","x,y","gWPs");
 
 
 
-/*
-
-// bauzeit
-if ($f_mode == "bauzeit") {
-	require_once("lib.construction.php");
-	$gMapContent = array_fill(0,$gCY,array_fill(0,$gCX,false));
-	for ($x=0;$x<$gCX;++$x)
-	for ($y=0;$y<$gCY;++$y) {
-		if (//$gMapClassesBG[$y][$x] == "t1-0" && 
-			(!isset($gMapClasses[$y][$x]) || $gMapClasses[$y][$x] == false || $gMapClasses[$y][$x] == "tcp")) {
-			$tf = GetBuildDistFactor(GetBuildDistance($x+$gLeft,$y+$gTop,$gUser->id));
-			$gMapBorder[$y][$x] = GradientRYG(1.0-GetFraction($tf-1.0,1.0),1.0);
-			$gMapContent[$y][$x] = ($tf<10)?sprintf("%0.1f",$tf):"";
-		}
-	}
-}
-
-
-// waypoints & paths
-if ($f_mode != "bauzeit" && isset($f_army) && $f_army>0) {
-	$gMapContent = array_fill(0,$gCY,array_fill(0,$gCX,false));
-	$army = sqlgetobject("SELECT * FROM `army` WHERE `id`=".intval($f_army)." LIMIT 1");
-	$army->units = cUnit::GetUnits($army->id);
-	if($army){
-		$gWaypoints = sqlgettable("SELECT * FROM `waypoint` WHERE `army` = ".intval($f_army)." ORDER BY `priority`");
-		for ($i=0,$imax=count($gWaypoints);$i<$imax-1;$i++) {
-			$x1 = $gWaypoints[$i]->x;
-			$y1 = $gWaypoints[$i]->y;
-			$x2 = $gWaypoints[$i+1]->x;
-			$y2 = $gWaypoints[$i+1]->y;
-			for ($x=$x1,$y=$y1;$x!=$x2||$y!=$y2;) {
-				list($x,$y) = GetNextStep($x,$y,$x1,$y1,$x2,$y2);
-				if ($x >= $gLeft && $x-$gLeft < $gCX && $y >= $gTop && $y-$gTop < $gCY) 
-					//$gMapClasses[$y-$gTop][$x-$gLeft] = $gMapBlocked[$x-$gLeft][$y-$gTop]?"pathb":"path";
-					$gMapClasses[$y-$gTop][$x-$gLeft] = (cArmy::GetPosSpeed($x,$y,$army->user,$army->units) == 0)?"pathb":"path";
-			}
-		}
-		foreach($gWaypoints as $o) if ($o->x >= $gLeft && $o->x-$gLeft < $gCX && $o->y >= $gTop && $o->y-$gTop < $gCY) {
-			$x = $o->x-$gLeft;
-			$y = $o->y-$gTop;
-			$gMapContent[$y][$x] = $o->priority;
-			//$gMapClasses[$y][$x] = $gMapBlocked[$x][$y]?"pathb":"wp";
-			$gMapClasses[$y][$x] = (cArmy::GetPosSpeed($o->x,$o->y,$army->user,$army->units) == 0)?"pathb":"wp";
-		}
-	}
-}
-*/
-
 /* // css notes
 
  ***** OLD-TABS ***** 
