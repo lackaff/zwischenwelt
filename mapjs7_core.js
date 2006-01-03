@@ -841,6 +841,9 @@ function GetTerrainPic (relx,rely) {
 function GetBuildingPic (building,relx,rely) {
 	var type = building.type;
 	var level = building.level;
+	var user = building.user;
+	var race = (user > 0 && gUsers[user]) ? gUsers[user].race : 1;
+	var moral = (user > 0 && gUsers[user]) ? gUsers[user].moral : 100;
 	if (level < 10) level = 0; else level = 1;
 	var nwsecode = GetNWSE(gBuildingType[type],relx,rely);
 	var gfx = gBuildingType[type].gfx;
@@ -851,8 +854,8 @@ function GetBuildingPic (building,relx,rely) {
 		
 	// HACK: special nwse for path,gates,bridge...  also in UpdateBuildingNWSE()
 	nwsecode = HackNWSE(type,nwsecode,relx,rely); // see mapjs7_globals.js.php
-		
-	return g3(gfx,nwsecode,level);
+	
+	return g5(gfx,nwsecode,level,race,moral);
 }
 
 // simple,fast versions of g

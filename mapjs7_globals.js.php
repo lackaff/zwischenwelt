@@ -320,7 +320,7 @@ php2js_objarray("gItemType",$gItemType,"name,gfx");
 php2js_objarray("gTerrainPatchType",$gTerrainPatchType,"id,gfx,here,up,down,left,right");
 // bodenschaetze (ressources,perks,specials,deposit...)
 
-php2js_objectfunction("jsUser","id,guild,color,name","gUsers","id");
+php2js_objectfunction("jsUser","id,guild,color,name,race,moral","gUsers","id");
 php2js_objectfunction("jsArmy","id,x,y,name,type,user,unitstxt,itemstxt,jsflags","gArmies","id");
 // php2js_parser("jsParseBuildings","x,y,type,user,level,hp,construction,jsflags","gBuildings"); // special for speed
 php2js_parser("jsParseItems","x,y,type,amount","gItems");

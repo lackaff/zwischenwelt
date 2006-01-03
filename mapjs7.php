@@ -203,7 +203,7 @@ if (count($gLocalUserIDs)>0)
 else	$gLocalUsers = array();
 foreach ($gLocalUsers as $o) {
 	$gLocalGuildIDs[] = $o->guild;
-	echo "jsUser(".obj2jsparams($o,"id,guild,color,name").");\n";
+	echo "jsUser(".obj2jsparams($o,"id,guild,color,name,race,moral").");\n";
 }
 
 // build distance sources
