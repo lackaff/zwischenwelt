@@ -257,6 +257,7 @@ $gLocalGuildIDs = array_unique($gLocalGuildIDs);
 //-->
 </SCRIPT>
 </head><body id="mapbody" onLoad="MapInit()">
-<span id="mapzone">JavaScript needed</span>
+<span id="mapzone">JavaScript wird geladen...</span>
+<noscript><b style="color:red">JavaScript needed!</b><br></noscript>
 <?php if (1) {?><div name="mapdebug"></div><?php }?>
 </body></html>
