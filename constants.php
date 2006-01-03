@@ -18,7 +18,7 @@ define("kMapNaviGotoCat_Hellhole",10);
 $gMapNaviGotoCatNames = array(
 	kMapNaviGotoCat_Pos			=> "Pos",
 	kMapNaviGotoCat_Mark		=> "MapMark",
-	kMapNaviGotoCat_Own			=> "Eigene",
+	kMapNaviGotoCat_Own			=> "Armeen",
 	kMapNaviGotoCat_Guild		=> "Gilde",
 	kMapNaviGotoCat_Friends		=> "Freunde",
 	kMapNaviGotoCat_Enemies		=> "Feinde",
