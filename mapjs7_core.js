@@ -327,7 +327,8 @@ function RefreshCell (relx,rely) {
 function CreateMap() {
 	var row,x,y,i,j;
 	
-	var maphtml = "<table class=\"map\" border=0 cellpadding=0 cellspacing=0 onMouseout=\"KillTip()\">\n";
+	//  onMouseout=\"KillTip()\"
+	var maphtml = "<table class=\"map\" border=0 cellpadding=0 cellspacing=0>\n";
 	
 	
 	// maptiles
@@ -413,7 +414,8 @@ function CreateMap() {
 	var tab_post = "\n</div></td></tr></table>\n";
 	*/
 	
-	var maptiphtml = "<span class=\"maptip\" onMouseover=\"KillTip()\" id=\""+kMapTipName+"\" style=\"position:absolute;top:0px;left:0px; visibility:hidden;\">&nbsp;</span>";
+	//  onMouseover=\"KillTip()\"
+	var maptiphtml = "<span class=\"maptip\" onClick=\"KillTip()\" id=\""+kMapTipName+"\" style=\"position:absolute;top:0px;left:0px; visibility:hidden;\">&nbsp;</span>";
 	
 	profiling("sending html to browser");
 	
@@ -576,14 +578,21 @@ function mapclick (relx,rely) {
 	}
 }
 
+var gLastTipX = -1;
+var gLastTipY = -1;
 function KillTip () {
 	if (gLoading) return;
+	var maptipnode = document.getElementById(kMapTipName);
+	maptipnode.style.visibility = "hidden";
 	//alert();
 	//document.getElementsByName(kMapTipName)[0].style.visibility = "hidden";
 }
 
 function mapover (relx,rely) {
+	if (relx == gLastTipX && rely == gLastTipY) return;
 	if (gLoading) return;
+	gLastTipX = relx;
+	gLastTipY = rely;
 	// todo : if (GetTool() != lupe) { KillTip(); return; }
 
 	// generate tip text
