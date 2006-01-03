@@ -4,7 +4,7 @@ require_once("lib.main.php");
 $gTabPaneNumber = 0;
 
 // $cssclass : class for div-container created around the whole thing
-// $tabs : array of $pair : $pair[0] = header-image/text/html, $pair[1] = content
+// $tabs : array of $tupel : $tupel[0] = header-image/text/html, $tupel[1] = content, $tupel[2] : url, if set, tabchange not by javascript, but by call
 // $corner : html for the right-top corner (cover in spans !)
 // selected is compared to the keys of the $tabs array, can be numeric or associative
 // $jschangecallback : if not false, then this is javascript function is called at tabchange jschangecallback(tabnum)
@@ -46,17 +46,20 @@ function PrintTabs ($cssclass,$tabs,$corner="",$jschangecallback=false,$selected
 	<div class="tabs">
 		<div class="tabheader">
 			<ul>
-				<?php $i = 0; foreach ($tabs as $id => $pair) {?>
+				<?php $i = 0; foreach ($tabs as $id => $tupel) {?>
+				<?php $hasurl = isset($tupel[2]) && $tupel[2];?>
+				<?php if ($hasurl) {?><a href="<?=$tupel[2]?>"><?php } // endif?>
 				<li name="tabhead<?=$gTabPaneNumber?>" id="tabhead<?=$gTabPaneNumber?>_<?=$i?>" 
 					class="<?=$selected==$id?"activetab":"inactivetab"?>" 
-					onClick="TabPane<?=$gTabPaneNumber?>Activate(<?=$i?>)"><span class="tabhead"><?=($pair[0])?></span>
-				</li>
+					<?=$hasurl?"":("onClick=\"TabPane".$gTabPaneNumber."Activate(".$i.")\"")?> 
+					><span class="tabhead"><?=($tupel[0])?></span></li>
+				<?php if ($hasurl) {?></a><?php } // endif?>
 				<?php ++$i; } // endforeach?>
 			</ul>
 			<div class="corner"><?=$corner?></div>
 		</div>
-		<?php $i = 0;  foreach ($tabs as $id => $pair) {?>
-		<div class="tabpane" name="tabpane<?=$gTabPaneNumber?>" id="tabpane<?=$gTabPaneNumber?>_<?=$i?>" <?=$selected==$id?"":"style=\"display:none;\""?>><?=($pair[1])?></div>
+		<?php $i = 0;  foreach ($tabs as $id => $tupel) {?>
+		<div class="tabpane" name="tabpane<?=$gTabPaneNumber?>" id="tabpane<?=$gTabPaneNumber?>_<?=$i?>" <?=$selected==$id?"":"style=\"display:none;\""?>><?=($tupel[1])?></div>
 		<?php ++$i; } // endforeach?>
 	</div>
 	</div>

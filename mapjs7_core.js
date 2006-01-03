@@ -328,7 +328,7 @@ function CreateMap() {
 	var row,x,y,i,j;
 	
 	//  onMouseout=\"KillTip()\"
-	var maphtml = "<table class=\"map\" border=0 cellpadding=0 cellspacing=0>\n";
+	var maphtml = "<table class=\"map\" onMouseout=\"AbortTip()\" border=0 cellpadding=0 cellspacing=0>\n";
 	
 	
 	// maptiles
@@ -580,12 +580,23 @@ function mapclick (relx,rely) {
 
 var gLastTipX = -1;
 var gLastTipY = -1;
+var gMapTipCountDown = false;
 function KillTip () {
 	if (gLoading) return;
 	var maptipnode = document.getElementById(kMapTipName);
 	maptipnode.style.visibility = "hidden";
+	AbortTip();
 	//alert();
 	//document.getElementsByName(kMapTipName)[0].style.visibility = "hidden";
+}
+
+// stops the countdown for popping up
+function AbortTip () {
+	if (gMapTipCountDown) {
+		// clear interval
+		window.clearTimeout(gMapTipCountDown);
+		gMapTipCountDown = false;
+	}
 }
 
 function mapover (relx,rely) {
@@ -593,6 +604,13 @@ function mapover (relx,rely) {
 	if (gLoading) return;
 	gLastTipX = relx;
 	gLastTipY = rely;
+	KillTip();
+	// set interval
+	gMapTipCountDown = window.setTimeout("ShowMapTip("+relx+","+rely+")",500);
+}
+
+function ShowMapTip(relx,rely) {
+	gMapTipCountDown = false; // count has finished, don't try to kill it now..
 	// todo : if (GetTool() != lupe) { KillTip(); return; }
 
 	// generate tip text
