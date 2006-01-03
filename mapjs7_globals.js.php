@@ -160,6 +160,15 @@ function HackCon () {
 		// internet explorer 5.0 doesn't know push/pop
 		echo $arrname."[".$arrname.".length] = ".$val.";\n";
 	}
+	?>
+	var i;
+	for (i in 	gBuildingType[<?=kBuilding_Gate?>].connectto_building)
+		if (	gBuildingType[<?=kBuilding_Gate?>].connectto_building[i] == <?=kBuilding_Gate?>)
+				gBuildingType[<?=kBuilding_Gate?>].connectto_building[i] = -2;
+	for (i in 	gBuildingType[<?=kBuilding_SeaGate?>].connectto_building)
+		if (	gBuildingType[<?=kBuilding_SeaGate?>].connectto_building[i] == <?=kBuilding_SeaGate?>)
+				gBuildingType[<?=kBuilding_SeaGate?>].connectto_building[i] = -2;
+	<?php 
 	js_print_legacy_push("gBuildingType[".kBuilding_Gate		."].connectto_building",kBuilding_Wall);
 	js_print_legacy_push("gBuildingType[".kBuilding_Wall		."].connectto_building",kBuilding_Gate);
 	js_print_legacy_push("gBuildingType[".kBuilding_Path		."].connectto_building",kBuilding_Gate);
@@ -169,6 +178,10 @@ function HackCon () {
 	js_print_legacy_push("gBuildingType[".kBuilding_Path		."].connectto_building",kBuilding_Bridge);
 	js_print_legacy_push("gBuildingType[".kBuilding_SeaWall	."].connectto_building",kBuilding_SeaGate);
 	js_print_legacy_push("gBuildingType[".kBuilding_SeaGate	."].connectto_building",kBuilding_SeaWall);
+	js_print_legacy_push("gBuildingType[".kBuilding_SeaWall	."].connectto_building",kBuilding_Wall);
+	js_print_legacy_push("gBuildingType[".kBuilding_Wall	."].connectto_building",kBuilding_SeaWall);
+	js_print_legacy_push("gBuildingType[".kBuilding_SeaGate	."].connectto_building",kBuilding_Wall);
+	js_print_legacy_push("gBuildingType[".kBuilding_Wall	."].connectto_building",kBuilding_SeaGate);
 	
 	js_print_legacy_push("gBuildingType[".kBuilding_Steg		."].connectto_building",kBuilding_Harbor);
 	js_print_legacy_push("gBuildingType[".kBuilding_Harbor	."].connectto_terrain",kTerrain_Sea);
