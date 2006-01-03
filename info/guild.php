@@ -82,13 +82,16 @@ $gGuild = sqlgetobject("SELECT g.*,u.`name` as `foundername` FROM `guild` g,`use
 <html>
 <head>
 <link rel="stylesheet" type="text/css" href="../styles.css">
+<link rel="stylesheet" type="text/css" href="../zwstyle.css">
 <title>Zwischenwelt - Gilde</title>
 
 </head>
 <body>
+<?php include("../menu.php"); ?>
+<div class="tabs"><div class="tabheader">
+<?=renderGuildTabbar("Allgemein")?>
+</div><div class="tabpane">
 <?php
-include("../menu.php");
-
 //ist der user in einer gilde?
 if($gUser->guild == 0)
 {//neeee ------------------------------------------------------------
@@ -113,8 +116,9 @@ if($gUser->guild == 0)
 }
 else
 {//gilde vorhanden ------------------------------------------------------------
-$gRight = sqlgettable("SELECT * FROM `guild_right` ORDER BY `right` ASC","right");
 ?>
+<h4>Gilde '<?=$gGuild->name?>'</h4>
+<?php $gRight = sqlgettable("SELECT * FROM `guild_right` ORDER BY `right` ASC","right"); ?>
 <form method="post" action="<?=Query("guild.php?sid=?")?>">
 	<div style="padding-top:20px;padding-left:0;padding-right:0;padding-bottom:0;">
 	<table>
@@ -162,7 +166,6 @@ $gRight = sqlgettable("SELECT * FROM `guild_right` ORDER BY `right` ASC","right"
 	
 	<table width=100% border=0>
 	<tr><td valign="top" style="padding-left:20px;padding-bottom:15px;">
-	<h4>Gilde '<?=$gGuild->name?>' <?=(guildRight(kViewAdmin,$gUser)?"<a style='color:blue;' href='".Query('guild_admin.php?sid=?')."'>verwalten</a>":"")?></h4>
 	Gründer: <?=$gGuild->foundername?><br>
 	Bewerbungen: <?=sqlgetone("SELECT COUNT(`user`) FROM `guild_request` WHERE `guild`=".$gGuild->id)?>
 	
@@ -213,54 +216,7 @@ $gRight = sqlgettable("SELECT * FROM `guild_right` ORDER BY `right` ASC","right"
 	</td>
 	</tr>
 	
-	<tr><td colspan=2 valign="top" width=100%><center>
-		
-	<?php ImgBorderStart("s1","jpg","#ffffee","",32,33); ?>
-		<center><span style="font-size:14px;">Mitglieder</span></center>
-		<table><tr><th>Status</td><th></th><th>Name</th><th>Ort</th><th>Gildepunkte</th></tr>
-		<?php
-		foreach($members as $u){
-			$hq=sqlgetobject("SELECT `id`,`x`,`y` FROM `building` WHERE `user`=".$u->id." AND `type`=1");
-			if(!$hq->id) continue;
-			$time=time();
-			$online = sqlgetone("SELECT `id` FROM `session` WHERE `userid`=".$u->id." AND $time-`lastuse`<300");
-			if($online)$online = "#338833"; 
-			else $online = "#3333aa";
-			if(($time-$u->lastlogin)>(60*60*24*7))$online = "#dd1111";
-			if(($time-$u->lastlogin)>(60*60*24*21))$online = "#999999";
-			$dead="";
-			if(($time-$u->lastlogin)>(60*60*24*48)){
-				$online = "#cacaca";
-				$dead="&#8224;";
-			}
-			?>
-			<tr>
-			<td align=left valign=middle><?
-			if($gGuild->founder!=$u->id){
-				if($u->guildstatus!=1 && $u->guildstatus!=0){
-					foreach($gRight as $r){
-						if($u->guildstatus%$r->right==0){
-							?><img src="<?=g($r->gfx)?>" title="<?=$r->desc?>">&nbsp;<?
-						}
-					}
-				}else{
-					?><img src="<?=g("tool_cancel.png")?>" title="hat keine Rechte"><?
-				}
-			}else{
-				?><center><img src="<?=g("icon/guild-founder.png")?>" title="Gildegründer"></center><?
-			}
-			?>&nbsp;</td>
-			<td style="background-color:<?=$u->color?>">&nbsp;</td>
-			<td>
-			<a style="font-family:verdana;color:<?=$online?>" href="<?=query("msg.php?sid=?&show=compose&to=".urlencode($u->name))?>"><?=$u->name." $dead"?></a></td>
-			<td align=center><a style="font-family:verdana;font-size:10px" href="<?=query("info.php?sid=?&x=".$hq->x."&y=".$hq->y)?>">(<?=$hq->x.'/'.$hq->y?>)</a></td>
-			<td align=right><?=ktrenner($u->guildpoints,"#4444cc","#aa5555")?></td></tr>
-		<?}?>
-		</table>
-	
-	<?php ImgBorderEnd("s1","jpg","ffffee",32,33); ?>
-	<br></center>
-	</td></tr></table>
+	</table>
 	
 	<?php ImgBorderStart(); ?>
 		<p align="center"><?=(!empty($gGuild->gfx)?"<img src='".$gGuild->gfx."' align='middle'> ":"")?></p>
@@ -290,6 +246,7 @@ $gRight = sqlgettable("SELECT * FROM `guild_right` ORDER BY `right` ASC","right"
 } // endif guild
 
 ?>
+</div></div>
 </body>
 </html>
 <?php profile_page_end(); ?>

@@ -65,14 +65,17 @@ if(isset($f_do)){
 <html>
 <head>
 <link rel="stylesheet" type="text/css" href="../styles.css">
+<link rel="stylesheet" type="text/css" href="../zwstyle.css">
 <title>Zwischenwelt - Gilde</title>
 
 </head>
 <body style="font-family:serif">
 
-<?
-include("../menu.php");
-
+<?php include("../menu.php"); ?>
+<div class="tabs"><div class="tabheader">
+<?=renderGuildTabbar("Forum")?>
+</div><div class="tabpane">
+<?php
 
 if(!empty($gGuild->forumurl)){
         ?>
@@ -265,5 +268,6 @@ if($s>0)
 profile_page_end(); 
 ?>
 </div>
+</div></div>
 </body>
 </html>

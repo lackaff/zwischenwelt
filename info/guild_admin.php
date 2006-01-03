@@ -119,15 +119,18 @@ if(!empty($f_do)){
 <html>
 <head>
 <link rel="stylesheet" type="text/css" href="../styles.css">
+<link rel="stylesheet" type="text/css" href="../zwstyle.css">
 <title>Zwischenwelt - Gilde</title>
 
 </head>
 <body>
 
-<?
-include("../menu.php");
+<?php include("../menu.php"); ?>
+<div class="tabs"><div class="tabheader">
+<?=renderGuildTabbar("Verwalten")?>
+</div><div class="tabpane">
 
-?><center>
+<center>
 <table>
 <tr><td valign="top" align="center">
 <?
@@ -329,5 +332,6 @@ ImgBorderEnd("s2","jpg","#ffffee",32,33);}
 	</div>
 </form>
 
+</div></div>
 </body>
 </html>

@@ -12,12 +12,17 @@ profile_page_start("guild_log.php");
 <html>
 <head>
 <link rel="stylesheet" type="text/css" href="../styles.css">
+<link rel="stylesheet" type="text/css" href="../zwstyle.css">
 <title>Zwischenwelt - Gildelog</title>
 
 </head>
 <body>
+<?php include("../menu.php"); ?>
+<div class="tabs"><div class="tabheader">
+<?=renderGuildTabbar("Log")?>
+</div><div class="tabpane">
+
 <?php
-include("../menu.php");
 
 $gGuild = sqlgetobject("SELECT g.*,u.`name` as `foundername` FROM `guild` g,`user` u WHERE u.`id`=g.`founder` AND g.`id`=".$gUser->guild);
 echo "<center>";
@@ -69,5 +74,7 @@ $guildlogs_page = 50;
 <?php
 profile_page_end(); 
 ?>
+
+</div></div>
 </body>
 </html>

@@ -379,4 +379,20 @@ function setStdGPLimit($id,$limit){
 	else sql("INSERT INTO `guild_pref` SET `value`='$limit', `var`='stdlimit', `guild`=".$id);
 }
 
+$gGuildTabs = array(
+	"Allgemein"=>"guild.php?sid=?",
+	"Mitglieder"=>"guild_members.php?sid=?",
+	"Forum"=>"guild_forum.php?sid=?",
+	"Log"=>"guild_log.php?sid=?",
+	"Verwalten"=>"guild_admin.php?sid=?",
+);
+function renderGuildTabbar($active = ""){
+	global $gGuildTabs;
+	$tab = "<ul>";
+	foreach($gGuildTabs as $name=>$link)
+		$tab .= "<li class=\"".($active==$name?"":"in")."activetab\"><a class=\"tabhead\" href=\"".query($link)."\">$name</a></li>";
+	$tab .= "</ul>";
+	return $tab;
+}
+
 ?>

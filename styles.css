@@ -154,3 +154,7 @@ ul#mainnavi span#new, ul#mainnavi a#new {
 	background-color:green;
 	color:white;
 }
+
+h4 {
+	margin-bottom:0px;
+}
