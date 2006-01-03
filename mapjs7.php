@@ -199,7 +199,7 @@ foreach ($gArmies as $o) {
 // local users
 $gLocalUserIDs = array_unique($gLocalUserIDs);
 if (count($gLocalUserIDs)>0)
-		$gLocalUsers = sqlgettable("SELECT `id`,`guild`,`color`,`name` FROM `user` WHERE `id` IN (".implode(",",$gLocalUserIDs).")");
+		$gLocalUsers = sqlgettable("SELECT `id`,`guild`,`color`,`name`,`race`,`moral` FROM `user` WHERE `id` IN (".implode(",",$gLocalUserIDs).")");
 else	$gLocalUsers = array();
 foreach ($gLocalUsers as $o) {
 	$gLocalGuildIDs[] = $o->guild;
