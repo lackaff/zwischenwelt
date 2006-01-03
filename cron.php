@@ -814,6 +814,7 @@ foreach($t as $x){
 }
 echo "done<br>";
 
+/*
 echo "grow cornfields ...<br>";
 $farm = sqlgetobject("SELECT * FROM `building` WHERE `type`=".$gGlobal["building_food"]." ORDER BY RAND() LIMIT 1");
 if($farm && (rand()%10==0)){ // TODO : unhardcode
@@ -837,11 +838,11 @@ if($farm && (rand()%10==0)){ // TODO : unhardcode
 		}
 }
 echo "done<br><br>";
-
+*/
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-
+/*
 echo "grow wood ...<br>";
 TablesLock();
 $wood = sqlgetobject("SELECT `x`,`y` FROM `terrain` WHERE `type`=".kTerrain_Forest." ORDER BY RAND() LIMIT 1");
@@ -862,7 +863,7 @@ if ($wood){
 }
 echo "done<br>";
 TablesUnlock();
-
+*/
 
 
 
