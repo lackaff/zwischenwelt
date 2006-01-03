@@ -94,6 +94,7 @@ $xylimit = "`x` >= ".($gLeft-1)." AND `x` < ".($gLeft+$gCX+1)." AND
 			`y` >= ".($gTop-1)." AND `y` < ".($gTop+$gCY+1);
 			
 // produce session-independent querry, to enable caching
+$jsparam = "v2=6";
 $styleparam = "?v=8";
 if ($gUser->usegfxpath || $gUser->race != 1)
 	$styleparam .= "&uid=".$gUser->id;
@@ -110,8 +111,8 @@ if($gUser && $gUser->usegfxpath && !empty($gUser->gfxpath)){
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/transitional.dtd">
 <html><head>
 <link rel="stylesheet" type="text/css" href="<?=GetZWStylePath()?>"></link>
-<script src="mapjs7_core.js?v=5" type="text/javascript"></script>
-<script src="<?="mapjs7_globals.js.php".$styleparam?>" type="text/javascript"></script>
+<script src="mapjs7_core.js?<?=$jsparam?>" type="text/javascript"></script>
+<script src="<?="mapjs7_globals.js.php".$styleparam."&".$jsparam?>" type="text/javascript"></script>
 <SCRIPT LANGUAGE="JavaScript" type="text/javascript"><!--
 gCX = <?=intval($gCX)?>;
 gCY = <?=intval($gCY)?>;
