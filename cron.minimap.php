@@ -21,6 +21,7 @@ require_once("lib.score.php");
 require_once("lib.hook.php");
 
 // generate new minimaps for each mode
+$time = time();
 $o = sqlgetobject("SELECT MIN(`x`) as minx,MAX(`x`) as maxx,MIN(`y`) as miny,MAX(`y`) as maxy FROM `building`");
 $left = $o->minx - 10;
 $right = $o->maxx + 10;
