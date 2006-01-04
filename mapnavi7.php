@@ -362,7 +362,7 @@ function NaviTool ($pic,$param1,$param2,$tooltip="",$css="") {
 	$res = "";
 	$res .= "<span class=\"".$css."\">";
 	$res .= "<a href=\"javascript:settool(".$param1.",".$param2.",'".$pic."')\">";
-	$res .= "<img border=0 src=\"".$pic."\" alt=\"".addslashes($tooltip)."\" title=\"".addslashes($tooltip)."\">";
+	$res .= "<img border=1 src=\"".$pic."\" alt=\"".addslashes($tooltip)."\" title=\"".addslashes($tooltip)."\">";
 	$res .= "</a>";
 	$res .= "</span>\n";
 	return $res;
@@ -402,8 +402,9 @@ if ($user_has_hq) {
 		foreach ($buildingtypeids as $id) if ($id != -1 && !$gBuildingType[$id]->special) {
 			if ($gBuildingType[$id]->race != 0 && $gUser->race != $gBuildingType[$id]->race) continue;
 			if ($id == kBuilding_HQ) continue;
+			$canbuild = HasReq($gBuildingType[$id]->req_geb,$gBuildingType[$id]->req_tech,$gUser->id);
 			// HasReq($o->req_geb,$o->req_tech,$gUser->id)
-			$content .= NaviTool(g($gBuildingType[$id]->gfx,"we",1),1,$id,$gBuildingType[$id]->name,"navtoolicon");
+			$content .= NaviTool(g($gBuildingType[$id]->gfx,"we",1),1,$id,$gBuildingType[$id]->name.($canbuild?"":"(noch nicht baubar)"),$canbuild?"buildable":"unbuildable");
 		}
 		$content .= "</div>\n";
 		$gNaviToolTabs[] = array($head,$content);

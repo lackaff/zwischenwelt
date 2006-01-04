@@ -27,7 +27,7 @@ class cInfoBuilding extends cInfoBase {
 	function GetMainTabHead () { // header grafik für main tab
 		global $gObject,$gUser,$gBuildingType;
 		$btype = $gBuildingType[$gObject->type];
-		return $this->GetBuildingPic().$btype->name;
+		return $this->GetBuildingPic();//.$btype->name;
 	}
 	
 	
@@ -54,10 +54,10 @@ class cInfoBuilding extends cInfoBase {
 			
 			// kampfsim link in jedem gebäude in dem man KAMPF-einheiten produzieren kann
 			$units = $this->producable_units();
-			$has_fighters = false;
-			foreach ($units as $o) if ($o->a > 0) { $has_fighters = true; break; }
+			$has_fighters = 0;
+			foreach ($units as $o) if ($o->a > 0) $has_fighters++;
 			global $gInfoTabs;
-			if ($has_fighters) $gInfoTabs[] = array("KampfSim","",Query("kampfsim.php?sid=?"));
+			if ($has_fighters > 1) $gInfoTabs[] = array("KampfSim","",Query("kampfsim.php?sid=?"));
 		}
 	}
 	

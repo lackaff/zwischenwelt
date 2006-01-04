@@ -154,7 +154,7 @@ function GetBuildTime ($x,$y,$typeid,$priority=-1,$userid=false) { // object(bui
 	$faktor_dist = GetBuildDistFactor($dist);
 	$faktor_tech = GetBuildTechFactor($userid);
 	$faktor_newbee = GetBuildNewbeeFactor($type,$priority,$userid);
-	return $gBuildingType[$type]->buildtime * $faktor_dist * $faktor_tech * $faktor_newbee;
+	return $gBuildingType[$typeid]->buildtime * $faktor_dist * $faktor_tech * $faktor_newbee;
 }
 
 // print an explanation for how GetBuildTime works

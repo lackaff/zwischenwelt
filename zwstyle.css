@@ -160,7 +160,8 @@ div.mainmenu ul {
 .mapnavitool_general textarea { background:#DDDDDD; }
 .mapnavitool_buildings span { /* background:url("gfx/landschaft/grass.png"); border:3px solid black; */ }
 
-.navtoolicon {}
+.mapnavitools .tabpane .buildable img { border:1px solid #006600; }
+.mapnavitools .tabpane .unbuildable img { border:1px solid red; }
 
 /* ***** MAP ***** */
 

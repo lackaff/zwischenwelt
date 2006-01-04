@@ -2,7 +2,7 @@
 require_once("../lib.main.php");
 require_once("../lib.map.php");
 Lock();
-profile_page_start("bauplan");
+profile_page_start("diplo");
 
 
 //$list = array(kDiplo_BreakFriendOnAttack=>"Freundschaft bei einem Angriff automatisch beenden");

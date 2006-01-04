@@ -389,7 +389,7 @@ if (!isset($f_blind)) {
 	<?php } // endif ?>
 	
 	<?php 
-	RegisterInfoTab($terrainpic."Landschaft",rob_ob_end());
+	RegisterInfoTab($terrainpic."",rob_ob_end());
 }
 
 
