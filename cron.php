@@ -774,6 +774,7 @@ foreach ($growwood as $o) {
 }
 unset($growwood);
 
+/*
 //if map to old (1 day) or there is not map then generate
 if(($gGlobal["ticks"] % 60*24) == 0 || !file_exists(GetMiniMapFile("user",GetMiniMapLastTime("user")))){
 	//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -800,6 +801,7 @@ if(($gGlobal["ticks"] % 60*24) == 0 || !file_exists(GetMiniMapFile("user",GetMin
 		SetGlobal($global,$time);
 	}
 }
+*/
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 profile_page_start("cron.php - misc",true);
