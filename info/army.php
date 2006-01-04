@@ -377,7 +377,7 @@ class cInfoArmy extends cInfoBase {
 	}
 	
 	
-	function mydisplay () {
+	function mygenerate_tabs () {
 		foreach ($_REQUEST as $name=>$val) ${"f_".$name} = $val;
 		global $gArmyType; 
 		global $gObject; 
@@ -390,6 +390,7 @@ class cInfoArmy extends cInfoBase {
 		global $gArmyFlagNames;
 		global $gBuildingType;
 		profile_page_start("army.php");
+		rob_ob_start();
 				
 		$gArmies = sqlgettable("SELECT * FROM `army` WHERE `user` = ".$gUser->id,"id");
 		$gArmy = $gObject;
@@ -871,6 +872,12 @@ class cInfoArmy extends cInfoBase {
 		
 		<?php 
 		profile_page_end(); 
+		
+		global $gInfoTabsSelected,$gInfoTabs;
+		$head = "Armee";
+		$content = rob_ob_end();
+		$gInfoTabs[] = array($head,$content);
+		$gInfoTabsSelected = count($gInfoTabs)-1;
 	}
 	
 	

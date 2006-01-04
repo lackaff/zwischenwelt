@@ -25,10 +25,20 @@ class cInfoBase {
 		$this->infobase_cmdout = trim(rob_ob_end());
 	}
 	
-	function classcommand () { // override me for things like gate and production
-	}
+	
 	
 	// execute drawing code in display() after displaying the buffered command() output
+	function generate_tabs () {
+		if ($this->infobase_nodisplay) return;
+		global $gObject; $gObject = $this; // backwards compatibility, better user $this
+		// register tabs to $gInfoTabs
+		$this->classgenerate_tabs(); // for building base class (unit prod, tech)
+		$this->mygenerate_tabs();
+	} 
+	
+	function classgenerate_tabs () {}
+	function mygenerate_tabs () { } // override-me
+	
 	function display () {
 		global $gObject; $gObject = $this; // backwards compatibility, better user $this
 		// set into a nice papyrus info in display
@@ -48,9 +58,10 @@ class cInfoBase {
 	}
 	
 	function display_header() {} // above mydisplay
-	function display_footer() { echo "<hr>"; } // below mydisplay
+	function display_footer() {} // below mydisplay
 	
 	function cancontroll ($user) { return true; } // check if commands may be executed
+	function classcommand () {} // override me in building-base-class for things like gate and production
 	function mycommand () {} // execute commands
 	function mydisplay () {} // draw info
 }

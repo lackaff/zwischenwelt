@@ -80,10 +80,6 @@ foreach($log as $x)
 					$target=nick($s2);
 				break;
 			
-				case MTARGET_SELF:
-					$target=nick($s2);
-				break;
-			
 				case MTARGET_AREA:
 					$target="das umliegende Gebiet";
 				break;
@@ -102,10 +98,6 @@ foreach($log as $x)
 			$color= "green";
 			switch($i3){
 				case MTARGET_PLAYER:
-					$target=nick($s2);
-				break;
-			
-				case MTARGET_SELF:
 					$target=nick($s2);
 				break;
 			
@@ -130,10 +122,6 @@ foreach($log as $x)
 					$target="euch";
 				break;
 			
-				case MTARGET_SELF:
-					$target="euch";
-				break;
-			
 				case MTARGET_AREA:
 					$target="das umliegende Gebiet";
 				break;
@@ -150,10 +138,6 @@ foreach($log as $x)
 		case NEWLOG_MAGIC_DAMAGE_TARGET:
 			switch(intval($i3)){
 				case MTARGET_PLAYER:
-					$target="euch";
-				break;
-			
-				case MTARGET_SELF:
 					$target="euch";
 				break;
 			

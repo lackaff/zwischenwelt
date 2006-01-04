@@ -14,7 +14,7 @@ $techtab = sqlgettable("SELECT * FROM `technologytype` WHERE 1 ORDER BY `buildin
 foreach ($techtab as $o) 
 	$techs[$o->id] = "<img src='".g($o->gfx)."'>".addslashes($o->name)."[$o->id]";
 
-$targets = array(0=>"kein",MTARGET_SELF=>"SELF",MTARGET_PLAYER=>"PLAYER",MTARGET_AREA=>"AREA",MTARGET_ARMY=>"ARMY");
+$targets = array(0=>"kein",MTARGET_PLAYER=>"PLAYER",MTARGET_AREA=>"AREA",MTARGET_ARMY=>"ARMY");
 	
 $form = 
 new cTableEditForm("?sid=?&id=$f_id","SpellType $f_id editieren",

@@ -18,11 +18,18 @@ profile_page_start("guild_log.php");
 </head>
 <body>
 <?php include("../menu.php"); ?>
-<div class="tabs"><div class="tabheader">
-<?=renderGuildTabbar("Log")?>
-</div><div class="tabpane">
+<?=renderGuildTabbar(3)?>
 
 <?php
+//ist der user in einer gilde?
+if($gUser->guild == 0)
+{//neeee ------------------------------------------------------------
+?>
+	Sie befinden sich in keiner Gilde!
+<?php
+}
+else
+{//gilde vorhanden ------------------------------------------------------------
 
 $gGuild = sqlgetobject("SELECT g.*,u.`name` as `foundername` FROM `guild` g,`user` u WHERE u.`id`=g.`founder` AND g.`id`=".$gUser->guild);
 echo "<center>";
@@ -72,6 +79,9 @@ $guildlogs_page = 50;
 	<?php } // count($guildlogs) > 0 ?>
 <p><a href="<?=Query("guild.php?sid=?")?>"><img src="<?=g("gildeforum/back.png")?>" border=0 alt="Zur&uuml;ck" title="zur&uuml;ck zur Gilde"></a></p></center>
 <?php
+
+}
+
 profile_page_end(); 
 ?>
 

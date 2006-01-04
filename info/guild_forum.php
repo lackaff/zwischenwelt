@@ -12,52 +12,55 @@ function jumplane($start,$num){?>
 	<?}
 	?></tr></table><?
 }
+//ist der user in einer gilde?
+if($gUser->guild > 0)
+{//gilde vorhanden ------------------------------------------------------------
 
-if(isset($f_flatview) && $gUser->flatview!=$f_flatview){
-	sql("UPDATE `user` SET `flatview`=".intval($f_flatview)." WHERE `id`=".$gUser->id);
-	$gUser->flatview=$f_flatview;
-}
+	if(isset($f_flatview) && $gUser->flatview!=$f_flatview){
+		sql("UPDATE `user` SET `flatview`=".intval($f_flatview)." WHERE `id`=".$gUser->id);
+		$gUser->flatview=$f_flatview;
+	}
 
-$gGuild = sqlgetobject("SELECT g.*,u.`name` as `foundername` FROM `guild` g,`user` u WHERE u.`id`=g.`founder` AND g.`id`=".$gUser->guild);
+	$gGuild = sqlgetobject("SELECT g.*,u.`name` as `foundername` FROM `guild` g,`user` u WHERE u.`id`=g.`founder` AND g.`id`=".$gUser->guild);
 
 
 
-if(isset($f_do)){
-	switch($f_do){
-		case "savec":
-			if(empty($f_ref))$f_ref=0;
-			if(!empty($f_article))addComment($f_article,$f_ref,$f_head,$f_comment);
-		break;
-		case "savea":
-			if(!empty($f_head) && !empty($f_content)) addArticle($f_head,$f_content);
-			$f_article=sqlgetone("SELECT `id` FROM `guild_forum` WHERE `guild`=".$gGuild->id." ORDER BY `date` DESC LIMIT 1");
-			$f_do="";
-		break;
-		case "saveec":
-			if(!empty($f_head) && !empty($f_comment) && !empty($f_id)) editComment($f_id,$f_head,$f_comment);
-		break;
-		case "saveea":
-			if(!empty($f_head) && !empty($f_content) && !empty($f_article)) editArticle($f_article,$f_head,$f_content);
-		break;
-		case "dc":
-				if(gForumDelC($gUser->id,$f_id)){
-					delComment($f_id);
-					$f_id="";
-					$f_do="";
-				}
+	if(isset($f_do)){
+		switch($f_do){
+			case "savec":
+				if(empty($f_ref))$f_ref=0;
+				if(!empty($f_article))addComment($f_article,$f_ref,$f_head,$f_comment);
 			break;
-		case "da":
-				if(gForumDelA($gUser->id,$f_article)){
-					delArticle($f_article);
-					$f_article="";
-					$f_id="";
-				}
-		break;
-		default:
-		break;
+			case "savea":
+				if(!empty($f_head) && !empty($f_content)) addArticle($f_head,$f_content);
+				$f_article=sqlgetone("SELECT `id` FROM `guild_forum` WHERE `guild`=".$gGuild->id." ORDER BY `date` DESC LIMIT 1");
+				$f_do="";
+			break;
+			case "saveec":
+				if(!empty($f_head) && !empty($f_comment) && !empty($f_id)) editComment($f_id,$f_head,$f_comment);
+			break;
+			case "saveea":
+				if(!empty($f_head) && !empty($f_content) && !empty($f_article)) editArticle($f_article,$f_head,$f_content);
+			break;
+			case "dc":
+					if(gForumDelC($gUser->id,$f_id)){
+						delComment($f_id);
+						$f_id="";
+						$f_do="";
+					}
+				break;
+			case "da":
+					if(gForumDelA($gUser->id,$f_article)){
+						delArticle($f_article);
+						$f_article="";
+						$f_id="";
+					}
+			break;
+			default:
+			break;
+		}
 	}
 }
-
 
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 transitional//EN"
@@ -72,10 +75,18 @@ if(isset($f_do)){
 <body style="font-family:serif">
 
 <?php include("../menu.php"); ?>
-<div class="tabs"><div class="tabheader">
-<?=renderGuildTabbar("Forum")?>
-</div><div class="tabpane">
+<?=renderGuildTabbar(2)?>
 <?php
+
+//ist der user in einer gilde?
+if($gUser->guild == 0)
+{//neeee ------------------------------------------------------------
+?>
+	Sie befinden sich in keiner Gilde!
+<?php
+}
+else
+{//gilde vorhanden ------------------------------------------------------------
 
 if(!empty($gGuild->forumurl)){
         ?>
@@ -265,6 +276,9 @@ if($s>0)
 <?
 //ImgBorderEnd();
 }
+
+}
+
 profile_page_end(); 
 ?>
 </div>

@@ -65,7 +65,7 @@ include("../menu.php");
 			$parttime = 0;
 			$cps = sqlgettable("SELECT * FROM `construction` WHERE `user` = ".$gUser->id." AND `type` = ".$o->type);
 			foreach ($cps as $cp)
-				$parttime += GetBuildTime($cp);
+				$parttime += GetBuildTime($cp->x,$cp->y,$cp->type,$cp->priority,$cp->user);
 			$timesum += $parttime;
 			foreach($gRes as $n=>$f) ${"partcost_".$f} = $o->c * $gBuildingType[$o->type]->{"cost_".$f};
 			foreach($gRes as $n=>$f) ${"totalcost_".$f} += ${"partcost_".$f};

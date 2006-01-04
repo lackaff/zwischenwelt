@@ -466,7 +466,7 @@ $gWPArmy = 0;
 	?>
 	<?php foreach ($buildable as $o) {
 		$name = $gBuildingType[$o]->name;?>
-		<a href="javascript:settool(1,<?=$o?>,'<?=GetBuildingPic($o,0,"ns")?>')"><img alt="<?=$name?>" title="<?=$name?>" class="picframe" src="<?=g($gBuildingType[$o]->gfx,"ns",0,$gUser->race)?>"></a>
+		<a href="javascript:settool(1,<?=$o?>,'<?=GetBuildingPic($o)?>')"><img alt="<?=$name?>" title="<?=$name?>" class="picframe" src="<?=GetBuildingPic($o)?>?>"></a>
 	<?php }?>
 	<a href="javascript:myreload()">(reload)</a><br>
 </td></tr></table>	
@@ -477,7 +477,7 @@ $gWPArmy = 0;
 	<?php } }?>
 <?php if ($gUser->admin) {?> 
 	<?php foreach($gBuildingType as $o) {?>
-	<a href="javascript:settool(6,<?=$o->id?>,'<?=GetBuildingPic($o->id,1,"ns")?>')"><img alt="<?=$o->name?>" title="<?=$o->name?>" class="picframe" src="<?=GetBuildingPic($o->id,1,"ns")?>"></a>
+	<a href="javascript:settool(6,<?=$o->id?>,'<?=GetBuildingPic($o)?>')"><img alt="<?=$o->name?>" title="<?=$o->name?>" class="picframe" src="<?=GetBuildingPic($o)?>"></a>
 	<?php }?>
 	<?php foreach($gUnitType as $o) if ($o->gfx) {?>
 	<a href="javascript:settool(7,<?=$o->id?>,'<?=g($o->gfx)?>')"><img alt="<?=$o->name?>" title="<?=$o->name?>" class="picframe" src="<?=g("$o->gfx")?>?>"></a>

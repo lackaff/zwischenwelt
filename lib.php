@@ -10,10 +10,8 @@ $time = mktime($h,$m,0,$month,$day,$year);
 echo "$h,$m,$day,$month,$year ".date("H:i d-m-Y",$time)."<br>";
 
 // notes
-ob_start();
-ob_end_flush();
-$outbuf = ob_get_contents();
-ob_end_clean();
+rob_ob_start();
+$outbuf = rob_ob_end();
 echo $outbuf;
 
 bool in_array ( mixed needle, array haystack [, bool strict])

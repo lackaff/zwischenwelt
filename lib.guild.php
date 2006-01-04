@@ -1,5 +1,6 @@
 <?php
 
+require_once("lib.tabs.php");
 define("kViewAdmin",2);
 define("kSiloGet",3);
 define("kSiloGive",5);
@@ -379,20 +380,17 @@ function setStdGPLimit($id,$limit){
 	else sql("INSERT INTO `guild_pref` SET `value`='$limit', `var`='stdlimit', `guild`=".$id);
 }
 
-$gGuildTabs = array(
-	"Allgemein"=>"guild.php?sid=?",
-	"Mitglieder"=>"guild_members.php?sid=?",
-	"Forum"=>"guild_forum.php?sid=?",
-	"Log"=>"guild_log.php?sid=?",
-	"Verwalten"=>"guild_admin.php?sid=?",
-);
-function renderGuildTabbar($active = ""){
-	global $gGuildTabs;
-	$tab = "<ul>";
-	foreach($gGuildTabs as $name=>$link)
-		$tab .= "<li class=\"".($active==$name?"":"in")."activetab\"><a class=\"tabhead\" href=\"".query($link)."\">$name</a></li>";
-	$tab .= "</ul>";
-	return $tab;
+
+function renderGuildTabbar($active=false){
+	$tabs = array(
+		array("Allgemein","",query("guild.php?sid=?")),
+		array("Mitglieder","",query("guild_members.php?sid=?")),
+		array("Forum","",query("guild_forum.php?sid=?")),
+		array("Log","",query("guild_log.php?sid=?")),
+		array("Verwalten","",query("guild_admin.php?sid=?")),
+	);
+	echo GenerateTabs("guildtabs",$tabs,"",false,$active);
+	echo "<div class=\"tabpane\">";
 }
 
 ?>

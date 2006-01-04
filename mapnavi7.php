@@ -276,9 +276,11 @@ if (isset($f_regentypes)) {
 		//parent.info.location.href = "info/info.php?blind=1&x="+x+"&y="+y+urladd+"&sid=<?=$gSID?>";
 		// ohne baseurl kommt hier der merkwürdige fehler, dass sich mehrere info/ ansammeln...
 		// vermutlich weil die funktion ueber das map frame aufgerufen wird -> browserbug ?
+		var url = "<?=BASEURL?>info/info.php?x="+x+"&y="+y+urladd+"&sid=<?=$gSID?>";
+		//alert(url);
 		if (curtool == 0 || curtool == 20) 
-				parent.info.location.href = "<?=BASEURL?>/info/info.php?x="+x+"&y="+y+urladd+"&sid=<?=$gSID?>";
-		else	parent.dummy.location.href = "<?=BASEURL?>/info/info.php?blind=1&x="+x+"&y="+y+urladd+"&sid=<?=$gSID?>";
+				parent.info.location.href = url;
+		else	parent.dummy.location.href = url + "&blind=1";
 	}
 	function clearline () { lineinit = false; }
 	function myreload () { 
@@ -360,7 +362,7 @@ function NaviTool ($pic,$param1,$param2,$tooltip="",$css="") {
 	$res = "";
 	$res .= "<span class=\"".$css."\">";
 	$res .= "<a href=\"javascript:settool(".$param1.",".$param2.",'".$pic."')\">";
-	$res .= "<img src=\"".$pic."\" alt=\"".addslashes($tooltip)."\" title=\"".addslashes($tooltip)."\">";
+	$res .= "<img border=0 src=\"".$pic."\" alt=\"".addslashes($tooltip)."\" title=\"".addslashes($tooltip)."\">";
 	$res .= "</a>";
 	$res .= "</span>\n";
 	return $res;
@@ -370,17 +372,17 @@ function NaviTool ($pic,$param1,$param2,$tooltip="",$css="") {
 $head = "<img src=\"".g("tool_look.png")."\">";
 $content = "";
 $content .= "<div class=\"mapnavitool_general\">\n";
-$content .= NaviTool(g("tool_look.png"),0,0,"anschauen");
-$content .= NaviTool(g("tool_cancel.png"),5,0,"Bauplan/Wegpunkt löschen");
-$content .= NaviTool(g("tool_wp.png"),3,0,"Wegpunkt setzen");
-$content .= NaviTool(g("tool_route.png"),4,0,"Route berechnen");
-$content .= NaviTool(g("pick.png"),9,0,"Koordinate aufschreiben");
+$content .= NaviTool(g("tool_look.png"),0,0,"anschauen","navtoolicon");
+$content .= NaviTool(g("tool_cancel.png"),5,0,"Bauplan/Wegpunkt löschen","navtoolicon");
+$content .= NaviTool(g("tool_wp.png"),3,0,"Wegpunkt setzen","navtoolicon");
+$content .= NaviTool(g("tool_route.png"),4,0,"Route berechnen","navtoolicon");
+$content .= NaviTool(g("pick.png"),9,0,"Koordinate aufschreiben","navtoolicon");
 if ($gUser->admin) {
-	$content .= NaviTool(g("del.png"),11,0,"Zap");
-	$content .= NaviTool(g("del.png"),12,0,"ruin");
-	$content .= NaviTool(g("del.png"),13,0,"rm_army");
-	$content .= NaviTool(g("del.png"),14,0,"rm_items");
-	$content .= NaviTool(g("del.png"),15,0,"clear");
+	$content .= NaviTool(g("del.png"),11,0,"Zap","navtoolicon");
+	$content .= NaviTool(g("del.png"),12,0,"ruin","navtoolicon");
+	$content .= NaviTool(g("del.png"),13,0,"rm_army","navtoolicon");
+	$content .= NaviTool(g("del.png"),14,0,"rm_items","navtoolicon");
+	$content .= NaviTool(g("del.png"),15,0,"clear","navtoolicon");
 }
 $content .= NaviTool(g("tool_crosshair.png"),10,0,"Zentrieren");
 $content .= "<br>";
@@ -401,7 +403,7 @@ if ($user_has_hq) {
 			if ($gBuildingType[$id]->race != 0 && $gUser->race != $gBuildingType[$id]->race) continue;
 			if ($id == kBuilding_HQ) continue;
 			// HasReq($o->req_geb,$o->req_tech,$gUser->id)
-			$content .= NaviTool(g($gBuildingType[$id]->gfx,"we",1),1,$id,$gBuildingType[$id]->name);
+			$content .= NaviTool(g($gBuildingType[$id]->gfx,"we",1),1,$id,$gBuildingType[$id]->name,"navtoolicon");
 		}
 		$content .= "</div>\n";
 		$gNaviToolTabs[] = array($head,$content);
@@ -411,7 +413,7 @@ if ($user_has_hq) {
 	$id = kBuilding_HQ;
 	$head = "<img src=\"".g($gBuildingType[$id]->gfx,"we",1)."\">";
 	$content = "";
-	$content .= NaviTool(g($gBuildingType[$id]->gfx,"we",1),1,$id,$gBuildingType[$id]->name);
+	$content .= NaviTool(g($gBuildingType[$id]->gfx,"we",1),1,$id,$gBuildingType[$id]->name,"navtoolicon");
 	$gNaviToolTabs[] = array($head,$content);
 }
 
@@ -430,7 +432,7 @@ foreach ($candospells as $group => $arr) if (count($arr) > 0) {
 	$head = "<img src=\"".g("tool_mana.png")."\">";
 	$content = "<div class=\"mapnavitool_magic\">\n";
 	foreach ($arr as $spelltype)
-		$content .= NaviTool(g($spelltype->gfx),20,$spelltype->id,$spelltype->name);
+		$content .= NaviTool(g($spelltype->gfx),20,$spelltype->id,$spelltype->name,"navtoolicon");
 	$content .= "</div>\n";
 	$gNaviToolTabs[] = array($head,$content);
 }
@@ -441,7 +443,7 @@ if ($gUser->admin || intval($gUser->flags) & kUserFlags_TerraFormer) {
 	$content = "<div class=\"mapnavitool_terraform\">\n";
 	$content .= "Landschaftsgestaltung: Pinselgrösse:<INPUT TYPE=\"text\" NAME=\"brushrad\" VALUE=\"0\" style=\"width:30px\"><br>\n";
 	foreach($gTerrainType as $o)
-		$content .= NaviTool(g($o->gfx,"ns"),2,$o->id,$o->name);
+		$content .= NaviTool(g($o->gfx,"ns"),2,$o->id,$o->name,"navtoolicon");
 	$content .= "</div>\n";
 	$gNaviToolTabs[] = array($head,$content);
 }
@@ -454,21 +456,21 @@ if ($gUser->admin) {
 	// buildings
 	$content = "<div class=\"mapnavitool_admin\">\n";
 	foreach($gBuildingType as $o)
-		$content .= NaviTool(g($gBuildingType[$o->id]->gfx,"we",1),6,$o->id,$o->name);
+		$content .= NaviTool(GetBuildingPic($o->id),6,$o->id,$o->name,"navtoolicon");
 	$content .= "</div>\n";
 	$gNaviToolTabs[] = array($head,$content);
 	
 	// units
 	$content = "<div class=\"mapnavitool_admin\">\n";
 	foreach($gUnitType as $o)
-		$content .= NaviTool(g($gUnitType[$o->id]->gfx),7,$o->id,$o->name);
+		$content .= NaviTool(g($gUnitType[$o->id]->gfx),7,$o->id,$o->name,"navtoolicon");
 	$content .= "</div>\n";
 	$gNaviToolTabs[] = array($head,$content);
 	
 	// items
 	$content = "<div class=\"mapnavitool_admin\">\n";
 	foreach($gItemType as $o)
-		$content .= NaviTool(g($gItemType[$o->id]->gfx),8,$o->id,$o->name);
+		$content .= NaviTool(g($gItemType[$o->id]->gfx),8,$o->id,$o->name,"navtoolicon");
 	$content .= "</div>\n";
 	$gNaviToolTabs[] = array($head,$content);
 }
@@ -476,7 +478,7 @@ if ($gUser->admin) {
 $tabcorner = "<div class=\"mapnavi_curtool\"><img width=23 height=23 name=\"curtoolpic\" src=\"".g("tool_look.png")."\"></div>";
 
 echo "<table width=\"100%\" border=0 cellspacing=0 cellpadding=0><tr><td>\n"; // cage
-PrintTabs("mapnavitools",$gNaviToolTabs,$tabcorner,"ToolTabChange");
+echo GenerateTabs("mapnavitools",$gNaviToolTabs,$tabcorner,"ToolTabChange");
 echo "</td></tr></table>\n"; // cage
 ?>
 
@@ -501,18 +503,6 @@ echo "</td></tr></table>\n"; // cage
 	
 <?php }?> 
 <a href="javascript:myreload()"><img border=0 src="<?=g("icon/reload.png")?>" alt="reload" title="reload"></a>
-	
-<?php if (0) {?>	
-	<?php foreach($gBuildingType as $o) {?>
-	<a href="javascript:settool(6,<?=$o->id?>,'<?=GetBuildingPic($o->id,1,"ns")?>')"><img alt="<?=$o->name?>" title="<?=$o->name?>" class="picframe" src="<?=GetBuildingPic($o->id,1,"ns")?>"></a>
-	<?php }?>
-	<?php foreach($gUnitType as $o) if ($o->gfx) {?>
-	<a href="javascript:settool(7,<?=$o->id?>,'<?=g($o->gfx)?>')"><img alt="<?=$o->name?>" title="<?=$o->name?>" class="picframe" src="<?=g("$o->gfx")?>?>"></a>
-	<?php }?>
-	<?php foreach($gItemType as $o) if ($o->gfx) {?>
-	<a href="javascript:settool(8,<?=$o->id?>,'<?=g($o->gfx)?>')"><img alt="<?=$o->name?>" title="<?=$o->name?>" class="picframe" src="<?=g("$o->gfx")?>?>"></a>
-	<?php }?>
-	<br>
-<?php }?>
+
 </body>
 </html>

@@ -60,7 +60,9 @@ class cInfoHQ extends cInfoBuilding {
 			break;
 		}
 	}
-	function mydisplay() {
+	
+	
+	function mygenerate_tabs() {
 		foreach ($_REQUEST as $name=>$val) ${"f_".$name} = $val;
 		global $gUser;
 		global $gGlobal;
@@ -76,6 +78,7 @@ class cInfoHQ extends cInfoBuilding {
 		global $gBuildingType;
 		
 		profile_page_start("hq.php");
+		rob_ob_start();
 			
 		if($gUser->guild>0 && isset($f_fc) && $f_fc==1){
 		?>
@@ -149,8 +152,8 @@ class cInfoHQ extends cInfoBuilding {
 			</tr>
 			</table>
 		
+		<?php if (0) {?>
 		<!--building quick jump-->
-		
 		<table border=0><tr><th>Schnellsprung</th></tr></table>
 		<?php 
 			$quickbuildingtypes = array(kBuilding_Market,
@@ -178,6 +181,7 @@ class cInfoHQ extends cInfoBuilding {
 				<?php }
 			}
 		?>
+		<?php } // endif?>
 		
 		<!--arbeiterverteilung-->
 			<form action="<?=Query("?sid=?&x=?&y=?")?>" method="post">
@@ -244,7 +248,7 @@ class cInfoHQ extends cInfoBuilding {
 				</SCRIPT>
 		
 				
-				<?php   $free = 100; foreach($gAdjust as $n=>$resfield) { 
+				<?php $free = 100; foreach($gAdjust as $n=>$resfield) { 
 					$free -= $gUser->{"worker_$resfield"};  // arbeitslose
 					$w = $gUser->pop * $gUser->{"worker_".$resfield} / 100; // anzahl arbeiter
 					if($slots[$resfield]>0)$auslastung = round(100.0 * $w / $slots[$resfield]);
@@ -343,5 +347,11 @@ class cInfoHQ extends cInfoBuilding {
 		?>
 		</table>
 		<?php profile_page_end(); 
+		
+		global $gInfoTabsSelected,$gInfoTabs;
+		$head = "Verwaltung";
+		$content = rob_ob_end();
+		$gInfoTabs[] = array($head,$content);
+		$gInfoTabsSelected = count($gInfoTabs)-1;
 	}
 }?>

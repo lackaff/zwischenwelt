@@ -22,10 +22,9 @@ require_once(kTypeCacheFile);
 
 //vardump($gTerrainType);
 
-function GetZWStylePath ($relpathprefix="") {
-	// $relpathprefix = "../" for info.php ?
+function GetZWStylePath () {
 	// todo : replace by neutral/good/evil, or user-defined
-	return $relpathprefix.kZWStyle_Neutral;
+	return kStyleServerPath.kZWStyle_Neutral."?time=".time(); // TODO : HACK : only for style dev..
 }
 
 function AdminBtn ($title,$url) {
@@ -174,7 +173,7 @@ function NWSEReplace ($source,$nwse) {
 
 // papyrus-border
 function ImgBorderStart($style="p1",$type="jpg",$bgcolor="#F9EDCD",$bgpic="",$tilesize=14,$bordersize=13,$rootpath="papyrus/") {?>
-	<table cellspacing="0" cellspadding="0" border=0>
+	<table cellspacing="0" cellpadding="0" border=0>
 	<tr>
 		<td style="background:url(<?=g($rootpath."tl-".$style.".".$type)?>) no-repeat bottom right">
 			<img src="<?=g("1px.gif")?>" alt="pfadfehler"
@@ -241,15 +240,18 @@ function DrawBar ($cur,$max,$color="green",$bgcolor="#eeeeee",$border=false) {
 	<?php
 }
 
-// TODO: DOOMED, OBSOLETE, SIMPLIFY ME
-function GetBuildingPic ($type,$level,$nwse="",$l=0)
-{
-	global $gBuildingType,$gUser;
-	// params : building type & level
-	return g($gBuildingType[intval($type)]->gfx,$nwse,$level,$gUser->race);
-	//str_replace("%NWSE%",$nwse,str_replace("%L%",$level,$gBuildingType[intval($type)]->gfx));
+// new and improved.... 
+function GetBuildingPic ($type,$user=false,$level=10,$nwse="we") {
+	global $gObject,$gUser,$gBuildingType;
+	if ($user === false) $user = $gUser;
+	if (!is_object($user)) $user = $user?sqlgetobject("SELECT * FROM `user` WHERE `id` = ".intval($user)):false;
+	if (!is_object($type)) $type = $gBuildingType[$type];
+	$race = $user ? $user->race : 1;
+	$moral = $user ? $user->moral : 100;
+	if ($level < 10) $level = 0; else $level = 1; // pic level
+	return g($type->gfx,$nwse,$level,$race,$moral);
 }
-
+	
 // userlog, visible in logwindow, see log.php
 //writes a log entry
 function LogMe($user,$topic,$type,$i1,$i2,$i3,$s1,$s2)
@@ -570,6 +572,7 @@ function nick($id=0,$fallback="Server",$aslink=false){
 function GetTechnologyLevel ($typeid,$userid=0) {
 	global $gUser,$gTechnologyLevelsOfAllUsers;
 	if ($userid == 0) $userid = $gUser->id;
+	if (is_object($userid)) $userid = $userid->id;
 	if (isset($gTechnologyLevelsOfAllUsers))
 		return isset($gTechnologyLevelsOfAllUsers[$userid][$typeid])?($gTechnologyLevelsOfAllUsers[$userid][$typeid]):0;
 	return intval(sqlgetone("SELECT `level` FROM `technology` WHERE `user` = ".intval($userid)." AND `type` = ".intval($typeid)." LIMIT 1"));

@@ -32,9 +32,7 @@ if($gGuild){
 </head>
 <body>
 <?php include("../menu.php"); ?>
-<div class="tabs"><div class="tabheader">
-<?=renderGuildTabbar("Mitglieder")?>
-</div><div class="tabpane">
+<?=renderGuildTabbar(1)?>
 <?php
 //ist der user in einer gilde?
 if($gUser->guild == 0)

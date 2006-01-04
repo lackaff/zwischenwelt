@@ -8,10 +8,11 @@ $gTabPaneNumber = 0;
 // $corner : html for the right-top corner (cover in spans !)
 // selected is compared to the keys of the $tabs array, can be numeric or associative
 // $jschangecallback : if not false, then this is javascript function is called at tabchange jschangecallback(tabnum)
-function PrintTabs ($cssclass,$tabs,$corner="",$jschangecallback=false,$selected=0) {
+function GenerateTabs ($cssclass,$tabs,$corner="",$jschangecallback=false,$selected=0) {
 	// internally for the javascript new numbers are used ($i)
 	global $gTabPaneNumber;
 	$anzahl_tabs = count($tabs);
+	rob_ob_start();
 	?>
 	<SCRIPT LANGUAGE="JavaScript" type="text/javascript"><!--
 	function TabPane<?=$gTabPaneNumber?>Activate (tabnum) {
@@ -45,6 +46,7 @@ function PrintTabs ($cssclass,$tabs,$corner="",$jschangecallback=false,$selected
 	<div class="<?=$cssclass?>">
 	<div class="tabs">
 		<div class="tabheader">
+			<div class="tabcorner"><?=$corner?></div>
 			<ul>
 				<?php $i = 0; foreach ($tabs as $id => $tupel) {?>
 				<?php $hasurl = isset($tupel[2]) && $tupel[2];?>
@@ -56,15 +58,16 @@ function PrintTabs ($cssclass,$tabs,$corner="",$jschangecallback=false,$selected
 				<?php if ($hasurl) {?></a><?php } // endif?>
 				<?php ++$i; } // endforeach?>
 			</ul>
-			<div class="corner"><?=$corner?></div>
 		</div>
 		<?php $i = 0;  foreach ($tabs as $id => $tupel) {?>
 		<div class="tabpane" name="tabpane<?=$gTabPaneNumber?>" id="tabpane<?=$gTabPaneNumber?>_<?=$i?>" <?=$selected==$id?"":"style=\"display:none;\""?>><?=($tupel[1])?></div>
 		<?php ++$i; } // endforeach?>
 	</div>
 	</div>
+	<div class="tabsend"></div>
 	<?php
 	++$gTabPaneNumber;
+	return rob_ob_end();
 }
 
 ?>

@@ -5,7 +5,6 @@ define("kURL_Chess","http://zwischenwelt.org/~hagish/occ/");
 define("kURL_Wiki","http://zwischenwelt.milchkind.net/zwwiki/index.php/");
 
 
-
 define("kMapNaviGotoCat_Pos",1);
 define("kMapNaviGotoCat_Mark",2);
 define("kMapNaviGotoCat_Own",3);
@@ -197,7 +196,6 @@ define("NEWLOG_MAGIC_HELP_TARGET",26);
 
 // magic
 
-define("MTARGET_SELF",1);
 define("MTARGET_PLAYER",2);
 define("MTARGET_AREA",3);
 define("MTARGET_ARMY",4);
@@ -415,6 +413,8 @@ define("kBuilding_Leuchtturm",66);
 
 // build distance factor is dependant on the following buildings
 $gBuildDistanceSources = array(0=>kBuilding_HQ,kBuilding_Silo,kBuilding_Harbor);
+$gSpeedyBuildingTypes = array(0=>6,7,8,9,11,12,13,14,15,16,20,22,23);
+define("kSpeedyBuildingsLimit",121); // 11*11 = 1 map full
 
 $gBuildingTypeGroupsPics = array("Gebäude"=>"tool_house.png","Infrastruktur"=>"tool_street.png","Deko"=>"tool_brunnen.png"); 
 $gBuildingTypeGroups = array( // used by for mapnavi tabs

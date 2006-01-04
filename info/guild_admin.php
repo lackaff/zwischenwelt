@@ -4,112 +4,116 @@ require_once("../lib.guild.php");
 
 Lock();
 
-//print_r($_POST);
+//ist der user in einer gilde?
+if($gUser->guild > 0)
+{//gilde vorhanden ------------------------------------------------------------
+	//print_r($_POST);
 
-$gGuild = sqlgetobject("SELECT g.*,u.`name` as `foundername` FROM `guild` g,`user` u WHERE u.`id`=g.`founder` AND g.`id`=".$gUser->guild);
-$gRight = sqlgettable("SELECT * FROM `guild_right` ORDER BY `right` ASC","right");
+	$gGuild = sqlgetobject("SELECT g.*,u.`name` as `foundername` FROM `guild` g,`user` u WHERE u.`id`=g.`founder` AND g.`id`=".$gUser->guild);
+	$gRight = sqlgettable("SELECT * FROM `guild_right` ORDER BY `right` ASC","right");
 
-$members = sqlgettable("SELECT * FROM `user` WHERE `guild`=".$gGuild->id." ORDER BY `general_pts`+`army_pts` DESC");
+	$members = sqlgettable("SELECT * FROM `user` WHERE `guild`=".$gGuild->id." ORDER BY `general_pts`+`army_pts` DESC");
 
-if(!empty($f_do)){
-	switch ($f_do){
-		case "killguild":
-			if($f_sure == 1 && ($gGuild->founder == $gUser->id || ($gUser->guildstatus%kGuildAdmin)==0)){
-				TablesLock();
-				$g = intval($gUser->guild);
-				sql("DELETE FROM `guild` WHERE `id`=$g");
-				sql("DELETE FROM `guild_forum` WHERE `guild`=$g");
-				sql("DELETE FROM `guild_forum_comment` WHERE `guild`=$g");
-				sql("DELETE FROM `guild_msg` WHERE `guild`=$g");
-				sql("DELETE FROM `guild_pref` WHERE `guild`=$g");
-				sql("DELETE FROM `guild_request` WHERE `guild`=$g");
-				sql("UPDATE `user` SET `guild`=0 WHERE `guild`=$g");
-				TablesUnlock();
-				Redirect(query("guild.php?sid=?"));
-				exit;
-			}
-		break;
-		case "setright":
-			if($gGuild->founder == $gUser->id || ($gUser->guildstatus%kGuildAdmin)==0)
-				foreach($members as $user){
-					//delete users
-					if(!empty($f_deluser[$user->id]) && $user->guild == $gGuild->id)leaveGuild($user->id);
-					//set right
+	if(!empty($f_do)){
+		switch ($f_do){
+			case "killguild":
+				if($f_sure == 1 && ($gGuild->founder == $gUser->id || ($gUser->guildstatus%kGuildAdmin)==0)){
+					TablesLock();
+					$g = intval($gUser->guild);
+					sql("DELETE FROM `guild` WHERE `id`=$g");
+					sql("DELETE FROM `guild_forum` WHERE `guild`=$g");
+					sql("DELETE FROM `guild_forum_comment` WHERE `guild`=$g");
+					sql("DELETE FROM `guild_msg` WHERE `guild`=$g");
+					sql("DELETE FROM `guild_pref` WHERE `guild`=$g");
+					sql("DELETE FROM `guild_request` WHERE `guild`=$g");
+					sql("UPDATE `user` SET `guild`=0 WHERE `guild`=$g");
+					TablesUnlock();
+					Redirect(query("guild.php?sid=?"));
+					exit;
+				}
+			break;
+			case "setright":
+				if($gGuild->founder == $gUser->id || ($gUser->guildstatus%kGuildAdmin)==0)
+					foreach($members as $user){
+						//delete users
+						if(!empty($f_deluser[$user->id]) && $user->guild == $gGuild->id)leaveGuild($user->id);
+						//set right
+						$status=1;
+						foreach ($gRight as $r){
+							if(isset($_POST["ri_".$user->id."_".$r->right]))$status*=$r->right;
+						}
+						sql("UPDATE `user` SET `guildstatus`=".$status." WHERE `guild`=$gGuild->id AND `id`=".$user->id);
+						//update me for runntime issue
+						if($user->id==$gUser->id)$gUser->guildstatus=$status;
+					}
+			break;
+			
+			case "savesettings":
+				if($gGuild->founder == $gUser->id || $gUser->guildstatus%kGuildAdmin==0)
+					sql("UPDATE `guild` SET `internprofile`='".addslashes($f_internprofile)."', `profile`='".addslashes($f_profile)."', `forumurl`='".addslashes($f_forumurl)."', `gfx`='".addslashes($f_gfxurl)."', `name` = '".addslashes($f_changedguildname)."',`color` = '".addslashes($f_color)."' WHERE `id` = ".$gGuild->id." LIMIT 1");
+			break;
+			
+			case "setstdright":
+				if($gGuild->founder == $gUser->id || $gUser->guildstatus%kGuildAdmin==0){
 					$status=1;
 					foreach ($gRight as $r){
-						if(isset($_POST["ri_".$user->id."_".$r->right]))$status*=$r->right;
+						if(isset($_POST["ri_std_".$r->right]))$status*=$r->right;
 					}
-					sql("UPDATE `user` SET `guildstatus`=".$status." WHERE `guild`=$gGuild->id AND `id`=".$user->id);
-					//update me for runntime issue
-					if($user->id==$gUser->id)$gUser->guildstatus=$status;
+					sql("UPDATE `guild` SET `stdstatus`=".$status." WHERE `id`=".$gGuild->id);
 				}
-		break;
-		
-		case "savesettings":
-			if($gGuild->founder == $gUser->id || $gUser->guildstatus%kGuildAdmin==0)
-				sql("UPDATE `guild` SET `internprofile`='".addslashes($f_internprofile)."', `profile`='".addslashes($f_profile)."', `forumurl`='".addslashes($f_forumurl)."', `gfx`='".addslashes($f_gfxurl)."', `name` = '".addslashes($f_changedguildname)."',`color` = '".addslashes($f_color)."' WHERE `id` = ".$gGuild->id." LIMIT 1");
-		break;
-		
-		case "setstdright":
-			if($gGuild->founder == $gUser->id || $gUser->guildstatus%kGuildAdmin==0){
-				$status=1;
-				foreach ($gRight as $r){
-					if(isset($_POST["ri_std_".$r->right]))$status*=$r->right;
+			break;
+			
+			case "setmsgoftheday":
+				if($gGuild->founder == $gUser->id || $gUser->guildstatus%kGuildAdmin==0 || $gUser->guildstatus%kSetMsgOfTheDay==0)
+					sql("UPDATE `guild` SET `message`='".addslashes($f_message)."' WHERE `id`=".$gGuild->id);
+			break;
+			
+			case "decide":
+				if(isset($f_decide) && isset($f_reaction) && ($gGuild->founder == $gUser->id || ($gUser->guildstatus%kGuildAdmin)==0))
+				{
+					$f_user = intval($f_user);
+					if($f_reaction == "accept")$ok = true;
+					else $ok = false;
+					reactOnRequestGuild($f_user,$gGuild->id,$ok);
 				}
-				sql("UPDATE `guild` SET `stdstatus`=".$status." WHERE `id`=".$gGuild->id);
-			}
-		break;
-		
-		case "setmsgoftheday":
-			if($gGuild->founder == $gUser->id || $gUser->guildstatus%kGuildAdmin==0 || $gUser->guildstatus%kSetMsgOfTheDay==0)
-				sql("UPDATE `guild` SET `message`='".addslashes($f_message)."' WHERE `id`=".$gGuild->id);
-		break;
-		
-		case "decide":
-			if(isset($f_decide) && isset($f_reaction) && ($gGuild->founder == $gUser->id || ($gUser->guildstatus%kGuildAdmin)==0))
-			{
-				$f_user = intval($f_user);
-				if($f_reaction == "accept")$ok = true;
-				else $ok = false;
-				reactOnRequestGuild($f_user,$gGuild->id,$ok);
-			}
-		break;
-		
-		case "setlimit":
-			if($gGuild->founder == $gUser->id || ($gUser->guildstatus%kGuildAdmin)==0 || ($gUser->guildstatus%kGuildBursar)==0)
-				foreach ($members as $o){
-					setGPLimit($o->id,$_POST['limit_'.$o->id]);
+			break;
+			
+			case "setlimit":
+				if($gGuild->founder == $gUser->id || ($gUser->guildstatus%kGuildAdmin)==0 || ($gUser->guildstatus%kGuildBursar)==0)
+					foreach ($members as $o){
+						setGPLimit($o->id,$_POST['limit_'.$o->id]);
+					}
+			break;
+			
+			case "setstdlimit":
+				if($gGuild->founder == $gUser->id || ($gUser->guildstatus%kGuildAdmin)==0 || ($gUser->guildstatus%kGuildBursar)==0)
+					setStdGPLimit($gGuild->id,$f_stdlimit);
+			break;
+			
+			case "settakealllimit":
+				if($gGuild->founder == $gUser->id || ($gUser->guildstatus%kGuildAdmin)==0 || ($gUser->guildstatus%kGuildBursar)==0)
+					setTakeAllLimit($gGuild->id,$f_takealllimit);
+			break;
+			
+			case "sendgm":
+				if(empty($f_subject) || empty($f_text))break;
+				if($gUser->guildstatus%kSendGuildMsg==0 || $gUser->guildstatus%kGuildAdmin==0 || $gUser->id==$gGuild->founder){
+					require_once("../lib.message.php");
+					$tosent=TRUE;
+					foreach ($members as $o){
+						sendMessage($o->id,$gUser->id,$f_subject,$f_text,kMsgTypeGM,$tosent);
+						$tosent=FALSE;
+					}
 				}
-		break;
-		
-		case "setstdlimit":
-			if($gGuild->founder == $gUser->id || ($gUser->guildstatus%kGuildAdmin)==0 || ($gUser->guildstatus%kGuildBursar)==0)
-				setStdGPLimit($gGuild->id,$f_stdlimit);
-		break;
-		
-		case "settakealllimit":
-			if($gGuild->founder == $gUser->id || ($gUser->guildstatus%kGuildAdmin)==0 || ($gUser->guildstatus%kGuildBursar)==0)
-				setTakeAllLimit($gGuild->id,$f_takealllimit);
-		break;
-		
-		case "sendgm":
-			if(empty($f_subject) || empty($f_text))break;
-			if($gUser->guildstatus%kSendGuildMsg==0 || $gUser->guildstatus%kGuildAdmin==0 || $gUser->id==$gGuild->founder){
-				require_once("../lib.message.php");
-				$tosent=TRUE;
-				foreach ($members as $o){
-					sendMessage($o->id,$gUser->id,$f_subject,$f_text,kMsgTypeGM,$tosent);
-					$tosent=FALSE;
-				}
-			}
-		break;
-		
-		
-		default:
-		break;
+			break;
+			
+			
+			default:
+			break;
+		}
+		$gGuild = sqlgetobject("SELECT g.*,u.`name` as `foundername` FROM `guild` g,`user` u WHERE u.`id`=g.`founder` AND g.`id`=".$gUser->guild);
+		$members = sqlgettable("SELECT * FROM `user` WHERE `guild`=".$gGuild->id." ORDER BY `general_pts`+`army_pts` DESC");
 	}
-	$gGuild = sqlgetobject("SELECT g.*,u.`name` as `foundername` FROM `guild` g,`user` u WHERE u.`id`=g.`founder` AND g.`id`=".$gUser->guild);
-	$members = sqlgettable("SELECT * FROM `user` WHERE `guild`=".$gGuild->id." ORDER BY `general_pts`+`army_pts` DESC");
 }
 
 ?>
@@ -125,11 +129,21 @@ if(!empty($f_do)){
 </head>
 <body>
 
-<?php include("../menu.php"); ?>
-<div class="tabs"><div class="tabheader">
-<?=renderGuildTabbar("Verwalten")?>
-</div><div class="tabpane">
+<?php 
 
+include("../menu.php");
+echo renderGuildTabbar(4);
+
+//ist der user in einer gilde?
+if($gUser->guild == 0)
+{//neeee ------------------------------------------------------------
+?>
+	Sie befinden sich in keiner Gilde!
+<?php
+}
+else
+{//gilde vorhanden ------------------------------------------------------------
+?>
 <center>
 <table>
 <tr><td valign="top" align="center">
@@ -331,6 +345,8 @@ ImgBorderEnd("s2","jpg","#ffffee",32,33);}
 	<input type=checkbox name=sure value=1> Diese Gilde <input type=submit value="löschen">
 	</div>
 </form>
+
+<?php } ?>
 
 </div></div>
 </body>

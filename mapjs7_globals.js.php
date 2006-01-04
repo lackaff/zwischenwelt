@@ -2,8 +2,9 @@
 require_once("lib.main.php");
 //if ( extension_loaded('zlib') )ob_start('ob_gzhandler');
 header('Content-Type: text/javascript');
-//header('Last-Modified: '.date("r",time()-60*60*24*7));
-//header('Cache-Control: max-age='.(60*60*24*7).', must-revalidate');
+$maxage = 60*60*24*7;
+header('Last-Modified: '.date("r",floor((time()-$maxage)/$maxage)*$maxage));
+header('Cache-Control: max-age='.$maxage.', must-revalidate');
 
 ?>
 kDefaultTerrainID = <?=kTerrain_Grass?>;

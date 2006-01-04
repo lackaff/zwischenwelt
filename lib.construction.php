@@ -1,19 +1,27 @@
 <?php
 
-$gSpeedyBuildingTypes = array(6,7,8,9,11,12,13,14,15,16,20,22,23); // todo : unhardcode
-define("kSpeedyBuildingsLimit",121); // todo : unhardcode // 11*11 = 1 map full
 require_once("lib.technology.php");
 
 
 
-// distance from hq, silo or harbor  // TODO :unhardcode
-function GetBuildDistance ($x,$y,$userid=0) { 
+// distance from hq,silo,harbor...
+// priority=-1 means new building/plan
+// priority=0 means for a construction
+function GetBuildDistance ($x,$y,$userid=0,$priority=-1) { 
 	global $gUser,$gBuildDistanceSources; 
 	if ($userid == 0) $userid = $gUser->id;
 	$x = intval($x);
 	$y = intval($y);
-	return sqrt(floatval(sqlgetone("SELECT MIN(((`x`-$x)*(`x`-$x) + (`y`-$y)*(`y`-$y)))
-		FROM `building` WHERE `user` = ".intval($userid)." AND `construction` = 0 AND `type` IN (".implode(",",$gBuildDistanceSources).")")));
+	
+	$distformula = "((`x`-$x)*(`x`-$x) + (`y`-$y)*(`y`-$y))";
+	$cond = "`user` = ".intval($userid)." AND `type` IN (".implode(",",$gBuildDistanceSources).")";
+	$existing_dist = floatval(sqlgetone("SELECT MIN($distformula) FROM `building` WHERE `construction` = 0 AND $cond"));
+	if ($priority == 0) return sqrt($existing_dist);
+	
+	$priocond = ($priority == -1)?"1":("`priority` < ".intval($priority));
+	$plan_dist = sqlgetone("SELECT MIN($distformula) FROM `construction` WHERE $priocond AND $cond");
+	if (!$plan_dist) return sqrt($existing_dist);
+	return sqrt(min(floatval($plan_dist),$existing_dist));
 }
 
 
@@ -102,41 +110,85 @@ function OwnConstructionInProcess ($x,$y) {
 
 
 
-
 function GetBuildDistFactor ($dist) {
 	if ($dist <= 4.0)
 			return 1.0;
 	else	return 1.0  + ($dist-4.0) * 0.1;
 }
 
-function GetBuildTechFactor ($userid) {	
+function GetBuildTechFactor ($userid) {
+	if (is_object($userid)) $userid = $userid->id;
 	$techlevel = ($userid != 0)?GetTechnologyLevel(kTech_Architecture,$userid):0;
 	$tf = 1.0;
 	for($i=0;$i<$techlevel;++$i) $tf *= 0.95; // todo : document in wiki
 	return $tf;
 }
 
-function GetBuildNewbeeFactor ($building) { // object(building or construction plan)
-	if (!$building) return 1.0;
-	global $gSpeedyBuildingTypes;
-	$cond = "`type` IN (".implode(",",$gSpeedyBuildingTypes).")";
-	$sbcount = intval(sqlgetone("SELECT count(*) FROM `building` WHERE `construction` = 0 AND `user`=".$building->user." AND $cond"));
-	if (isset($building->priority)) // its not a building, but a construction plan
-		$sbcount += intval(sqlgetone("SELECT count(*) FROM `construction` WHERE `user`=".$building->user." AND `priority` < ".$building->priority." AND $cond"));
-	if (in_array($building->type,$gSpeedyBuildingTypes) && $sbcount <= kSpeedyBuildingsLimit)
+// btypeid=-1 means any speedy building
+// priority=-1 means new building/plan
+// priority=0 means for a construction
+function GetBuildNewbeeFactor ($btypeid=-1,$priority=-1,$userid=false) {
+	global $gSpeedyBuildingTypes,$gUser;
+	if ($btypeid != -1 && !in_array($btypeid,$gSpeedyBuildingTypes)) return 1.0;
+	if ($userid === false) $userid = $gUser->id;
+	if (is_object($userid)) $userid = $userid->id;
+	if (is_object($btypeid)) $btypeid = $btypeid->id;
+	$cond = "`user`=".intval($userid)." AND `type` IN (".implode(",",$gSpeedyBuildingTypes).")";
+	$sbcount = intval(sqlgetone("SELECT count(*) FROM `building` WHERE `construction` = 0 AND $cond"));
+	if ($priority == -1) // -1 means for a new plan -> take all existing plans into account 
+		$sbcount += intval(sqlgetone("SELECT count(*) FROM `construction` WHERE $cond"));
+	else if ($priority > 0)
+		$sbcount += intval(sqlgetone("SELECT count(*) FROM `construction` WHERE `priority` < ".intval($priority)." AND $cond"));
+	if ($sbcount <= kSpeedyBuildingsLimit)
 			return $sbcount / (float)kSpeedyBuildingsLimit;
 	else	return 1.0;
 }
 			
-function GetBuildTime ($building) { // object(building or construction) or id
-	if (!is_object($building))
-		$building = sqlgetobject("SELECT * FROM `building` WHERE `id` = ".intval($building));
-	if (!$building) return 0;
-	$dist = GetBuildDistance($building->x,$building->y,$building->user);
-	global $gBuildingType;
-	return $gBuildingType[$building->type]->buildtime * GetBuildDistFactor($dist) * GetBuildTechFactor($building->user) * GetBuildNewbeeFactor($building);
+// priority=-1 means for a new building
+// priority=0 means for a construction
+function GetBuildTime ($x,$y,$typeid,$priority=-1,$userid=false) { // object(building or construction) or id
+	global $gUser,$gBuildingType;
+	if ($userid === false) $userid = $gUser->id;
+	if (is_object($userid)) $userid = $userid->id;
+	$dist = GetBuildDistance($x,$y,$userid,$priority);
+	$faktor_dist = GetBuildDistFactor($dist);
+	$faktor_tech = GetBuildTechFactor($userid);
+	$faktor_newbee = GetBuildNewbeeFactor($type,$priority,$userid);
+	return $gBuildingType[$type]->buildtime * $faktor_dist * $faktor_tech * $faktor_newbee;
 }
 
+// print an explanation for how GetBuildTime works
+// priority=-1 means for a new building/plan
+// priority=0 means for a construction
+// type=-1 means for a speedy building
+function PrintBuildTimeHelp ($x,$y,$type=-1,$priority=-1,$userid=false) {
+	global $gUser;
+	if ($userid === false) $userid = $gUser->id;
+	if (is_object($userid)) $userid = $userid->id;
+	$dist = GetBuildDistance($x,$y,$userid,$priority);
+	$faktor_dist = GetBuildDistFactor($dist);
+	$faktor_tech = GetBuildTechFactor($userid);
+	$faktor_newbee = GetBuildNewbeeFactor($type,$priority,$userid);
+	?>
+	<table>
+	<tr>
+		<td>Entfernung zum Haupthaus oder Lager <?=round($dist,2)?></td>
+		<td>Bauzeit * <?=round($faktor_dist,2)?></td>
+	</tr><tr>
+		<td>Architekturlevel: <?=$tech->level?></td>
+		<td>Bauzeit * <?=round($faktor_tech,2)?></td>
+	</tr><tr>
+	<?php if ($faktor_newbee < 1.0) {?>	
+		<td>frisch gegründete Siedlung (Newbee)</td>
+		<td>Bauzeit * <?=round($faktor_newbee,2)?></td>
+	</tr><tr>
+	<?php } // endif?>
+		<td>Insgesamt</td>
+		<td>Bauzeit * <?=round($faktor_dist * $faktor_tech * $faktor_newbee,2)?></td>
+	</tr><tr>
+	</table>
+	<?php
+}
 
 function GetBuildlist ($x,$y,$unsafe=FALSE,$withhq=TRUE,$ignorereq=TRUE,$ignoreterrain=FALSE) {
 	global $gUser,$gBuildingType,$gTerrainType;
@@ -279,12 +331,12 @@ function canBuildBridgeHere($x,$y) {
 
 
 //returns percent 0.0 - 1.0 of construction progress
-function GetConstructionProgress($building){
-	if(!is_object($building))$building = sqlgetobject("SELECT * FROM `building` WHERE `id`=".intval($building));
-	if($building){
-		$r=floatval(1 - max(0,$building->construction - time()) / GetBuildTime($building));
-		return min(1.0,max(0.0,$r));
-	} else return 0;
+function GetConstructionProgress($building) {
+	if(!is_object($building)) $building = sqlgetobject("SELECT * FROM `building` WHERE `id`=".intval($building));
+	if (!$building) return 0;
+	$timeleft = max(0,$building->construction - time());
+	$buildtime = max(1,GetBuildTime($building->x,$building->y,$building->type,0,$building->user)); // prevent div by zero
+	return 1.0 - min(1.0,$timeleft / $buildtime);
 }
 
 

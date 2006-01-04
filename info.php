@@ -7,6 +7,12 @@ if ($hq) Redirect(Query("info/info.php?sid=?".($f_fc==1?"&fc=1&":"&")."x=".$hq->
 else
 {
 ?>
+	<SCRIPT LANGUAGE="JavaScript" type="text/javascript">
+	<!--
+		parent.map.location.href = parent.map.location.href;
+		parent.navi.location.href = parent.navi.location.href;
+	//-->
+	</SCRIPT>
 	Du hast noch kein Haupthaus, daher solltest Du Dir ein schönes Plätzchen suchen und dort eines bauen.<br>
 	Unter der Karte im rechten Fenster sind Pfeile, damit kannst du dich umschauen.<br>
 	Wenn du auf (MiniMap) clickst siehst du eine kleine Weltkarte.<br>
@@ -19,7 +25,6 @@ else
 	<br>
 	<a target="map" href="<?=query(kMapScript."?sid=?")?>">Hier klicken um zu einem freien Platz zu springen</a><br>
 	<a target="_blank" href="<?=query("minimap.php?random=1&sid=?")?>">Hier klicken um eine Weltkarte anzuschauen</a>
-	
 <?php
 }
 

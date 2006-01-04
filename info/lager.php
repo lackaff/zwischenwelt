@@ -50,7 +50,7 @@ class cInfoLager extends cInfoBuilding {
 	}
 	
 	
-	function mydisplay() {
+	function mygenerate_tabs() {
 		foreach ($_REQUEST as $name=>$val) ${"f_".$name} = $val;
 		global $gUser;
 		global $gObject;
@@ -65,6 +65,7 @@ class cInfoLager extends cInfoBuilding {
 		$gc=getGuildCommander();
 		profile_page_start("lager.php");
 		$gArmies = cArmy::getMyArmies(false,$gUser);
+		rob_ob_start();
 		?>
 		
 		<?php if (count($gArmies) > 0) {?>
@@ -138,5 +139,11 @@ class cInfoLager extends cInfoBuilding {
 		</form>
 		<?php }?>
 		<?php profile_page_end(); 
+		
+		global $gInfoTabsSelected,$gInfoTabs;
+		$head = "Waren";
+		$content = rob_ob_end();
+		$gInfoTabs[] = array($head,$content);
+		$gInfoTabsSelected = count($gInfoTabs)-1;
 	}
 }?>

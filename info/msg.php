@@ -122,6 +122,7 @@ if(isset($f_do)){
 <html>
 <head>
 <link rel="stylesheet" type="text/css" href="../styles.css">
+<link rel="stylesheet" type="text/css" href="../zwstyle.css">
 <title>Zwischenwelt - Nachrichten</title>
 <script>
 function CheckAll() {

@@ -88,9 +88,7 @@ $gGuild = sqlgetobject("SELECT g.*,u.`name` as `foundername` FROM `guild` g,`use
 </head>
 <body>
 <?php include("../menu.php"); ?>
-<div class="tabs"><div class="tabheader">
-<?=renderGuildTabbar("Allgemein")?>
-</div><div class="tabpane">
+<?=renderGuildTabbar(0)?>
 <?php
 //ist der user in einer gilde?
 if($gUser->guild == 0)

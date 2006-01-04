@@ -24,6 +24,40 @@ class cInfoBuilding extends cInfoBase {
 		if ($gObject->construction == 0) parent::command();
 	}
 	
+	function GetMainTabHead () { // header grafik für main tab
+		global $gObject,$gUser,$gBuildingType;
+		$btype = $gBuildingType[$gObject->type];
+		return $this->GetBuildingPic().$btype->name;
+	}
+	
+	
+
+	function GetBuildingPic () { // uses function with the same name from lib.main.php
+		global $gObject,$gUser,$gBuildingType;
+		$btype = $gBuildingType[$this->type];
+		$gfx = GetBuildingPic($this->type,$this->user,$this->level);
+		return "<img class=\"info_buildingpic\" alt=\"".($btype->name)."\" title=\"".($btype->name)."\" src=\"".$gfx."\">";
+	}
+	
+	// execute drawing code in display() after displaying the buffered command() output
+	function classgenerate_tabs () {
+		global $gInfoTabsSelected,$gInfoTabs;
+		$this->generate_tab_building(); $gInfoTabsSelected = count($gInfoTabs)-1;
+		$this->generate_tab_unit_production();
+		$this->generate_tab_technology();
+		// TODO : eliminate infobase_cmdout ?
+		// TODO : unit transfer tabbing :
+		// if ($gObject->construction == 0) cTransfer::display_armytransfer($gObject,0);
+	}
+	
+	function mygenerate_tabs () {
+		global $gObject,$gUser,$gBuildingType,$gGlobal,$gRes;
+		global $gTaxableBuildingTypes,$gOpenableBuildingTypes;
+		global $gOwnerBuildingFlags,$gBuildingFlagNames;
+		if ($gObject->construction > 0) return;
+		// override me...
+	}
+	
 	function display () {
 		global $gObject; $gObject = $this; // backwards compatibility, better user $this
 		//hide display, if this is still under construction
@@ -40,9 +74,6 @@ class cInfoBuilding extends cInfoBase {
 		if ($this->infobase_nodisplay) return;
 		//echo "displaying ".get_class($this)."<hr>";
 		//vardump2($this);echo "<hr>";
-		$this->display_header();
-		if ($gObject->construction == 0) $this->mydisplay();
-		$this->display_footer();
 	}
 	
 	function mycommand () {} // override me for building-specific commands
@@ -237,13 +268,14 @@ class cInfoBuilding extends cInfoBase {
 		return $res;
 	}
 	
-	function display_unit_production() {
+	//function display_unit_production() {
+	function generate_tab_unit_production() {
+		global $gObject,$gUser,$gBuildingType,$gUnitType;
+		
 		// einheitenproduktions-dialog
-		global $gUnitType;
-		global $gObject;
-		global $gUser;
 		if (!$this->cancontroll($gUser)) return;
 		if ($gObject->construction > 0) return;
+		
 		
 		$gActions = sqlgettable("SELECT * FROM `action` WHERE `building` = ".$gObject->id." ORDER BY `id`","id");
 		$producable_units = $this->producable_units();
@@ -255,6 +287,7 @@ class cInfoBuilding extends cInfoBase {
 		
 		if (count($producable_units) == 0 && count($gActions) == 0 && !$can_station_units) return;
 		
+		rob_ob_start();
 		ImgBorderStart("s1","jpg","#ffffee","",32,33);
 		
 		if ($can_station_units) {
@@ -294,7 +327,7 @@ class cInfoBuilding extends cInfoBase {
 		<INPUT TYPE="hidden" NAME="building" VALUE="unit_producer">
 		<INPUT TYPE="hidden" NAME="id" VALUE="<?=$gObject->id?>">
 		<INPUT TYPE="hidden" NAME="do" VALUE="set_all_tasks_to_this">
-		Den Ausbildungsauftrag von hier für alle gleichen Gebäude 
+		Den Ausbildungsauftrag von hier für alle gleichen Geb&auml;ude 
 		<input type="submit" name="save" value="übernehmen">
 		</form>
 		<?php 
@@ -365,18 +398,21 @@ class cInfoBuilding extends cInfoBase {
 		}
 		
 		ImgBorderEnd("s1","jpg","#ffffee",32,33);
+		
+		global $gInfoTabs;
+		$head = "Ausbildung";
+		$content = rob_ob_end();
+		$gInfoTabs[] = array($head,$content);
 	}
 	
-	function display_header() {
-		global $gBuildingType;
-		global $gObject;
-		global $gGlobal;
-		global $gUser;
-		global $gRes;
-		global $gTaxableBuildingTypes;
-		global $gOpenableBuildingTypes;
-		global $gOwnerBuildingFlags;
-		global $gBuildingFlagNames;
+	
+	function generate_tab_building() {
+		global $gObject,$gUser,$gBuildingType,$gGlobal,$gRes;
+		global $gTaxableBuildingTypes,$gOpenableBuildingTypes;
+		global $gOwnerBuildingFlags,$gBuildingFlagNames;
+		
+		rob_ob_start();
+		
 		$btype = $gBuildingType[$gObject->type];
 		if($gObject->type==kBuilding_Portal && intval(sqlgetone("SELECT `value` FROM `buildingparam` WHERE `name`='target' AND `building`=".$gObject->id))>0)
 			$btype->gfx=str_replace("zu","offen",$btype->gfx);
@@ -399,7 +435,7 @@ class cInfoBuilding extends cInfoBase {
 						<tr><td>
 							<?php $infourl = Query("?sid=?&x=?&y=?&infobuildingtype=".$btype->id);?>
 							<?php $race = sqlgetone("SELECT `race` FROM `user` WHERE `id` = ".$gObject->user);?>
-							<a href="<?=$infourl?>"><img src="<?=g($btype->gfx,($gObject->nwse=="?" || empty($gObject->nwse))?"ns":$gObject->nwse,$lpic,$race)?>" border=1></a>
+							<a href="<?=$infourl?>"><?=$this->GetBuildingPic()?></a>
 						</td></tr>
 						<tr><td height=5 style="border:1px solid black"><?=DrawBar($gObject->hp,cBuilding::calcMaxBuildingHp($btype->id,$gObject->level),GradientRYG(GetFraction($gObject->hp,cBuilding::calcMaxBuildingHp($btype->id,$gObject->level))),"black")?></td></tr>
 						<?if($gObject->type==$gGlobal['building_runes']){?>
@@ -637,7 +673,7 @@ class cInfoBuilding extends cInfoBase {
 			} else if ($this->cancontroll()) {?>
 				<?php /* #### BAUSTELLE #### */ ?>
 				<?php 
-				$buildtime = GetBuildTime($gObject);
+				$buildtime = GetBuildTime($gObject->x,$gObject->y,$gObject->type,0,$gObject->user);
 				$remaining_time = max(0,$gObject->construction - time());
 				?>
 				<table>
@@ -680,22 +716,15 @@ class cInfoBuilding extends cInfoBase {
 			echo "<b>BODENSCHATZ ! : ".cost2txt($costarr)." pro Stunde bei ".ktrenner(kBodenSchatzIdealWorkers)." Arbeitern</b><br>";
 		}
 		
-		$this->display_unit_production();
-		if ($gObject->construction == 0) cTransfer::display_armytransfer($gObject,0);
+		global $gInfoTabs;
+		$head = $this->GetMainTabHead();
+		$content = rob_ob_end();
+		$gInfoTabs[] = array($head,$content);
 	}
 	
-	function display_footer () {
-		global $gObject;
-		$this->display_tech_tree();
-	}
-	
-	function display_tech_tree () {
-		foreach ($_REQUEST as $name=>$val) ${"f_".$name} = $val;
-		global $gObject;
-		global $gUser;
-		global $gRes;
-		global $gTechnologyType;
-		global $gTechnologyGroup;
+	function generate_tab_technology () {
+		foreach ($_REQUEST as $name=>$val) ${"f_".$name} = $val; // TODO : noch notwendig ??
+		global $gObject,$gUser,$gBuildingType,$gRes,$gTechnologyType,$gTechnologyGroup;
 		if (!$this->cancontroll()) return;
 		if ($gObject->construction > 0) return;
 		
@@ -714,8 +743,9 @@ class cInfoBuilding extends cInfoBase {
 			}
 		if (count($localtechtypes) == 0) return; // no techs for this building
 		ksort($localtechtypes);
-		ImgBorderStart("s1","jpg","#ffffee","",32,33);
 		
+		rob_ob_start();
+		ImgBorderStart("s1","jpg","#ffffee","",32,33);
 		?>
 		<?php if($gUser->admin){ ?>
 			<?php if (0) {?>ACHTUNG, (reset) setzt das forschungslevel ALLER spieler auf 0 zurück !!!<br><?php } ?>
@@ -832,6 +862,11 @@ class cInfoBuilding extends cInfoBase {
 		</table>
 		<?php
 		ImgBorderEnd("s1","jpg","#ffffee",32,33);
+		
+		global $gInfoTabs;
+		$head = "Forschung";
+		$content = rob_ob_end();
+		$gInfoTabs[] = array($head,$content);
 	}
 }
 ?>

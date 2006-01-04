@@ -369,7 +369,7 @@ function CreateMap() {
 	
 	profiling("construct map tabs");
 	
-	var tab_corner = "";
+	//var tab_corner = "";
 	/*
 	tab_corner += "<span class=\"mapscroll\" style='display:none'>";
 	tab_corner += "<span class=\"mapscroll_minus\"><a href=\"javascript:mapscroll_minus()\">-</a></span>";
@@ -379,28 +379,28 @@ function CreateMap() {
 	*/
 	var tab_pre = "";
 	tab_pre += "<div class=\"tabs\">";
+	//tab_pre += "	<div>"+tab_corner+"</div>";
 	tab_pre += "	<div class=\"tabheader\">";
-	tab_pre += "		<ul>";
-	tab_pre += "			<li class=\""+(gMapMode==kJSMapMode_Normal?	"activetab":"inactivetab")+"\"><a class=\"tabhead\" href=\"javascript:SetMapMode(kJSMapMode_Normal)\">Normal</a></li>";
-	tab_pre += "			<li class=\""+(gMapMode==kJSMapMode_Plan?	"activetab":"inactivetab")+"\"><a class=\"tabhead\" href=\"javascript:SetMapMode(kJSMapMode_Plan)\">Pl&auml;ne</a></li>";
-	tab_pre += "			<li class=\""+(gMapMode==kJSMapMode_Bauzeit?"activetab":"inactivetab")+"\"><a class=\"tabhead\" href=\"javascript:SetMapMode(kJSMapMode_Bauzeit)\">Bauzeit</a></li>";
-	tab_pre += "			<li class=\""+(gMapMode==kJSMapMode_HP?		"activetab":"inactivetab")+"\"><a class=\"tabhead\" href=\"javascript:SetMapMode(kJSMapMode_HP)\">HP</a></li>";
-	tab_pre += "		</ul>";
-	tab_pre += "		<div class=\"corner\">";
+	tab_pre += "		<div class=\"tabcorner\">";
 	tab_pre += "			<span>"+gMapModiHelp+"</span>";
 	tab_pre += "			<a href=\"javascript:OpenMap(1)\"><img alt=\"bigmap\" title=\"bigmap\" border=0 src=\"gfx/icon/bigmap.png\"></a>";
 	tab_pre += "			<a href=\"javascript:OpenMap(2)\"><img alt=\"minimap2\" title=\"minimap2\" border=0 src=\"gfx/icon/minimap2.png\"></a>";
 	tab_pre += "			<a href=\"javascript:OpenMap(3)\"><img alt=\"minimap\" title=\"minimap\" border=0 src=\"gfx/icon/minimap.png\"></a>";
 	tab_pre += "			<a href=\"javascript:OpenMap(4)\"><img alt=\"creepmap\" title=\"creepmap\" border=0 src=\"gfx/icon/creepmap.png\"></a>";
 	tab_pre += "			<a href=\"javascript:OpenMap(5)\"><img alt=\"diplomap\" title=\"diplomap\" border=0 src=\"gfx/icon/diplomap.png\"></a>";
-	tab_pre += "			<span>"+tab_corner+"</span>";
 	tab_pre += "		</div>";
+	tab_pre += "		<ul>";
+	tab_pre += "			<li class=\""+(gMapMode==kJSMapMode_Normal?	"activetab":"inactivetab")+"\"><a class=\"tabhead\" href=\"javascript:SetMapMode(kJSMapMode_Normal)\">Normal</a></li>";
+	tab_pre += "			<li class=\""+(gMapMode==kJSMapMode_Plan?	"activetab":"inactivetab")+"\"><a class=\"tabhead\" href=\"javascript:SetMapMode(kJSMapMode_Plan)\">Pl&auml;ne</a></li>";
+	tab_pre += "			<li class=\""+(gMapMode==kJSMapMode_Bauzeit?"activetab":"inactivetab")+"\"><a class=\"tabhead\" href=\"javascript:SetMapMode(kJSMapMode_Bauzeit)\">Bauzeit</a></li>";
+	tab_pre += "			<li class=\""+(gMapMode==kJSMapMode_HP?		"activetab":"inactivetab")+"\"><a class=\"tabhead\" href=\"javascript:SetMapMode(kJSMapMode_HP)\">HP</a></li>";
+	tab_pre += "		</ul>";
 	tab_pre += "	</div>";
 	tab_pre += "	<div class=\"tabpane\">";
 		
 	var tab_post = "";
 	tab_post += "	</div>";
-	tab_post += "</div>";
+	tab_post += "</div><div class=\"tabsend\"></div>";
 
 	/*
 	tab_pre += "<table class=\"tabs\" cellspacing=0 cellpadding=0><tr>\n";
@@ -865,13 +865,15 @@ function GetTerrainPic (relx,rely) {
 	var nwsecode = GetNWSE(gTerrainType[terraintype],relx,rely);
 	return g_nwse(gTerrainType[terraintype].gfx,nwsecode);
 }
+
+// similar to the php function GetBuildingPic in lib.main.php
 function GetBuildingPic (building,relx,rely) {
 	var type = building.type;
 	var level = building.level;
 	var user = building.user;
 	var race = (user > 0 && gUsers[user]) ? gUsers[user].race : 1;
 	var moral = (user > 0 && gUsers[user]) ? gUsers[user].moral : 100;
-	if (level < 10) level = 0; else level = 1;
+	if (level < 10) level = 0; else level = 1; // 
 	var nwsecode = GetNWSE(gBuildingType[type],relx,rely);
 	var gfx = gBuildingType[type].gfx;
 	

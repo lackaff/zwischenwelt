@@ -10,52 +10,9 @@ profile_page_start("magic.php");
 
 $x = intval($f_x);
 $y = intval($f_y);
-$spelltarget = array();
 $second = "";
 
-switch($f_mtarget){
-	case MTARGET_SELF:
-		$spelltarget['type'] = $f_mtarget;
-		$spelltarget['id'] = $gUser->id;
-		$spelltarget['name'] = $gUser->name;
-		$second = " OR `target`=".MTARGET_PLAYER." ";
-	break;
-	
-	case MTARGET_PLAYER:
-		if($usertargetid = sqlgetone("SELECT `user` FROM `building` WHERE `x`=$x AND `y`=$y")){
-			$spelltarget['type'] = $f_mtarget;
-			$spelltarget['id'] = $usertargetid;
-			$spelltarget['name'] = nick($usertargetid);
-		}else{
-			echo "Kein Spieler hier...<br>";
-			exit;
-		}
-	break;
 
-	case MTARGET_ARMY:
-		if($targetarmy = sqlgetobject("SELECT `id`,`name` FROM `army` WHERE `x`=$x AND `y`=$y")){
-			$spelltarget['type'] = $f_mtarget;
-			$spelltarget['id'] = $targetarmy->id;
-			$spelltarget['name'] = $targetarmy->name;
-		}else{
-			echo "Keine Armee hier...<br>";
-			exit;
-		}
-	break;
-
-	case MTARGET_AREA:
-		$spelltarget['type'] = $f_mtarget;
-		$spelltarget['id'] = 0;
-		$spelltarget['name'] = "Umgebung";
-	break;
-
-	default:
-		echo "Can't find target<br>";
-		exit;
-	break;
-}
-
-$gSpellType = sqlgettable("SELECT * FROM `spelltype` WHERE `target`=".intval($f_mtarget)." $second ORDER BY `orderval` ASC","id");
 $candospells = array();
 	foreach ($gSpellType as $spell){
 	if(HasReq($spell->req_building,$spell->req_tech,$gUser->id,0)){ // TODO : replace 0 by current spell-tech level ?
@@ -74,11 +31,10 @@ $basemana = $gBuildingType[$gGlobal['building_runes']]->basemana;
 
 
 <?php ImgBorderStart("s1","jpg","#ffffee","",32,33); ?>
-<h4>Zauber auf <?=$spelltarget['name'].", Koordinaten: (".$x."/".$y.")"?></h4>
+<h4>Zauber auf <?="(".$x."/".$y.")"?></h4>
 <table border=1 cellspacing=0>
-	<FORM name="spellform" METHOD="POST" ACTION="<?=Query("?sid=?&x=?&y=?&mtarget=?")?>">
+	<FORM name="spellform" METHOD="POST" ACTION="<?=Query("?sid=?&x=?&y=?")?>">
 		<INPUT TYPE="hidden" NAME="do" VALUE="cast_spell">
-		<INPUT TYPE="hidden" NAME="target" VALUE="<?=$spelltarget['type']?>">
 	<tr>
 		<td colspan=14>
 			<table>

@@ -45,7 +45,7 @@ function StartBuild ($con) {
 			$building->type = $con->type;
 			$building->level = 0;
 			$building->hp = $buildingtype->maxhp;
-			$building->construction = time() + GetBuildTime($building); // fertigstellungszeit
+			$building->construction = time() + GetBuildTime($building->x,$building->y,$building->type,0,$building->user); // fertigstellungszeit
 			sql("INSERT INTO `building` SET ".obj2sql($building));
 			$success = true;
 			// delete all construction on x,y

@@ -69,7 +69,7 @@ class Spell {
 	function GetHelpers() {
 		global $gSpellType;
 		$this->spelltype = $gSpellType[$this->type];
-		if ($this->targettype == MTARGET_PLAYER || $this->targettype == MTARGET_SELF)
+		if ($this->targettype == MTARGET_PLAYER)
 			$this->targetuser = sqlgetobject("SELECT * FROM `user` WHERE `id` = ".intval($this->target));
 		if ($this->targettype == MTARGET_ARMY)
 			$this->targetarmy = sqlgetobject("SELECT * FROM `army` WHERE `id` = ".intval($this->target));
@@ -148,11 +148,12 @@ class Spell {
 	}
 	
 	// no need to override this method in the actual spells, use Birth($success) instead
-	function Cast ($spelltype,$x,$y,$targettype,$owner=0,$towerid=0) { // $owner=-1 means no res-cost
+	function Cast ($spelltype,$x,$y,$owner=0,$towerid=0) { // $owner=-1 means no res-cost
 		global $gUser,$gRes;
 		if (is_object($owner)) $owner = $owner->id;
 		if ($owner == 0) $owner = $gUser->id;
-		//LogMe($targettype,NEWLOG_TOPIC_MAGIC,NEWLOG_MAGIC_HELP_TARGET,$x,$y,$targettype,$gSpellType[$type]->name,$owner);
+		
+		//LogMe($spelltype->target,NEWLOG_TOPIC_MAGIC,NEWLOG_MAGIC_HELP_TARGET,$x,$y,$spelltype->target,$gSpellType[$type]->name,$owner);
 		
 		// check user
 		if ($owner > 0) {
@@ -191,8 +192,8 @@ class Spell {
 		
 		// check target
 		$this->target = 0;
-		if ($targettype == MTARGET_PLAYER || $targettype == MTARGET_SELF || $targettype == MTARGET_ARMY) {
-			$this->target = $this->GetTargetID($targettype,$x,$y,$owner);
+		if ($spelltype->target == MTARGET_PLAYER || $spelltype->target == MTARGET_ARMY) {
+			$this->target = $this->GetTargetID($spelltype->target,$x,$y,$owner);
 			if (!$this->target) {
 				echo "kein Ziel gefunden<br>";
 				return false;
@@ -210,14 +211,14 @@ class Spell {
 		$this->x = $x;
 		$this->y = $y;
 		$this->type = $spelltype->id;
-		$this->targettype = $targettype;
+		$this->targettype = $spelltype->target;
 		$this->owner = $owner;
 		$this->GetHelpers();
 		$this->mod = $success;
 		$this->lasts = time() + $this->spelltype->basetime*$success;
 		
 		// versuche zauber-konter
-		if ($targettype == MTARGET_PLAYER) {
+		if ($spelltype->target == MTARGET_PLAYER) {
 			if ($this->TryCounter($this->target)) {
 				echo "Zauber wurde gekontert !<br>";
 				return false;
@@ -225,7 +226,7 @@ class Spell {
 		}
 		
 		// attempt to correct player position to hq (not really needed...?)
-		if ($targettype == MTARGET_PLAYER || $targettype == MTARGET_SELF) {
+		if ($spelltype->target == MTARGET_PLAYER) {
 			$hq = sqlgetobject("SELECT * FROM `building` WHERE `type` = ".kBuilding_HQ." AND `user` = ".intval($this->targetuser->id));
 			if ($hq) {
 				$this->x = $hq->x;
@@ -243,8 +244,6 @@ class Spell {
 				$r = sqlgetone("SELECT `user` FROM `building` WHERE `x`=".intval($x)." AND `y`=".intval($y));
 				if ($r) return $r;
 				return sqlgetone("SELECT `user` FROM `army` WHERE `x`=".intval($x)." AND `y`=".intval($y));
-			case MTARGET_SELF:
-				return intval($owner);
 			case MTARGET_AREA:
 				return false;
 			case MTARGET_ARMY:

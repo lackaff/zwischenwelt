@@ -118,7 +118,7 @@ else if(isset($f_key))
 		sql("INSERT INTO `building` SET ".obj2sql($o));
 		
 		sql("DELETE FROM `pending` WHERE `key`='$f_key'");
-		echo "<hr>Alles ok, der Account ist nun freigeschaltet. Sie k&ouml;nnen<hr>";
+		echo "<hr>Alles ok, der Account ist nun freigeschaltet. Sie k&ouml;nnen sich nun einloggen.<hr>";
 		include("footer.php");
 		exit;
 		/*
