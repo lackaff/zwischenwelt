@@ -6,6 +6,7 @@ define("MYSQL_DB","zw");
 define("BASEPATH","/some/where/zw/");
 define("PHP_ERROR_LOG_MAIL","admin@main.blubber");
 define("kGfxServerPath","http://localhost/gfx/");
+define("kStyleServerPath","http://localhost/");
 define("PAGELAYOUT",1);
 define("BASEURL","http://localhost/");
 ?>
