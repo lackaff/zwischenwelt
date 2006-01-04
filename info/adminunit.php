@@ -58,6 +58,7 @@ if (isset($f_repair_unit_owner)) {
 <html>
 <head>
 <link rel="stylesheet" type="text/css" href="../styles.css">
+<link rel="stylesheet" type="text/css" href="<?=GetZWStylePath()?>">
 <title>Zwischenwelt - Armee Administration</title>
 </head>
 <body>

@@ -383,11 +383,11 @@ function CreateMap() {
 	tab_pre += "	<div class=\"tabheader\">";
 	tab_pre += "		<div class=\"tabcorner\">";
 	tab_pre += "			<span>"+gMapModiHelp+"</span>";
-	tab_pre += "			<a href=\"javascript:OpenMap(1)\"><img alt=\"bigmap\" title=\"bigmap\" border=0 src=\"gfx/icon/bigmap.png\"></a>";
-	tab_pre += "			<a href=\"javascript:OpenMap(2)\"><img alt=\"minimap2\" title=\"minimap2\" border=0 src=\"gfx/icon/minimap2.png\"></a>";
-	tab_pre += "			<a href=\"javascript:OpenMap(3)\"><img alt=\"minimap\" title=\"minimap\" border=0 src=\"gfx/icon/minimap.png\"></a>";
-	tab_pre += "			<a href=\"javascript:OpenMap(4)\"><img alt=\"creepmap\" title=\"creepmap\" border=0 src=\"gfx/icon/creepmap.png\"></a>";
-	tab_pre += "			<a href=\"javascript:OpenMap(5)\"><img alt=\"diplomap\" title=\"diplomap\" border=0 src=\"gfx/icon/diplomap.png\"></a>";
+	if (!gBig)	tab_pre += "<a href=\"javascript:OpenMap(1)\"><img alt=\"bigmap\" title=\"bigmap\" border=0 src=\"gfx/icon/bigmap.png\"></a>";
+	if (!gBig)	tab_pre += "<a href=\"javascript:OpenMap(2)\"><img alt=\"minimap2\" title=\"minimap2\" border=0 src=\"gfx/icon/minimap2.png\"></a>";
+	if (!gBig)	tab_pre += "<a href=\"javascript:OpenMap(3)\"><img alt=\"minimap\" title=\"minimap\" border=0 src=\"gfx/icon/minimap.png\"></a>";
+	if (!gBig)	tab_pre += "<a href=\"javascript:OpenMap(4)\"><img alt=\"creepmap\" title=\"creepmap\" border=0 src=\"gfx/icon/creepmap.png\"></a>";
+	if (!gBig)	tab_pre += "<a href=\"javascript:OpenMap(5)\"><img alt=\"diplomap\" title=\"diplomap\" border=0 src=\"gfx/icon/diplomap.png\"></a>";
 	tab_pre += "		</div>";
 	tab_pre += "		<ul>";
 	tab_pre += "			<li class=\""+(gMapMode==kJSMapMode_Normal?	"activetab":"inactivetab")+"\"><a class=\"tabhead\" href=\"javascript:SetMapMode(kJSMapMode_Normal)\">Normal</a></li>";
@@ -548,7 +548,7 @@ function GetCellHTML (relx,rely) {
 	}
 	res += "<div id=\"mouselistener_"+rely+"_"+relx+"\" ><div onClick=\"mapclick("+relx+","+rely+")\" onMouseover=\"if (!gLoading) mapover("+relx+","+rely+")\">";
 	if (relx == gXMid && rely == gYMid) 
-			res += "<img src='gfx/crosshair.png'>"; 
+			res += "<img src='gfx/crosshair.png' onMouseover=\"if (!gLoading) mapover("+relx+","+rely+")\">"; 
 	else	res += "<img src=\""+g("1px.gif")+"\" width="+kJSForceIESpaceCX+" height="+kJSForceIESpaceCY+">";
 	res += celltext;
 	res += '</div></div>';
@@ -600,8 +600,8 @@ function AbortTip () {
 }
 
 function mapover (relx,rely) {
-	if (relx == gLastTipX && rely == gLastTipY) return;
 	if (gLoading) return;
+	if (relx == gLastTipX && rely == gLastTipY) return;
 	gLastTipX = relx;
 	gLastTipY = rely;
 	KillTip();

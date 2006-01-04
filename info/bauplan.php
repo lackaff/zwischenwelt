@@ -49,6 +49,7 @@ $types = array_unique($types);
 <html>
 <head>
 <link rel="stylesheet" type="text/css" href="../styles.css">
+<link rel="stylesheet" type="text/css" href="<?=GetZWStylePath()?>">
 <title>Zwischenwelt - Baupläne</title>
 
 </head>

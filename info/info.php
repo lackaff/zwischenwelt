@@ -17,9 +17,26 @@ Lock();
 $gJSCommands = array();
 $gInfoTabs = array();
 $gInfoTabsSelected = -1; // -1 is replaced by the last one
+$gInfoTabsPriority = 0; // -1 is replaced by the last one
 $gInfoTabsCorner = "";
 $info_message = ""; //ausgabevariable fuer z.b. spells
 
+
+function RegisterInfoTab ($head,$content,$select_priority=false) {
+	global $gInfoTabs,$gInfoTabsSelected,$gInfoTabsPriority;
+	$gInfoTabs[] = array($head,$content);
+	if ($select_priority && $select_priority > $gInfoTabsPriority) {
+		$gInfoTabsSelected = count($gInfoTabs)-1;
+		$gInfoTabsPriority = $select_priority;
+	}
+}
+
+function JSRefreshArmy ($army) {
+	global $gJSCommands;
+	if (!is_object($army)) $army = sqlgetobject("SELECT * FROM `army` WHERE `id` = ".intval($army));
+	$gJSCommands[] = "parent.map.jsArmy(".cArmy::GetJavaScriptArmyData($army).");";
+	$gJSCommands[] = "parent.map.JSActivateArmy(".$army->id.",\"".cArmy::GetJavaScriptWPs($army->id)."\");";
+}
 
 $guildcommander = FALSE;
 if ($gUser->guild > 0) {
@@ -89,11 +106,11 @@ if (!isset($f_building) && !isset($f_army) && isset($f_do)) {
 			$wp = sqlgetobject("SELECT * FROM `waypoint` WHERE `id` = ".intval($f_id));
 			if ($wp) {
 				$army = sqlgetobject("SELECT * FROM `army` WHERE `id` = ".$wp->army);
-				if (intval($army->flags) & kArmyFlag_SelfLock) break;
+				if ($army && (intval($army->flags) & kArmyFlag_SelfLock) && $army->user == $gUser->id) break;
 				if ($army && $wp->priority > 0 && cArmy::CanControllArmy($army,$gUser)) {
 					cArmy::ArmyCancelWaypoint($army,$wp);	
 					echo "Wegpunkt gelöscht";
-					$gJSCommands[] = "parent.map.location.href = parent.map.location.href;";
+					JSRefreshArmy($army);
 				}
 			}
 		break;
@@ -109,7 +126,7 @@ if (!isset($f_building) && !isset($f_army) && isset($f_do)) {
 					foreach ($allwpafter as $o)
 						cArmy::ArmyCancelWaypoint($army,$o);
 					echo "Wegpunkte gelöscht";
-					$gJSCommands[] = "parent.map.location.href = parent.map.location.href;";
+					JSRefreshArmy($army);
 				}
 			}
 		break;
@@ -161,14 +178,27 @@ if (!isset($f_building) && !isset($f_army) && isset($f_do)) {
 			}
 		break;
 		case "cancel":
-			// TODO : CANCEL WP of active ARMY  $f_cancel_wp_armyid
-			// $con = sqlgetobject("SELECT * FROM `construction` WHERE `x` = ".intval($f_x)." AND  `y` = ".intval($f_y)." AND `user` = ".$gUser->id);
-			$con = sqlgetobject("SELECT * FROM `construction` WHERE `x` = ".intval($f_x)." AND  `y` = ".intval($f_y)." AND `user` = ".$gUser->id);
-			if ($con) {
-				$con = CancelConstruction($con->id,$gUser->id);
+			
+			require_once("../lib.army.php");
+			$wp = sqlgetobject("SELECT * FROM `waypoint` WHERE `x` = ".intval($f_x)." AND  `y` = ".intval($f_y)." AND `army` = ".intval($f_cancel_wp_armyid));
+			if ($wp) {
+				$army = sqlgetobject("SELECT * FROM `army` WHERE `id` = ".$wp->army);
+				if ($army && (intval($army->flags) & kArmyFlag_SelfLock) && $army->user == $gUser->id) break;
+				if ($army && $wp->priority > 0 && cArmy::CanControllArmy($army,$gUser)) {
+					cArmy::ArmyCancelWaypoint($army,$wp);	
+					echo "Wegpunkt gelöscht";
+					JSRefreshArmy($army);
+				}
+			} else {
+				// TODO : CANCEL WP of active ARMY  $f_cancel_wp_armyid
+				// $con = sqlgetobject("SELECT * FROM `construction` WHERE `x` = ".intval($f_x)." AND  `y` = ".intval($f_y)." AND `user` = ".$gUser->id);
+				$con = sqlgetobject("SELECT * FROM `construction` WHERE `x` = ".intval($f_x)." AND  `y` = ".intval($f_y)." AND `user` = ".$gUser->id);
 				if ($con) {
-					echo "Bauplan abgebrochen <!-- 2 -->";
-					$gJSCommands[] = "pparent.map.JSRemovePlan(".intval($f_x).",".intval($f_y).");";
+					$con = CancelConstruction($con->id,$gUser->id);
+					if ($con) {
+						echo "Bauplan abgebrochen <!-- 2 -->";
+						$gJSCommands[] = "pparent.map.JSRemovePlan(".intval($f_x).",".intval($f_y).");";
+					}
 				}
 			}
 		break;
@@ -225,7 +255,35 @@ if (!isset($f_building) && !isset($f_army) && isset($f_do)) {
 	$info_message = rob_ob_end();
 }
 
+$gInfoObjects = array();
+$gInfoBuildingScriptClassNames = array();
 
+// register building classes
+foreach ($gBuildingType as $o) if (!array_key_exists($o->script,$gInfoBuildingScriptClassNames)) {
+	if (!$o->script) continue;
+	$loadscript = $o->script;
+	if (!file_exists($o->script)) $loadscript = false;
+	if (!$loadscript && file_exists($o->script.".php")) $loadscript = $o->script.".php";
+	if ($loadscript) {
+		$gClassName = false;
+		require_once($loadscript);
+		if ($gClassName) {
+			$gInfoBuildingScriptClassNames[$o->script] = $gClassName;
+			$gInfoObjects[] = new $gClassName(null);
+		}
+	}
+}
+
+// register other classes
+require_once("army.php");
+$gInfoObjects[] = new cInfoArmy();
+$gInfoObjects[] = new cInfoBuilding();
+
+// execute commands
+function walk_command (&$item, $key) { $item->command(); }
+array_walk($gInfoObjects,"walk_command");
+
+// now that the commands have had their chance to update stuff, get object data
 $xylimit = "`x` = ".$f_x." AND `y` = ".$f_y;
 $gMapBuilding = sqlgettable("SELECT * FROM `building` WHERE ".$xylimit);
 $gMapArmy = sqlgettable("SELECT * FROM `army` WHERE ".$xylimit,"id");
@@ -236,96 +294,29 @@ $terraintype = sqlgetobject("SELECT * FROM `terraintype` WHERE `id` = ".($terrai
 $gItems = sqlgettable("SELECT * FROM `item` WHERE `army`=0 AND `building`=0 AND ".$xylimit." ORDER BY `type`");
 $gArmy = cArmy::getMyArmies(FALSE,$gUser->id);
 
-$gInfoObjects = array();
-$gInfoBuildingScriptClassNames = array();
-if (1) {
-	// register building classes
-	foreach ($gBuildingType as $o) {
-		if (!$o->script) continue;
-		//if (file_exists($o->script.".php")) $o->script = $o->script.".php";
-		if (file_exists($o->script)) {
-			$gClassName = false;
-			require_once($o->script);
-			if ($gClassName) {
-				$gInfoBuildingScriptClassNames[$o->script] = $gClassName;
-				$gInfoObjects[] = new $gClassName(null);
-			}
-		}
-	}
-
-	// register other classes
-	require_once("army.php");
-	$gInfoObjects[] = new cInfoArmy();
-	$gInfoObjects[] = new cInfoBuilding();
-
-	// execute commands
-	function walk_command (&$item, $key) { $item->command(); }
-	array_walk($gInfoObjects,"walk_command");
-
-	// create instances
-	foreach ($gMapArmy as $o)		
-		$gInfoObjects[] = new cInfoArmy($o);
-	foreach ($gMapBuilding as $o) {
-		if(!empty($gBuildingType[$o->type]->script))$classname = $gInfoBuildingScriptClassNames[$gBuildingType[$o->type]->script];
-		else $classname = null;
-		if (!empty($classname)) $gInfoObjects[] = new $classname($o);
-		else	$gInfoObjects[] = new cInfoBuilding($o);
-	}
+// create instances
+foreach ($gMapBuilding as $o) {
+	if(!empty($gBuildingType[$o->type]->script))$classname = $gInfoBuildingScriptClassNames[$gBuildingType[$o->type]->script];
+	else $classname = null;
+	if (!empty($classname)) $gInfoObjects[] = new $classname($o);
+	else	$gInfoObjects[] = new cInfoBuilding($o);
 }
-
-?>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 transitional//EN"
-   "http://www.w3.org/TR/html4/transitional.dtd">
-<html>
-<head>
-<link rel="stylesheet" type="text/css" href="../styles.css">
-<link rel="stylesheet" type="text/css" href="<?=GetZWStylePath()?>">
-<title>Zwischenwelt - info</title>
-<SCRIPT LANGUAGE="JavaScript" type="text/javascript">
-<!--
-	<?php foreach ($gJSCommands as $cmd) echo $cmd."\n";?>
-	function WPMap (army) {
-		var x = parent.map.getx();
-		var y = parent.map.gety();
-		window.open("../minimap.php?mode=wp&sid=<?=$gSID?>&cx="+x+"&cy="+y+"&army="+army,"WPMap","location=no,menubar=no,toolbar=no,status=no,resizable=yes,scrollbars=yes");
-	}
-//-->
-</SCRIPT>
-</head>
-<body>
-
-<?php if (isset($f_blind)) { // blind modus im dummy frame, fuer schnellere map-click-befehle
-	if($info_message!="") {?><div><?=$info_message?></div><hr><?}
-	foreach ($gInfoObjects as $o) $o->display();
-	echo "</body></html>";
-	exit();
-}
-?>
-
-<?php include("../menu.php");?>
+foreach ($gMapArmy as $o)		
+	$gInfoObjects[] = new cInfoArmy($o);
 
 
-<?php /* info message */ ?>
-<?php if($info_message!="") {?><div><?=$info_message?></div><hr><?}?>
-<?php if(isset($pastinclude) && is_file($pastinclude))include($pastinclude); ?>
-
-
-
-<?php /* tab corner (right-top) */ ?>
-<?php
+/* tab corner (right-top) */ 
+if (!isset($f_blind)) {
 	// coordinates
 	$gClickCoords = "<a href=\"".Query("../".kMapScript."?x=".$f_x."&y=".$f_y."&sid=?")."\" target=\"map\">(".$f_x.",".$f_y.")</a>";
 	$gInfoTabsCorner .= $gClickCoords;
-?>
+}
 
-
-
-<?php /* terrain info*/ ?>
-<?php if (1) {
+/* terrain info*/ 
+if (!isset($f_blind)) {
 	/* TERRAIN , wegpunkt setzen, magie */ 
 	rob_ob_start();
 	$terrainpic = "<img class=\"info_terrainpic\" alt=\"".($terraintype->name)."\" title=\"".($terraintype->name)."\" src=\"".g($terraintype->gfx,$terrain->nwse)."\">";
-	$head = $terrainpic."Landschaft";
 	?>
 	
 	<?=$terrainpic?>
@@ -398,13 +389,12 @@ if (1) {
 	<?php } // endif ?>
 	
 	<?php 
-	$content = rob_ob_end();
-	$gInfoTabs[] = array($head,$content);
-}?>
+	RegisterInfoTab($terrainpic."Landschaft",rob_ob_end());
+}
 
 
-<?php /*waypoint info*/ ?>
-<?php 
+/*waypoint info*/
+if (!isset($f_blind)) {
 	$c = 0; foreach ($gMapWaypoints as $wp) if ($wp->priority > 0) ++$c;
 	if ($c > 0) {
 		rob_ob_start();
@@ -430,18 +420,16 @@ if (1) {
 			<hr>
 			<?php 
 		}
-		$head = "Wegpunkte";
-		$content = rob_ob_end();
-		$gInfoTabs[] = array($head,$content);
+		RegisterInfoTab("Wegpunkte",rob_ob_end());
 	}
-?>
+}
 	
 	
+$planpic = "<img class=\"info_planpic\" src=\"".g("constructionplan.png")."\">"; 
 	
-<?php $planpic = "<img class=\"info_planpic\" src=\"".g("constructionplan.png")."\">"; ?>
-	
-<?php /* construction info */ ?>
-<?php foreach($gMapCons as $gObject) {
+
+/* construction info */
+if (!isset($f_blind)) foreach($gMapCons as $gObject) {
 	rob_ob_start();
 	$btype = $gBuildingType[$gObject->type];
 	?>
@@ -479,87 +467,76 @@ if (1) {
 	<hr>
 	<?php 
 
-	$head = $planpic."Bauplan";
-	$content = rob_ob_end();
-	$gInfoTabs[] = array($head,$content);
-	$gInfoTabsSelected = count($gInfoTabs)-1;
-}?>
+	RegisterInfoTab($planpic."Bauplan",rob_ob_end(),1);
+}
 
 
 
 
-
-
-
-
-
-<?php /* build info */ ?>
-<?php if (count($gMapBuilding) == 0 && !OwnConstructionInProcess($f_x,$f_y)) {   // TODO : REWRITE !!!!
-	rob_ob_start();
-	?>
-	<?php if (InBuildCross($f_x,$f_y,$gUser->id)) {?>
-		<?php PrintBuildTimeHelp($f_x,$f_y); ?>
-		<FORM METHOD=POST ACTION="<?=Query("?sid=?&x=?&y=?")?>">
-		<INPUT TYPE="hidden" NAME="do" VALUE="build">
-		<table border=1 cellspacing=0 rules="all">
-		<tr>
-			<th><?=$planpic?></th>
-			<th></th>
-			<?php foreach($gRes as $n=>$f)echo '<th><img src="'.g('res_'.$f.'.gif').'"></th>'; ?>
-			<th><img src="<?=g("sanduhr.gif")?>"></th>
-			<th></th>
-		</tr>
-		<?php 
-			if (UserHasBuilding($gUser->id,kBuilding_HQ,0)){
-			$baulist = GetBuildlist($f_x,$f_y);
-			foreach ($gBuildingType as $o)if(isset($baulist[$o->id]) && $baulist[$o->id]){ 
-			   if($o->special == 0 && $o->id!=1){
-				if(!HasReq($o->req_geb,$o->req_tech,$gUser->id) || !CanBuildHere($f_x,$f_y,$o->id)) $bb="<a style='color:red' href='".Query("?sid=?&x=?&y=?&infobuildingtype=".$o->id)."'>Anforderungen</a>";
-				else $bb="<INPUT TYPE='submit' NAME='build[".$o->id."]' VALUE='bauen'>";
+/* build info */
+if (!isset($f_blind)) {
+	if (count($gMapBuilding) == 0 && !OwnConstructionInProcess($f_x,$f_y)) {   // TODO : REWRITE !!!!
+		rob_ob_start();
 		?>
+		<?php if (InBuildCross($f_x,$f_y,$gUser->id)) {?>
+			<?php PrintBuildTimeHelp($f_x,$f_y); ?>
+			<FORM METHOD=POST ACTION="<?=Query("?sid=?&x=?&y=?")?>">
+			<INPUT TYPE="hidden" NAME="do" VALUE="build">
+			<table border=1 cellspacing=0 rules="all">
 			<tr>
-			<td align=center>
-				<?php $infourl = Query("?sid=?&x=?&y=?&infobuildingtype=".$o->id);?>
-				<a href="<?=$infourl?>"><img title="<?=strip_tags($o->descr)?>" alt="<?=strip_tags($o->descr)?>" class="picframe" src="<?=GetBuildingPic($o)?>"></a>
-			</td>
-			<td><?=cText::Wiki("building",$o->id)?><a href="<?=$infourl?>"><?=$o->name?></a></td>
-			<?php foreach($gRes as $n=>$f)echo '<td align=right>'.$o->{"cost_".$f}.'</td>'; ?>
-			<td align=right nowrap><?=Duration2Text(GetBuildTime($f_x,$f_y,$o->id))?></td>
-			<td><?=$bb?></td>
+				<th><?=$planpic?></th>
+				<th></th>
+				<?php foreach($gRes as $n=>$f)echo '<th><img src="'.g('res_'.$f.'.gif').'"></th>'; ?>
+				<th><img src="<?=g("sanduhr.gif")?>"></th>
+				<th></th>
 			</tr>
-			<?php }
-		}?>
-		<?php }else{ 
-			$o=$gBuildingType[kBuilding_HQ];
-			$bb="<INPUT TYPE='submit' NAME='build[".$o->id."]' VALUE='bauen'>";
-		?>
-			<tr>
-			<td align=center>
-				<?php $infourl = Query("?sid=?&x=?&y=?&infobuildingtype=".$o->id);?>
-				<a href="<?=$infourl?>"><img title="<?=strip_tags($o->descr)?>" alt="<?=strip_tags($o->descr)?>" class="picframe" src="<?=GetBuildingPic($o)?>"></a>
-			</td>
-			<td><?=cText::Wiki("building",$o->id)?><a href="<?=$infourl?>"><?=$o->name?></a></td>
-			<?php foreach($gRes as $n=>$f)echo '<td align=right>'.$o->{"cost_".$f}.'</td>'; ?>
-			<td align=right nowrap><?="sofort fertig"?></td>
-			<td><?=$bb?></td>
-			</tr>
+			<?php 
+				if (UserHasBuilding($gUser->id,kBuilding_HQ,0)){
+				$baulist = GetBuildlist($f_x,$f_y);
+				foreach ($gBuildingType as $o)if(isset($baulist[$o->id]) && $baulist[$o->id]){ 
+				   if($o->special == 0 && $o->id!=1){
+					if(!HasReq($o->req_geb,$o->req_tech,$gUser->id) || !CanBuildHere($f_x,$f_y,$o->id)) $bb="<a style='color:red' href='".Query("?sid=?&x=?&y=?&infobuildingtype=".$o->id)."'>Anforderungen</a>";
+					else $bb="<INPUT TYPE='submit' NAME='build[".$o->id."]' VALUE='bauen'>";
+			?>
+				<tr>
+				<td align=center>
+					<?php $infourl = Query("?sid=?&x=?&y=?&infobuildingtype=".$o->id);?>
+					<a href="<?=$infourl?>"><img title="<?=strip_tags($o->descr)?>" alt="<?=strip_tags($o->descr)?>" class="picframe" src="<?=GetBuildingPic($o)?>"></a>
+				</td>
+				<td><?=cText::Wiki("building",$o->id)?><a href="<?=$infourl?>"><?=$o->name?></a></td>
+				<?php foreach($gRes as $n=>$f)echo '<td align=right>'.$o->{"cost_".$f}.'</td>'; ?>
+				<td align=right nowrap><?=Duration2Text(GetBuildTime($f_x,$f_y,$o->id))?></td>
+				<td><?=$bb?></td>
+				</tr>
+				<?php }
+			}?>
+			<?php }else{ 
+				$o=$gBuildingType[kBuilding_HQ];
+				$bb="<INPUT TYPE='submit' NAME='build[".$o->id."]' VALUE='bauen'>";
+			?>
+				<tr>
+				<td align=center>
+					<?php $infourl = Query("?sid=?&x=?&y=?&infobuildingtype=".$o->id);?>
+					<a href="<?=$infourl?>"><img title="<?=strip_tags($o->descr)?>" alt="<?=strip_tags($o->descr)?>" class="picframe" src="<?=GetBuildingPic($o)?>"></a>
+				</td>
+				<td><?=cText::Wiki("building",$o->id)?><a href="<?=$infourl?>"><?=$o->name?></a></td>
+				<?php foreach($gRes as $n=>$f)echo '<td align=right>'.$o->{"cost_".$f}.'</td>'; ?>
+				<td align=right nowrap><?="sofort fertig"?></td>
+				<td><?=$bb?></td>
+				</tr>
+			<?php }?>
+			</table>
+			</FORM>
+		<?php } else {?>
+			Feld kann nicht bebaut werden, kein eigenes Geb&auml;ude in der N&auml;he.<br>
 		<?php }?>
-		</table>
-		</FORM>
-	<?php } else {?>
-		Feld kann nicht bebaut werden, kein eigenes Geb&auml;ude in der N&auml;he.<br>
-	<?php }?>
-	<?php 
-	
-	$head = $planpic."Bauen";
-	$content = rob_ob_end();
-	$gInfoTabs[] = array($head,$content);
-	$gInfoTabsSelected = count($gInfoTabs)-1;
-}?>
+		<?php 
+		RegisterInfoTab($planpic."Bauen",rob_ob_end(),1);
+	}
+}
 
 
-
-<?php if ($gUser->admin) {
+if (!isset($f_blind)) if ($gUser->admin) {
 	/* admin terrain set */
 
 	rob_ob_start();
@@ -666,28 +643,21 @@ if (1) {
 	f&uuml;r fl&uuml;sse am besten $ang=20-40 und $steps=$dur/3 oder sowas<br>
 	</FORM>
 	<?php 
-	
-	$head = "Admin";
-	$content = rob_ob_end();
-	$gInfoTabs[] = array($head,$content);
-}?>
+	RegisterInfoTab("Admin",rob_ob_end());
+}
 
 
-<?php /*  INFO CLASSES */ ?>
-<?php 
+/*  INFO CLASSES */ 
+if (!isset($f_blind)) {
 	// direct output should always be empty ! buildings register new tabs instead
 	rob_ob_start();
 	foreach ($gInfoObjects as $o) $o->generate_tabs(); 
-	$head = "Infos";
 	$content = rob_ob_end();
-	if (!empty($content)) $gInfoTabs[] = array($head,$content);
-?>
-
-
-
-<?php
+	if (!empty($content)) RegisterInfoTab("Infos",$content,100);
+}
+	
 /* gegenstände */
-if(sizeof($gItems)>0) {
+if (!isset($f_blind)) if(sizeof($gItems)>0) {
 	$armyid = 0;
 	foreach($gMapArmy as $a) {$armyid = $a->id;$armyowner = $a->user;break;}
 	$canpickone = false;
@@ -713,42 +683,69 @@ if(sizeof($gItems)>0) {
 			<img src="<?=g("pick.png")?>" border=0 alt="einsammeln" title="einsammeln">alles einsammeln
 		</a>
 	<?php } // endif
-	$head = "Gegenstände";
-	$content = rob_ob_end();
-	$gInfoTabs[] = array($head,$content);
-} // endif armyitems count > 0 ?>
+	RegisterInfoTab("Gegenstände",rob_ob_end(),4);
+} // endif armyitems count > 0 
 
 
+// magic button
+if (!isset($f_blind)) if (sqlgetone("SELECT COUNT(`id`) FROM `building` WHERE `type`=".$gGlobal['building_runes']." AND `user`=".$gUser->id." GROUP BY `type`")) {
+	$head = "";
+	$head .= "<span class=\"info_magic_cast_button\">";
+	$head .= "<img alt=\"zaubern\" title=\"zaubern\" border=0 src=\"".g("tool_mana.png")."\">zaubern";
+	$head .= "</span>";
+	$content = "";
+	$content .= "<a href=\"".Query("?sid=?&x=?&y=?&do=choose_cast&button_cast=zaubern")."\">";
+	$content .= "(Einen Zauber auf ($f_x,$f_y) wirken...)</a>";
+	RegisterInfoTab($head,$content);
+}
 
-<?php
-	// magic button
-	if (sqlgetone("SELECT COUNT(`id`) FROM `building` WHERE `type`=".$gGlobal['building_runes']." AND `user`=".$gUser->id." GROUP BY `type`")) {
-		$head = "";
-		$head .= "<span class=\"info_magic_cast_button\">";
-		$head .= "<img alt=\"zaubern\" title=\"zaubern\" border=0 src=\"".g("tool_mana.png")."\">zaubern";
-		$head .= "</span>";
-		$content = "";
-		$content .= "<a href=\"".Query("?sid=?&x=?&y=?&do=choose_cast&button_cast=zaubern")."\">";
-		$content .= "(Einen Zauber auf ($f_x,$f_y) wirken...)</a>";
-		$gInfoTabs[] = array($head,$content);
-	}
-?>
-
-<?php
-	// anforderungen
+// anforderungen
+if (!isset($f_blind)) {
 	rob_ob_start();
 	if (isset($f_infotechtype)) 		cInfoReq::PrintTechnology($f_infotechtype);
 	if (isset($f_infobuildingtype)) 	cInfoReq::PrintBuilding($f_infobuildingtype);
 	if (isset($f_infounittype)) 		cInfoReq::PrintUnit($f_infounittype);
 	if (isset($f_infospelltype)) 		cInfoReq::PrintSpell($f_infospelltype);
-	$head = "Anforderungen";
 	$content = rob_ob_end();
-	if (!empty($content)) {
-		$gInfoTabs[] = array($head,$content);
-		$gInfoTabsSelected = count($gInfoTabs)-1;
+	if (!empty($content)) RegisterInfoTab("Information",$content,100);
+}
+
+
+?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 transitional//EN"
+   "http://www.w3.org/TR/html4/transitional.dtd">
+<html>
+<head>
+<link rel="stylesheet" type="text/css" href="../styles.css">
+<link rel="stylesheet" type="text/css" href="<?=GetZWStylePath()?>">
+<title>Zwischenwelt - info</title>
+<SCRIPT LANGUAGE="JavaScript" type="text/javascript">
+<!--
+	<?php foreach ($gJSCommands as $cmd) echo $cmd."\n";?>
+	function WPMap (army) {
+		var x = parent.map.getx();
+		var y = parent.map.gety();
+		window.open("../minimap.php?mode=wp&sid=<?=$gSID?>&cx="+x+"&cy="+y+"&army="+army,"WPMap","location=no,menubar=no,toolbar=no,status=no,resizable=yes,scrollbars=yes");
 	}
+//-->
+</SCRIPT>
+</head>
+<body>
+
+<?php 
+if (isset($f_blind)) { // blind modus im dummy frame, fuer schnellere map-click-befehle
+	if($info_message!="") {?><div><?=$info_message?></div><hr><?}
+	foreach ($gInfoObjects as $o) $o->display();
+	echo "</body></html>";
+	exit();
+}
 ?>
 
+<?php include("../menu.php");?>
+
+<?php /* info message */ ?>
+<?php if($info_message!="") {?><div><?=$info_message?></div><hr><?}?>
+<?php if(isset($pastinclude) && is_file($pastinclude))include($pastinclude); ?>
 
 <?php
 if ($gInfoTabsSelected == -1) $gInfoTabsSelected = count($gInfoTabs)-1;

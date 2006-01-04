@@ -12,7 +12,7 @@ profile_page_start("waren");
 <html>
 <head>
 <link rel="stylesheet" type="text/css" href="../styles.css">
-<link rel="stylesheet" type="text/css" href="../zwstyle.css">
+<link rel="stylesheet" type="text/css" href="<?=GetZWStylePath()?>">
 <title>Zwischenwelt - Kosten</title>
 
 </head>

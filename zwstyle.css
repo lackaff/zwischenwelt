@@ -246,10 +246,10 @@ table.map { background-color: #66AA55; table-layout:fixed; border:1px solid blac
 .mapscroll a:hover { color:#00ff00; }
 
 .maptip {
-	background-color : #ffeeaa;
-	border:1px solid black;
 }
 .maptip > table {
+	background-color : #ffeeaa;
+	border:1px solid black;
 	padding:3px;
 }
 .maptip * {

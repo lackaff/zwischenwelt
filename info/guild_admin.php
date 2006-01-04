@@ -123,7 +123,7 @@ if($gUser->guild > 0)
 <html>
 <head>
 <link rel="stylesheet" type="text/css" href="../styles.css">
-<link rel="stylesheet" type="text/css" href="../zwstyle.css">
+<link rel="stylesheet" type="text/css" href="<?=GetZWStylePath()?>">
 <title>Zwischenwelt - Gilde</title>
 
 </head>

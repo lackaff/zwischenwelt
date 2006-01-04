@@ -5,7 +5,8 @@ class cInfoSchild extends cInfoBuilding {
 		foreach ($_REQUEST as $name=>$val) ${"f_".$name} = $val;
 		global $gUser;
 		global $gObject;
-		profile_page_start("schild.php"); ?>
+		profile_page_start("schild.php"); 
+		?>
 		<hr>
 		<?php 
 			if(($gUser->id == $gObject->user || $gUser->admin) && isset($f_text)) {

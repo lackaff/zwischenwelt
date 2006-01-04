@@ -8,10 +8,7 @@ class cInfoArmy extends cInfoBase {
 	function cancontroll ($user) { return cArmy::CanControllArmy($this,$user); }
 	function mycommand () {
 		foreach ($_REQUEST as $name=>$val) ${"f_".$name} = $val;
-		global $gUser;
-		global $gRes;
-		global $gRes2ItemType;
-		global $gUnitType;
+		global $gUser,$gRes,$gRes2ItemType,$gUnitType,$gJSCommands;
 		
 		if (!isset($f_army) || !isset($f_do)) return;
 	
@@ -39,11 +36,7 @@ class cInfoArmy extends cInfoBase {
 					global $f_x,$f_y;
 					$f_x = $army->x;
 					$f_y = $army->y;
-					?>
-					<script language="javascript">
-						parent.map.location.href = parent.map.location.href;
-					</script>
-					<?php
+					JSRefreshArmy($army);
 				}
 			break;
 			case "admin_fight_step" : if (!$gUser->admin) break;
@@ -126,11 +119,7 @@ class cInfoArmy extends cInfoBase {
 				else if (isset($f_escape_e_x))	{$x = $army->x+1;$y = $army->y;}
 				else break;
 				if (!cFight::Flee($army,$x,$y)) break;
-				?>
-				<script language="javascript">
-					parent.map.location.href = parent.map.location.href;
-				</script>
-				<?php
+				JSRefreshArmy($army);
 			break;
 			
 			
@@ -158,20 +147,12 @@ class cInfoArmy extends cInfoBase {
 				$newwps = array();
 				$i=0; foreach ($inverse as $o) if ($i++ > 0)
 					$newwps[] = cArmy::ArmySetWaypoint($army->id,$o->x,$o->y);
-				?>
-				<script language="javascript">
-					parent.map.location.href = parent.map.location.href;
-				</script>
-				<?php
+				JSRefreshArmy($army);
 			break;
 			case "delallwaypoints":
 				if (intval($army->flags) & kArmyFlag_SelfLock) break;
 				sql("DELETE FROM `waypoint` WHERE `army`=".$army->id);
-				?>
-				<script language="javascript">
-					parent.map.location.href = parent.map.location.href;
-				</script>
-				<?php
+				JSRefreshArmy($army);
 			break;
 			case "setwaypoint":
 				if (intval($army->flags) & kArmyFlag_SelfLock) break;
@@ -224,12 +205,8 @@ class cInfoArmy extends cInfoBase {
 					}
 				}
 				$pathlen = count($path);
-				?>
-				<script language="javascript">
-					parent.map.jsArmy(<?=cArmy::GetJavaScriptArmyData($army)?>);
-					parent.map.JSActivateArmy(<?=$army->id?>,"<?=cArmy::GetJavaScriptWPs($army->id)?>");
-				</script>
-				<?php
+				JSRefreshArmy($army);
+				
 				for ($i=0;$i<$newwplen;++$i) { 
 					list($x,$y) = $newwps[$i]; 
 					$speed = cArmy::GetPosSpeed($x,$y,$army->user,$army->units,false);
@@ -252,11 +229,7 @@ class cInfoArmy extends cInfoBase {
 					if (count($coords) == 2)
 						cArmy::ArmySetWaypoint($army->id,$coords[0],$coords[1]);
 				}
-				?>
-				<script language="javascript">
-					parent.map.location.href = parent.map.location.href;
-				</script>
-				<?php
+				JSRefreshArmy($army);
 			break;
 			case "attackarmy":
 				// todo : function AddArmyAction(army,cmd,p1,p2,p3);
@@ -351,18 +324,16 @@ class cInfoArmy extends cInfoBase {
 			break;
 			case "itemuse":
 				$result = cItem::useItem(intval($f_item),$army->id);
-				if ($result) {
+				if ($result) { 	
 					list($x,$y) = $result;
-					$url = Query("?sid=?&x=".$x."&y=".$y);
+					$infourl = Query("?sid=?&x=".$x."&y=".$y);
+					$mapurl = Query("../".kMapScript."?sid=?&x=".$x."&y=".$y."&army=".$army->id);
+					//$gJSCommands[] = "parent.map.location.href = parent.map.location.href;";
+					$gJSCommands[] = "parent.navi.navabs(".intval($x).",".intval($y).",true);";
+					$gJSCommands[] = "location.href=\"".$infourl."\";";
 					?>
-					<script language="javascript">
-						//parent.map.location.href = parent.map.location.href;
-						parent.navi.navabs(<?=intval($x)?>,<?=intval($y)?>,true);
-						window.location="<?=$url?>";
-					</script>
-					<a href='<?=$url?>'>weiter: <?=$url?></a><br>
+					<h3><font color=green>Armee Teleportiert Nach <a target='map' href='<?=$mapurl?>'>(<?=$x?>,<?=$y?>)</a></font></h3>
 					<?php
-					exit();
 				} else {
 					?>
 					<h3><font color=red>Hat nicht funktioniert...</font></h3>
@@ -378,6 +349,7 @@ class cInfoArmy extends cInfoBase {
 	
 	
 	function mygenerate_tabs () {
+		if ($this->construction > 0) return;
 		foreach ($_REQUEST as $name=>$val) ${"f_".$name} = $val;
 		global $gArmyType; 
 		global $gObject; 
@@ -391,6 +363,8 @@ class cInfoArmy extends cInfoBase {
 		global $gBuildingType;
 		profile_page_start("army.php");
 		rob_ob_start();
+		
+		$this->display_header();
 				
 		$gArmies = sqlgettable("SELECT * FROM `army` WHERE `user` = ".$gUser->id,"id");
 		$gArmy = $gObject;
@@ -401,12 +375,7 @@ class cInfoArmy extends cInfoBase {
 		
 		// activate army in map, show wps if own army
 		if (cArmy::CanControllArmy($gArmy,$gUser)) {
-			?>
-			<script language="javascript">
-				parent.map.jsArmy(<?=cArmy::GetJavaScriptArmyData($gArmy)?>);
-				parent.map.JSActivateArmy(<?=$gArmy->id?>,"<?=cArmy::GetJavaScriptWPs($gArmy->id)?>");
-			</script>
-			<?php
+			JSRefreshArmy($gArmy);
 		}
 		?>
 		
@@ -873,11 +842,7 @@ class cInfoArmy extends cInfoBase {
 		<?php 
 		profile_page_end(); 
 		
-		global $gInfoTabsSelected,$gInfoTabs;
-		$head = "Armee";
-		$content = rob_ob_end();
-		$gInfoTabs[] = array($head,$content);
-		$gInfoTabsSelected = count($gInfoTabs)-1;
+		RegisterInfoTab("Armee",rob_ob_end(),20);
 	}
 	
 	

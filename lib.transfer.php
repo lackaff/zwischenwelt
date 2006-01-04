@@ -28,6 +28,12 @@ class cTransfer {
 		foreach ($gArmyTransfer as $transfer) 
 			cTransfer::ArmyTransferBox($transfer,$sourcebuilding,$sourcearmy);
 	}
+	function has_armytransfer($sourcebuilding,$sourcearmy) {
+		global $gArmyTransfer,$gUser;
+		foreach ($gArmyTransfer as $transfer) 
+			if (cTransfer::ArmyTransferVisible($transfer,$sourcebuilding,$sourcearmy,$gUser)) return true;
+		return false;
+	}
 	
 	// check if displayed , $user must be object !
 	function ArmyTransferVisible ($transfer,$sourcebuilding,$sourcearmy,$user) {

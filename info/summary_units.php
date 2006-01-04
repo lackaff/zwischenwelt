@@ -45,6 +45,7 @@ if (isset($f_typeup_to)) {
 <html>
 <head>
 <link rel="stylesheet" type="text/css" href="../styles.css">
+<link rel="stylesheet" type="text/css" href="<?=GetZWStylePath()?>">
 <title>Zwischenwelt - Übersicht</title>
 </head>
 <body>

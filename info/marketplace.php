@@ -89,7 +89,8 @@ class cInfoMarket extends cInfoBuilding {
 	}
 	
 	
-	function mydisplay() {
+	function mygenerate_tabs() {
+		if ($this->construction > 0) return;
 		foreach ($_REQUEST as $name=>$val) ${"f_".$name} = $val;
 		global $gUser;
 		global $gObject;
@@ -99,6 +100,7 @@ class cInfoMarket extends cInfoBuilding {
 		global $gResTypeVars;
 				
 		profile_page_start("marketplace.php");
+		rob_ob_start();
 		
 		if ($gObject->user == $gUser->id) {
 			
@@ -280,5 +282,6 @@ class cInfoMarket extends cInfoBuilding {
 		<?php }?>
 		
 		<?php profile_page_end();
+		RegisterInfoTab("Handeln",rob_ob_end(),10);
 	}
 }?>

@@ -36,6 +36,7 @@ $friendids = intarray(AF($friends,"id"));
 <html>
 <head>
 <link rel="stylesheet" type="text/css" href="../styles.css">
+<link rel="stylesheet" type="text/css" href="<?=GetZWStylePath()?>">
 <title>Zwischenwelt - Diplomatie</title>
 <SCRIPT LANGUAGE="JavaScript" type="text/javascript">
 <!--

@@ -41,13 +41,17 @@ class cInfoBuilding extends cInfoBase {
 	
 	// execute drawing code in display() after displaying the buffered command() output
 	function classgenerate_tabs () {
-		global $gInfoTabsSelected,$gInfoTabs;
-		$this->generate_tab_building(); $gInfoTabsSelected = count($gInfoTabs)-1;
+		$this->generate_tab_building();
+		if ($this->construction > 0) return;
 		$this->generate_tab_unit_production();
 		$this->generate_tab_technology();
 		// TODO : eliminate infobase_cmdout ?
 		// TODO : unit transfer tabbing :
-		// if ($gObject->construction == 0) cTransfer::display_armytransfer($gObject,0);
+		if (cTransfer::has_armytransfer($this,false)) {
+			rob_ob_start();
+			cTransfer::display_armytransfer($this,false);
+			RegisterInfoTab("Transfer",rob_ob_end(),3);	
+		}
 	}
 	
 	function mygenerate_tabs () {
@@ -398,11 +402,7 @@ class cInfoBuilding extends cInfoBase {
 		}
 		
 		ImgBorderEnd("s1","jpg","#ffffee",32,33);
-		
-		global $gInfoTabs;
-		$head = "Ausbildung";
-		$content = rob_ob_end();
-		$gInfoTabs[] = array($head,$content);
+		RegisterInfoTab("Ausbildung",rob_ob_end());
 	}
 	
 	
@@ -716,10 +716,9 @@ class cInfoBuilding extends cInfoBase {
 			echo "<b>BODENSCHATZ ! : ".cost2txt($costarr)." pro Stunde bei ".ktrenner(kBodenSchatzIdealWorkers)." Arbeitern</b><br>";
 		}
 		
-		global $gInfoTabs;
-		$head = $this->GetMainTabHead();
-		$content = rob_ob_end();
-		$gInfoTabs[] = array($head,$content);
+		if ($this->construction == 0) $this->mydisplay();
+		
+		RegisterInfoTab($this->GetMainTabHead(),rob_ob_end(),2);
 	}
 	
 	function generate_tab_technology () {
@@ -862,11 +861,7 @@ class cInfoBuilding extends cInfoBase {
 		</table>
 		<?php
 		ImgBorderEnd("s1","jpg","#ffffee",32,33);
-		
-		global $gInfoTabs;
-		$head = "Forschung";
-		$content = rob_ob_end();
-		$gInfoTabs[] = array($head,$content);
+		RegisterInfoTab("Forschung",rob_ob_end());
 	}
 }
 ?>

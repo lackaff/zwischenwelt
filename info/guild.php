@@ -82,7 +82,7 @@ $gGuild = sqlgetobject("SELECT g.*,u.`name` as `foundername` FROM `guild` g,`use
 <html>
 <head>
 <link rel="stylesheet" type="text/css" href="../styles.css">
-<link rel="stylesheet" type="text/css" href="../zwstyle.css">
+<link rel="stylesheet" type="text/css" href="<?=GetZWStylePath()?>">
 <title>Zwischenwelt - Gilde</title>
 
 </head>

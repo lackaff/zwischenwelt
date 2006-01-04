@@ -31,7 +31,6 @@ class cInfoBase {
 	function generate_tabs () {
 		if ($this->infobase_nodisplay) return;
 		global $gObject; $gObject = $this; // backwards compatibility, better user $this
-		// register tabs to $gInfoTabs
 		$this->classgenerate_tabs(); // for building base class (unit prod, tech)
 		$this->mygenerate_tabs();
 	} 

@@ -136,14 +136,15 @@ class cInfoPortal extends cInfoBuilding {
 	}
 	
 	
-	function mydisplay() {
+	function mygenerate_tabs() {
+		if ($this->construction > 0) return;
 		foreach ($_REQUEST as $name=>$val) ${"f_".$name} = $val;
 		global $gUser;
 		global $gObject;
 		global $gRes;
 		global $gGlobal;
 		profile_page_start("portal.php");
-		
+		rob_ob_start();
 		
 		
 		$transportcount = intval(GetBParam($gObject->id,"transportcount"));
@@ -242,5 +243,6 @@ class cInfoPortal extends cInfoBuilding {
 		<?php } // endif?>
 		
 		<?php profile_page_end();
+		RegisterInfoTab("Reisen",rob_ob_end(),10);
 	}
 }

@@ -140,10 +140,6 @@ class cInfoLager extends cInfoBuilding {
 		<?php }?>
 		<?php profile_page_end(); 
 		
-		global $gInfoTabsSelected,$gInfoTabs;
-		$head = "Waren";
-		$content = rob_ob_end();
-		$gInfoTabs[] = array($head,$content);
-		$gInfoTabsSelected = count($gInfoTabs)-1;
+		RegisterInfoTab("Waren",rob_ob_end(),10);
 	}
 }?>
