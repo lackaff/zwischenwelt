@@ -242,7 +242,7 @@ class cInfoHQ extends cInfoBuilding {
 	function PrintTips () {
 		global $gUser,$gBuildingType;
 		
-		$debug_show_all_tips = true;
+		$debug_show_all_tips = false;
 		$minbtable = array();
 		$popicon = "<img src=\"".g("pop-r%R%.png","","",$gUser->race)."\">";
 		$minbtable[] = array(kBuilding_Lumberjack,4,", produziert <img src=\"".g("res_lumber.gif")."\">");
