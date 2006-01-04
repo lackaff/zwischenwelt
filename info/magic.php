@@ -3,7 +3,7 @@
 require_once("../lib.main.php");
 require_once("../lib.army.php");
 require_once("../lib.technology.php");
-require_once("lib.spells.php");
+require_once("../lib.spells.php");
 Lock();
 
 profile_page_start("magic.php");
