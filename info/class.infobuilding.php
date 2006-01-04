@@ -50,7 +50,14 @@ class cInfoBuilding extends cInfoBase {
 		if (cTransfer::has_armytransfer($this,false)) {
 			rob_ob_start();
 			cTransfer::display_armytransfer($this,false);
-			RegisterInfoTab("Transfer",rob_ob_end(),3);	
+			RegisterInfoTab("Einheiten",rob_ob_end(),3);
+			
+			// kampfsim link in jedem gebäude in dem man KAMPF-einheiten produzieren kann
+			$units = $this->producable_units();
+			$has_fighters = false;
+			foreach ($units as $o) if ($o->a > 0) { $has_fighters = true; break; }
+			global $gInfoTabs;
+			if ($has_fighters) $gInfoTabs[] = array("KampfSim","",Query("kampfsim.php?sid=?"));
 		}
 	}
 	
@@ -466,7 +473,10 @@ class cInfoBuilding extends cInfoBase {
 							<a href="<?=query("adminuser.php?id=$gObject->user&sid=?")?>"><img alt="user" title="user" src="<?=g("icon/admin.png")?>" border=0></a>
 						<?php } ?>
 					<?php }?>
-				<img alt="Geschwindigkeit: Wartezeit in s bis der nächste Schritt möglich ist" title="Geschwindigkeit: Wartezeit in s bis der nächste Schritt möglich ist" src="<?=g("sanduhrklein.gif")?>">:<?=$btype->speed?>s Mod:(a*<?=round($btype->mod_a,2)?>|v*<?=round($btype->mod_v,2)?>|f*<?=round($btype->mod_f,2)?>) <?=cText::Wiki("kampf_mod")?>
+				<img alt="Geschwindigkeit: Wartezeit in s bis der nächste Schritt möglich ist" title="Geschwindigkeit: Wartezeit in s bis der nächste Schritt möglich ist" src="<?=g("sanduhrklein.gif")?>">:<?=$btype->speed?>s 
+				<?php if (0) { /* TODO : REACTIVATE ONCE THE TERRAIN MOD SYSTEM IS COMPLETE */?>
+				Mod:(a*<?=round($btype->mod_a,2)?>|v*<?=round($btype->mod_v,2)?>|f*<?=round($btype->mod_f,2)?>) <?=cText::Wiki("kampf_mod")?>
+				<?php } // endif?>
 				<?php if($gUser->admin){ ?>
 					<a href="<?=query("adminbuilding.php?id=$gObject->id&sid=?")?>"><img alt="Building" title="Building" src="<?=g("icon/admin.png")?>" border=0></a>
 					<a href="<?=query("adminunit.php?containerid=$gObject->id&containertype=".kUnitContainer_Building."&sid=?")?>"><img alt=Units title=Units src="<?=g("icon/admin.png")?>" border=0></a>

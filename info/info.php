@@ -749,7 +749,7 @@ if (isset($f_blind)) { // blind modus im dummy frame, fuer schnellere map-click-
 
 <?php
 if ($gInfoTabsSelected == -1) $gInfoTabsSelected = count($gInfoTabs)-1;
-foreach($gInfoTabs as $i=>$v)$gInfoTabs[$i][0] = "<img src=\"".g("1px.gif")."\" width=1 height=18>".$gInfoTabs[$i][0];
+foreach($gInfoTabs as $i=>$v)$gInfoTabs[$i][0] = "<img border=0 src=\"".g("1px.gif")."\" width=1 height=18>".$gInfoTabs[$i][0];
 echo GenerateTabs("infotabs",$gInfoTabs,$gInfoTabsCorner,false,$gInfoTabsSelected); // echo "<div class=\"tabpane\">";
 ?>
 

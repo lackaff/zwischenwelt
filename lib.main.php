@@ -138,6 +138,14 @@ function UserHasBuilding ($user,$type,$level=0) {
 	return $r;
 }
 
+function CountUserBuildingType ($userid,$typeid,$plans_also=true) {
+	if (is_object($userid)) $userid = $userid->id;
+	if (is_object($typeid)) $typeid = $typeid->id;
+	$res = sqlgetone("SELECT COUNT(*) FROM `building` WHERE `type` = ".intval($typeid)." AND `user` = ".intval($userid)." LIMIT 1");
+	if ($plans_also) $res += sqlgetone("SELECT COUNT(*) FROM `construction` WHERE `type` = ".intval($typeid)." AND `user` = ".intval($userid)." LIMIT 1");
+	return intval($res);
+}
+
 // $o must be building object, returns css-class for map
 // TODO: DOOMED, OBSOLETE
 function GetBuildingCSS ($o,$blocked) {

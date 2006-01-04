@@ -62,25 +62,85 @@ class cInfoHQ extends cInfoBuilding {
 	}
 	
 	
+	function mydisplay() {
+		global $gObject,$gUser;
+		global $gRes,$gAdjust,$gGlobal,$gResTypeNames,$gResTypeVars;
+		global $gItemType,$gSpellType,$gTechnologyType,$gTechnologyGroup,$gBuildingType;
+		?>
+		
+		<?php if ($gObject->user != $gUser->id) {?>
+		<form method="post" action="<?=Query("?sid=?&x=?&y=?")?>">
+		<input type="hidden" name="do" value="setfof">
+		<input type="hidden" name="other" value="<?=$gObject->user?>">
+			Diplomatie : <?=GetFOFtxt($gUser->id,$gObject->user)?>
+			
+			<?php if (GetFOF($gUser->id,$gObject->user) == kFOF_Friend) {?>
+				<input type="submit" name="delfriend" value="Freundschaft kündigen">
+			<?php } else { // ?>
+				<input type="submit" name="addfriend" value="Freundschaft schliessen">
+			<?php } // endif?>
+			
+			<?php if (GetFOF($gUser->id,$gObject->user) == kFOF_Enemy) {?>
+				<input type="submit" name="delenemy" value="Feindschaft beenden">
+			<?php } else { // ?>
+				<input type="submit" name="addenemy" value="zum Feind erklären">
+			<?php } // endif?>
+		</form>
+		<?php } // endif?>
+		
+		<?php 
+		$profil = sqlgetone("SELECT `profil` FROM `userprofil` WHERE `id`=".$gObject->user);
+		$ownername = sqlgetone("SELECT `name` FROM `user` WHERE `id`=".intval($gObject->user));
+		?>
+		<?php ImgBorderStart("s2","jpg","#ffffee","bg-s2",32,33); ?>
+		<p align="center"><a href="<?=query("msg.php?sid=?&show=compose&to=".urlencode($ownername))?>"><span style="font-family:serif;font-size:18px;font-style:italic;"><?=$ownername?></span></a></p>
+		<p align="center"><span style="font-family:serif;font-size:11px;">von<br><?=sqlgetone("SELECT g.`name` FROM `guild` g,`user` u WHERE g.id=u.guild AND u.id=".$gObject->user)?></span></p>
+		<?php 
+		$registered = sqlgetone("SELECT `registered` FROM `user` u WHERE u.id=".$gObject->user);
+		if($registered > 0){ ?>
+		<p align="center"><span style="font-family:serif;font-size:11px;">dabei seit <?=date("j.n.y",$registered)?></span></p>
+		<?php } ?>
+		<?=nl2br(htmlspecialchars($profil))?>
+		<?php ImgBorderEnd("s2","jpg","#ffffee",32,33); ?>
+		
+		<?=$this->PrintTitles();?>
+		<?php
+	}
+	
+	
 	function mygenerate_tabs() {
-		if ($this->construction > 0) return;
+		global $gObject,$gUser;
+		global $gRes,$gAdjust,$gGlobal,$gResTypeNames,$gResTypeVars;
+		global $gItemType,$gSpellType,$gTechnologyType,$gTechnologyGroup,$gBuildingType;
 		foreach ($_REQUEST as $name=>$val) ${"f_".$name} = $val;
-		global $gUser;
-		global $gGlobal;
-		global $gObject;
-		global $gItemType;
-		global $gSpellType;
-		global $gRes;
-		global $gAdjust;
-		global $gResTypeNames;
-		global $gResTypeVars;
-		global $gTechnologyType;
-		global $gTechnologyGroup;
-		global $gBuildingType;
+		
+		if ($this->construction > 0) return;
+		if ($gObject->user != $gUser->id) return;
 		
 		profile_page_start("hq.php");
 		rob_ob_start();
 			
+		if($gObject->user == $gUser->id) {
+			$hqtabs = array();
+			$hqtabs[] = array("Zentrum",$this->PrintCenter());
+			$hqtabs[] = array("Produktion",$this->PrintWorker());
+			$hqtabs[] = array("Übersicht",$this->PrintOverview());
+			$hqtabs[] = array("Diplomatie",		"",Query("diplo.php?sid=?"));
+			$hqtabs[] = array("Einstellungen",	"",Query("profile.php?sid=?"));
+			echo GenerateTabs("hqtabs",$hqtabs,"",false);
+		} 
+		
+		profile_page_end(); 
+		RegisterInfoTab("Verwaltung",rob_ob_end(),10);
+	}
+	
+	function PrintCenter () {
+		foreach ($_REQUEST as $name=>$val) ${"f_".$name} = $val;
+		global $gObject,$gUser;
+		global $gRes,$gAdjust,$gGlobal,$gResTypeNames,$gResTypeVars;
+		global $gItemType,$gSpellType,$gTechnologyType,$gTechnologyGroup,$gBuildingType;
+		rob_ob_start(); 
+		
 		if($gUser->guild>0 && isset($f_fc) && $f_fc==1) {
 			?>
 			<center><span style="font-size:14px;font-weight:bold;">Nachricht des Tages</span><br>
@@ -90,160 +150,162 @@ class cInfoHQ extends cInfoBuilding {
 			<br>
 			<?
 		}
+		
+		if ($gUser->food <= 0) {?>
+			<center><?ImgBorderStart();?>
+			<span style="color:red;font-size:12px;font-style:italic;">Ihre Bevölkerung hungert. Sie benötigen mehr Nahrung!</span>
+			<?ImgBorderEnd();?></center>
+			<br>
+		<?php } // endif?>
+		
+		<table><tr>
+		<?php
+		$con = sqlgetobject("SELECT * FROM `building` WHERE `construction` > 0 AND `user` = ".$gObject->user." LIMIT 1");
+		$cps = sqlgettable("SELECT * FROM `construction` WHERE `user` = ".$gObject->user." ORDER BY `priority` LIMIT 10");
+		$concount = sqlgetone("SELECT COUNT(`id`) FROM `construction` WHERE `user` = ".$gObject->user);
+		if ($con) {
+			$btype = $gBuildingType[$con->type];
+			$proz=100*GetConstructionProgress($con);
+			?>
+			<td>
+			<a href="<?=Query("?sid=?&x=".$con->x."&y=".$con->y)?>">
+				<table><tr>
+					<td valign="center"><a href="<?=Query("?sid=?&x=".$con->x."&y=".$con->y)?>"><img border=1 src="<?=g("construction.png")?>"></a></td>
+					<td valign="center">&gt;</td>
+					<td valign="center"><img border=1 src="<?=g($btype->gfx,($con->nwse=="?")?"ns":$con->nwse,0,$gUser->race)?>"></td>
+				</tr>
+				<tr><td align=center><?=round($proz)?>%</td></tr>
+				</table>		
+			</a>
+			</td>
+		<?php }
+		if (count($cps) > 0) {?>
+			<td valign="top">
+				<table><tr>
+					<?php foreach ($cps as $cp) {$btype = $gBuildingType[$cp->type];?>
+					<td valign="center"><a href="<?=Query("?sid=?&x=".$cp->x."&y=".$cp->y)?>"><img border=1 src="<?=g($btype->gfx,"ns",0,$gUser->race)?>"></a></td>
+					<?php }?>
+				</tr></table>
+			</td>
+		<?php }?>
+		<td>
+			<?php if ($concount == 0) {?>
+				<font color="red"><b>keine Pl&auml;ne mehr !</b></font>
+			<?php } else if ($concount < 10) {?>
+				<font color="#FF4400"><b>nur noch <?=$concount?> Pl&auml;ne !</b></font>
+			<?php } else {?>
+				noch <?=$concount?> Pl&auml;ne
+			<?php }?>
+		</td>
+		</tr>
+		</table>
+		
+		<?php if (1) {?>
+			<!--building quick jump-->
+			<table border=0><tr><th>Schnellsprung</th></tr></table>
+			<?php 
+			$quickbuildingtypes = array(kBuilding_Market,
+										kBuilding_Smith,
+										kBuilding_Garage,
+										kBuilding_Chessboard,
+										kBuilding_MagicTower,
+										kBuilding_Temple,
+										kBuilding_BROID,
+										kBuilding_Hospital,
+										kBuilding_Portal,
+										kBuilding_Baracks,
+										kBuilding_Tavern,
+										kBuilding_Harbor,
+										kBuilding_Werft);
+			foreach ($quickbuildingtypes as $typeid) {
+				$tquick = sqlgettable("SELECT * FROM `building` WHERE `construction`=0 AND `user` = ".$gUser->id." AND `type` = ".$typeid);	
+				$i=0;foreach($tquick as $o){
+					++$i; 
+					if ($i>1) continue; // all only once
+					$lpic = ($o->level>=10)?"1":"0";
+					$btype = $gBuildingType[$o->type];?>
+					<a href="<?=Query("?sid=?&x=".$o->x."&y=".$o->y)?>">
+					<img title="<?=strip_tags($btype->name)?>" alt="<?=strip_tags($btype->name)?>" border=1 src="<?=g($btype->gfx,($o->nwse=="?")?"ns":$o->nwse,$lpic)?>"></a>
+				<?php }
+			}
+		} // endif
 		?>
 		
-		<?php if($gObject->user == $gUser->id) {?>
-			<?php if ($gUser->food <= 0) {?>
-				<center><?ImgBorderStart();?>
-				<span style="color:red;font-size:12px;font-style:italic;">Ihre Bevölkerung hungert. Sie benötigen mehr Nahrung!</span>
-				<?ImgBorderEnd();?></center>
-				<br>
-			<?php } // endif?>
-			
-			
-			<table><tr>
-			<?php
-			$con = sqlgetobject("SELECT * FROM `building` WHERE `construction` > 0 AND `user` = ".$gObject->user." LIMIT 1");
-			$cps = sqlgettable("SELECT * FROM `construction` WHERE `user` = ".$gObject->user." ORDER BY `priority` LIMIT 10");
-			$concount = sqlgetone("SELECT COUNT(`id`) FROM `construction` WHERE `user` = ".$gObject->user);
-			if ($con) {
-				$btype = $gBuildingType[$con->type];
-				$proz=100*GetConstructionProgress($con);
-				?>
-				<td>
-				<a href="<?=Query("?sid=?&x=".$con->x."&y=".$con->y)?>">
-					<table><tr>
-						<td valign="center"><a href="<?=Query("?sid=?&x=".$con->x."&y=".$con->y)?>"><img border=1 src="<?=g("construction.png")?>"></a></td>
-						<td valign="center">&gt;</td>
-						<td valign="center"><img border=1 src="<?=g($btype->gfx,($con->nwse=="?")?"ns":$con->nwse,0,$gUser->race)?>"></td>
-					</tr>
-					<tr><td align=center><?=round($proz)?>%</td></tr>
-					</table>		
-				</a>
-				</td>
-			<?php }
-			if (count($cps) > 0) {?>
-				<td valign="top">
-					<table><tr>
-						<?php foreach ($cps as $cp) {$btype = $gBuildingType[$cp->type];?>
-						<td valign="center"><a href="<?=Query("?sid=?&x=".$cp->x."&y=".$cp->y)?>"><img border=1 src="<?=g($btype->gfx,"ns",0,$gUser->race)?>"></a></td>
-						<?php }?>
-					</tr></table>
-				</td>
-			<?php }?>
-			<td>
-				<?php if ($concount == 0) {?>
-					<font color="red"><b>keine Pl&auml;ne mehr !</b></font>
-				<?php } else if ($concount < 10) {?>
-					<font color="#FF4400"><b>nur noch <?=$concount?> Pl&auml;ne !</b></font>
-				<?php } else {?>
-					noch <?=$concount?> Pl&auml;ne
-				<?php }?>
-			</td>
-			</tr>
-			</table>
 		
-			<?php if (1) {?>
-				<!--building quick jump-->
-				<table border=0><tr><th>Schnellsprung</th></tr></table>
-				<?php 
-				$quickbuildingtypes = array(kBuilding_Market,
-											kBuilding_Smith,
-											kBuilding_Garage,
-											kBuilding_Chessboard,
-											kBuilding_MagicTower,
-											kBuilding_Temple,
-											kBuilding_BROID,
-											kBuilding_Hospital,
-											kBuilding_Portal,
-											kBuilding_Baracks,
-											kBuilding_Tavern,
-											kBuilding_Harbor,
-											kBuilding_Werft);
-				foreach ($quickbuildingtypes as $typeid) {
-					$tquick = sqlgettable("SELECT * FROM `building` WHERE `construction`=0 AND `user` = ".$gUser->id." AND `type` = ".$typeid);	
-					$i=0;foreach($tquick as $o){
-						++$i; 
-						if ($i>1) continue; // all only once
-						$lpic = ($o->level>=10)?"1":"0";
-						$btype = $gBuildingType[$o->type];?>
-						<a href="<?=Query("?sid=?&x=".$o->x."&y=".$o->y)?>">
-						<img title="<?=strip_tags($btype->name)?>" alt="<?=strip_tags($btype->name)?>" border=1 src="<?=g($btype->gfx,($o->nwse=="?")?"ns":$o->nwse,$lpic)?>"></a>
-					<?php }
-				}
-			} // endif?>
+		<?php $this->PrintTips(); ?>
 		
-			
-			<?php
-			$hqtabs = array();
-			rob_ob_start(); 
-			$this->PrintWorker();
-			$content = rob_ob_end();
-			$hqtabs[] = array("Arbeiter",$content);
-			$hqtabs[] = array("Überblick",		"",Query("summary.php?sid=?"));
-			$hqtabs[] = array("Waren",			"",Query("waren.php?sid=?"));
-			$hqtabs[] = array("Kosten",			"",Query("kosten.php?sid=?"));
-			$hqtabs[] = array("Baupl&auml;ne",	"",Query("bauplan.php?sid=?"));
-			$hqtabs[] = array("Diplomatie",		"",Query("diplo.php?sid=?"));
-			// $hqtabs[] = array("Truppen",		"",Query("summary_units.php?sid=?"));
-			// $hqtabs[] = array("Gebäude",		"",Query("summary_buildings.php?sid=?"));
-			$hqtabs[] = array("KampfSim",		"",Query("kampfsim.php?sid=?"));
-			$hqtabs[] = array("Forschung",		"",Query("tech.php?sid=?"));
-			$hqtabs[] = array("Einstell.",		"",Query("profile.php?sid=?"));
-			$hqtabs[] = array("Quests",		"",Query("quest.php?sid=?"));
-			
-			rob_ob_start(); 
-			$this->PrintTitles();
-			$content = rob_ob_end();
-			if (!empty($content)) $hqtabs[] = array("Titel",$content);
-			echo GenerateTabs("hqtabs",$hqtabs,"",false);
-		} else { // cancontroll?>
-			<form method="post" action="<?=Query("?sid=?&x=?&y=?")?>">
-			<input type="hidden" name="do" value="setfof">
-			<input type="hidden" name="other" value="<?=$gObject->user?>">
-				Diplomatie : <?=GetFOFtxt($gUser->id,$gObject->user)?>
-				
-				<?php if (GetFOF($gUser->id,$gObject->user) == kFOF_Friend) {?>
-					<input type="submit" name="delfriend" value="Freundschaft kündigen">
-				<?php } else { // ?>
-					<input type="submit" name="addfriend" value="Freundschaft schliessen">
-				<?php } // endif?>
-				
-				<?php if (GetFOF($gUser->id,$gObject->user) == kFOF_Enemy) {?>
-					<input type="submit" name="delenemy" value="Feindschaft beenden">
-				<?php } else { // ?>
-					<input type="submit" name="addenemy" value="zum Feind erklären">
-				<?php } // endif?>
-			</form>
-			
-			<?php 
-			$profil = sqlgetone("SELECT `profil` FROM `userprofil` WHERE `id`=".$gObject->user);
-			$ownername = sqlgetone("SELECT `name` FROM `user` WHERE `id`=".intval($gObject->user));
-			?>
-			<?php ImgBorderStart("s2","jpg","#ffffee","bg-s2",32,33); ?>
-			<p align="center"><a href="<?=query("msg.php?sid=?&show=compose&to=".urlencode($ownername))?>"><span style="font-family:serif;font-size:18px;font-style:italic;"><?=$ownername?></span></a></p>
-			<p align="center"><span style="font-family:serif;font-size:11px;">von<br><?=sqlgetone("SELECT g.`name` FROM `guild` g,`user` u WHERE g.id=u.guild AND u.id=".$gObject->user)?></span></p>
-			<?php 
-			$registered = sqlgetone("SELECT `registered` FROM `user` u WHERE u.id=".$gObject->user);
-			if($registered > 0){ ?>
-			<p align="center"><span style="font-family:serif;font-size:11px;">dabei seit <?=date("j.n.y",$registered)?></span></p>
-			<?php } ?>
-			<?=nl2br(htmlspecialchars($profil))?>
-			<?php ImgBorderEnd("s2","jpg","#ffffee",32,33); ?>
-			
-			<?php $this->PrintTitles(); ?>
-		<?php } // endif cancontroll?>
-		
-		<?php 
-		
-		profile_page_end(); 
-		RegisterInfoTab("Verwaltung",rob_ob_end(),10);
+		<?php
+		return rob_ob_end();
 	}
 	
+	// for noobs, you should build xx..
+	function PrintTips () {
+		global $gUser,$gBuildingType;
+		
+		$debug_show_all_tips = true;
+		$minbtable = array();
+		$popicon = "<img src=\"".g("pop-r%R%.png","","",$gUser->race)."\">";
+		$minbtable[] = array(kBuilding_Lumberjack,4,", produziert <img src=\"".g("res_lumber.gif")."\">");
+		$minbtable[] = array(kBuilding_StoneProd,4,", produziert <img src=\"".g("res_stone.gif")."\">");
+		$minbtable[] = array(kBuilding_Farm,2,", produziert <img src=\"".g("res_food.gif")."\"> für deine Bevölkerung");
+		$minbtable[] = array(kBuilding_Silo,2,", dort werden deine Rohstoffe gelagert");
+		$minbtable[] = array(kBuilding_House,4,", damit deine Bevölkerung ".$popicon." wachsen kann");
+		
+		$tip = array();
+		
+		if ($gUser->guild == kGuild_Weltbank || $debug_show_all_tips) {
+			$tip[] = "Du bist in deiner Anfangszeit in der Weltbank-Gilde";
+			$tip[] = "dort kannst du dir Rohstoffe ausleihen,";
+			$tip[] = "und dich mit anderen neuen Spielern unterhalten";
+			$tip[] = "clicke dazu im Menu auf \"Gilde\"";
+		}
+		
+		foreach ($minbtable as $o) {
+			$cb = CountUserBuildingType($gUser->id,$o[0]);
+			if (!$debug_show_all_tips && $cb >= $o[1]) continue;
+			$tip[] = "Du solltest noch mind. ".($o[1]-$cb)." <img src=\"".GetBuildingPic($o[0])."\"> bauen ".$o[2]."<br>";
+		}
+		
+		$minbtable[] = array(kBuilding_Baracks,1,", dort kannst du Soldaten ausbilden");
+		$cb = CountUserBuildingType($gUser->id,kBuilding_Wall);
+		if ($cb < 5 || $debug_show_all_tips) {
+			$pic = "<img src=\"".GetBuildingPic(kBuilding_Wall)."\">";
+			$tip[] = "Du solltest eine Stadtmauer ".$pic." bauen, um dich vor Angriffen zu schützen.";
+		}
+		
+		$cb = CountUserBuildingType($gUser->id,kBuilding_Baracks);
+		if ($cb < 1 || $debug_show_all_tips) {
+			$pic = "<img src=\"".GetBuildingPic(kBuilding_Baracks)."\">";
+			$tip[] = "Du solltest ein paar ".$pic." bauen, damit du Soldaten ausbilden kannst";
+		}
+		
+		$cb = CountUserBuildingType($gUser->id,kBuilding_Path);
+		if ($cb < 5 || $debug_show_all_tips) {
+			$pic = "<img src=\"".GetBuildingPic(kBuilding_Path)."\">";
+			$pic2 = "<img src=\"".GetBuildingPic(kBuilding_Gate)."\">";
+			$tip[] = "Du solltest ein paar Wege ".$pic." und Tore ".$pic2." bauen, damit sich deine Truppen in deiner Siedlung besser bewegen können";
+		}
+		
+		if (count($tip) == 0) return;
+		
+		//ImgBorderStart("s1","jpg","#ffffee","",32,33);
+		?>
+		<div class="hqtips">
+		<ul>
+		<?php foreach ($tip as $o) {?>
+		<li><?=$o?></li>
+		<?php } // endforeach?>
+		</ul></div>
+		<?php
+		//ImgBorderEnd("s1","jpg","ffffee",32,33);
+	}
+	
+	// auszeichnungen, orden, ...
 	function PrintTitles () {
 		global $gObject;
 		$t = sqlgettable("SELECT * FROM `title` WHERE `user`=".$gObject->user);
-		if (!$t || count($t) == 0) return;
+		if (!$t || count($t) == 0) return false;
+		rob_ob_start(); 
 		?>
 		<!-- titel -->
 		<table cellpadding=2 cellspacing=2 border=0>
@@ -252,11 +314,38 @@ class cInfoHQ extends cInfoBuilding {
 		<?php }?>
 		</table>
 		<?php
+		return rob_ob_end();
+	}
+	
+	function PrintOverview () {
+		global $gUser;
+		rob_ob_start(); 
+		$overviewtabs = array();
+		$overviewtabs[] = array("Zauber",			"",Query("summary.php?sid=?"));
+		$overviewtabs[] = array("Waren",			"",Query("waren.php?sid=?"));
+		$overviewtabs[] = array("Kosten",			"",Query("kosten.php?sid=?"));
+		$overviewtabs[] = array("Baupl&auml;ne",	"",Query("bauplan.php?sid=?"));
+		$overviewtabs[] = array("Truppen",			"",Query("summary_units.php?sid=?"));
+		$overviewtabs[] = array("Gebäude",			"",Query("summary_buildings.php?sid=?"));
+		$overviewtabs[] = array("Forschung",		"",Query("tech.php?sid=?"));
+		$overviewtabs[] = array("Quests",			"",Query("quest.php?sid=?"));
+		// echo GenerateTabs("overviewtabs",$overviewtabs,"",false);
+		?>
+		<div class="hqoverview"><ul>
+		<?php foreach ($overviewtabs as $o) {?>
+		<li><a href="<?=$o[2]?>"><?=$o[0]?></a></li>
+		<?php } // endforeach?>
+		</ul></div>
+		<?php
+		return rob_ob_end();
 	}
 	
 	function PrintWorker () {
 		global $gObject,$gUser,$gGlobal,$gAdjust;
+		rob_ob_start(); 
 		?>
+		<?=kplaintrenner(round($gUser->pop))?> Bewohner verbrauchen <?=kplaintrenner(round(calcFoodNeed($gUser->pop,60*60),1))?> Nahrung / Stunde
+		
 		<!--arbeiterverteilung-->
 		<form action="<?=Query("?sid=?&x=?&y=?")?>" method="post">
 		<input type="hidden" name="building" value="hq">
@@ -357,6 +446,9 @@ class cInfoHQ extends cInfoBuilding {
 		</table>
 		<input type="submit" value="verteilung speichern">
 		</form>
+		
+		
 		<?php
+		return rob_ob_end();
 	}
 }?>

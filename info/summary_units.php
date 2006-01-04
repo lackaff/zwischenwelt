@@ -51,14 +51,6 @@ if (isset($f_typeup_to)) {
 <body>
 <?php include("../menu.php"); ?>
 
-<a href="<?=Query("waren.php?sid=?")?>"><b><u>Waren</u></b></a> /
-<a href="<?=Query("kosten.php?sid=?")?>"><b><u>Kostenübersicht</u></b></a> /
-<a href="<?=Query("bauplan.php?sid=?")?>"><b><u>Baupl&auml;ne</u></b></a> /
-<a href="<?=Query("diplo.php?sid=?")?>"><b><u>Diplomatie</u></b></a> /
-<a href="<?=Query("summary_units.php?sid=?")?>"><b><u>Einheiten</u></b></a> /
-<a href="<?=Query("summary_buildings.php?sid=?")?>"><b><u>Gebäude</u></b></a>
-<br>
-<br>
 
 	<h4>Truppen</h4>
 	[ <a href="<?=query("?armytype=0&sid=?")?>">alle</a> 

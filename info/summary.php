@@ -82,18 +82,6 @@ if (isset($f_typeup_to)) {
 	$onme = sqlgettable("SELECT * FROM `spell` WHERE `target`=".$gUser->id." ORDER BY `type`");
 ?>
 
-<a href="<?=Query("waren.php?sid=?")?>"><b><u>Waren</u></b></a> /
-<a href="<?=Query("kosten.php?sid=?")?>"><b><u>Kostenübersicht</u></b></a> /
-<a href="<?=Query("bauplan.php?sid=?")?>"><b><u>Baupl&auml;ne</u></b></a> /
-<a href="<?=Query("diplo.php?sid=?")?>"><b><u>Diplomatie</u></b></a> /
-<a href="<?=Query("summary_units.php?sid=?")?>"><b><u>Einheiten</u></b></a> /
-<a href="<?=Query("summary_buildings.php?sid=?")?>"><b><u>Gebäude</u></b></a>
-<br>
-<br>
-
-	<h4>Nahrungsverbrauch durch die Bewohner pro Stunde:</h4>
-	<?=round($gUser->pop)?> Bewohner benötigen <?=round(calcFoodNeed($gUser->pop,60*60),1)?> Nahrung / Stunde
-
 	<?php if ($gUser->worker_runes > 0) {?>
 	<h4>Ressourcen Verbrauch durch Runen Produktion pro Stunde:</h4>
 	<?$pf = GetProductionFaktoren($gUser->id);
