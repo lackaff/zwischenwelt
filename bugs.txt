@@ -1,0 +1,13 @@
+------------------------------------------------------------------------------------
+[Silenius] nen gruenen portalstein verwendet um zum lager zu kommen, is der erste error seit ewigkeiten. funktioniert hats trotzdem
+
+http://zwischenwelt.org//info/info.php?sid=JDEkNE1DckZjTkskL095NEhRTkhZRlg5&x=295&y=376
+Inline script thread
+Error:
+name: TypeError
+message: Statement on line 2: Type mismatch (usually a non-object value used where an object is required)
+Backtrace:
+ Line 2 of inline#2 script in http://zwischenwelt.org//info/info.php?sid=JDEkNE1DckZjTkskL095NEhRTkhZRlg5&x=295&y=376
+   parent.map
+ .jsArmy(167086, 295, 376, "Zwirbeldüse", 4, 328, "29:67471|6:35992|28:47673|5:85864|27:61166|4:96099|", "30:4|33:1|32:3|31:11|44:17500|46:9900066|", 135168);
+ ------------------------------------------------------------------------------------
