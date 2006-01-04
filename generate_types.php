@@ -72,6 +72,13 @@ function GenerateTypesPHP () {
 		$gBuildingType[$id]->neednear_building = explode(",",trim($gBuildingType[$id]->neednear_building,","));
 		$gBuildingType[$id]->require_building = explode(",",trim($gBuildingType[$id]->require_building,","));
 		$gBuildingType[$id]->exclude_building = explode(",",trim($gBuildingType[$id]->exclude_building,","));
+		if(!file_exists(BASEPATH."/info/".($gBuildingType[$id]->script))){
+			//todo: remove this backward compatibility hack
+			//check if there is a file with the ending .php
+			if(file_exists(BASEPATH."/info/".($gBuildingType[$id]->script).".php")){
+				$gBuildingType[$id]->script = ($gBuildingType[$id]->script).".php";
+			}
+		}
 	}	
 	fwrite($fp,'$gBuildingType = array('.array_out_numkey($gBuildingType).");\n");
 	

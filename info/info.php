@@ -243,9 +243,9 @@ if (1) {
 	foreach ($gBuildingType as $o) {
 		if (!$o->script) continue;
 		//if (file_exists($o->script.".php")) $o->script = $o->script.".php";
-		if (file_exists($o->script.".php")) {
+		if (file_exists($o->script)) {
 			$gClassName = false;
-			require_once($o->script.".php");
+			require_once($o->script);
 			if ($gClassName) {
 				$gInfoBuildingScriptClassNames[$o->script] = $gClassName;
 				$gInfoObjects[] = new $gClassName(null);
