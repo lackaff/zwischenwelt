@@ -100,16 +100,13 @@ class cBuilding {
 	}
 	
 	 
-	function calcUpgradeTime($typeobj,$level=0)
-	// typeobj is an object from `buildingtype` table
-	// used this way because of table lock in cron
-	{
-		if($typeobj->id != kBuilding_HQ)
-				$base = $typeobj->buildtime;
+	function calcUpgradeTime($btypeid,$level=0) {
+		global $gBuildingType;
+		if ($btypeid != kBuilding_HQ)
+				$base = $gBuildingType[$btypeid]->buildtime;
 		else	$base = kHQ_Upgrade_BaseTime;
 		
 		if($base<20)$base=43200;  // TODO :unhardcode
-		
 		$time=round(($base*($level))/30,0);  // TODO :unhardcode
 		return $time;
 	}

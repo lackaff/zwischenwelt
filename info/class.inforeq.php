@@ -146,7 +146,7 @@ class cInfoReq {
 			<?php 
 				if ($btype) {
 					$upmod = cBuilding::calcUpgradeCostsMod($i+1); 
-					$time = cBuilding::calcUpgradeTime($o,$i+1);
+					$time = cBuilding::calcUpgradeTime($o->id,$i+1);
 				} else if ($ttype) {
 					$upmod = ($i-1)*$o->increment + 1.0;
 					$time = $upmod*$o->basetime;

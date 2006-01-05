@@ -159,7 +159,7 @@ foreach ($buildings as $o) {
 		$heal = $maxhp/100*2.0; // TODO : unhardcode
 		sql("UPDATE `building` SET
 			`level` = `level` + 1 ,
-			`upgrades` = `upgrades` - 1 ,
+			`upgrades` = GREATEST(0,`upgrades` - 1) ,
 			`hp` = LEAST(`hp`+".($up+$heal)." , $maxhp),
 			`upgradetime` = 0 WHERE `id` = ".$o->id." LIMIT 1");
 		// echo "upgrade auf ".($o->level+1)." fertig : ".$gBuildingType[$o->type]->name."(".$o->x."|".$o->y."), hpup=".$up.", hpheal=".$heal."<br>\n";
@@ -181,7 +181,7 @@ foreach ($buildings as $o) {
 				$mod * $gBuildingType[$o->type]->cost_metal,
 				$mod * $gBuildingType[$o->type]->cost_runes)) {
 				// echo "upgrade auf $level gestartet : ".$gBuildingType[$o->type]->name."(".$o->x."|".$o->y.")<br>\n";
-				$finishtime = $time + cBuilding::calcUpgradeTime($gBuildingType[$o->type],$level);
+				$finishtime = $time + cBuilding::calcUpgradeTime($o->type,$level);
 				sql("UPDATE `building` SET `upgradetime` = ".$finishtime." WHERE `id` = ".intval($o->id)." LIMIT 1");
 			}
 		}

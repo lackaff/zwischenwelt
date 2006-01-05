@@ -109,7 +109,7 @@ include("../menu.php");
 			$parttimesum = 0;
 			for ($L=$o->reallevel;$L<$o->reallevel+$o->realupgrades;$L++) {
 				$upmod = cBuilding::calcUpgradeCostsMod($L+1); 
-				$parttimesum += cBuilding::calcUpgradeTime($gBuildingType[$o->type],$L+1);
+				$parttimesum += cBuilding::calcUpgradeTime($o->type,$L+1);
 				foreach($gRes as $n=>$f) ${"partcost_".$f} += round($upmod*$gBuildingType[$o->type]->{"cost_".$f},0);
 			}
 			foreach($gRes as $n=>$f) ${"totalcost_".$f} += $o->c*${"partcost_".$f};

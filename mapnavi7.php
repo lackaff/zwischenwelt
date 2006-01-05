@@ -68,7 +68,7 @@ if (isset($f_regentypes)) {
 		kMapNaviGotoCat_Guild		=> GetGuildStuffList($gUser->guild),
 		kMapNaviGotoCat_Friends		=> sqlgettable("SELECT `user`.* FROM `fof_user`,`user` WHERE `class` = ".kFOF_Friend." AND `master` = ".$gUser->id." AND `other` = `user`.id ORDER BY `name`","id","name"),
 		kMapNaviGotoCat_Enemies		=> sqlgettable("SELECT `user`.* FROM `fof_user`,`user` WHERE `class` = ".kFOF_Enemy." AND `master` = ".$gUser->id." AND `other` = `user`.id ORDER BY `name`","id","name"),
-		kMapNaviGotoCat_Search		=> 0,
+		kMapNaviGotoCat_Search		=> array("Spieler","Gilde","Armee","Monster","Bodenschatz"),
 		kMapNaviGotoCat_Random		=> array("Gebäude","Landschaft","Position"),
 		kMapNaviGotoCat_Hellhole	=> 0,
 	);
@@ -134,7 +134,7 @@ if (isset($f_regentypes)) {
 		if (gGotoCat == <?=kMapNaviGotoCat_Guild?>)		{ HideList2(); }
 		if (gGotoCat == <?=kMapNaviGotoCat_Friends?>)	{ HideList1(); }
 		if (gGotoCat == <?=kMapNaviGotoCat_Enemies?>)	{ HideList1(); }
-		if (gGotoCat == <?=kMapNaviGotoCat_Search?>)	{ Hide("search"); }
+		if (gGotoCat == <?=kMapNaviGotoCat_Search?>)	{ HideList1(); Hide("search"); }
 		if (gGotoCat == <?=kMapNaviGotoCat_Random?>) 	{ HideList1(); }
 		if (gGotoCat == <?=kMapNaviGotoCat_Hellhole?>)	{ HideList1(); }
 		
@@ -147,12 +147,13 @@ if (isset($f_regentypes)) {
 		if (gGotoCat == <?=kMapNaviGotoCat_Guild?>)		{ ShowList2(); }
 		if (gGotoCat == <?=kMapNaviGotoCat_Friends?>)	{ ShowList1(); }
 		if (gGotoCat == <?=kMapNaviGotoCat_Enemies?>)	{ ShowList1(); }
-		if (gGotoCat == <?=kMapNaviGotoCat_Search?>)	{ Show("search"); }
+		if (gGotoCat == <?=kMapNaviGotoCat_Search?>)	{ ShowList1(); Show("search"); }
 		if (gGotoCat == <?=kMapNaviGotoCat_Random?>)	{ ShowList1(); }
 		if (gGotoCat == <?=kMapNaviGotoCat_Hellhole?>)	{ ShowList1(); }
 		ChangeGotoCat2();
 	}
 	function ChangeGotoCat2 () {
+		GetName("searchcounter").value = -1; // incremented before send
 		if (gGotoCat != <?=kMapNaviGotoCat_Own?> &&
 			gGotoCat != <?=kMapNaviGotoCat_Guild?>) return;
 		var cat2 = GetName("gotocat2").value;
@@ -315,24 +316,29 @@ if (isset($f_regentypes)) {
 			}
 		}
 	}
+	function submitgoto() {
+		resettool();
+		GetName("searchcounter").value++; // starts at -1
+	}
 //-->
 </SCRIPT>
 </head><body onLoad="MyOnLoad()">
 
 <!--mapcontrols-->
 <div class="mapnavigoto">
-<FORM METHOD=GET ACTION="<?=Query(kMapScript."?sid=?&big=?&cx=$gCX&cy=$gCY")?>" target="map" onSubmit="resettool()">
+<FORM METHOD=GET ACTION="<?=Query(kMapScript."?sid=?&big=?&cx=$gCX&cy=$gCY")?>" target="map" onSubmit="submitgoto()">
 <INPUT TYPE="hidden" NAME="sid" VALUE="<?=$gSID?>">
+<INPUT TYPE="hidden" NAME="searchcounter" VALUE="-1">
 <SELECT NAME="gotocat" onChange="ChangeGotoCat()">
 	<?php foreach($gMapNaviGotoCatNames as $id => $name) 
 		if ($gUser->admin || !in_array($id,$gMapNaviGotoCat_AdminOnly)) {?>
 		<OPTION VALUE=<?=$id?>><?=$name?></OPTION>
 	<?php }?>
 </SELECT>
-<INPUT TYPE="text" NAME="pos" VALUE="" style="width:90px;display:none;">
-<INPUT TYPE="text" NAME="search" VALUE="" style="width:90px;display:none;" >
 <SELECT NAME="gotocat2" onChange="ChangeGotoCat2()" style="display:none;"></SELECT>
 <SELECT NAME="gotocat3" style="display:none;"></SELECT>
+<INPUT TYPE="text" NAME="pos" VALUE="" style="width:90px;display:none;">
+<INPUT TYPE="text" NAME="search" VALUE="" style="width:90px;display:none;" >
 <INPUT TYPE="submit" NAME="armygoto" VALUE="&gt;">
 </FORM>
 </div>

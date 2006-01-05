@@ -95,31 +95,31 @@ div.mainmenu ul {
 .info_conpic { border:1px solid black; }
 .info_planpic { border:1px solid black; }
 
-/* ***** Dynamic Tabs ***** */
+/* ***** Dynamic Tabs (ul based) ***** */
 .notizblock {
   width:90%;
 }
 
 .tabs { display:inline; }
-.tabheader {
+.tabs .tabheader {
   float:left;
   width:100%;
   background:#DAE0D2 url("gfx/tab/bg.png") repeat-x bottom;
   font-size:93%;
   line-height:normal;
 }
-.tabheader ul {
+.tabs .tabheader ul {
   margin:0;
   padding:2px 2px 0;
   list-style:none;
 }
-.tabheader li {
+.tabs .tabheader li {
   float:left;
   background:url("gfx/tab/left.png") no-repeat left top;
   margin:0;
   padding:0 0 0 3px;
 }
-.tabheader ul .tabhead {
+.tabs .tabheader ul .tabhead {
   float:left;
   display:block;
   background:url("gfx/tab/right.png") no-repeat right top;
@@ -129,24 +129,29 @@ div.mainmenu ul {
   color:#765;
 }
 
-.tabheader ul .tabhead img {
+.tabs .tabheader ul .tabhead img {
 	vertical-align:middle;
 	margin-right:2px;
 }
 
 /* Commented Backslash Hack
    hides rule from IE5-Mac \*/
-.tabheader .tabhead { float:none; cursor:pointer;}
+.tabs .tabheader .tabhead { float:none; cursor:pointer;}
 /* End IE5-Mac hack */
-.tabheader ul .tabhead:hover { color:#333; }
+.tabs .tabheader ul .tabhead:hover { color:#333; }
 
-.tabheader .activetab			{ background-image:url("gfx/tab/left_on.png"); }
-.tabheader .activetab .tabhead	{ background-image:url("gfx/tab/right_on.png"); color:#333; padding-bottom:1px; }
-.tabheader	{ margin-top:2px; margin-right:2px; }
-.tabcorner	{ margin-right:5px; float:right; }
-.tabheader .tabcorner span		{ margin-bottom:2px; }
-.tabpane { float:left; margin-top:5px; margin-left:5px; margin-bottom:5px; padding-top:5px; }
-.tabsend {}
+.tabs .tabheader .activetab			{ background-image:url("gfx/tab/left_on.png"); }
+.tabs .tabheader .activetab .tabhead	{ background-image:url("gfx/tab/right_on.png"); color:#333; padding-bottom:1px; }
+.tabs .tabheader	{ margin-top:2px; margin-right:2px; }
+.tabs .tabcorner	{ margin-right:5px; float:right; }
+.tabs .tabheader .tabcorner span		{ margin-bottom:2px; }
+.tabs .tabpane { float:left; margin-top:5px; margin-left:5px; margin-bottom:5px; padding-top:5px; }
+.tabs .tabsend {}
+
+/* ***** MultiTabs (table based) ***** */
+
+.multitabs .tabheader .activetab { border:2px solid black;}
+.multitabs .tabheader .inactivetab { border:2px solid white; }
 
 /* ***** MAP NAVI ***** */
 

@@ -194,6 +194,7 @@ function cost2txt ($costarr,$user=false) {
 		$color = (!$user)?"black":(($user->{$f} >= $cost)?"green":"red");
 		$out .= "<img src='".g("res_$f.gif")."'><font color='$color'>".ktrenner($cost)."</font>";
 	}
+	if (empty($out)) $out = "0";
 	return $out;
 }
 function BuildingAction2txt ($action) {

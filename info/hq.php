@@ -127,7 +127,7 @@ class cInfoHQ extends cInfoBuilding {
 			$hqtabs[] = array("Übersicht",$this->PrintOverview());
 			$hqtabs[] = array("Diplomatie",		"",Query("diplo.php?sid=?"));
 			$hqtabs[] = array("Einstellungen",	"",Query("profile.php?sid=?"));
-			echo GenerateTabs("hqtabs",$hqtabs,"",false);
+			echo GenerateTabs("hqtabs",$hqtabs);
 		} 
 		
 		profile_page_end(); 
@@ -321,13 +321,13 @@ class cInfoHQ extends cInfoBuilding {
 		global $gUser;
 		rob_ob_start(); 
 		$overviewtabs = array();
+		$overviewtabs[] = array("Gebäude",			"",Query("summary_buildings.php?sid=?"));
+		$overviewtabs[] = array("Forschung",		"",Query("tech.php?sid=?"));
+		$overviewtabs[] = array("Truppen",			"",Query("summary_units.php?sid=?"));
 		$overviewtabs[] = array("Zauber",			"",Query("summary.php?sid=?"));
 		$overviewtabs[] = array("Waren",			"",Query("waren.php?sid=?"));
 		$overviewtabs[] = array("Kosten",			"",Query("kosten.php?sid=?"));
 		$overviewtabs[] = array("Baupl&auml;ne",	"",Query("bauplan.php?sid=?"));
-		$overviewtabs[] = array("Truppen",			"",Query("summary_units.php?sid=?"));
-		$overviewtabs[] = array("Gebäude",			"",Query("summary_buildings.php?sid=?"));
-		$overviewtabs[] = array("Forschung",		"",Query("tech.php?sid=?"));
 		$overviewtabs[] = array("Quests",			"",Query("quest.php?sid=?"));
 		// echo GenerateTabs("overviewtabs",$overviewtabs,"",false);
 		?>

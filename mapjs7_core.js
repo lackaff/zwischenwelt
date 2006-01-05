@@ -547,9 +547,10 @@ function GetCellHTML (relx,rely) {
 		res += "<div style=\"background-image:url("+layers[i]+"); "+bg+"\">";
 	}
 	res += "<div id=\"mouselistener_"+rely+"_"+relx+"\" ><div onClick=\"mapclick("+relx+","+rely+")\" onMouseover=\"if (!gLoading) mapover("+relx+","+rely+")\">";
-	if (relx == gXMid && rely == gYMid) 
-			res += "<img src='gfx/crosshair.png' onMouseover=\"if (!gLoading) mapover("+relx+","+rely+")\">"; 
-	else	res += "<img src=\""+g("1px.gif")+"\" width="+kJSForceIESpaceCX+" height="+kJSForceIESpaceCY+">";
+	//if (relx == gXMid && rely == gYMid) 
+	//		res += "<img src='gfx/crosshair.png' onMouseover=\"if (!gLoading) mapover("+relx+","+rely+")\">"; 
+	//else
+	res += "<img src=\""+g("1px.gif")+"\" width="+kJSForceIESpaceCX+" height="+kJSForceIESpaceCY+">";
 	res += celltext;
 	res += '</div></div>';
 	for (i in layers) res += '</div>';
@@ -606,7 +607,7 @@ function mapover (relx,rely) {
 	gLastTipY = rely;
 	KillTip();
 	// set interval
-	gMapTipCountDown = window.setTimeout("ShowMapTip("+relx+","+rely+")",500);
+	gMapTipCountDown = window.setTimeout("ShowMapTip("+relx+","+rely+")",300);
 }
 
 function ShowMapTip(relx,rely) {

@@ -34,10 +34,34 @@ if (isset($f_gotocat)) {
 			$foundobject = sqlgetobject("SELECT `x`,`y` FROM `building` WHERE `user` = ".intval($f_gotocat2)." AND `type` = ".kBuilding_HQ);
 		break;
 		case kMapNaviGotoCat_Search:
-			// todo : on change of searchtext-field in navi : reset search-number
-			// todo : list usernames, userguild, armynames, bodenschatz-type, hellholes-monstertype..
-			$foundobject = sqlgetobject("SELECT `id` FROM `user` WHERE `name` LIKE '%".addslashes($f_search)."%' ORDER BY RAND() LIMIT 1");
-			if ($foundobject) $foundobject = sqlgetobject("SELECT `x`,`y` FROM `building` WHERE `user` = ".$foundobject->id." AND `type` = ".kBuilding_HQ);
+			// $f_searchcounter
+			$foundplayerid = 0;
+			if (!empty($f_search)) switch ($f_gotocat2) {
+				case 0: // Spieler
+					$mylist = sqlgetonetable("SELECT `id` FROM `user` WHERE `name` LIKE '%".addslashes($f_search)."%'");
+					if (count($mylist) > 0) $foundplayerid = $mylist[intval($f_searchcounter) % count($mylist)];
+				break;
+				case 1: // Gilde
+					$mylist = sqlgetonetable("SELECT `user`.`id` FROM `user`,`guild` WHERE `guild`.`id` = `user`.`guild` AND `guild`.`name` LIKE '%".addslashes($f_search)."%'");
+					if (count($mylist) > 0) $foundplayerid = $mylist[intval($f_searchcounter) % count($mylist)];
+				break;
+				case 2: // Armee
+					$mylist = sqlgettable("SELECT `x`,`y` FROM `army` WHERE `name` LIKE '%".addslashes($f_search)."%'");
+					if (count($mylist) > 0) $foundobject = $mylist[intval($f_searchcounter) % count($mylist)];
+				break;
+				case 3: // Monster
+					$mylist = sqlgettable("SELECT `x`,`y` FROM `army` WHERE `name` LIKE '%".addslashes($f_search)."%'");
+					if (count($mylist) > 0) $foundobject = $mylist[intval($f_searchcounter) % count($mylist)];
+				break;
+				case 4: // Bodenschatz
+					$typelist = sqlgetonetable("SELECT `id` FROM `buildingtype` WHERE `id` IN (".implode(",",$gBodenSchatzBuildings).") AND `name` LIKE '%".addslashes($f_search)."%'");
+					if (count($typelist) > 0) {
+						$mylist = sqlgettable("SELECT `x`,`y` FROM `building` WHERE `type` IN (".implode(",",$typelist).") ");
+						if (count($mylist) > 0) $foundobject = $mylist[intval($f_searchcounter) % count($mylist)];
+					}
+				break;
+			}
+			if ($foundplayerid) $foundobject = sqlgetobject("SELECT `x`,`y` FROM `building` WHERE `user` = ".$foundplayerid." AND `type` = ".kBuilding_HQ);
 		break;
 		case kMapNaviGotoCat_Random: // i thought this might be funny =)
 			switch ($f_gotocat2) {
@@ -94,7 +118,7 @@ $xylimit = "`x` >= ".($gLeft-1)." AND `x` < ".($gLeft+$gCX+1)." AND
 			`y` >= ".($gTop-1)." AND `y` < ".($gTop+$gCY+1);
 			
 // produce session-independent querry, to enable caching
-$jsparam = "v2=6";
+$jsparam = "v2=7";
 $styleparam = "?v=8";
 if ($gUser->usegfxpath || $gUser->race != 1)
 	$styleparam .= "&uid=".$gUser->id;

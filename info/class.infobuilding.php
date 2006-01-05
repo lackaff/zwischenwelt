@@ -50,7 +50,7 @@ class cInfoBuilding extends cInfoBase {
 		if (cTransfer::has_armytransfer($this,false)) {
 			rob_ob_start();
 			cTransfer::display_armytransfer($this,false);
-			RegisterInfoTab("Einheiten",rob_ob_end(),3);
+			RegisterInfoTab("Truppen",rob_ob_end(),3);
 			
 			// kampfsim link in jedem gebäude in dem man KAMPF-einheiten produzieren kann
 			$units = $this->producable_units();
@@ -537,7 +537,7 @@ class cInfoBuilding extends cInfoBase {
 							<?php /* #### KOSTEN AUFLISTUNG #### */ ?>
 							<table border=1 cellspacing=0 rules="all">
 							<tr>
-								<td colspan=2 align="center"><a href="<?=Query("kosten.php?sid=?")?>">Upgrade auf Stufe</a></td>
+								<td colspan=2 align="center"><a href="<?=Query("summary_buildings.php?sid=?&selbtype=".$gObject->type)?>">Upgrade auf Stufe</a></td>
 								<?php foreach($gRes as $n=>$f)echo '<td align="center"><img src="'.g('res_'.$f.'.gif').'"></td>'; ?>
 								<td align="center"><img src="<?=g("sanduhrklein.gif")?>"></td>
 							</tr>
@@ -545,7 +545,7 @@ class cInfoBuilding extends cInfoBase {
 							<?php $show = 4;for ($L=$gObject->level;$L<$gObject->level+$upgrades;$L++) {?>
 								<?php
 									--$show;
-									$upmod = cBuilding::calcUpgradeCostsMod($L+1); $time = cBuilding::calcUpgradeTime($btype,$L+1);
+									$upmod = cBuilding::calcUpgradeCostsMod($L+1); $time = cBuilding::calcUpgradeTime($btype->id,$L+1);
 									if (!$upgrading || $L > $gObject->level) {
 										$timesum += $time;
 										foreach($gRes as $n=>$f) ${"totalcost_".$f} += round($upmod*$btype->{"cost_".$f},0);
@@ -576,7 +576,7 @@ class cInfoBuilding extends cInfoBase {
 								<td></td>
 								<td align="right">&nbsp;<?=$gObject->level+$upgrades+1?>&nbsp;</td>
 								<?php foreach($gRes as $n=>$f)echo '<td align="right">'.ktrenner(round($upmod*$btype->{"cost_".$f},0)).'</td>'; ?>
-								<td align="right"><?=Duration2Text(cBuilding::calcUpgradeTime($btype,$gObject->level+1+$upgrades))?></td>
+								<td align="right"><?=Duration2Text(cBuilding::calcUpgradeTime($gObject->type,$gObject->level+1+$upgrades))?></td>
 							</tr>
 							</table>
 							
