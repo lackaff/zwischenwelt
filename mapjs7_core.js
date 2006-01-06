@@ -24,7 +24,10 @@ gTerrainMap_nwse = false; // generated from CompileTerrain()
 gWPMap = false; // generated from CompileWPs
 var gXMid,gYMid;
 gNWSEDebug = false; // shows typeid and connect-to infos in maptip
+gPathDetected = 0;
 
+// compare version with kBaseJSMapVersion from mapjs7.php and kNaviJSMapVersion available with GetkNaviJSMapVersion
+kCoreJSMapVersion = 24;
 kMapTipName = "maptip";
 kMapTip_xoff = 29;
 kMapTip_yoff = 56;
@@ -40,8 +43,19 @@ gProfileLastLine = "";
 
 gBaseLoaded = false; // wether or not the mapjs7.php javascript has finished loading -> when calling MapInit();
 
+// a single location to secure all access
+function GetNaviFrame () {
+	if (gBig) {
+		if (opener) if (opener.parent) if (opener.parent.navi) return opener.parent.navi;
+		return false;
+	} else {
+		if (parent) if (parent.navi) return parent.navi;
+		return false;
+	}
+}
 
 // obsolete interface
+function getmode() { return gMode;}
 function getmode() { return gMode;}
 function getleft() { return gLeft;}
 function gettop() { return gTop;}
@@ -86,9 +100,10 @@ function JSUpdateNaviPos () {
 	// disabled because of browser problems...
 	if (!gBaseLoaded) return;
 	if (!gAllLoaded) return;
-	if (gBig != null && !gBig && parent.navi != null && parent.navi.updatepos != null) {
-		parent.navi.updatepos(gLeft+gXMid,gTop+gYMid);
-		parent.navi.SelectArmy(gActiveArmyID);
+	var naviframe = GetNaviFrame();
+	if (!gBig && naviframe) {
+		naviframe.updatepos(gLeft+gXMid,gTop+gYMid);
+		naviframe.SelectArmy(gActiveArmyID);
 	}*/
 }
 
@@ -187,8 +202,65 @@ function CompileWPs () {
 	}
 }
 
+
+function AbsolutePathCheck () {
+	// to detect path mismatch early
+	// a mismatching absolute path can cause permission violations on some browser versions
+	var base1 = kBaseUrl+"/"+kMapScript;
+	var base2 = kBaseUrl+kMapScript;
+	var expected1 = location.protocol+"//"+location.host+location.pathname;
+	var expected2 = location.protocol+"//"+location.hostname+location.pathname;
+	gPathDetected = 0;
+	if (base1 == expected1) gPathDetected += 1;
+	if (base2 == expected1) gPathDetected += 2;
+	if (base1 == expected2) gPathDetected += 4;
+	if (base2 == expected2) gPathDetected += 8;
+	if (gPathDetected > 0) return true; // valid path
+	var mytext = "";
+	mytext += "Konfigurations- oder Browser Problem : der Absolute Pfad stimmt nicht\n";
+	mytext += "siehe defines.mysql.php : BASEURL\n";
+	mytext += "base1="+base1+"\n";
+	//mytext += "base2="+base2+"\n";
+	//mytext += "expected1="+expected1+"\n";
+	//mytext += "expected2="+expected2+"\n";
+	mytext += "location.protocol="+location.protocol+"\n";
+	mytext += "location.host="+location.host+"\n";
+	mytext += "location.hostname="+location.hostname+"\n";
+	mytext += "location.pathname="+location.pathname+"\n";
+	//mytext += "location.hash="+location.hash+"\n";
+	//mytext += "location.port="+location.port+"\n";
+	//mytext += "location.search="+location.search+"\n";
+	//mytext += "location.href="+location.href+"\n";
+	alert(mytext);
+	return false;
+}
+
+function VersionCheckBase () {
+	//if (!AbsolutePathCheck()) return false;
+	AbsolutePathCheck();
+	if (kCoreJSMapVersion == kBaseJSMapVersion) return true;
+	alert("Update der JavaScriptKarte (Core von v"+kCoreJSMapVersion+" auf v"+kBaseJSMapVersion+"), bitte neu einloggen...");
+	var naviframe = GetNaviFrame();
+	if (naviframe) naviframe.location.reload();
+	location.reload();
+	return false;
+}
+
+function VersionCheckNavi () {
+	var naviframe = GetNaviFrame();
+	if (!naviframe) return true;
+	var naviversion = naviframe.GetkNaviJSMapVersion();
+	if (kCoreJSMapVersion == naviversion) return true;
+	alert("Update der JavaScriptKarte (Navi von v"+naviversion+" auf v"+kCoreJSMapVersion+"), bitte neu einloggen...");
+	naviframe.location.reload();
+	location.reload();
+	return false;
+}
+
 // executed onLoad, parse data, CreateMap() when finished
 function MapInit() {
+	if (!VersionCheckBase()) return;
+
 	gBaseLoaded = true;
 	profiling("starting init");
 	
@@ -363,7 +435,7 @@ function CreateMap() {
 			//var blindcx = (y<0)?kJSForceIESpace:1;
 			//var blindcy = (x<0)?kJSForceIESpace:1;
 			//var blindgif = (x<0&&y<0)?"":("<img src=\""+g("edit.png")+"\" width="+blindcx+" height="+blindcy+">");
-			row += "<th nowrap class=\"mapborder\"><div class=\""+myclass+"\" onClick=\"nav("+navx+","+navy+","+step+")\"><span>"+text+"</span></div></th>\n";
+			row += "<th nowrap class=\"mapborder\"><div class=\""+myclass+"\" onClick=\"navrel("+navx+","+navy+","+step+")\"><span>"+text+"</span></div></th>\n";
 		}
 		maphtml += "\n<tr>"+row+"</tr>\n";
 	}
@@ -386,8 +458,8 @@ function CreateMap() {
 	tab_pre += "	<div class=\"tabheader\">";
 	tab_pre += "		<div class=\"tabcorner\">";
 	tab_pre += "			<span>"+gMapModiHelp+"</span>";
-	tab_pre += "<a href=\"javascript:void(alert('Map-Version:17'))\">v</a>";
-	tab_pre += "<a href=\"javascript:nav(0,0,1)\"><img alt=\"reload\" title=\"reload\" border=0 src=\""+g("icon/reload.png")+"\"></a>";
+	tab_pre += "<a href=\"javascript:void(alert('Map-Version="+kCoreJSMapVersion+",PathCode="+gPathDetected+"'))\">v</a>";
+	tab_pre += "<a href=\"javascript:navrel(0,0,1)\"><img alt=\"reload\" title=\"reload\" border=0 src=\""+g("icon/reload.png")+"\"></a>";
 	if (!gBig)	tab_pre += "<a href=\"javascript:OpenMap(1)\"><img alt=\"bigmap\" title=\"bigmap\" border=0 src=\""+g("icon/bigmap.png")+"\"></a>";
 	if (!gBig)	tab_pre += "<a href=\"javascript:OpenMap(2)\"><img alt=\"minimap2\" title=\"minimap2\" border=0 src=\""+g("icon/minimap2.png")+"\"></a>";
 	if (!gBig)	tab_pre += "<a href=\"javascript:OpenMap(3)\"><img alt=\"minimap\" title=\"minimap\" border=0 src=\""+g("icon/minimap.png")+"\"></a>";
@@ -563,7 +635,7 @@ function GetCellHTML (relx,rely) {
 	
 	//if (relx == 4 && rely == 5) alert(g3(gBuildingType[buildingtype].gfx,nwsecode,level));
 	// background-color:$b
-	// onClick="nav(-1,-1)"
+	// onClick="navrel(-1,-1)"
 	//res = "<div onClick='m("+relx+","+rely+")'>"+res+"</div>";
 	//res = "<div onClick='m("+relx+","+rely+")'>"+res+"</div>";
 	//if (relx == 0 && rely == 0) alert(res);
@@ -573,14 +645,9 @@ function GetCellHTML (relx,rely) {
 function mapclick (relx,rely) {
 	//if (gLoading) return;
 	//debuglog("c"+relx+","+rely);
-	if (gBig) {
-		//opener.parent.info.location.href = "info/info.php?x="+(x+gLeft)+"&y="+(y+gTop)+"&sid="+gSID;
-		if (opener != null && opener.parent != null && opener.parent.navi != null)
-			opener.parent.navi.mapclicktool(relx+gLeft,rely+gTop,gActiveArmyID);
-	} else {
-		if (parent.navi != null)
-			parent.navi.mapclicktool(relx+gLeft,rely+gTop,gActiveArmyID);
-	}
+	if (!VersionCheckNavi()) return;
+	var naviframe = GetNaviFrame();
+	if (naviframe) naviframe.mapclicktool(relx+gLeft,rely+gTop,gActiveArmyID);
 	KillTip();
 }
 
@@ -923,7 +990,7 @@ function g5 (path,nwse,level,race,moral) {
 
 // interaction
 
-function nav(x,y,scroll) {
+function navrel(x,y,scroll) {
 	if (x < 0) x = -1; else if (x > 0) x = 1;
 	if (y < 0) y = -1; else if (y > 0) y = 1;
 	x = gLeft + gXMid + x * scroll;
@@ -931,6 +998,10 @@ function nav(x,y,scroll) {
 	navabs(x,y,0);
 }
 
+// call this from external pages...
+function extnavabs (x,y,cancelmode) {
+	navabs(x,y,cancelmode);
+}
 function navabs (x,y,cancelmode) {
 	// alle elemente mit javascript-mouseover deaktivieren, um javascript fehler beim laden zu verhindern
 	
@@ -944,7 +1015,8 @@ function navabs (x,y,cancelmode) {
 	//gAllLoaded = false;
 	var mode = cancelmode?kJSMapMode_Normal:gMapMode;
 	//location.href = location.pathname + "?sid="+gSID+"&x="+x+"&big="+gBig+"&y="+y+"&cx="+gCX+"&cy="+gCY+"&mode="+mode+"&scroll="+gScroll+"&army="+gActiveArmyID;
-	location.href = kBASEURL + "/mapjs7.php?sid="+gSID+"&x="+x+"&big="+gBig+"&y="+y+"&cx="+gCX+"&cy="+gCY+"&mode="+mode+"&scroll="+gScroll+"&army="+gActiveArmyID;
+	//location.href = kBASEURL + "/mapjs7.php?sid="+gSID+"&x="+x+"&big="+gBig+"&y="+y+"&cx="+gCX+"&cy="+gCY+"&mode="+mode+"&scroll="+gScroll+"&army="+gActiveArmyID;
+	location.href = "?sid="+gSID+"&x="+x+"&big="+gBig+"&y="+y+"&cx="+gCX+"&cy="+gCY+"&mode="+mode+"&scroll="+gScroll+"&army="+gActiveArmyID;
 }
 
 

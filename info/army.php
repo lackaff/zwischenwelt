@@ -329,7 +329,7 @@ class cInfoArmy extends cInfoBase {
 					$infourl = Query("?sid=?&x=".$x."&y=".$y);
 					$mapurl = Query("../".kMapScript."?sid=?&x=".$x."&y=".$y."&army=".$army->id);
 					//$gJSCommands[] = "parent.map.location.href = parent.map.location.href;";
-					$gJSCommands[] = "parent.navi.navabs(".intval($x).",".intval($y).",true);";
+					$gJSCommands[] = "parent.map.extnavabs(".intval($x).",".intval($y).",true);";
 					$gJSCommands[] = "location.href=\"".$infourl."\";";
 					?>
 					<h3><font color=green>Armee Teleportiert Nach <a target='map' href='<?=$mapurl?>'>(<?=$x?>,<?=$y?>)</a></font></h3>

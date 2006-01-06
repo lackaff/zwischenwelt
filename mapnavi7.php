@@ -172,11 +172,12 @@ if (isset($f_regentypes)) {
 	var lineinit = false;
 	var linex = 0;
 	var liney = 0;
-	function nav (x,y) {
-		parent.map.nav(x,y);
+	kNaviJSMapVersion = <?=intval(kJSMapVersion)?>;
+	function GetkNaviJSMapVersion () {
+		return kNaviJSMapVersion;
 	}
-	function navabs (x,y,cancelmode) {
-		parent.map.navabs(x,y,cancelmode);
+	function navi_navrel (x,y) {
+		parent.map.navrel(x,y);
 	}
 	function updatepos (x,y) {
 		document.getElementsByName("pos")[0].value = x+","+y;
@@ -202,7 +203,7 @@ if (isset($f_regentypes)) {
 			return;
 		}	
 		if (curtool == 10) {
-			navabs(x,y,false);
+			parent.map.extnavabs(x,y,false);
 			return;
 		}	
 		var urladd = "";
