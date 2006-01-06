@@ -69,10 +69,11 @@ class Spell {
 	function GetHelpers() {
 		global $gSpellType;
 		$this->spelltype = $gSpellType[$this->type];
-		if ($this->targettype == MTARGET_PLAYER)
-			$this->targetuser = sqlgetobject("SELECT * FROM `user` WHERE `id` = ".intval($this->target));
-		if ($this->targettype == MTARGET_ARMY)
-			$this->targetarmy = sqlgetobject("SELECT * FROM `army` WHERE `id` = ".intval($this->target));
+		$building = sqlgetobject("SELECT * FROM `building` WHERE `x` = ".intval($this->x)." AND `y` = ".intval($this->y));
+		if ($building) $this->targetuser = sqlgetobject("SELECT * FROM `user` WHERE `id` = ".intval($building->user));
+		
+		//if ($this->targettype == MTARGET_PLAYER)
+		//	$this->targetuser = sqlgetobject("SELECT * FROM `user` WHERE `id` = ".intval($this->target));
 		$this->level = $this->GetLevel();
 		$this->radius = $this->GetRadius();
 	}
