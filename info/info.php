@@ -361,7 +361,7 @@ if (!isset($f_blind)) {
 	<?php /* wegpunkte */ ?>
 	<?php $count = 0; foreach($gArmy as $army) if (cArmy::CanControllArmy($army,$gUser)) ++$count;?>
 	<?php if ($count > 0) { ?>
-	Wegpunkte setzten : 
+	Wegpunkte setzen : 
 	<FORM METHOD=POST name="setwpform" ACTION="<?=Query("?sid=?&x=?&y=?")?>">
 	<INPUT TYPE="hidden" NAME="do" VALUE="setwaypoint">
 	<INPUT TYPE="hidden" NAME="gfxbuttonmode" VALUE="0">

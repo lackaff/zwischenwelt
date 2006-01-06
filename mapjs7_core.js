@@ -550,7 +550,7 @@ function GetCellHTML (relx,rely) {
 		var bg = (i==0 && backgroundcolor && backgroundcolor != "false")?("background-color:"+backgroundcolor+";"):"";
 		res += "<div style=\"background-image:url("+layers[i]+"); "+bg+"\">";
 	}
-	res += "<div id=\"mouselistener_"+rely+"_"+relx+"\" ><div onClick=\"mapclick("+relx+","+rely+")\" onMouseover=\"if (!gLoading) mapover("+relx+","+rely+")\">";
+	res += "<div id=\"mouselistener_"+rely+"_"+relx+"\" ><div onClick=\"mapclick("+relx+","+rely+")\" onMouseover=\"mapover("+relx+","+rely+")\">";
 	//if (relx == gXMid && rely == gYMid) 
 	//		res += "<img src='gfx/crosshair.png' onMouseover=\"if (!gLoading) mapover("+relx+","+rely+")\">"; 
 	//else
@@ -570,9 +570,8 @@ function GetCellHTML (relx,rely) {
 }
 
 function mapclick (relx,rely) {
-	if (gLoading) return;
+	//if (gLoading) return;
 	//debuglog("c"+relx+","+rely);
-	KillTip();
 	if (gBig) {
 		//opener.parent.info.location.href = "info/info.php?x="+(x+gLeft)+"&y="+(y+gTop)+"&sid="+gSID;
 		if (opener != null && opener.parent != null && opener.parent.navi != null)
@@ -581,13 +580,14 @@ function mapclick (relx,rely) {
 		if (parent.navi != null)
 			parent.navi.map(relx+gLeft,rely+gTop,gActiveArmyID);
 	}
+	KillTip();
 }
 
 var gLastTipX = -1;
 var gLastTipY = -1;
 var gMapTipCountDown = false;
 function KillTip () {
-	if (gLoading) return;
+	// if (gLoading) return;
 	var maptipnode = document.getElementById(kMapTipName);
 	maptipnode.style.visibility = "hidden";
 	AbortTip();
@@ -605,7 +605,7 @@ function AbortTip () {
 }
 
 function mapover (relx,rely) {
-	if (gLoading) return;
+	//if (gLoading) return;
 	if (relx == gLastTipX && rely == gLastTipY) return;
 	gLastTipX = relx;
 	gLastTipY = rely;
