@@ -727,6 +727,19 @@ if (!isset($f_blind)) {
 		var y = parent.map.gety();
 		window.open("../minimap.php?mode=wp&sid=<?=$gSID?>&cx="+x+"&cy="+y+"&army="+army,"WPMap","location=no,menubar=no,toolbar=no,status=no,resizable=yes,scrollbars=yes");
 	}
+	function setallchecks (name,check) {
+		for (var i in document.getElementsByName(name))
+			document.getElementsByName(name)[i].checked = check;
+	}
+	function ActivateInfoTab (tabum) {
+		// todo : set cookie
+		var verfall = 1000 * 60 * 60 * 24 * 365;
+		var jetzt = new Date();
+		var Auszeit = new Date(jetzt.getTime() + verfall);
+		document.cookie = "activeinfotab" + "=" + tabum + "; expires=" + Auszeit.toGMTString() + ";";
+		document.cookie = "activeinfotabx" + "=" + <?=intval($f_x)?> + "; expires=" + Auszeit.toGMTString() + ";";
+		document.cookie = "activeinfotaby" + "=" + <?=intval($f_y)?> + "; expires=" + Auszeit.toGMTString() + ";";
+	}
 //-->
 </SCRIPT>
 </head>
@@ -749,8 +762,11 @@ if (isset($f_blind)) { // blind modus im dummy frame, fuer schnellere map-click-
 
 <?php
 if ($gInfoTabsSelected == -1) $gInfoTabsSelected = count($gInfoTabs)-1;
+if (isset($_COOKIE["activeinfotab"]) && $_COOKIE["activeinfotabx"] == $f_x && $_COOKIE["activeinfotaby"] == $f_y) {
+	$gInfoTabsSelected = intval($_COOKIE["activeinfotab"]);
+}
 foreach($gInfoTabs as $i=>$v)$gInfoTabs[$i][0] = "<img border=0 src=\"".g("1px.gif")."\" width=1 height=18>".$gInfoTabs[$i][0];
-echo GenerateTabs("infotabs",$gInfoTabs,$gInfoTabsCorner,false,$gInfoTabsSelected); // echo "<div class=\"tabpane\">";
+echo GenerateTabs("infotabs",$gInfoTabs,$gInfoTabsCorner,"ActivateInfoTab",$gInfoTabsSelected); // echo "<div class=\"tabpane\">";
 ?>
 
 </body>

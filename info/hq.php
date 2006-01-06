@@ -58,6 +58,18 @@ class cInfoHQ extends cInfoBuilding {
 					$gUser = sqlgetobject("SELECT * FROM `user` WHERE `id` = ".$gUser->id);
 				}
 			break;
+			case "hqdiplo":
+				if (isset($f_remove)) {
+					$f_sel_friend = intarray(isset($f_sel_friend)?$f_sel_friend:false);
+					$f_sel_enemy = intarray(isset($f_sel_enemy)?$f_sel_enemy:false);
+					foreach ($f_sel_friend as $uid)	SetFOF($gUser->id,intval($uid),kFOF_Neutral);
+					foreach ($f_sel_enemy as $uid)	SetFOF($gUser->id,intval($uid),kFOF_Neutral);
+				}
+				if (isset($f_accept)) {
+					$f_sel_friendoffer = intarray(isset($f_sel_friendoffer)?$f_sel_friendoffer:false);
+					foreach ($f_sel_friendoffer as $uid) SetFOF($gUser->id,intval($uid),kFOF_Friend);
+				}
+			break;
 		}
 	}
 	
@@ -88,20 +100,24 @@ class cInfoHQ extends cInfoBuilding {
 		</form>
 		<?php } // endif?>
 		
-		<?php 
-		$profil = sqlgetone("SELECT `profil` FROM `userprofil` WHERE `id`=".$gObject->user);
-		$ownername = sqlgetone("SELECT `name` FROM `user` WHERE `id`=".intval($gObject->user));
-		?>
-		<?php ImgBorderStart("s2","jpg","#ffffee","bg-s2",32,33); ?>
-		<p align="center"><a href="<?=query("msg.php?sid=?&show=compose&to=".urlencode($ownername))?>"><span style="font-family:serif;font-size:18px;font-style:italic;"><?=$ownername?></span></a></p>
-		<p align="center"><span style="font-family:serif;font-size:11px;">von<br><?=sqlgetone("SELECT g.`name` FROM `guild` g,`user` u WHERE g.id=u.guild AND u.id=".$gObject->user)?></span></p>
-		<?php 
-		$registered = sqlgetone("SELECT `registered` FROM `user` u WHERE u.id=".$gObject->user);
-		if($registered > 0){ ?>
-		<p align="center"><span style="font-family:serif;font-size:11px;">dabei seit <?=date("j.n.y",$registered)?></span></p>
-		<?php } ?>
-		<?=nl2br(htmlspecialchars($profil))?>
-		<?php ImgBorderEnd("s2","jpg","#ffffee",32,33); ?>
+		<?php if ($gObject->user != $gUser->id) {?>
+			<?php 
+			$profil = sqlgetone("SELECT `profil` FROM `userprofil` WHERE `id`=".$gObject->user);
+			$ownername = sqlgetone("SELECT `name` FROM `user` WHERE `id`=".intval($gObject->user));
+			?>
+			<?php ImgBorderStart("s2","jpg","#ffffee","bg-s2",32,33); ?>
+			<p align="center"><a href="<?=query("msg.php?sid=?&show=compose&to=".urlencode($ownername))?>"><span style="font-family:serif;font-size:18px;font-style:italic;"><?=$ownername?></span></a></p>
+			<p align="center"><span style="font-family:serif;font-size:11px;">von<br><?=sqlgetone("SELECT g.`name` FROM `guild` g,`user` u WHERE g.id=u.guild AND u.id=".$gObject->user)?></span></p>
+			<?php 
+			$registered = sqlgetone("SELECT `registered` FROM `user` u WHERE u.id=".$gObject->user);
+			if($registered > 0){ ?>
+			<p align="center"><span style="font-family:serif;font-size:11px;">dabei seit <?=date("j.n.y",$registered)?></span></p>
+			<?php } ?>
+			<?=nl2br(htmlspecialchars($profil))?>
+			<?php ImgBorderEnd("s2","jpg","#ffffee",32,33); ?>
+		<?php } else { // ?>
+			<?=$this->PrintCenter()?>
+		<?php } // endif?>
 		
 		<?=$this->PrintTitles();?>
 		<?php
@@ -117,21 +133,22 @@ class cInfoHQ extends cInfoBuilding {
 		if ($this->construction > 0) return;
 		if ($gObject->user != $gUser->id) return;
 		
+		/*
 		profile_page_start("hq.php");
 		rob_ob_start();
-			
 		if($gObject->user == $gUser->id) {
 			$hqtabs = array();
-			$hqtabs[] = array("Zentrum",$this->PrintCenter());
-			$hqtabs[] = array("Produktion",$this->PrintWorker());
-			$hqtabs[] = array("Übersicht",$this->PrintOverview());
+			//$hqtabs[] = array("Zentrum",$this->PrintCenter());
 			$hqtabs[] = array("Diplomatie",		"",Query("diplo.php?sid=?"));
 			$hqtabs[] = array("Einstellungen",	"",Query("profile.php?sid=?"));
 			echo GenerateTabs("hqtabs",$hqtabs);
 		} 
-		
 		profile_page_end(); 
-		RegisterInfoTab("Verwaltung",rob_ob_end(),10);
+		*/
+		RegisterInfoTab("Produktion",$this->PrintWorker());
+		RegisterInfoTab("Übersicht",$this->PrintOverview());
+		RegisterInfoTab("Diplomatie",$this->PrintDiplo());
+		// RegisterInfoTab("Einstellungen",Query("profile.php?sid=?"));
 	}
 	
 	function PrintCenter () {
@@ -254,10 +271,9 @@ class cInfoHQ extends cInfoBuilding {
 		$tip = array();
 		
 		if ($gUser->guild == kGuild_Weltbank || $debug_show_all_tips) {
-			$tip[] = "Du bist in deiner Anfangszeit in der Weltbank-Gilde";
-			$tip[] = "dort kannst du dir Rohstoffe ausleihen,";
-			$tip[] = "und dich mit anderen neuen Spielern unterhalten";
-			$tip[] = "clicke dazu im Menu auf \"Gilde\"";
+			$tip[] = "Du bist in deiner Anfangszeit in der Weltbank (Menupunkt \"Gilde\")";
+			$tip[] = "In der Weltbank kannst du dir Rohstoffe ausleihen";
+			$tip[] = "In der Weltbank kannst du dich mit anderen neuen Spielern unterhalten";
 		}
 		
 		foreach ($minbtable as $o) {
@@ -448,6 +464,120 @@ class cInfoHQ extends cInfoBuilding {
 		</form>
 		
 		
+		<?php
+		return rob_ob_end();
+	}
+	
+	function PrintDiplo () {
+		global $gObject,$gUser,$gGlobal;
+		
+		$friends = sqlgettable("SELECT `user`.*,`user`.`general_pts`+`user`.`army_pts` as `pts` FROM `fof_user`,`user` 
+			WHERE `class` = ".kFOF_Friend." AND `master` = ".$gUser->id." AND `other` = `user`.id ORDER BY `pts` DESC");
+		$enemies = sqlgettable("SELECT `user`.*,`user`.`general_pts`+`user`.`army_pts` as `pts` FROM `fof_user`,`user` 
+			WHERE `class` = ".kFOF_Enemy." AND `master` = ".$gUser->id." AND `other` = `user`.id ORDER BY `pts` DESC");
+		$friend_offers = sqlgettable("SELECT `user`.*,`user`.`general_pts`+`user`.`army_pts` as `pts` FROM `fof_user`,`user` 
+			WHERE `class` = ".kFOF_Friend." AND `other` = ".$gUser->id." AND `master` = `user`.id ORDER BY `pts` DESC");
+		$friendids = intarray(AF($friends,"id"));
+
+		rob_ob_start();
+		?>
+		
+		<table><tr>
+		
+		<?php $count = 0; foreach ($friend_offers as $o) if (!in_array($o->id,$friendids)) $count++; ?>
+		<?php if ($count > 0) {?>
+			<td valign="top">
+			<form method="post" action="<?=Query("?sid=?&x=?&y=?")?>">
+			<input type="hidden" name="building" value="hq">
+			<input type="hidden" name="do" value="hqdiplo">
+			<input type="hidden" name="id" value="<?=$gObject->id?>">
+				<table>
+				<tr><th>Freundschafts angebote</th></tr>
+				<tr><td valign="top">
+					<?php if (count($friend_offers)) {?>
+						<?php /*Freunde*/ ?>
+						<table>
+						<tr>
+							<th><input type="checkbox" name="dummy" value="1" onChange="setallchecks('sel_friendoffer[]',this.checked)"></th>
+							<th>Name</th>
+							<th>Pos</th>
+							<th>Punkte</th>
+						</tr>
+						<?php foreach ($friend_offers as $o) if (!in_array($o->id,$friendids)) {?>
+							<tr>
+								<td><input type="checkbox" name="sel_friendoffer[]" value="<?=$o->id?>"></td>
+								<td><?=usermsglink($o)?></td>
+								<td><?=opos2txt(sqlgetobject("SELECT * FROM `building` WHERE `type` = ".kBuilding_HQ." AND `user` = ".$o->id))?></td>
+								<td align="right"><?=$o->general_pts+$o->army_pts?></td>
+							</tr>
+						<?php } // endforeach?>
+						</table>
+					<?php } // endif nonempty?>
+				</td></tr>
+				</table>
+				<input type="submit" name="accept" value="annehmen">
+			</form>
+			</td>
+		<?php } // endif not all empty?>
+				
+				
+		<?php if (count($friends) == 0 && count($enemies) == 0) {?>
+		<?php } else { // endif not all empty?>
+			<td valign="top">
+			<form method="post" action="<?=Query("?sid=?&x=?&y=?")?>">
+			<input type="hidden" name="building" value="hq">
+			<input type="hidden" name="do" value="hqdiplo">
+			<input type="hidden" name="id" value="<?=$gObject->id?>">
+				<table>
+				<tr><th>Freunde</th><th><?=count($enemies)?"Feinde":""?></th></tr>
+				<tr><td valign="top">
+					<?php if (count($friends)) {?>
+						<?php /*Freunde*/ ?>
+						<table>
+						<tr>
+							<th><input type="checkbox" name="dummy" value="1" onChange="setallchecks('sel_friend[]',this.checked)"></th>
+							<th>Name</th>
+							<th>Pos</th>
+							<th>Punkte</th>
+						</tr>
+						<?php foreach ($friends as $o) {?>
+							<tr>
+								<td><input type="checkbox" name="sel_friend[]" value="<?=$o->id?>"></td>
+								<td><?=usermsglink($o)?><?=GetFOF($o->id,$gUser->id)==kFOF_Friend?"":"<font color='#0088FF'>(einseitig)</font>"?></td>
+								<td><?=opos2txt(sqlgetobject("SELECT * FROM `building` WHERE `type` = ".kBuilding_HQ." AND `user` = ".$o->id))?></td>
+								<td align="right"><?=$o->general_pts+$o->army_pts?></td>
+							</tr>
+						<?php } // endforeach?>
+						</table>
+					<?php } // endif nonempty?>
+				</td><td valign="top">
+					<?php if (count($enemies)) {?>
+						<?php /*Feinde*/ ?>
+						<table>
+						<tr>
+							<th><input type="checkbox" name="dummy" value="1" onChange="setallchecks('sel_enemy[]',this.checked)"></th>
+							<th>Name</th>
+							<th>Pos</th>
+							<th>Punkte</th>
+						</tr>
+						<?php foreach ($enemies as $o) {?>
+							<tr>
+								<td><input type="checkbox" name="sel_enemy[]" value="<?=$o->id?>"></td>
+								<td><?=usermsglink($o)?></td>
+								<td><?=opos2txt(sqlgetobject("SELECT * FROM `building` WHERE `type` = ".kBuilding_HQ." AND `user` = ".$o->id))?></td>
+								<td align="right"><?=$o->general_pts+$o->army_pts?></td>
+							</tr>
+						<?php } // endforeach?>
+						</table>
+					<?php } // endif nonempty?>
+				</td></tr>
+				</table>
+				<input type="submit" name="remove" value="entfernen">
+			</form>
+			</td>
+		<?php } // endif not all empty ?>
+		
+		</tr></table>
 		<?php
 		return rob_ob_end();
 	}

@@ -293,8 +293,8 @@ if (isset($f_regentypes)) {
 	}
 	function MyOnLoad () {
 		ChangeGotoCat();
-		if (parent.map != null && parent.map.JSUpdateNaviPos != null)
-			parent.map.JSUpdateNaviPos();
+		//if (parent.map != null && parent.map.JSUpdateNaviPos != null)
+		//	parent.map.JSUpdateNaviPos();
 	}
 	function SelectArmy (armyid) {
 		if (armyid == 0) return;

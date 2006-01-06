@@ -150,8 +150,8 @@ div.mainmenu ul {
 
 /* ***** MultiTabs (table based) ***** */
 
-.multitabs .tabheader .activetab { border:2px solid black;}
-.multitabs .tabheader .inactivetab { border:2px solid white; }
+.activemultitab { border:2px solid black;}
+.inactivemultitab { border:2px solid white; }
 
 /* ***** MAP NAVI ***** */
 

@@ -25,13 +25,14 @@ else $newguild = false;
 			<li <?=($newpost)?"class=\"highlight\"":""?>>
 				<a href="<?=Query("../info/msg.php?sid=?&folder=".$cpost->folder)?>">Post</a>
 			</li>
-			<li><a href="<?=sessionLink("../stats/gen_pts.php")?>">Highscore</a></li>
 			<li><a href="http://zwischenwelt.org/forum/" target="_blank">Forum</a></li>
+			<li><a href="<?=sessionLink("../stats/gen_pts.php")?>">Highscore</a></li>
+			<li><a href="<?=sessionLink("../info/profile.php?sid=?")?>">Einstell.</a></li>
 			<li><a href="http://zwischenwelt.org/wiki/" target="_blank">Hilfe</a></li>
+			<li><a href="<?=sessionLink("../logout.php")?>" target="_parent">Logout</a></li>
 			<li <?=($newguild)?"class=\"highlight\"":""?>>
 				<a href="<?=sessionLink("../info/guild.php")?>">Gilde</a>
 			</li>
-			<li><a href="<?=sessionLink("../logout.php")?>" target="_parent">Logout</a></li>
 		</ul>
 	</div>
 	<div class="mainmenu_icons">

@@ -17,8 +17,7 @@ function GenerateTabs ($cssclass,$tabs,$corner="",$jschangecallback=false,$selec
 	?>
 	<SCRIPT LANGUAGE="JavaScript" type="text/javascript"><!--
 	function TabPane<?=$gTabPaneNumber?>Activate (tabnum) {
-		<?php if ($jschangecallback) {?> <?=$jschangecallback?>(tabnum); <?php }?>
-		var i,head,pane;
+		var i,head,pane,nochange = false;
 		//var heads = document.getElementsByName("tabhead<?=$gTabPaneNumber?>");
 		//var panes = document.getElementsByName("tabpane<?=$gTabPaneNumber?>");
 		//var heads = document.getElementsByName("tabhead<?=$gTabPaneNumber?>");
@@ -32,15 +31,20 @@ function GenerateTabs ($cssclass,$tabs,$corner="",$jschangecallback=false,$selec
 			head = document.getElementById("tabhead<?=$gTabPaneNumber?>_"+i);
 			pane = document.getElementById("tabpane<?=$gTabPaneNumber?>_"+i);
 			if (head.className == "activetab") {
-				if (i == tabnum) return; // nothing to activate
-				head.className = "inactivetab";
-				pane.style.display = "none";
+				if (i == tabnum) nochange = true; // nothing to activate
+				if (!nochange) {
+					head.className = "inactivetab";
+					pane.style.display = "none";
+				}
 			}
 		}
-		head = document.getElementById("tabhead<?=$gTabPaneNumber?>_"+tabnum);
-		pane = document.getElementById("tabpane<?=$gTabPaneNumber?>_"+tabnum);
-		head.className = "activetab";
-		pane.style.display = "inline"; // TODO : is this the evil tabs bug ??
+		if (!nochange) {
+			head = document.getElementById("tabhead<?=$gTabPaneNumber?>_"+tabnum);
+			pane = document.getElementById("tabpane<?=$gTabPaneNumber?>_"+tabnum);
+			head.className = "activetab";
+			pane.style.display = "inline"; // TODO : is this the evil tabs bug ??
+		}
+		<?php if ($jschangecallback) {?> <?=$jschangecallback?>(tabnum); <?php }?>
 	}
 	//-->
 	</SCRIPT>
@@ -86,27 +90,27 @@ function GenerateTabsMultiRow ($cssclass,$tabs,$max_per_row,$selected=0) {
 		for (i=0;i<<?=$anzahl_tabs?>;++i) {
 			head = document.getElementById("tabhead<?=$gTabPaneNumber?>_"+i);
 			pane = document.getElementById("tabpane<?=$gTabPaneNumber?>_"+i);
-			if (head.className == "activetab") {
+			if (head.className == "activemultitab") {
 				if (i == tabnum) return; // nothing to activate
-				head.className = "inactivetab";
+				head.className = "inactivemultitab";
 				pane.style.display = "none";
 			}
 		}
 		head = document.getElementById("tabhead<?=$gTabPaneNumber?>_"+tabnum);
 		pane = document.getElementById("tabpane<?=$gTabPaneNumber?>_"+tabnum);
-		head.className = "activetab";
+		head.className = "activemultitab";
 		pane.style.display = "block";
 	}
 	//-->
 	</SCRIPT>
 	<div class="<?=$cssclass?>">
 	<div class="multitabs">
-		<div class="tabheader">
+		<div class="multitabheader">
 		<table>
 		<tr>
 			<?php $i = 0; foreach ($tabs as $id => $tupel) {?>
 				<th name="tabhead<?=$gTabPaneNumber?>" id="tabhead<?=$gTabPaneNumber?>_<?=$i?>"
-					class="<?=$selected==$id?"activetab":"inactivetab"?>" 
+					class="<?=$selected==$id?"activemultitab":"inactivemultitab"?>" 
 					onClick="MultiTabPane<?=$gTabPaneNumber?>Activate(<?=$i?>)"><?=$tupel[0]?></th>
 				<?php if ($i<$anzahl_tabs-1 && ($i%$max_per_row) == $max_per_row-1) { /*last one in row*/?>
 					</tr><tr>
@@ -116,7 +120,7 @@ function GenerateTabsMultiRow ($cssclass,$tabs,$max_per_row,$selected=0) {
 		</table>
 		</div>
 		<?php $i = 0;  foreach ($tabs as $id => $tupel) {?>
-		<div class="tabpane" name="tabpane<?=$gTabPaneNumber?>" id="tabpane<?=$gTabPaneNumber?>_<?=$i?>" <?=$selected==$id?"":"style=\"display:none;\""?>><?=($tupel[1])?></div>
+		<div class="multitabpane" name="tabpane<?=$gTabPaneNumber?>" id="tabpane<?=$gTabPaneNumber?>_<?=$i?>" <?=$selected==$id?"":"style=\"display:none;\""?>><?=($tupel[1])?></div>
 		<?php ++$i; } // endforeach?>
 	</div>
 	</div>
