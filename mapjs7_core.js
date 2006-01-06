@@ -922,12 +922,13 @@ function nav(x,y,scroll) {
 
 function navabs (x,y,cancelmode) {
 	// alle elemente mit javascript-mouseover deaktivieren, um javascript fehler beim laden zu verhindern
+	/*
 	var i,ix,iy,mouselistener;
 	for (iy=0;iy<gCY;++iy)
 	for (ix=0;ix<gCX;++ix) {
 		mouselistener = document.getElementById("mouselistener_"+iy+"_"+ix);
 		mouselistener.innerHTML = "";
-	}
+	}*/
 	//gLoading = true;
 	//gAllLoaded = false;
 	var mode = cancelmode?kJSMapMode_Normal:gMapMode;
