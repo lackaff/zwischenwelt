@@ -386,6 +386,7 @@ function CreateMap() {
 	tab_pre += "	<div class=\"tabheader\">";
 	tab_pre += "		<div class=\"tabcorner\">";
 	tab_pre += "			<span>"+gMapModiHelp+"</span>";
+	tab_pre += "<a href=\"javascript:void(alert('"+gVersion+"'))\">v</a>";
 	tab_pre += "<a href=\"javascript:nav(0,0,1)\"><img alt=\"reload\" title=\"reload\" border=0 src=\""+g("icon/reload.png")+"\"></a>";
 	if (!gBig)	tab_pre += "<a href=\"javascript:OpenMap(1)\"><img alt=\"bigmap\" title=\"bigmap\" border=0 src=\""+g("icon/bigmap.png")+"\"></a>";
 	if (!gBig)	tab_pre += "<a href=\"javascript:OpenMap(2)\"><img alt=\"minimap2\" title=\"minimap2\" border=0 src=\""+g("icon/minimap2.png")+"\"></a>";
@@ -575,10 +576,10 @@ function mapclick (relx,rely) {
 	if (gBig) {
 		//opener.parent.info.location.href = "info/info.php?x="+(x+gLeft)+"&y="+(y+gTop)+"&sid="+gSID;
 		if (opener != null && opener.parent != null && opener.parent.navi != null)
-			opener.parent.navi.map(relx+gLeft,rely+gTop,gActiveArmyID);
+			opener.parent.navi.mapclicktool(relx+gLeft,rely+gTop,gActiveArmyID);
 	} else {
 		if (parent.navi != null)
-			parent.navi.map(relx+gLeft,rely+gTop,gActiveArmyID);
+			parent.navi.mapclicktool(relx+gLeft,rely+gTop,gActiveArmyID);
 	}
 	KillTip();
 }

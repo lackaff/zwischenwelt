@@ -195,7 +195,7 @@ if (isset($f_regentypes)) {
 		//if (document.getElementsByName("patchcheck")[0].checked)
 		//	document.getElementsByName("patch")[0].value += text;
 	}
-	function map (x,y,activearmyid) {
+	function mapclicktool (x,y,activearmyid) {
 		updatepos(x,y);
 		if (curtool == 9) {
 			document.getElementsByName("notizblock")[0].value += "  "+x+","+y;

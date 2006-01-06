@@ -118,7 +118,7 @@ $xylimit = "`x` >= ".($gLeft-1)." AND `x` < ".($gLeft+$gCX+1)." AND
 			`y` >= ".($gTop-1)." AND `y` < ".($gTop+$gCY+1);
 			
 // produce session-independent querry, to enable caching
-$jsparam = "v2=14";
+$jsparam = "v2=16";
 $styleparam = "?v=8";
 if ($gUser->usegfxpath || $gUser->race != 1)
 	$styleparam .= "&uid=".$gUser->id;
@@ -138,6 +138,7 @@ if($gUser && $gUser->usegfxpath && !empty($gUser->gfxpath)){
 <script src="mapjs7_core.js?<?=$jsparam?>" type="text/javascript"></script>
 <script src="<?="mapjs7_globals.js.php".$styleparam."&".$jsparam?>" type="text/javascript"></script>
 <SCRIPT LANGUAGE="JavaScript" type="text/javascript"><!--
+gVersion = "<?=($jsparam)?>";
 gCX = <?=intval($gCX)?>;
 gCY = <?=intval($gCY)?>;
 gLeft = <?=$gLeft?>;
