@@ -15,6 +15,7 @@ kNWSE_E = <?=kNWSE_E?>;
 kConstructionPlanPic = "<?=kConstructionPlanPic?>";
 kConstructionPic = "<?=kConstructionPic?>";
 kTransCP = "<?=kTransCP?>"; // transparent construction plan
+kBASEURL = "<?=BASEURL?>";
 
 kJSMapBuildingFlag_Open = <?=kJSMapBuildingFlag_Open?>;
 kJSMapBuildingFlag_Tax = <?=kJSMapBuildingFlag_Tax?>;
