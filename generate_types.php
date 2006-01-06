@@ -1,5 +1,6 @@
 <?php
 // generates "tmp/types.php"
+require_once("lib.main.php");
 
 function val_out($val){
 	if(is_array($val)) {
