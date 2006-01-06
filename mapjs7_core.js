@@ -576,10 +576,10 @@ function mapclick (relx,rely) {
 	if (gBig) {
 		//opener.parent.info.location.href = "info/info.php?x="+(x+gLeft)+"&y="+(y+gTop)+"&sid="+gSID;
 		if (opener != null && opener.parent != null && opener.parent.navi != null)
-			opener.parent.navi.map(relx+gLeft,rely+gTop);
+			opener.parent.navi.map(relx+gLeft,rely+gTop,gActiveArmyID);
 	} else {
 		if (parent.navi != null)
-			parent.navi.map(relx+gLeft,rely+gTop);
+			parent.navi.map(relx+gLeft,rely+gTop,gActiveArmyID);
 	}
 }
 

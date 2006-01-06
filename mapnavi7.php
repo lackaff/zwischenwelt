@@ -195,7 +195,7 @@ if (isset($f_regentypes)) {
 		//if (document.getElementsByName("patchcheck")[0].checked)
 		//	document.getElementsByName("patch")[0].value += text;
 	}
-	function map (x,y) {
+	function map (x,y,activearmyid) {
 		updatepos(x,y);
 		if (curtool == 9) {
 			document.getElementsByName("notizblock")[0].value += "  "+x+","+y;
@@ -206,7 +206,8 @@ if (isset($f_regentypes)) {
 			return;
 		}	
 		var urladd = "";
-		var army = parent.map.JSGetActiveArmyID();
+		//var army = parent.map.JSGetActiveArmyID();
+		var army = activearmyid;
 		if (army == 0 && document.getElementsByName("gotocat3")[0] != null)
 			army = document.getElementsByName("gotocat3")[0].value;
 		
