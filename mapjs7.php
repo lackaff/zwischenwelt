@@ -118,7 +118,7 @@ $xylimit = "`x` >= ".($gLeft-1)." AND `x` < ".($gLeft+$gCX+1)." AND
 			`y` >= ".($gTop-1)." AND `y` < ".($gTop+$gCY+1);
 			
 // produce session-independent querry, to enable caching
-$jsparam = "v2=11";
+$jsparam = "v2=12";
 $styleparam = "?v=8";
 if ($gUser->usegfxpath || $gUser->race != 1)
 	$styleparam .= "&uid=".$gUser->id;
