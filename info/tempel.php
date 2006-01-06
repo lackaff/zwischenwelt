@@ -69,7 +69,7 @@ class cInfoTempel extends cInfoBuilding {
 						sql("UPDATE `user` SET `runes`=`runes`+$x WHERE `id`=".$gUser->id);
 					break;
 				}
-				$gUser = sql("SELECT * FROM `user` WHERE `id` = ".$gUser->id);
+				$gUser = sqlgetobject("SELECT * FROM `user` WHERE `id` = ".$gUser->id);
 			}
 		?>
 		<form method="post" action="<?=query("info.php?sid=?&x=?&y=?")?>">

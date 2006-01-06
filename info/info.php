@@ -22,6 +22,7 @@ $gInfoTabsCorner = "";
 $info_message = ""; //ausgabevariable fuer z.b. spells
 
 
+
 function RegisterInfoTab ($head,$content,$select_priority=false) {
 	global $gInfoTabs,$gInfoTabsSelected,$gInfoTabsPriority;
 	$gInfoTabs[] = array($head,$content);
@@ -279,9 +280,12 @@ require_once("army.php");
 $gInfoObjects[] = new cInfoArmy();
 $gInfoObjects[] = new cInfoBuilding();
 
+
 // execute commands
 function walk_command (&$item, $key) { $item->command(); }
 array_walk($gInfoObjects,"walk_command");
+
+
 
 // now that the commands have had their chance to update stuff, get object data
 $xylimit = "`x` = ".$f_x." AND `y` = ".$f_y;
@@ -391,7 +395,6 @@ if (!isset($f_blind)) {
 	<?php 
 	RegisterInfoTab($terrainpic."",rob_ob_end());
 }
-
 
 /*waypoint info*/
 if (!isset($f_blind)) {
@@ -536,6 +539,7 @@ if (!isset($f_blind)) {
 }
 
 
+
 if (!isset($f_blind)) if ($gUser->admin) {
 	/* admin terrain set */
 
@@ -651,7 +655,9 @@ if (!isset($f_blind)) if ($gUser->admin) {
 if (!isset($f_blind)) {
 	// direct output should always be empty ! buildings register new tabs instead
 	rob_ob_start();
-	foreach ($gInfoObjects as $o) $o->generate_tabs(); 
+	foreach ($gInfoObjects as $o) if ($o) {
+		$o->generate_tabs(); 
+	}
 	$content = rob_ob_end();
 	if (!empty($content)) RegisterInfoTab("Infos",$content,100);
 }
