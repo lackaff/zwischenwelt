@@ -18,6 +18,23 @@ else {
 	<title>Zwischenwelt</title>
 	<link rel="stylesheet" type="text/css" href="images/<?=$layout?>/pagestyles.css">
 	<link REL="shortcut icon" HREF="favicon.ico" TYPE="image/png">
+	
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+	<META NAME="keywords" CONTENT="online, strategie, multiplayer, kostenlos, spiel, MOO, ogame,Browsergames, OnlineGame, MUD, Rollenspiel, Freewar, Browsergame, Opensource, GPL, Onlinegames, Game, forschen, siedeln, bauen, creepen">
+	<META NAME="description" CONTENT="Zwischenwelt - kostenloses realtime online Browsergame, bauen, zaubern, entwickeln, kämpfen :  erschaffe deine welt">
+	<META NAME="robots" CONTENT="index, follow">
+	<META NAME="revisit-after" content="21 days">
+	<META NAME="language" CONTENT="de">
+	<META NAME="distribution" CONTENT="global">
+	<META NAME="audience" CONTENT="all">
+	<META NAME="author" CONTENT="zwischenwelt team">
+	<META NAME="author-mail" CONTENT="info@zwischenwelt.org">
+	<META NAME="publisher" CONTENT="zwischenwelt team">
+	<META NAME="copyright" CONTENT="(c) 2006 zwischenwelt team">
+
+	<META HTTP-EQUIV="expires" CONTENT="0">
+	<META HTTP-EQUIV="pragma" CONTENT="no-cache">
+
 </head>
 <!-- <body onLoad="javascript:document.login.name.focus()"> -->
 <body>
