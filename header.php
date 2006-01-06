@@ -50,7 +50,7 @@ else {
 	<div id=forum><a href="http://zwischenwelt.org/forum/fudforum/">Forum</a></div>
 	<div id=impressum><a href="impressum.php">Impressum</a></div>
 </div>
-<FORM name="login" METHOD=POST ACTION="login.php">
+<FORM name="login" METHOD=POST ACTION="<?=BASEURL?>login.php">
 <div id=login>
 		<span id=text>Name:</span><span id=input><INPUT TYPE="text" NAME="name"></span><br>
 		<span id=text>Password:</span><span id=input><INPUT TYPE="password" NAME="pass"></span><br>

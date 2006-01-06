@@ -218,15 +218,16 @@ function AbsolutePathCheck () {
 	if (gPathDetected > 0) return true; // valid path
 	var mytext = "";
 	mytext += "Konfigurations- oder Browser Problem : der Absolute Pfad stimmt nicht\n";
-	mytext += "siehe defines.mysql.php : BASEURL\n";
+	mytext += "Bitte folgende Werte den Admins melden :\n";
 	mytext += "base1="+base1+"\n";
 	//mytext += "base2="+base2+"\n";
 	//mytext += "expected1="+expected1+"\n";
 	//mytext += "expected2="+expected2+"\n";
-	mytext += "location.protocol="+location.protocol+"\n";
-	mytext += "location.host="+location.host+"\n";
-	mytext += "location.hostname="+location.hostname+"\n";
-	mytext += "location.pathname="+location.pathname+"\n";
+	mytext += "protocol="+location.protocol+"\n";
+	mytext += "host="+location.host+"\n";
+	mytext += "hostname="+location.hostname+"\n";
+	mytext += "pathname="+location.pathname+"\n";
+	mytext += "siehe defines.mysql.php : BASEURL\n";
 	//mytext += "location.hash="+location.hash+"\n";
 	//mytext += "location.port="+location.port+"\n";
 	//mytext += "location.search="+location.search+"\n";
