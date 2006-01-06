@@ -483,7 +483,7 @@ function GetCellHTML (relx,rely) {
 	// building
 	var building = GetBuilding(relx,rely);
 	if (building) {
-		if (building.construction > 0) {
+		if (building.construction > 0 || !gBuildingType[building.type]) {
 			layers[layers.length] = g(kConstructionPic);
 		} else {
 			layers[layers.length] = GetBuildingPic(building,relx,rely);
@@ -498,9 +498,9 @@ function GetCellHTML (relx,rely) {
 	// plan
 	var plan = SearchPos(gPlans,relx,rely);
 	if (plan) {
-		if (gMapMode==kJSMapMode_Plan) {
+		if (gMapMode==kJSMapMode_Plan && gBuildingType[plan.type]) {
 			backgroundcolor = "red";
-			layers[layers.length] = g3(gBuildingType[plan.type].gfx,0,0);
+			layers[layers.length] = g3(gBuildingType[plan.type].gfx,10,0); // nwse : we
 		} else {
 			layers[layers.length] = g(kTransCP);
 		}
@@ -639,20 +639,26 @@ function ShowMapTip(relx,rely) {
 	// building
 	var building = GetBuilding(relx,rely);
 	if (building) {
-		tiptext += "<tr><td nowrap><img src=\""+GetBuildingPic(building,relx,rely)+"\"></td><td nowrap colspan=2 align=\"left\">";
-		tiptext += "<span>"+gBuildingType[building.type].name + " Stufe "+building.level + "</span><br>";
-		tiptext += "<span>"+"HP : "+building.hp+"/"+calcMaxBuildingHp(building.type,building.level) + "</span><br>";
-		if (building.user > 0) tiptext += "<span>"+gUsers[building.user].name + "</span>";
-		if (gNWSEDebug) tiptext += "<br><span>type="+building.type+"flags="+building.jsflags+"</span>";
-		if (gNWSEDebug) tiptext += "<br><span>tc="+gBuildingType[building.type].connectto_terrain.join(",")+"</span>";
-		if (gNWSEDebug) tiptext += "<br><span>bc="+gBuildingType[building.type].connectto_building.join(",")+"</span>";
-		// backgroundcolor = GradientRYG(GetFraction(hp,calcMaxBuildingHp(type,level)))
-		tiptext += "</td></tr>";
+		if (gBuildingType[building.type]) {
+			tiptext += "<tr><td nowrap><img src=\""+GetBuildingPic(building,relx,rely)+"\"></td><td nowrap colspan=2 align=\"left\">";
+			tiptext += "<span>"+gBuildingType[building.type].name + " Stufe "+building.level + "</span><br>";
+			tiptext += "<span>"+"HP : "+building.hp+"/"+calcMaxBuildingHp(building.type,building.level) + "</span><br>";
+			if (building.user > 0) tiptext += "<span>"+gUsers[building.user].name + "</span>";
+			if (gNWSEDebug) tiptext += "<br><span>type="+building.type+"flags="+building.jsflags+"</span>";
+			if (gNWSEDebug) tiptext += "<br><span>tc="+gBuildingType[building.type].connectto_terrain.join(",")+"</span>";
+			if (gNWSEDebug) tiptext += "<br><span>bc="+gBuildingType[building.type].connectto_building.join(",")+"</span>";
+			// backgroundcolor = GradientRYG(GetFraction(hp,calcMaxBuildingHp(type,level)))
+			tiptext += "</td></tr>";
+		} else {
+			tiptext += "<tr><td nowrap colspan=3 align=\"left\">";
+			tiptext += "<span> Unbekannter GebäudeTyp "+ building.type + "</span><br>";
+			tiptext += "</td></tr>";
+		}
 	}
 	
 	// plan
 	var plan = SearchPos(gPlans,relx,rely);
-	if (plan) {
+	if (plan && gBuildingType[plan.type]) {
 		tiptext += "<tr><td nowrap>";
 		tiptext += "<img src=\""+g(kTransCP)+"\"></td><td nowrap>";
 		tiptext += "<img src=\""+g3(gBuildingType[plan.type].gfx,HackNWSE(plan.type,0,relx,rely),0)+"\"></td><td nowrap>";
@@ -753,6 +759,7 @@ function GradientRYG (factor) { // red-yellow-green
 	return "#"+(""+r)+(""+g)+"00";
 }
 function calcMaxBuildingHp(type,level) {
+	if (!gBuildingType[type]) return 0;
 	var maxhp = gBuildingType[type].maxhp;
 	return Math.ceil(maxhp + maxhp/100*1.5*level);
 }
@@ -857,12 +864,14 @@ function ArmyGetMovableMask (army) {
 
 function GetNWSE (typeobj,relx,rely) {
 	var nwsecode = 0;
-	var ct = typeobj.connectto_terrain;
-	var cb = typeobj.connectto_building;
-	if (InArray(GetTerrainType(relx,rely-1),ct) || InArray(GetBuildingType(relx,rely-1),cb)) nwsecode += kNWSE_N;
-	if (InArray(GetTerrainType(relx-1,rely),ct) || InArray(GetBuildingType(relx-1,rely),cb)) nwsecode += kNWSE_W;
-	if (InArray(GetTerrainType(relx,rely+1),ct) || InArray(GetBuildingType(relx,rely+1),cb)) nwsecode += kNWSE_S;
-	if (InArray(GetTerrainType(relx+1,rely),ct) || InArray(GetBuildingType(relx+1,rely),cb)) nwsecode += kNWSE_E;
+	if (typeobj) {
+		var ct = typeobj.connectto_terrain;
+		var cb = typeobj.connectto_building;
+		if (InArray(GetTerrainType(relx,rely-1),ct) || InArray(GetBuildingType(relx,rely-1),cb)) nwsecode += kNWSE_N;
+		if (InArray(GetTerrainType(relx-1,rely),ct) || InArray(GetBuildingType(relx-1,rely),cb)) nwsecode += kNWSE_W;
+		if (InArray(GetTerrainType(relx,rely+1),ct) || InArray(GetBuildingType(relx,rely+1),cb)) nwsecode += kNWSE_S;
+		if (InArray(GetTerrainType(relx+1,rely),ct) || InArray(GetBuildingType(relx+1,rely),cb)) nwsecode += kNWSE_E;
+	}
 	return nwsecode;
 }
 function GetTerrainPic (relx,rely) {
@@ -875,11 +884,12 @@ function GetTerrainPic (relx,rely) {
 // similar to the php function GetBuildingPic in lib.main.php
 function GetBuildingPic (building,relx,rely) {
 	var type = building.type;
+	if (!gBuildingType[type]) return ""; // broken types
 	var level = building.level;
 	var user = building.user;
 	var race = (user > 0 && gUsers[user]) ? gUsers[user].race : 1;
 	var moral = (user > 0 && gUsers[user]) ? gUsers[user].moral : 100;
-	if (level < 10) level = 0; else level = 1; // 
+	if (level < 10) level = 0; else level = 1;
 	var nwsecode = GetNWSE(gBuildingType[type],relx,rely);
 	var gfx = gBuildingType[type].gfx;
 	

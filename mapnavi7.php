@@ -409,6 +409,7 @@ if ($user_has_hq) {
 		foreach ($buildingtypeids as $id) if ($id != -1 && !$gBuildingType[$id]->special) {
 			if ($gBuildingType[$id]->race != 0 && $gUser->race != $gBuildingType[$id]->race) continue;
 			if ($id == kBuilding_HQ) continue;
+			if (!isset($gBuildingType[$id])) continue;
 			$canbuild = HasReq($gBuildingType[$id]->req_geb,$gBuildingType[$id]->req_tech,$gUser->id);
 			// HasReq($o->req_geb,$o->req_tech,$gUser->id)
 			$content .= NaviTool(g($gBuildingType[$id]->gfx,"we",1),1,$id,$gBuildingType[$id]->name.($canbuild?"":"(noch nicht baubar)"),$canbuild?"buildable":"unbuildable");

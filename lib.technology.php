@@ -108,8 +108,8 @@ function GetTechnologyObject ($typeid,$userid=0) {
 function HasReq ($req_geb,$req_tech,$userid=0,$inclevel=0) {
 	global $gUser;
 	if ($userid == 0) $userid = $gUser->id;
-	if (is_string($req_tech)) $req_tech = ParseReq($req_tech);
-	if (is_string($req_geb)) $req_geb = ParseReq($req_geb);
+	$req_tech = (is_string($req_tech) && !empty($req_tech)) ? ParseReq($req_tech) : array();
+	$req_geb = (is_string($req_geb) && !empty($req_geb)) ? ParseReq($req_geb) : array();
 
 	// check technologies
 	foreach ($req_tech as $type => $o)
