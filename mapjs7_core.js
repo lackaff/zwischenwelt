@@ -620,7 +620,7 @@ function ShowMapTip(relx,rely) {
 
 	// generate tip text
 	var i;
-	var tiptext = "<table>";
+	var tiptext = "<table bgcolor=\"white\">";
 
 	// terrain
 	var terraintype = GetTerrainType(relx,rely);
