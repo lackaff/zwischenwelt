@@ -386,7 +386,7 @@ function CreateMap() {
 	tab_pre += "	<div class=\"tabheader\">";
 	tab_pre += "		<div class=\"tabcorner\">";
 	tab_pre += "			<span>"+gMapModiHelp+"</span>";
-	tab_pre += "<a href=\"javascript:void(alert('Map-Version:16'))\">v</a>";
+	tab_pre += "<a href=\"javascript:void(alert('Map-Version:17'))\">v</a>";
 	tab_pre += "<a href=\"javascript:nav(0,0,1)\"><img alt=\"reload\" title=\"reload\" border=0 src=\""+g("icon/reload.png")+"\"></a>";
 	if (!gBig)	tab_pre += "<a href=\"javascript:OpenMap(1)\"><img alt=\"bigmap\" title=\"bigmap\" border=0 src=\""+g("icon/bigmap.png")+"\"></a>";
 	if (!gBig)	tab_pre += "<a href=\"javascript:OpenMap(2)\"><img alt=\"minimap2\" title=\"minimap2\" border=0 src=\""+g("icon/minimap2.png")+"\"></a>";
@@ -923,13 +923,13 @@ function nav(x,y,scroll) {
 
 function navabs (x,y,cancelmode) {
 	// alle elemente mit javascript-mouseover deaktivieren, um javascript fehler beim laden zu verhindern
-	/*
+	
 	var i,ix,iy,mouselistener;
 	for (iy=0;iy<gCY;++iy)
 	for (ix=0;ix<gCX;++ix) {
 		mouselistener = document.getElementById("mouselistener_"+iy+"_"+ix);
 		mouselistener.innerHTML = "";
-	}*/
+	}
 	//gLoading = true;
 	//gAllLoaded = false;
 	var mode = cancelmode?kJSMapMode_Normal:gMapMode;
