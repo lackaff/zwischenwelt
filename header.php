@@ -15,13 +15,13 @@ else {
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/transitional.dtd">
 <html>
 <head>
-	<title>Zwischenwelt</title>
+	<title>Zwischenwelt : erschaffe deine Welt</title>
 	<link rel="stylesheet" type="text/css" href="images/<?=$layout?>/pagestyles.css">
 	<link REL="shortcut icon" HREF="favicon.ico" TYPE="image/png">
 	
 	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 	<META NAME="keywords" CONTENT="online, strategie, multiplayer, kostenlos, spiel, MOO, ogame,Browsergames, OnlineGame, MUD, Rollenspiel, Freewar, Browsergame, Opensource, GPL, Onlinegames, Game, forschen, siedeln, bauen, creepen">
-	<META NAME="description" CONTENT="Zwischenwelt - kostenloses realtime online Browsergame, bauen, zaubern, entwickeln, kämpfen :  erschaffe deine welt">
+	<META NAME="description" CONTENT="Zwischenwelt - kostenloses realtime online Browsergame, baue, forsche, zaubere, kämpfe : erschaffe deine Welt">
 	<META NAME="robots" CONTENT="index, follow">
 	<META NAME="revisit-after" content="21 days">
 	<META NAME="language" CONTENT="de">
