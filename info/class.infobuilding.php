@@ -684,12 +684,16 @@ class cInfoBuilding extends cInfoBase {
 				<?php /* #### BAUSTELLE #### */ ?>
 				<?php 
 				
+				global $gSpeedyBuildingTypes;
 				$normalbuildtime = $gBuildingType[$gObject->type]->buildtime;
 				$buildtime = GetBuildTime($gObject->x,$gObject->y,$gObject->type,0,$gObject->user);
 				$remaining_time = max(0,$gObject->construction - time());
 				//echo "$gObject->x,$gObject->y,$gObject->type,0,$gObject->user<br>";
 				?>
 				<?php PrintBuildTimeHelp($gObject->x,$gObject->y,$gObject->type,0); ?>
+				<?php if (!in_array($gObject->type,$gSpeedyBuildingTypes)) {?>
+				(Gebäude-Typ ist vom NewbieFaktor ausgeschlossen)<br>
+				<?php } // endif?>
 				<table>
 				<tr><td>normale Bauzeit</td><td><?=($normalbuildtime>0)?Duration2Text($normalbuildtime):"sofort fertig"?></td></tr>
 				<tr><td>effektive Bauzeit</td><td><?=($buildtime>0)?Duration2Text($buildtime):"sofort fertig"?></td></tr>
