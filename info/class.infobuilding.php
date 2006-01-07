@@ -506,7 +506,7 @@ class cInfoBuilding extends cInfoBase {
 			</table>
 			
 			<?php 
-			if (!$gObject->construction) { 
+			if (!$gObject->construction) {
 				if ($this->cancontroll()) {
 					require_once("../lib.building.php");
 					$upgrades = $gObject->upgrades;
@@ -683,12 +683,17 @@ class cInfoBuilding extends cInfoBase {
 			} else if ($this->cancontroll()) {?>
 				<?php /* #### BAUSTELLE #### */ ?>
 				<?php 
+				
+				$normalbuildtime = $gBuildingType[$gObject->type]->buildtime;
 				$buildtime = GetBuildTime($gObject->x,$gObject->y,$gObject->type,0,$gObject->user);
 				$remaining_time = max(0,$gObject->construction - time());
+				//echo "$gObject->x,$gObject->y,$gObject->type,0,$gObject->user<br>";
 				?>
+				<?php PrintBuildTimeHelp($gObject->x,$gObject->y,$gObject->type,0); ?>
 				<table>
+				<tr><td>normale Bauzeit</td><td><?=($normalbuildtime>0)?Duration2Text($normalbuildtime):"sofort fertig"?></td></tr>
+				<tr><td>effektive Bauzeit</td><td><?=($buildtime>0)?Duration2Text($buildtime):"sofort fertig"?></td></tr>
 				<tr><td>BauBeginn</td><td><?=date("H:i d.m.Y",$gObject->construction - $buildtime)?></td></tr>
-				<tr><td>BauZeit</td><td><?=Duration2Text($buildtime)?></td></tr>
 				<tr><td>BauEnde</td><td><?=date("H:i d.m.Y",$gObject->construction)?>
 				<?php if ($gUser->admin == 1){ ?>
 					<FORM METHOD=POST ACTION="<?=Query("?sid=?&x=?&y=?")?>">
@@ -698,7 +703,7 @@ class cInfoBuilding extends cInfoBase {
 					</FORM>
 				<?php } ?>
 				</td></tr>
-				<tr><td>Restzeit</td><td><?=Duration2Text($remaining_time)?> (<?=round(100*GetConstructionProgress($gObject))?>%)</td></tr>
+				<tr><td>Restzeit</td><td><?=($remaining_time>0)?Duration2Text($remaining_time):"fertig, nurnoch aufräumen..."?> (<?=round(100*GetConstructionProgress($gObject))?>%)</td></tr>
 				</table>
 				<FORM METHOD=POST ACTION="<?=Query("?sid=?&x=?&y=?")?>">
 				<INPUT TYPE="hidden" NAME="do" VALUE="removebuilding">

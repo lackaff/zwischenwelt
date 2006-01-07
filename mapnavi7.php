@@ -322,6 +322,9 @@ if (isset($f_regentypes)) {
 		resettool();
 		GetName("searchcounter").value++; // starts at -1
 	}
+	gBigMapWin = false; // bigmap is opened from navi, so it can be called even after normal map scroll
+	function OpenBigMap(a,b) { gBigMapWin = window.open(a,b); }
+	function GetBigMap() { return gBigMapWin; }
 //-->
 </SCRIPT>
 </head><body onLoad="MyOnLoad()">

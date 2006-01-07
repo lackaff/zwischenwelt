@@ -131,7 +131,24 @@ if (!isset($f_building) && !isset($f_army) && isset($f_do)) {
 				}
 			}
 		break;
-		case "build":
+		case "build":  
+			// todo : report error
+			// todo : report error
+			// todo : report error
+			// todo : report error
+			// todo : report error
+			// todo : report error
+			// todo : report error
+			// todo : report error
+			// todo : report error
+			// todo : report error
+			// todo : report error
+			// todo : report error
+			// todo : report error
+			// todo : report error
+			// todo : report error
+			// todo : report error
+			// todo : error check : as in cron : InBuildCross($con->x,$con->y,$con->user,-1) && CanBuildHere($con->x,$con->y,$con->type)
 			$baulist = GetBuildlist($f_x,$f_y,false,true,false);
 			foreach ($f_build as $typeid => $val) {
 				if(!isset($baulist[$typeid]) || !$baulist[$typeid])continue;
@@ -140,8 +157,8 @@ if (!isset($f_building) && !isset($f_army) && isset($f_do)) {
 				//if ($typeid != kBuilding_Bridge && $typeid != kBuilding_GB && !
 				if (!$terraintype->buildable && $gBuildingType[$typeid]->terrain_needed != $terraintype->id)	continue;
 				if (sqlgetone("SELECT 1 FROM `building` WHERE `x` = ".$f_x." AND `y` = ".$f_y)) continue;
-				if (OwnConstructionInProcess($f_x,$f_y)) continue;
-				if (!InBuildCross($f_x,$f_y,$gUser->id)) continue;
+				if (OwnConstructionInProcess($f_x,$f_y)) continue; // todo : report error
+				if (!InBuildCross($f_x,$f_y,$gUser->id)) continue; // todo : report error
 
 				sql("LOCK TABLES `phperror` WRITE, `terrain` READ,`construction` WRITE,`sqlerror` WRITE,  `building` WRITE");
 			

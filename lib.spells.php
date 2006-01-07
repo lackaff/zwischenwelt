@@ -71,6 +71,7 @@ class Spell {
 		$this->spelltype = $gSpellType[$this->type];
 		$building = sqlgetobject("SELECT * FROM `building` WHERE `x` = ".intval($this->x)." AND `y` = ".intval($this->y));
 		if ($building) $this->targetuser = sqlgetobject("SELECT * FROM `user` WHERE `id` = ".intval($building->user));
+		else $this->targetuser = false;
 		
 		//if ($this->targettype == MTARGET_PLAYER)
 		//	$this->targetuser = sqlgetobject("SELECT * FROM `user` WHERE `id` = ".intval($this->target));
@@ -227,7 +228,7 @@ class Spell {
 		}
 		
 		// attempt to correct player position to hq (not really needed...?)
-		if ($spelltype->target == MTARGET_PLAYER) {
+		if ($spelltype->target == MTARGET_PLAYER && $this->targetuser) {
 			$hq = sqlgetobject("SELECT * FROM `building` WHERE `type` = ".kBuilding_HQ." AND `user` = ".intval($this->targetuser->id));
 			if ($hq) {
 				$this->x = $hq->x;
@@ -383,6 +384,7 @@ class Spell_Once_Per_User extends Spell_Cron {
 //*********************************************************************************************
 class Spell_Production extends Spell_Cron {	
 	function GetProduced ($dtime) { // override me for non-res (pop,maxpop,maxres,...)
+		if (!$this->targetuser) return 0;
 		return ( ((float)$this->targetuser->{"worker_".$this->res}) * 0.01 *
 				 ((float)$this->targetuser->pop)  *
 				 ((float)$this->spelltype->baseeffect) *
@@ -391,6 +393,7 @@ class Spell_Production extends Spell_Cron {
 	
 	function Cron($dtime) {
 		parent::Cron($dtime);
+		if (!$this->targetuser) return;
 		assert($dtime>0);
 		$produced = $this->GetProduced($dtime);
 		global $gVerbose;

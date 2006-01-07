@@ -265,6 +265,8 @@ function GetBuildingPic ($type,$user=false,$level=10,$nwse="we") {
 function LogMe($user,$topic,$type,$i1,$i2,$i3,$s1,$s2)
 {
 	//check if this message can be merged with almost an identical message
+	if (is_object($s2)) { echo "LogMe,s2 is obj:".stacktrace()."<br>"; vardump2($s2); }
+	if (is_object($s1)) { echo "LogMe,s1 is obj:".stacktrace()."<br>"; vardump2($s1); }
 	$id = sqlgetone("SELECT `id` FROM `newlog` WHERE 
 		`count`<100 AND `type`=".intval($type)." AND 
 		`topic`=".intval($topic)." AND 
@@ -457,6 +459,8 @@ function Duration2Text ($dur) {
 			return sprintf("%ds",$s);
 	else if ($t >= 1)
 			return sprintf("%dT %d:%02d",$t,$h,$m);
+	else if ($dur < 60*5) 
+			return sprintf("%d:%02d:%02d",$h,$m,$s);
 	else	return sprintf("%d:%02d",$h,$m);
 }
 

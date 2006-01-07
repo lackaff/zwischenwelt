@@ -51,6 +51,7 @@ class cInfoLager extends cInfoBuilding {
 	
 	
 	function mygenerate_tabs() {
+		if ($this->construction > 0) return;
 		foreach ($_REQUEST as $name=>$val) ${"f_".$name} = $val;
 		global $gUser;
 		global $gObject;

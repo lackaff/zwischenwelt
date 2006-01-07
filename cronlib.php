@@ -18,7 +18,7 @@ function StartBuild ($con) {
 	$debugname = $gBuildingType[$con->type]->name."(".$con->x.",".$con->y.")";
 
 	// check if buildable and affordable
-	$blockingbuilding = sqlgetone("SELECT 1 FROM `building` WHERE `x` = ".$con->x." AND `y` = ".$con->y);
+	$blockingbuilding = sqlgetone("SELECT 1 FROM `building` WHERE `x` = ".$con->x." AND `y` = ".$con->y." LIMIT 1");
 	if ($blockingbuilding) {
 		if ($gVerbose) echo "can't start $debugname, a building is in the way<br>";
 		sql("DELETE FROM `construction` WHERE `id` = ".$con->id);
@@ -27,7 +27,7 @@ function StartBuild ($con) {
 	} else if (sqlgetone("SELECT 1 FROM `army` WHERE `x` = ".$con->x." AND `y` = ".$con->y." LIMIT 1")) {
 		if ($gVerbose) echo "can't start $debugname, army is in the way, waiting for army to move<br>";
 		// TODO message to user ?
-	} else if (InBuildCross($con->x,$con->y,$con->user,1) && CanBuildHere($con->x,$con->y,$con->type)) {
+	} else if (InBuildCross($con->x,$con->y,$con->user,-1) && CanBuildHere($con->x,$con->y,$con->type)) {
 		$buildingtype = $gBuildingType[$con->type];
 
 		// headquater is free
@@ -35,7 +35,7 @@ function StartBuild ($con) {
 										$buildingtype->cost_lumber,$buildingtype->cost_stone,
 										$buildingtype->cost_food,$buildingtype->cost_metal,$buildingtype->cost_runes))
 		{
-			sql("DELETE FROM `construction` WHERE `id` = ".$con->id);
+			sql("DELETE FROM `construction` WHERE `id` = ".$con->id." LIMIT 1");
 			sql("UPDATE `construction` SET `priority` = `priority` - 1 WHERE `user` = ".$con->user);
 			$building = false;
 			$building->x = $con->x;
@@ -76,17 +76,18 @@ function CompleteBuild ($building) { // object
 		$terrain = $gBuildingType[$building->type]->convert_into_terrain;
 		echo "building complete, create terrain $terrain<br>\n";
 		setTerrain($building->x,$building->y,$terrain);
-		sql("DELETE FROM `building` WHERE `id`=".$building->id);
+		sql("DELETE FROM `building` WHERE `id`=".$building->id." LIMIT 1");
 	} else {	
-		$upgradeto = sqlgetone("SELECT `level`+`upgrades` AS `upgto` FROM `building` 
-			WHERE `user`=".intval($building->user)." AND `type`=".intval($building->type)." AND `construction`=0 ORDER BY `upgto` ASC LIMIT 1");
+		$upgradeto = sqlgetone("SELECT MIN(`level`+`upgrades`) FROM `building` 
+			WHERE `user`=".intval($building->user)." AND `type`=".intval($building->type)." AND `construction`=0");
+		if (!$upgradeto) $upgradeto = 0; // no previous buildings found
 		echo "building complete, $upgradeto upgrades planned<br>\n";
-		sql("UPDATE `building` SET `construction`=0,`upgrades`=".intval($upgradeto)." WHERE `id`=".$building->id);
+		sql("UPDATE `building` SET `construction`=0,`upgrades`=".intval($upgradeto)." WHERE `id`=".$building->id." LIMIT 1");
 	}
 	
 	RegenSurroundingNWSE($building->x,$building->y);
 	
-	LogMe($building->user,NEWLOG_TOPIC_BUILD,NEWLOG_BUILD_FINISHED,$building->x,$building->y,0,$gBuildingType[$building->type]->name,"");
+	//LogMe($building->user,NEWLOG_TOPIC_BUILD,NEWLOG_BUILD_FINISHED,$building->x,$building->y,0,$gBuildingType[$building->type]->name,"");
 	Hook_CreateBuilding($building);
 }
 

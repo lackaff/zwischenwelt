@@ -39,10 +39,11 @@ function InBuildCross ($x,$y,$user,$priority=false) {
 		`x` >= ".($x-2)." AND `x` <= ".($x+2)." AND 
 		`y` >= ".($y-2)." AND `y` <= ".($y+2)." AND `user` = ".$user." LIMIT 1"))
 		return true;
+	if ($priority == -1) return false;
 
 	// if $priority == false, set to max priority
 	if (!$priority)
-		$priority = sqlgetone("SELECT MAX(`priority`) FROM `construction` WHERE `user` = ".$user) + 1;
+		$priority = intval(sqlgetone("SELECT MAX(`priority`) FROM `construction` WHERE `user` = ".$user)) + 1;
 
 	// check constructions with smaller(build first) priority !
 	if (sqlgetone("SELECT 1 FROM `construction` WHERE 
@@ -55,6 +56,8 @@ function InBuildCross ($x,$y,$user,$priority=false) {
 
 //checks the build requirenments
 //excludes, need nears and required
+// todo : add param : priority, and conside buildingplans with lower priority,
+// todo : this is neccessary in order to check build-plans
 function CanBuildHere($x,$y,$buildingtypeid){
 	$x = intval($x);$y = intval($y);$buildingtypeid = intval($buildingtypeid);
 	global $gBuildingType;
@@ -134,6 +137,7 @@ function GetBuildNewbeeFactor ($btypeid=-1,$priority=-1,$userid=false) {
 	if (is_object($userid)) $userid = $userid->id;
 	if (is_object($btypeid)) $btypeid = $btypeid->id;
 	$cond = "`user`=".intval($userid)." AND `type` IN (".implode(",",$gSpeedyBuildingTypes).")";
+	//echo "GetBuildNewbeeFactor($btypeid,$priority,$userid)<br>$cond<br>";
 	$sbcount = intval(sqlgetone("SELECT count(*) FROM `building` WHERE `construction` = 0 AND $cond"));
 	if ($priority == -1) // -1 means for a new plan -> take all existing plans into account 
 		$sbcount += intval(sqlgetone("SELECT count(*) FROM `construction` WHERE $cond"));
@@ -153,8 +157,8 @@ function GetBuildTime ($x,$y,$typeid,$priority=-1,$userid=false) { // object(bui
 	$dist = GetBuildDistance($x,$y,$userid,$priority);
 	$faktor_dist = GetBuildDistFactor($dist);
 	$faktor_tech = GetBuildTechFactor($userid);
-	$faktor_newbee = GetBuildNewbeeFactor($type,$priority,$userid);
-	return $gBuildingType[$typeid]->buildtime * $faktor_dist * $faktor_tech * $faktor_newbee;
+	$faktor_newbee = GetBuildNewbeeFactor($typeid,$priority,$userid);
+	return ((float)$gBuildingType[$typeid]->buildtime) * (float)$faktor_dist * (float)$faktor_tech * (float)$faktor_newbee;
 }
 
 // print an explanation for how GetBuildTime works
@@ -175,7 +179,7 @@ function PrintBuildTimeHelp ($x,$y,$type=-1,$priority=-1,$userid=false) {
 		<td>Entfernung zum Haupthaus oder Lager <?=round($dist,2)?></td>
 		<td>Bauzeit * <?=round($faktor_dist,2)?></td>
 	</tr><tr>
-		<td>Architekturlevel: <?=$tech->level?></td>
+		<td>Architekturlevel: <?=GetTechnologyLevel(kTech_Architecture,$userid)?></td>
 		<td>Bauzeit * <?=round($faktor_tech,2)?></td>
 	</tr><tr>
 	<?php if ($faktor_newbee < 1.0) {?>	
@@ -309,25 +313,6 @@ function getBridgeParam($x,$y,$t=null) {
 }
 
 
-function canBuildBridgeHere($x,$y) {
-	global $gUser;
-	$x = intval($x);
-	$y = intval($y);
-
-	$t = TableToXYIndex(sqlgettable("SELECT * FROM `terrain` WHERE ABS(`x`-($x)) <= 2 AND ABS(`y`-($y)) <= 2"));
-
-	//ist das hier ein fluss?
-	if(!isset($t[$x][$y]) || $t[$x][$y]->type != kTerrain_River)return false;
-
-	//ist das ein gerade flußstück?
-	$param = getBridgeParam($x,$y,$t);
-	if($param == "ns")$horizontal = true;
-	else if($param == "we")$horizontal = false;
-	else return false;
-
-	//hab ich ein haus daneben?
-	return InBuildCross($x,$y,$gUser->id);
-}
 
 
 //returns percent 0.0 - 1.0 of construction progress

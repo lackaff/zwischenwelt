@@ -150,23 +150,33 @@ $buildings = sqlgettable("SELECT * FROM `building` WHERE `upgrades` > 0 ORDER BY
 $hqlevels = sqlgettable("SELECT `user`,`level` FROM `building` WHERE `type`=".kBuilding_HQ,"user");
 $sieges = sqlgettable("SELECT `building` FROM `siege`","building");
 
+echo "testing ".count($buildings)." buildings for upgrades<br>\n";
+$count_start = 0;
+$count_end = 0;
 foreach ($buildings as $o) {
 	if ($o->upgradetime > 0 && ($o->upgradetime < $time || kZWTestMode)) {
+		$count_start++;
 		// upgrade finished
 		if (isset($sieges[$o->id])) continue;
 		$maxhp = cBuilding::calcMaxBuildingHp($o->type,$o->level+1);
 		$up = $maxhp - cBuilding::calcMaxBuildingHp($o->type,$o->level);
-		$heal = $maxhp/100*2.0; // TODO : unhardcode
+		$heal = $maxhp/100*2.0;
+		
 		sql("UPDATE `building` SET
 			`level` = `level` + 1 ,
 			`upgrades` = GREATEST(0,`upgrades` - 1) ,
 			`hp` = LEAST(`hp`+".($up+$heal)." , $maxhp),
 			`upgradetime` = 0 WHERE `id` = ".$o->id." LIMIT 1");
 		// echo "upgrade auf ".($o->level+1)." fertig : ".$gBuildingType[$o->type]->name."(".$o->x."|".$o->y."), hpup=".$up.", hpheal=".$heal."<br>\n";
-		LogMe($o->user,NEWLOG_TOPIC_BUILD,NEWLOG_UPGRADE_FINISHED,$o->x,$o->y,$o->level+1,$gBuildingType[$o->type]->name,"");
-		$o = sqlgetobject("SELECT * FROM `building` WHERE `id`=".$o->id." LIMIT 1");
+		//LogMe($o->user,NEWLOG_TOPIC_BUILD,NEWLOG_UPGRADE_FINISHED,$o->x,$o->y,$o->level+1,$gBuildingType[$o->type]->name,"");
+		//$o = sqlgetobject("SELECT * FROM `building` WHERE `id`=".$o->id." LIMIT 1");
+		$o->level++;
+		$o->upgrades = max(0,$o->upgrades-1);
+		$o->hp = min($o->hp+$up+$heal,$maxhp);
+		$o->upgradetime = 0;
 		Hook_UpgradeBuilding($o);
 	} else if ($o->upgradetime == 0) {
+		$count_end++;
 		// test if upgrade can be started
 		if (!isset($hqlevels[$o->user])) continue;
 		if (isset($sieges[$o->id])) continue;
@@ -187,6 +197,8 @@ foreach ($buildings as $o) {
 		}
 	}
 }
+echo "<br>\ns=".($count_start++);
+echo "<br>\ne=".($count_end++)."<br>\n";
 unset($buildings);
 unset($sieges);
 unset($hqlevels);

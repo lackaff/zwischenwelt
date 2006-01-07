@@ -27,7 +27,7 @@ gNWSEDebug = false; // shows typeid and connect-to infos in maptip
 gPathDetected = 0;
 
 // compare version with kBaseJSMapVersion from mapjs7.php and kNaviJSMapVersion available with GetkNaviJSMapVersion
-kCoreJSMapVersion = 33;
+kCoreJSMapVersion = 36;
 kMapTipName = "maptip";
 kMapTip_xoff = 29;
 kMapTip_yoff = 56;
@@ -77,10 +77,10 @@ function JSInsertPlan (x,y,type,priority) {
 	res.priority = priority;
 	gPlans[gPlans.length] = res;
 	RefreshCell(x-gLeft,y-gTop);
-	if (gBigMapWindow) gBigMapWindow.JSInsertPlan(x,y,type,priority);
+	if (!gBig && gBigMapWindow && !gBigMapWindow.closed) gBigMapWindow.JSInsertPlan(x,y,type,priority);
 }
 function JSRemovePlan (x,y) {
-	if (gBigMapWindow) gBigMapWindow.JSRemovePlan(x,y);
+	if (!gBig && gBigMapWindow && !gBigMapWindow.closed) gBigMapWindow.JSRemovePlan(x,y);
 	var i;
 	for (i in gPlans) if (gPlans[i].x == x && gPlans[i].y == y) {
 		gPlans[i] = false;
@@ -107,12 +107,12 @@ function JSUpdateNaviPos () {
 
 function JSArmyUpdate (id,x,y,name,type,user,unitstxt,itemstxt,flags) {
 	jsArmy(id,x,y,name,type,user,unitstxt,itemstxt,flags);
-	if (gBigMapWindow) gBigMapWindow.JSArmyUpdate(id,x,y,name,type,user,unitstxt,itemstxt,flags);
+	if (!gBig && gBigMapWindow && !gBigMapWindow.closed) gBigMapWindow.JSArmyUpdate(id,x,y,name,type,user,unitstxt,itemstxt,flags);
 	// bigmap 
 }
 
 function JSActivateArmy (armyid,wps) {
-	if (gBigMapWindow) gBigMapWindow.JSActivateArmy(armyid,wps);
+	if (!gBig && gBigMapWindow && !gBigMapWindow.closed) gBigMapWindow.JSActivateArmy(armyid,wps);
 	gActiveArmyID = armyid;
 	gWPs = wps;
 	jsWPs();
@@ -336,6 +336,9 @@ function MapInit() {
 	profiling("done");profiling(""); // double call to finish output
 	
 	JSUpdateNaviPos();
+	
+	var naviframe = GetNaviFrame();
+	if (naviframe) gBigMapWindow = naviframe.GetBigMap();
 }
 
 function CompileTerrain () {
@@ -503,11 +506,11 @@ function OpenMap (type) {
 	var x = gLeft+gXMid;
 	var y = gTop+gYMid;
 	if (type == 1) { // bigmap
-		var army = 0;
-		//if (document.getElementsByName("army")[0] != null)
-		//	army = document.getElementsByName("army")[0].value;
-		// "BigMap"+Math.abs(x)+Math.abs(y)
-		gBigMapWindow = window.open("mapjs7.php?sid="+gSID+"&cx=50&cy=50&big=1&army="+gActiveArmyID+"&mode="+gMapMode+"&x="+x+"&y="+y,"BigMap");
+		var naviframe = GetNaviFrame();
+		if (!naviframe) return;
+		//gBigMapWindow = window.open("mapjs7.php?sid="+gSID+"&cx=50&cy=50&big=1&army="+gActiveArmyID+"&mode="+gMapMode+"&x="+x+"&y="+y,"BigMap");
+		naviframe.OpenBigMap("mapjs7.php?sid="+gSID+"&cx=50&cy=50&big=1&army="+gActiveArmyID+"&mode="+gMapMode+"&x="+x+"&y="+y,"BigMap");
+		gBigMapWindow = naviframe.GetBigMap();
 	} else if (type == 2) { //minimap2
 		window.open("minimap2.php?sid="+gSID+"&crossx="+x+"&crossy="+y,"MiniMap","location=no,menubar=no,toolbar=no,status=no,resizable=yes,scrollbars=yes");
 	} else if (type == 3) { //minimap

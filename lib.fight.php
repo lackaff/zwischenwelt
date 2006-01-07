@@ -70,7 +70,7 @@ class cFight {
 		// userlog
 		global $gAllUsers,$gBuildingType;
 		$armyownername = cArmy::GetArmyOwnerName($army);
-		$busername = $building->user?(isset($gAllUsers)?$gAllUsers[$building->user]:sqlgetone("SELECT `name` FROM `user` WHERE `id` = ".intval($building->user))):"server";
+		$busername = $building->user?(isset($gAllUsers)?$gAllUsers[$building->user]->name:sqlgetone("SELECT `name` FROM `user` WHERE `id` = ".intval($building->user))):"server";
 		if ($army->user)		LogMe($army->user,		NEWLOG_TOPIC_FIGHT,NEWLOG_PILLAGE_ATTACKER_START,$building->x,$building->y,0,$army->name,$busername);
 		if ($building->user)	LogMe($building->user,	NEWLOG_TOPIC_FIGHT,NEWLOG_PILLAGE_DEFENDER_START,$building->x,$building->y,0,$army->name,$armyownername);
 		
@@ -212,7 +212,7 @@ class cFight {
 		// userlog
 		global $gAllUsers,$gBuildingType;
 		$armyownername = cArmy::GetArmyOwnerName($army);
-		$busername = $building->user?(isset($gAllUsers)?$gAllUsers[$building->user]:sqlgetone("SELECT `name` FROM `user` WHERE `id` = ".intval($building->user))):"server";
+		$busername = $building->user?(isset($gAllUsers)?$gAllUsers[$building->user]->name:sqlgetone("SELECT `name` FROM `user` WHERE `id` = ".intval($building->user))):"server";
 		//if ($debug) echo "siege : $armyownername $busername $army->user $building->user <br>";
 		if ($army->user)		LogMe($army->user,		NEWLOG_TOPIC_FIGHT,NEWLOG_RAMPAGE_ATTACKER_START,$building->x,$building->y,0,$army->name,$busername);
 		if ($building->user)	LogMe($building->user,	NEWLOG_TOPIC_FIGHT,NEWLOG_RAMPAGE_DEFENDER_START,$building->x,$building->y,0,$army->name,$armyownername);

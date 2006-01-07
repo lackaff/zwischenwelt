@@ -295,9 +295,9 @@ function ArmyThink ($army,$debug=false) {
 				if ($army->flags & kArmyFlag_BuildingWait) {
 					$army->flags = $army->flags & (~kArmyFlag_BuildingWait); // don't try again and again...
 					sql("UPDATE `army` SET `flags` = ".$army->flags." WHERE `id` = ".$army->id);
-					echo "deaktiviere buildingwait<br>";
+					//echo "deaktiviere buildingwait<br>";
 				}
-				echo "keine wegpunkte, fertig<br>";
+				//echo "keine wegpunkte, fertig<br>";
 				return;
 			}
 			if ($debug) echo "army walking to waypoint (".$wps[1]->x.",".$wps[1]->y.")<br>";

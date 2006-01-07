@@ -34,6 +34,7 @@ class Spell_LoveAndJoy extends Spell_Production {
 	}  
 	function Spell_LoveAndJoy() { $this->res = "pop"; $this->restext = "<img src='".g("pop-r%R%.png")."'>"; }  
 	function GetProduced ($dtime) { // override for non-res boosting
+		if (!$this->targetuser) return 0;
 		return ($dtime*40.0/3600.0+$this->level*0.005*$this->targetuser->pop*$dtime/3600.0)*$this->mod;
 	}
 }
@@ -83,7 +84,10 @@ class Spell_Pest extends Spell_Production {
 		foreach ($killed as $kill) BanSpell($kill,$this->owner);
 	}
 	function GetDifficulty ($spelltype,$mages,$userid) { return 8; }
-	function GetProduced ($dtime) { return -($dtime*40.0/3600.0+$this->level*0.01*$this->targetuser->pop*$dtime/3600.0)*$this->mod; }
+	function GetProduced ($dtime) { 
+		if (!$this->targetuser) return 0;
+		return -($dtime*40.0/3600.0+$this->level*0.01*$this->targetuser->pop*$dtime/3600.0)*$this->mod; 
+	}
 }
 
 
