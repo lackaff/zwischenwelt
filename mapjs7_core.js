@@ -27,7 +27,7 @@ gNWSEDebug = false; // shows typeid and connect-to infos in maptip
 gPathDetected = 0;
 
 // compare version with kBaseJSMapVersion from mapjs7.php and kNaviJSMapVersion available with GetkNaviJSMapVersion
-kCoreJSMapVersion = 27;
+kCoreJSMapVersion = 33;
 kMapTipName = "maptip";
 kMapTip_xoff = 29;
 kMapTip_yoff = 56;
@@ -38,6 +38,12 @@ kJSMapMode_HP = 3;
 gBigMapWindow = false;
 gLastDebugTime = 0;
 gProfileLastLine = "";
+gMapConstructionCurY = -1;
+gMapHTML = false;
+
+function MapReport (text) {
+	document.getElementById("mapdebug").innerHTML = text;
+}
 
 // a single location to secure all access
 function GetNaviFrame () {
@@ -99,7 +105,14 @@ function JSUpdateNaviPos () {
 	naviframe.updatepos(gLeft+gXMid,gTop+gYMid);
 }
 
+function JSArmyUpdate (id,x,y,name,type,user,unitstxt,itemstxt,flags) {
+	jsArmy(id,x,y,name,type,user,unitstxt,itemstxt,flags);
+	if (gBigMapWindow) gBigMapWindow.JSArmyUpdate(id,x,y,name,type,user,unitstxt,itemstxt,flags);
+	// bigmap 
+}
+
 function JSActivateArmy (armyid,wps) {
+	if (gBigMapWindow) gBigMapWindow.JSActivateArmy(armyid,wps);
 	gActiveArmyID = armyid;
 	gWPs = wps;
 	jsWPs();
@@ -107,26 +120,29 @@ function JSActivateArmy (armyid,wps) {
 	CompileWPs();
 	CreateMap();
 	JSUpdateNaviPos();
-	var naviframe = GetNaviFrame();
-	if (naviframe) naviframe.SelectArmy(gActiveArmyID);
+	if (!gBig) {
+		var naviframe = GetNaviFrame();
+		if (naviframe) naviframe.SelectArmy(gActiveArmyID);
+	}
+	// bigmap
 }
 
 // speedup
 function jsParseBuildings () {
-	var i;
+	var i,res,arr;
 	gBuildings = gBuildings.split(";");	
 	gBuildings.length=gBuildings.length-1;
 	for (i in gBuildings) {
-		gBuildings[i] = gBuildings[i].split(",");
-		var res = new Object();
-		res.x = gBuildings[i][0];
-		res.y = gBuildings[i][1];
-		res.type = gBuildings[i][2];
-		res.user = gBuildings[i][3];
-		res.level = gBuildings[i][4];
-		res.hp = gBuildings[i][5];
-		res.construction = gBuildings[i][6];
-		res.jsflags = gBuildings[i][7];			
+		arr = gBuildings[i].split(",");
+		res = new Object();
+		res.x = arr[0];
+		res.y = arr[1];
+		res.type = arr[2];
+		res.user = arr[3];
+		res.level = arr[4];
+		res.hp = arr[5];
+		res.construction = arr[6];
+		res.jsflags = arr[7];			
 		gBuildingsCache[res.y-gTop+1][res.x-gLeft+1] = res;
 	}
 }
@@ -183,10 +199,10 @@ function CompileWPs () {
 				head = DirToNWSE1(dx2,dy2); // direction going from here to next
 				// TODO : check if blocked -> red or green
 				blocked = (GetPosSpeed(relx,rely,movablemask,gActiveArmyID) == 0) ? "b" : ""; // appended to nwse
-				if (foot) gWPMap[relx][rely][gWPMap[relx][rely].length] = (g("mapwp/foot_"+foot+blocked+".gif")); else alert("dead foot "+dx1+"."+dy1);
-				if (head) gWPMap[relx][rely][gWPMap[relx][rely].length] = (g("mapwp/head_"+head+blocked+".gif")); else alert("dead head "+dx2+"."+dy2);
+				if (foot) gWPMap[relx][rely][gWPMap[relx][rely].length] = (g("mapwp/foot_"+foot+blocked+".gif"));
+				if (head) gWPMap[relx][rely][gWPMap[relx][rely].length] = (g("mapwp/head_"+head+blocked+".gif"));
 			}
-			if (x == step[0] && y == step[1]) { alert("endless!"); break; }
+			if (x == step[0] && y == step[1]) { alert("endless!"); return; }
 			x = step[0];
 			y = step[1];
 			dx1 = dx2;
@@ -211,19 +227,21 @@ function AbsolutePathCheck () {
 	if (base2 == expected2) gPathDetected += 8;
 	if (gPathDetected > 0) return true; // valid path
 	var mytext = "";
-	mytext += "Fehler in der ZW-Config : der Absolute Pfad stimmt nicht\n";
+	mytext += "Fehler in der ZW-Config :\n";
+	mytext += "der Absolute Pfad stimmt nicht\n";
 	mytext += "Bitte folgende Werte den Admins melden :\n";
 	mytext += "absolutepath="+base1+"\n";
 	mytext += "protocol.host.pathname="+expected1+"\n";
 	mytext += "hostname="+location.hostname+"\n";
 	mytext += "siehe defines.mysql.php : BASEURL\n";
-	alert(mytext);
+	MapReport(mytext.split("\n").join("<br>"));
+	//alert(mytext);
 	return false;
 }
 
 function VersionCheckBase () {
-	//if (!AbsolutePathCheck()) return false;
-	AbsolutePathCheck();
+	if (!AbsolutePathCheck()) return false;
+	//AbsolutePathCheck();
 	if (kCoreJSMapVersion == kBaseJSMapVersion) return true;
 	alert("Update der JavaScriptKarte (Core von v"+kCoreJSMapVersion+" auf v"+kBaseJSMapVersion+"), bitte neu einloggen...");
 	var naviframe = GetNaviFrame();
@@ -245,15 +263,13 @@ function VersionCheckNavi () {
 
 // executed onLoad, parse data, CreateMap() when finished
 function MapInit() {
-	if (!VersionCheckBase()) return;
+	if (!gBig) if (!VersionCheckBase()) return;
 
 	profiling("starting init");
 	
 	var i,j,x,y;
 	gXMid=Math.floor(gCX/2);
 	gYMid=Math.floor(gCY/2);
-	
-	JSUpdateNaviPos();
 	
 	profiling("parse terrain");
 	// parse data
@@ -367,9 +383,10 @@ function CompileTerrain () {
 function ParseTypeAmountList (list) {
 	var arr = list.split("|");
 	arr.length=arr.length-1;
-	var i,res = new Array();
+	var i,type_amount_pair;
+	var res = new Array();
 	for (i in arr) {
-		var type_amount_pair = arr[i].split(":");
+		type_amount_pair = arr[i].split(":");
 		if (!res[type_amount_pair[0]]) // EX UNDEFINED
 			res[type_amount_pair[0]] = 0;
 		res[type_amount_pair[0]] += parseInt(type_amount_pair[1]);
@@ -382,111 +399,104 @@ function RefreshCell (relx,rely) {
 	document.getElementById("cell_"+relx+"_"+rely).innerHTML = GetCellHTML(relx,rely);
 }
 
-// createmap is called as soon as loading is complete
-function CreateMap() {
-	var row,x,y,i,j;
-	
-	//  onMouseout=\"KillTip()\"
-	var maphtml = "<table class=\"map\" onMouseout=\"AbortTip()\" border=0 cellpadding=0 cellspacing=0>\n";
-	
+
+// construction process divided into steps to improve browser responsibility and prevent script hang check
+function CreateMapStep () {
+	var row,x,y,i,j,myclass,step;
+	var smallstep = Math.floor(gXMid/2),bigstep = gCX-1,normalstep = gXMid;
+	var navx,navy,text;
+	y = gMapConstructionCurY;
 	
 	// maptiles
-	for (y=-1;y<gCY+1;++y) {
-		profiling("construct map row "+y);
-		row = "";
+	if (y<gCY+1) {
+		MapReport("Erzeuge Kartenzeile "+y+"/"+(gCY));
+		//profiling("Erzeuge Kartenzeile "+y+"/"+gCY+1);
+		gMapHTML += "\n<tr>";
 		for (x=-1;x<gCX+1;++x) if (x >= 0 && x < gCX && y >= 0 && y < gCY) {
 			// cell
-			row += "<td nowrap class=\"mapcell\" id=\"cell_"+x+"_"+y+"\">"+GetCellHTML(x,y)+"</td>\n";
+			gMapHTML += "<td nowrap class=\"mapcell\" id=\"cell_"+x+"_"+y+"\">"+GetCellHTML(x,y)+"</td>\n";
 		} else {
 			// border
-			var myclass = "mapborder_" + (y<gYMid ? "n" : (y==gYMid?"":"s")) + (x<gXMid ? "w" : (x==gXMid?"":"e"));
+			myclass = "mapborder_" + (y<gYMid ? "n" : (y==gYMid?"":"s")) + (x<gXMid ? "w" : (x==gXMid?"":"e"));
 			if ((x < 0 || x >= gCX) && (y < 0 || y >= gCY)) myclass += "_edge";
 			
 			// arrows for the big and small steps
-			var step = 5;
-			       if(x+1 == gXMid && y<gYMid){step = 2;myclass = "mapborder_n_small";}
-			else if(x-1 == gXMid && y<gYMid){step = 10;myclass = "mapborder_n_big";}
-			else if(y+1 == gYMid && x<gXMid){step = 2;myclass = "mapborder_w_small";}
-			else if(y-1 == gYMid && x<gXMid){step = 10;myclass = "mapborder_w_big";}
-			else if(x+1 == gXMid && y>gYMid){step = 2;myclass = "mapborder_s_small";}
-			else if(x-1 == gXMid && y>gYMid){step = 10;myclass = "mapborder_s_big";}
-			else if(y+1 == gYMid && x>gXMid){step = 2;myclass = "mapborder_e_small";}
-			else if(y-1 == gYMid && x>gXMid){step = 10;myclass = "mapborder_e_big";}
+			step = normalstep;
 			
-			var navx = x<0?-1:(x>=gCX?1:0);
-			var navy = y<0?-1:(y>=gCY?1:0);
-			var text = (x < 0 || x >= gCX) ? (y+gTop) : (x+gLeft);
+				 if(x+1 == gXMid && y<gYMid){step = smallstep;myclass = "mapborder_n_small";}
+			else if(x-1 == gXMid && y<gYMid){step = bigstep;myclass = "mapborder_n_big";}
+			else if(y+1 == gYMid && x<gXMid){step = smallstep;myclass = "mapborder_w_small";}
+			else if(y-1 == gYMid && x<gXMid){step = bigstep;myclass = "mapborder_w_big";}
+			else if(x+1 == gXMid && y>gYMid){step = smallstep;myclass = "mapborder_s_small";}
+			else if(x-1 == gXMid && y>gYMid){step = bigstep;myclass = "mapborder_s_big";}
+			else if(y+1 == gYMid && x>gXMid){step = smallstep;myclass = "mapborder_e_small";}
+			else if(y-1 == gYMid && x>gXMid){step = bigstep;myclass = "mapborder_e_big";}
+			
+			navx = x<0?-1:(x>=gCX?1:0);
+			navy = y<0?-1:(y>=gCY?1:0);
+			text = (x < 0 || x >= gCX) ? (y+gTop) : (x+gLeft);
 			//var blindcx = (y<0)?kJSForceIESpace:1;
 			//var blindcy = (x<0)?kJSForceIESpace:1;
 			//var blindgif = (x<0&&y<0)?"":("<img src=\""+g("edit.png")+"\" width="+blindcx+" height="+blindcy+">");
-			row += "<th nowrap class=\"mapborder\"><div class=\""+myclass+"\" onClick=\"navrel("+navx+","+navy+","+step+")\"><span>"+text+"</span></div></th>\n";
+			gMapHTML += "<th nowrap class=\"mapborder\"><div class=\""+myclass+"\" onClick=\"navrel("+navx+","+navy+","+step+")\"><span>"+text+"</span></div></th>\n";
 		}
-		maphtml += "\n<tr>"+row+"</tr>\n";
-	}
-	
-	maphtml += "</table>";
-	
-	profiling("construct map tabs");
-	
-	//var tab_corner = "";
-	/*
-	tab_corner += "<span class=\"mapscroll\" style='display:none'>";
-	tab_corner += "<span class=\"mapscroll_minus\"><a href=\"javascript:mapscroll_minus()\">-</a></span>";
-	tab_corner += "<span class=\"mapscroll_plus\"><a href=\"javascript:mapscroll_plus()\">+</a></span>";
-	tab_corner += "<input type=\"text\" name=\"mapscroll\" value=\""+gScroll+"\">";
-	tab_corner += "</span>";
-	*/
-	var tab_pre = "";
-	tab_pre += "<div class=\"tabs\">";
-	//tab_pre += "	<div>"+tab_corner+"</div>";
-	tab_pre += "	<div class=\"tabheader\">";
-	tab_pre += "		<div class=\"tabcorner\">";
-	tab_pre += "			<span>"+gMapModiHelp+"</span>";
-	tab_pre += "<a href=\"javascript:void(alert('Map-Version="+kCoreJSMapVersion+",PathCode="+gPathDetected+"'))\">v</a>";
-	tab_pre += "<a href=\"javascript:navrel(0,0,1)\"><img alt=\"reload\" title=\"reload\" border=0 src=\""+g("icon/reload.png")+"\"></a>";
-	if (!gBig)	tab_pre += "<a href=\"javascript:OpenMap(1)\"><img alt=\"bigmap\" title=\"bigmap\" border=0 src=\""+g("icon/bigmap.png")+"\"></a>";
-	if (!gBig)	tab_pre += "<a href=\"javascript:OpenMap(2)\"><img alt=\"minimap2\" title=\"minimap2\" border=0 src=\""+g("icon/minimap2.png")+"\"></a>";
-	if (!gBig)	tab_pre += "<a href=\"javascript:OpenMap(3)\"><img alt=\"minimap\" title=\"minimap\" border=0 src=\""+g("icon/minimap.png")+"\"></a>";
-	if (!gBig)	tab_pre += "<a href=\"javascript:OpenMap(4)\"><img alt=\"creepmap\" title=\"creepmap\" border=0 src=\""+g("icon/creepmap.png")+"\"></a>";
-	if (!gBig)	tab_pre += "<a href=\"javascript:OpenMap(5)\"><img alt=\"diplomap\" title=\"diplomap\" border=0 src=\""+g("icon/diplomap.png")+"\"></a>";
-	tab_pre += "		</div>";
-	tab_pre += "		<ul>";
-	tab_pre += "			<li class=\""+(gMapMode==kJSMapMode_Normal?	"activetab":"inactivetab")+"\"><a class=\"tabhead\" href=\"javascript:SetMapMode(kJSMapMode_Normal)\">Normal</a></li>";
-	tab_pre += "			<li class=\""+(gMapMode==kJSMapMode_Plan?	"activetab":"inactivetab")+"\"><a class=\"tabhead\" href=\"javascript:SetMapMode(kJSMapMode_Plan)\">Pl&auml;ne</a></li>";
-	tab_pre += "			<li class=\""+(gMapMode==kJSMapMode_Bauzeit?"activetab":"inactivetab")+"\"><a class=\"tabhead\" href=\"javascript:SetMapMode(kJSMapMode_Bauzeit)\">Bauzeit</a></li>";
-	tab_pre += "			<li class=\""+(gMapMode==kJSMapMode_HP?		"activetab":"inactivetab")+"\"><a class=\"tabhead\" href=\"javascript:SetMapMode(kJSMapMode_HP)\">HP</a></li>";
-	tab_pre += "		</ul>";
-	tab_pre += "	</div>";
-	tab_pre += "	<div class=\"tabpane\">";
+		//gMapHTML += "\n<tr>"+row+"</tr>\n";
+		gMapHTML += "</tr>\n";
+		++gMapConstructionCurY;
+		if (gBig) {
+			// timeout
+			window.setTimeout("CreateMapStep()",10);
+			return true;
+		}
+		return false; // loop in createmap, false -> not done
+	} else {
+		//profiling("construct map tabs");
 		
-	var tab_post = "";
-	tab_post += "	</div>";
-	tab_post += "</div><div class=\"tabsend\"></div>";
+			
+		var tab_post = "</div></div><div class=\"tabsend\"></div>";
 
-	/*
-	tab_pre += "<table class=\"tabs\" cellspacing=0 cellpadding=0><tr>\n";
-	tab_pre += "<td "+(gMapMode==kJSMapMode_Normal?	"id=\"current\"":"")+"><a href=\"javascript:SetMapMode(kJSMapMode_Normal)\">Normal</a></td>\n";
-	tab_pre += "<td class=\""+(gMapMode==kJSMapMode_Plan?	"":"in"	)+"activetab\"><a href=\"javascript:SetMapMode(kJSMapMode_Plan)\">Pläne</a></td>\n";
-	tab_pre += "<td class=\""+(gMapMode==kJSMapMode_Bauzeit?"":"in"	)+"activetab\"><a href=\"javascript:SetMapMode(kJSMapMode_Bauzeit)\">Bauzeit</a></td>\n";
-	tab_pre += "<td class=\""+(gMapMode==kJSMapMode_HP?"":"in"		)+"activetab\"><a href=\"javascript:SetMapMode(kJSMapMode_HP)\">HP</a></td>\n";
-	tab_pre += "<td class=\"tabfillerright\" width=\"100%\" align=\"right\">"+tab_topright+"</td>\n";
-	tab_pre += "</tr><tr>\n";
-	tab_pre += "<td class=\"tabpane\" colspan=5><div>\n";
-	var tab_post = "\n</div></td></tr></table>\n";
-	*/
+		var maptiphtml = "<span class=\"maptip\" onClick=\"KillTip()\" id=\""+kMapTipName+"\" style=\"position:absolute;top:0px;left:0px; visibility:hidden;\">&nbsp;</span>";
+		
+		gMapHTML += "</table>" + tab_post + maptiphtml;
+		
+		//profiling("sending html to browser");
+		MapReport("");
+		document.getElementById("mapzone").innerHTML = gMapHTML;
+		// done constructing map
+		return true;
+	}
+}
+
+// createmap is called as soon as loading is complete
+function CreateMap() {
+	gMapConstructionCurY = -1;
+	gMapHTML = "";
 	
-	//  onMouseover=\"KillTip()\"
-	var maptiphtml = "<span class=\"maptip\" onClick=\"KillTip()\" id=\""+kMapTipName+"\" style=\"position:absolute;top:0px;left:0px; visibility:hidden;\">&nbsp;</span>";
+	gMapHTML += "<div class=\"tabs\">";
+	//gMapHTML += "	<div>"+tab_corner+"</div>";
+	gMapHTML += "	<div class=\"tabheader\">";
+	gMapHTML += "		<div class=\"tabcorner\">";
+	gMapHTML += "			<span>"+gMapModiHelp+"</span>";
+	gMapHTML += "<a href=\"javascript:void(alert('Map-Version="+kCoreJSMapVersion+",PathCode="+gPathDetected+"'))\">v</a>";
+	gMapHTML += "<a href=\"javascript:navrel(0,0,1)\"><img alt=\"reload\" title=\"reload\" border=0 src=\""+g("icon/reload.png")+"\"></a>";
+	if (!gBig)	gMapHTML += "<a href=\"javascript:OpenMap(1)\"><img alt=\"bigmap\" title=\"bigmap\" border=0 src=\""+g("icon/bigmap.png")+"\"></a>";
+	if (!gBig)	gMapHTML += "<a href=\"javascript:OpenMap(2)\"><img alt=\"minimap2\" title=\"minimap2\" border=0 src=\""+g("icon/minimap2.png")+"\"></a>";
+	if (!gBig)	gMapHTML += "<a href=\"javascript:OpenMap(3)\"><img alt=\"minimap\" title=\"minimap\" border=0 src=\""+g("icon/minimap.png")+"\"></a>";
+	if (!gBig)	gMapHTML += "<a href=\"javascript:OpenMap(4)\"><img alt=\"creepmap\" title=\"creepmap\" border=0 src=\""+g("icon/creepmap.png")+"\"></a>";
+	if (!gBig)	gMapHTML += "<a href=\"javascript:OpenMap(5)\"><img alt=\"diplomap\" title=\"diplomap\" border=0 src=\""+g("icon/diplomap.png")+"\"></a>";
+	gMapHTML += "		</div>";
+	gMapHTML += "		<ul>";
+	gMapHTML += "			<li class=\""+(gMapMode==kJSMapMode_Normal?	"activetab":"inactivetab")+"\"><a class=\"tabhead\" href=\"javascript:SetMapMode(kJSMapMode_Normal)\">Normal</a></li>";
+	gMapHTML += "			<li class=\""+(gMapMode==kJSMapMode_Plan?	"activetab":"inactivetab")+"\"><a class=\"tabhead\" href=\"javascript:SetMapMode(kJSMapMode_Plan)\">Pl&auml;ne</a></li>";
+	gMapHTML += "			<li class=\""+(gMapMode==kJSMapMode_Bauzeit?"activetab":"inactivetab")+"\"><a class=\"tabhead\" href=\"javascript:SetMapMode(kJSMapMode_Bauzeit)\">Bauzeit</a></li>";
+	gMapHTML += "			<li class=\""+(gMapMode==kJSMapMode_HP?		"activetab":"inactivetab")+"\"><a class=\"tabhead\" href=\"javascript:SetMapMode(kJSMapMode_HP)\">HP</a></li>";
+	gMapHTML += "		</ul>";
+	gMapHTML += "	</div>";
+	gMapHTML += "	<div class=\"tabpane\">";
+		
+	gMapHTML += "<table class=\"map\" onMouseout=\"AbortTip()\" border=0 cellpadding=0 cellspacing=0>\n";
 	
-	profiling("sending html to browser");
-	
-	document.getElementById("mapzone").innerHTML = tab_pre + maphtml + tab_post + maptiphtml;
-	
-	
-	// var maptipnode = document.getElementById(kMapTipName);
-	//alert("0"+maptipnode);
-	
-	return true;
+	while (!CreateMapStep()) ; // one step triggers the next
 }
 
 function OpenMap (type) {
@@ -987,11 +997,15 @@ function extnavabs (x,y,cancelmode) {
 function navabs (x,y,cancelmode) {
 	// alle elemente mit javascript-mouseover deaktivieren, um javascript fehler beim laden zu verhindern
 	
-	var i,ix,iy,mouselistener;
-	for (iy=0;iy<gCY;++iy)
-	for (ix=0;ix<gCX;++ix) {
-		mouselistener = document.getElementById("mouselistener_"+iy+"_"+ix);
-		mouselistener.innerHTML = "";
+	if (gBig) {
+		document.getElementById("mapzone").innerHTML = "";
+	} else {
+		var i,ix,iy,mouselistener;
+		for (iy=0;iy<gCY;++iy)
+		for (ix=0;ix<gCX;++ix) {
+			mouselistener = document.getElementById("mouselistener_"+iy+"_"+ix);
+			mouselistener.innerHTML = "";
+		}
 	}
 	var mode = cancelmode?kJSMapMode_Normal:gMapMode;
 	//location.href = location.pathname + "?sid="+gSID+"&x="+x+"&big="+gBig+"&y="+y+"&cx="+gCX+"&cy="+gCY+"&mode="+mode+"&scroll="+gScroll+"&army="+gActiveArmyID;

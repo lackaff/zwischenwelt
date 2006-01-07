@@ -69,6 +69,12 @@ class cInfoHQ extends cInfoBuilding {
 					$f_sel_friendoffer = intarray(isset($f_sel_friendoffer)?$f_sel_friendoffer:false);
 					foreach ($f_sel_friendoffer as $uid) SetFOF($gUser->id,intval($uid),kFOF_Friend);
 				}
+				if (isset($f_reject_friend)) {
+					$f_sel_friendoffer = intarray(isset($f_sel_friendoffer)?$f_sel_friendoffer:false);
+					foreach ($f_sel_friendoffer as $uid) 
+						if (GetFOF(intval($uid),$gUser->id) == kFOF_Friend) 
+							SetFOF(intval($uid),$gUser->id,kFOF_Neutral);
+				}
 			break;
 		}
 	}
@@ -516,6 +522,7 @@ class cInfoHQ extends cInfoBuilding {
 				</td></tr>
 				</table>
 				<input type="submit" name="accept" value="annehmen">
+				<input type="submit" name="reject_friend" value="ablehnen">
 			</form>
 			</td>
 		<?php } // endif not all empty?>

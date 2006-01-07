@@ -737,12 +737,6 @@ class cInfoBuilding extends cInfoBase {
 		if (!$this->cancontroll()) return;
 		if ($gObject->construction > 0) return;
 		
-		if($gUser->admin){ ?>
-			Techadmin:
-			<a href="<?=query("?sid=?&x=?&y=?&building=tech_admin&id=".$gObject->id."&do=newtech&group=0")?>">(+)</a>
-			<a href="<?=query("?sid=?&x=?&y=?&building=tech_admin&id=".$gObject->id."&do=newtech&newgroup=1")?>">(+g)</a>
-		<?php }
-		
 		$localtechtypes = array(); // the techs available in this building
 		foreach ($gTechnologyType as $o) 
 			if ($o->buildingtype == $gObject->type) {
@@ -750,10 +744,17 @@ class cInfoBuilding extends cInfoBase {
 							$localtechtypes[$o->group] = array();
 				$localtechtypes[$o->group][] = $o;
 			}
-		if (count($localtechtypes) == 0) return; // no techs for this building
+		if (count($localtechtypes) == 0 && !$gUser->admin) return; // no techs for this building
 		ksort($localtechtypes);
 		
 		rob_ob_start();
+		
+		if($gUser->admin){ ?>
+			Techadmin:
+			<a href="<?=query("?sid=?&x=?&y=?&building=tech_admin&id=".$gObject->id."&do=newtech&group=0")?>">(+)</a>
+			<a href="<?=query("?sid=?&x=?&y=?&building=tech_admin&id=".$gObject->id."&do=newtech&newgroup=1")?>">(+g)</a>
+		<?php }
+		
 		ImgBorderStart("s1","jpg","#ffffee","",32,33);
 		?>
 		<?php if($gUser->admin){ ?>

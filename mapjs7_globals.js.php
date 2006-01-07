@@ -118,22 +118,24 @@ function GetPosSpeed (relx,rely,movablemask,skiparmyid) {
 	
 	// check building
 	var building = GetBuilding(relx,rely);
-	if(building) {
+	if(building && gBuildingType[building.type]) {
 		// is open for user?
 		b_speed = (parseInt(building.jsflags) & kJSMapBuildingFlag_Open) ? gBuildingType[building.type].speed : 0;
 		override = gBuildingType[building.type].movable_override_terrain == 1;
 		if ((movablemask & parseInt(gBuildingType[building.type].movable_flag)) == 0) {
 			b_speed = 0;
 		}
-	}
+	} else building = false;
 	
 	// check terrain
 	var terraintype = GetTerrainType(relx,rely);
-	t_speed = gTerrainType[terraintype].speed;
-	// check movable
-	if ((movablemask & parseInt(gTerrainType[terraintype].movable_flag)) == 0) {
-		t_speed = 0;
-	}
+	if (gTerrainType[terraintype]) {
+		t_speed = gTerrainType[terraintype].speed;
+		// check movable
+		if ((movablemask & parseInt(gTerrainType[terraintype].movable_flag)) == 0) {
+			t_speed = 0;
+		}
+	} else t_speed = 0;
 	
 	//check if building movable overrides terrain
 	if (building && override) {
@@ -292,15 +294,15 @@ function php2js_parser ($function_name,$fields,$globalarr,$sep_obj=";",$sep_val=
 	if (!is_array($fields)) $fields = explode(",",$fields);
 	?>
 	function <?=$function_name?> () {
-		var i;
+		var i,arr;
 		<?=$globalarr?> = <?=$globalarr?>.split("<?=addslashes($sep_obj)?>");	
 		<?=$globalarr?>.length=<?=$globalarr?>.length-1;
 		for (i in <?=$globalarr?>) if (<?=$globalarr?>[i] == "") {
 			<?=$globalarr?>[i] = false;
 		} else {
-			<?=$globalarr?>[i] = <?=$globalarr?>[i].split("<?=addslashes($sep_val)?>");
+			arr = <?=$globalarr?>[i].split("<?=addslashes($sep_val)?>");
 			var res = new Object();
-			<?php $i = 0; foreach ($fields as $field) echo "res.".$field." = ".$globalarr."[i][".($i++)."];";?>
+			<?php $i = 0; foreach ($fields as $field) echo "res.".$field." = arr[".($i++)."];";?>
 			<?=$globalarr?>[i] = res;
 		}
 	}
