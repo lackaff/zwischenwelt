@@ -50,12 +50,13 @@ insgesamt <?=$totalbuildings?> Gebäude
 <?php
 if (isset($f_listtype)) {
 	// &listtype=".$o->type."&listlevel=".$o->level."&listup=".$o->upgrades
-	$buildings = sqlgettable("SELECT * FROM `building` WHERE 
-		`user` = ".$gUser->id." AND 
-		`construction` = 0 AND 
-		`type` = ".intval($f_listtype)." AND 
-		`level` = ".intval($f_listlevel)." AND 
-		`upgrades` = ".intval($f_listup));
+	$cond = array();
+	$cond[] = "`user` = ".$gUser->id;
+	$cond[] = "`construction` = 0";
+	$cond[] = "`type` = ".intval($f_listtype);
+	if ($f_listlevel > -1)	$cond[] = "`level` = ".intval($f_listlevel);
+	if ($f_listup > -1)		$cond[] = "`upgrades` = ".intval($f_listup);
+	$buildings = sqlgettable("SELECT * FROM `building` WHERE ".implode(" AND ",$cond));
 	$typepic = "<img src=\"".GetBuildingPic(intval($f_listtype),$gUser)."\">";
 	?>
 	<a href="<?=Query("?sid=?&selbtype=".$f_listtype)?>">(zurück zur Übersicht)</a><br>

@@ -341,8 +341,8 @@ if (isset($f_regentypes)) {
 <SELECT NAME="gotocat3" style="display:none;"></SELECT>
 <INPUT TYPE="text" NAME="pos" VALUE="" style="width:90px;display:none;">
 <INPUT TYPE="text" NAME="search" VALUE="" style="width:90px;display:none;" >
-<INPUT TYPE="submit" NAME="armyshow" VALUE="wp" style="display:none;">
 <INPUT TYPE="submit" NAME="armygoto" VALUE="&gt;">
+<INPUT TYPE="submit" NAME="armyshow" VALUE="wp" style="display:none;">
 </FORM>
 </div>
 
