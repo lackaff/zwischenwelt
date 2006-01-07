@@ -130,8 +130,8 @@ if (isset($f_regentypes)) {
 		// hide old cat
 		if (gGotoCat == <?=kMapNaviGotoCat_Pos?>)		{ Hide("pos"); }
 		if (gGotoCat == <?=kMapNaviGotoCat_Mark?>)		{ HideList1(); }
-		if (gGotoCat == <?=kMapNaviGotoCat_Own?>)		{ HideList2(); }
-		if (gGotoCat == <?=kMapNaviGotoCat_Guild?>)		{ HideList2(); }
+		if (gGotoCat == <?=kMapNaviGotoCat_Own?>)		{ HideList2(); Hide("armyshow"); }
+		if (gGotoCat == <?=kMapNaviGotoCat_Guild?>)		{ HideList2(); Hide("armyshow"); }
 		if (gGotoCat == <?=kMapNaviGotoCat_Friends?>)	{ HideList1(); }
 		if (gGotoCat == <?=kMapNaviGotoCat_Enemies?>)	{ HideList1(); }
 		if (gGotoCat == <?=kMapNaviGotoCat_Search?>)	{ HideList1(); Hide("search"); }
@@ -143,8 +143,8 @@ if (isset($f_regentypes)) {
 		// show new cat
 		if (gGotoCat == <?=kMapNaviGotoCat_Pos?>) 		{ Show("pos"); }
 		if (gGotoCat == <?=kMapNaviGotoCat_Mark?>)		{ ShowList1(); }
-		if (gGotoCat == <?=kMapNaviGotoCat_Own?>)		{ ShowList2(); }
-		if (gGotoCat == <?=kMapNaviGotoCat_Guild?>)		{ ShowList2(); }
+		if (gGotoCat == <?=kMapNaviGotoCat_Own?>)		{ ShowList2(); Show("armyshow"); }
+		if (gGotoCat == <?=kMapNaviGotoCat_Guild?>)		{ ShowList2(); Show("armyshow"); }
 		if (gGotoCat == <?=kMapNaviGotoCat_Friends?>)	{ ShowList1(); }
 		if (gGotoCat == <?=kMapNaviGotoCat_Enemies?>)	{ ShowList1(); }
 		if (gGotoCat == <?=kMapNaviGotoCat_Search?>)	{ ShowList1(); Show("search"); }
@@ -341,6 +341,7 @@ if (isset($f_regentypes)) {
 <SELECT NAME="gotocat3" style="display:none;"></SELECT>
 <INPUT TYPE="text" NAME="pos" VALUE="" style="width:90px;display:none;">
 <INPUT TYPE="text" NAME="search" VALUE="" style="width:90px;display:none;" >
+<INPUT TYPE="submit" NAME="armyshow" VALUE="wp" style="display:none;">
 <INPUT TYPE="submit" NAME="armygoto" VALUE="&gt;">
 </FORM>
 </div>

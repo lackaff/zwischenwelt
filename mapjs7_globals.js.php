@@ -97,7 +97,7 @@ function GetNextStep (x,y,x1,y1,x2,y2) {
 function GetUnitsMovableMask (units) {
 	var mask = 0;
 	var maskset = false;
-	for (i in units) if (units[i] >= 1) {
+	for (i in units) if (units[i] >= 1 && gUnitType[i]) {
 		var flag = parseInt(gUnitType[i].movable_flag);
 		mask = (maskset)?(mask & flag):(flag);
 		maskset = true;

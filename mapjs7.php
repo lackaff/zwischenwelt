@@ -13,7 +13,7 @@ $gCY = isset($f_cy)?(min(200,max(0,intval($f_cy)))|1):11;
 if (isset($f_gotocat)) {
 	//echo "gotocat = $f_gotocat , gotocat2 = $f_gotocat2 , gotocat3 = $f_gotocat3 <br>";
 	$foundobject = false;
-	if ($f_gotocat != kMapNaviGotoCat_Pos) unset($f_pos);
+	if ($f_gotocat != kMapNaviGotoCat_Pos && !isset($f_armyshow)) unset($f_pos);
 	switch ($f_gotocat) {
 		case kMapNaviGotoCat_Pos: break; // handled by $f_pos
 		case kMapNaviGotoCat_Mark: 
@@ -22,11 +22,13 @@ if (isset($f_gotocat)) {
 		case kMapNaviGotoCat_Own:
 			$foundobject = sqlgetobject("SELECT * FROM `army` WHERE `id` = ".intval($f_gotocat3));
 			$f_army = $foundobject->id;
+			if (isset($f_armyshow)) $foundobject = 0;
 		break;
 		case kMapNaviGotoCat_Guild:
 			if ($f_gotocat2 > 0) { // if cat2>0 then armytype else userid
 				$foundobject = sqlgetobject("SELECT * FROM `army` WHERE `id` = ".intval($f_gotocat3));
 				$f_army = $foundobject->id;
+				if (isset($f_armyshow)) $foundobject = 0;
 			} else $foundobject = sqlgetobject("SELECT `x`,`y` FROM `building` WHERE `user` = ".intval($f_gotocat3)." AND `type` = ".kBuilding_HQ);
 		break;
 		case kMapNaviGotoCat_Friends:

@@ -27,7 +27,7 @@ gNWSEDebug = false; // shows typeid and connect-to infos in maptip
 gPathDetected = 0;
 
 // compare version with kBaseJSMapVersion from mapjs7.php and kNaviJSMapVersion available with GetkNaviJSMapVersion
-kCoreJSMapVersion = 24;
+kCoreJSMapVersion = 27;
 kMapTipName = "maptip";
 kMapTip_xoff = 29;
 kMapTip_yoff = 56;
@@ -35,13 +35,9 @@ kJSMapMode_Normal = 0;
 kJSMapMode_Plan = 1;
 kJSMapMode_Bauzeit = 2;
 kJSMapMode_HP = 3;
-gLoading = true; // set to true when navi is clicked
-gAllLoaded = false; // mouselistener protection
 gBigMapWindow = false;
 gLastDebugTime = 0;
 gProfileLastLine = "";
-
-gBaseLoaded = false; // wether or not the mapjs7.php javascript has finished loading -> when calling MapInit();
 
 // a single location to secure all access
 function GetNaviFrame () {
@@ -75,8 +71,10 @@ function JSInsertPlan (x,y,type,priority) {
 	res.priority = priority;
 	gPlans[gPlans.length] = res;
 	RefreshCell(x-gLeft,y-gTop);
+	if (gBigMapWindow) gBigMapWindow.JSInsertPlan(x,y,type,priority);
 }
 function JSRemovePlan (x,y) {
+	if (gBigMapWindow) gBigMapWindow.JSRemovePlan(x,y);
 	var i;
 	for (i in gPlans) if (gPlans[i].x == x && gPlans[i].y == y) {
 		gPlans[i] = false;
@@ -95,16 +93,10 @@ function JSSetTerrain (x,y,type,brushrad) { /* ./infoadmincmd.php:298:  ... more
 function JSSetBuilding (x,y,type,brushrad) { /* ./infoadmincmd.php:352:  ... more params : line,level.. */ }
 
 function JSUpdateNaviPos () {
-	//var myarr = new Array(); myarr.pop();
-	/*
-	// disabled because of browser problems...
-	if (!gBaseLoaded) return;
-	if (!gAllLoaded) return;
+	if (gBig) return;
 	var naviframe = GetNaviFrame();
-	if (!gBig && naviframe) {
-		naviframe.updatepos(gLeft+gXMid,gTop+gYMid);
-		naviframe.SelectArmy(gActiveArmyID);
-	}*/
+	if (!naviframe) return;
+	naviframe.updatepos(gLeft+gXMid,gTop+gYMid);
 }
 
 function JSActivateArmy (armyid,wps) {
@@ -115,6 +107,8 @@ function JSActivateArmy (armyid,wps) {
 	CompileWPs();
 	CreateMap();
 	JSUpdateNaviPos();
+	var naviframe = GetNaviFrame();
+	if (naviframe) naviframe.SelectArmy(gActiveArmyID);
 }
 
 // speedup
@@ -217,21 +211,12 @@ function AbsolutePathCheck () {
 	if (base2 == expected2) gPathDetected += 8;
 	if (gPathDetected > 0) return true; // valid path
 	var mytext = "";
-	mytext += "Konfigurations- oder Browser Problem : der Absolute Pfad stimmt nicht\n";
+	mytext += "Fehler in der ZW-Config : der Absolute Pfad stimmt nicht\n";
 	mytext += "Bitte folgende Werte den Admins melden :\n";
-	mytext += "base1="+base1+"\n";
-	//mytext += "base2="+base2+"\n";
-	//mytext += "expected1="+expected1+"\n";
-	//mytext += "expected2="+expected2+"\n";
-	mytext += "protocol="+location.protocol+"\n";
-	mytext += "host="+location.host+"\n";
+	mytext += "absolutepath="+base1+"\n";
+	mytext += "protocol.host.pathname="+expected1+"\n";
 	mytext += "hostname="+location.hostname+"\n";
-	mytext += "pathname="+location.pathname+"\n";
 	mytext += "siehe defines.mysql.php : BASEURL\n";
-	//mytext += "location.hash="+location.hash+"\n";
-	//mytext += "location.port="+location.port+"\n";
-	//mytext += "location.search="+location.search+"\n";
-	//mytext += "location.href="+location.href+"\n";
 	alert(mytext);
 	return false;
 }
@@ -262,7 +247,6 @@ function VersionCheckNavi () {
 function MapInit() {
 	if (!VersionCheckBase()) return;
 
-	gBaseLoaded = true;
 	profiling("starting init");
 	
 	var i,j,x,y;
@@ -334,7 +318,6 @@ function MapInit() {
 	profiling("constructing map");
 	CreateMap();
 	profiling("done");profiling(""); // double call to finish output
-	gLoading = false;
 	
 	JSUpdateNaviPos();
 }
@@ -589,7 +572,8 @@ function GetCellHTML (relx,rely) {
 	// item
 	var item = SearchPos(gItems,relx,rely);
 	var items = SearchPosArr(gItems,relx,rely);
-	for (i in items) layers[layers.length] = g(gItemType[items[i].type].gfx);
+	for (i in items) if (gItemType[items[i].type])
+		layers[layers.length] = g(gItemType[items[i].type].gfx);
 	
 	// army
 	var army = SearchPos(gArmies,relx,rely);
@@ -602,7 +586,8 @@ function GetCellHTML (relx,rely) {
 			if (unittype == GetArmyUnitType(relx,rely+1)) nwsecode += kNWSE_S;
 			if (unittype == GetArmyUnitType(relx+1,rely)) nwsecode += kNWSE_E;
 		}
-		layers[layers.length] = g2(gUnitType[unittype].gfx,nwsecode);
+		if (gUnitType[unittype])
+			layers[layers.length] = g2(gUnitType[unittype].gfx,nwsecode);
 		if (army.user > 0) backgroundcolor = gUsers[army.user].color;
 	}
 	
@@ -626,7 +611,7 @@ function GetCellHTML (relx,rely) {
 	}
 	res += "<div id=\"mouselistener_"+rely+"_"+relx+"\" ><div onClick=\"mapclick("+relx+","+rely+")\" onMouseover=\"mapover("+relx+","+rely+")\">";
 	//if (relx == gXMid && rely == gYMid) 
-	//		res += "<img src='gfx/crosshair.png' onMouseover=\"if (!gLoading) mapover("+relx+","+rely+")\">"; 
+	//		res += "<img src='gfx/crosshair.png' onMouseover=\"mapover("+relx+","+rely+")\">"; 
 	//else
 	res += "<img src=\""+g("1px.gif")+"\" width="+kJSForceIESpaceCX+" height="+kJSForceIESpaceCY+">";
 	res += celltext;
@@ -644,8 +629,6 @@ function GetCellHTML (relx,rely) {
 }
 
 function mapclick (relx,rely) {
-	//if (gLoading) return;
-	//debuglog("c"+relx+","+rely);
 	if (!VersionCheckNavi()) return;
 	var naviframe = GetNaviFrame();
 	if (naviframe) naviframe.mapclicktool(relx+gLeft,rely+gTop,gActiveArmyID);
@@ -656,7 +639,6 @@ var gLastTipX = -1;
 var gLastTipY = -1;
 var gMapTipCountDown = false;
 function KillTip () {
-	// if (gLoading) return;
 	var maptipnode = document.getElementById(kMapTipName);
 	maptipnode.style.visibility = "hidden";
 	AbortTip();
@@ -674,7 +656,6 @@ function AbortTip () {
 }
 
 function mapover (relx,rely) {
-	//if (gLoading) return;
 	if (relx == gLastTipX && rely == gLastTipY) return;
 	gLastTipX = relx;
 	gLastTipY = rely;
@@ -759,7 +740,7 @@ function ShowMapTip(relx,rely) {
 	
 	// item
 	var items = SearchPosArr(gItems,relx,rely);
-	for (i in items) {
+	for (i in items) if (gItemType[items[i].type]) {
 		var item = items[i];
 		tiptext += "<tr><td nowrap>";
 		tiptext += "<img class=\"maptippic\" src=\""+g(gItemType[item.type].gfx)+"\"></td><td nowrap colspan=2>";
@@ -774,11 +755,11 @@ function ShowMapTip(relx,rely) {
 		tiptext += "<span>"+army.name+"</span><br>";
 		if (army.user > 0) tiptext += "<span>"+gUsers[army.user].name+"</span><br>";
 		tiptext += "<span>";
-		if (army.units.length > 0) for (i in army.units)
+		if (army.units.length > 0) for (i in army.units) if (gUnitType[i])
 			tiptext += "<img src=\""+g(gUnitType[i].gfx)+"\">"+TausenderTrenner(army.units[i]);
 		tiptext += "</span><br>";
 		tiptext += "<span>";
-		if (army.items.length > 0) for (i in army.items)
+		if (army.items.length > 0) for (i in army.items) if (gItemType[i])
 			tiptext += "<img src=\""+g(gItemType[i].gfx)+"\">"+TausenderTrenner(army.items[i]);
 		tiptext += "</span>";
 		tiptext += "</td></tr>";
@@ -1012,12 +993,10 @@ function navabs (x,y,cancelmode) {
 		mouselistener = document.getElementById("mouselistener_"+iy+"_"+ix);
 		mouselistener.innerHTML = "";
 	}
-	//gLoading = true;
-	//gAllLoaded = false;
 	var mode = cancelmode?kJSMapMode_Normal:gMapMode;
 	//location.href = location.pathname + "?sid="+gSID+"&x="+x+"&big="+gBig+"&y="+y+"&cx="+gCX+"&cy="+gCY+"&mode="+mode+"&scroll="+gScroll+"&army="+gActiveArmyID;
 	//location.href = kBASEURL + "/mapjs7.php?sid="+gSID+"&x="+x+"&big="+gBig+"&y="+y+"&cx="+gCX+"&cy="+gCY+"&mode="+mode+"&scroll="+gScroll+"&army="+gActiveArmyID;
-	location.href = "?sid="+gSID+"&x="+x+"&big="+gBig+"&y="+y+"&cx="+gCX+"&cy="+gCY+"&mode="+mode+"&scroll="+gScroll+"&army="+gActiveArmyID;
+	location.href = kBASEURL+"/"+kMapScript+"?sid="+gSID+"&x="+x+"&big="+gBig+"&y="+y+"&cx="+gCX+"&cy="+gCY+"&mode="+mode+"&scroll="+gScroll+"&army="+gActiveArmyID;
 }
 
 
@@ -1036,6 +1015,3 @@ function profiling (text) {
 function debuglog (text) {
 	document.getElementsByName("mapdebug")[0].innerHTML = text+document.getElementsByName("mapdebug")[0].innerHTML;
 }
-
-gAllLoaded = true; 
-// scheiss race conditions beim navigieren im mouseover, krieg ich sogar hiermit nicht ganz weg...
