@@ -54,6 +54,7 @@ define("kStats_SysInfo_Fight",3);
 define("kStats_SysInfo_Trade",5);
 define("kStats_SysInfo_Chat",6);
 define("kStats_SysInfo_Magic",7);
+define("kStats_SysInfo_Activity",8);
 
 define("kFOF_Neutral",0);
 define("kFOF_Friend",1);
