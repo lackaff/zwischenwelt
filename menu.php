@@ -63,22 +63,24 @@ else $newguild = false;
 		<ul>
 			<?php foreach($gRes as $n=>$f) {
 				$rel = round(100*max(0,$gUser->$f)/(max(1,$gUser->{"max_".$f})));
+				$col = GradientRYG($rel/100,0.8);
 				$alt = $n." ($rel%): ".kplaintrenner(floor(max(0,$gUser->$f)))." / ".kplaintrenner(floor($gUser->{"max_".$f}));
 			?>
 				<li>
 					<a href="<?=Query("../info/waren.php?sid=?&t=".(isset($gRes2ItemType)?$gRes2ItemType[$f]:"?"))?>">
 						<img border=0 title="<?=$alt?>" alt="<?=$alt?>" src="<?=g("res_$f.gif")?>">
 					</a>
-					(<?=$rel?>%) <?=ktrenner(floor(max(0,$gUser->$f)))?>
+					(<span style="color:<?=$col?>"><?=$rel?>%</span>) <?=ktrenner(floor(max(0,$gUser->$f)))?>
 				</li>
 			<?php }?>
 			<li>
 				<?php 
 				$rel = round(100*max(0,$gUser->pop)/max(1,($gUser->maxpop)));
+				$col = GradientRYG($rel/100,0.8);
 				$alt = "Bev&ouml;lkerung ($rel%): ".kplaintrenner(floor(max(0,$gUser->pop)))." / ".kplaintrenner(floor($gUser->maxpop));
 				?>
 				<img title="<?=$alt?>" alt="<?=$alt?>" src="<?=g("pop-r%R%.png","","",$gUser->race)?>">
-				(<?=$rel?>%) <?=ktrenner(floor(max(0,$gUser->pop)))?>
+				(<span style="color:<?=$col?>"><?=$rel?>%</span>) <?=ktrenner(floor(max(0,$gUser->pop)))?>
 			</li>
 		</ul>
 	</div>
