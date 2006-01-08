@@ -38,6 +38,11 @@ div.mainmenu div.mainmenu_icons {
 	margin-right:5px;
 	margin-left:5px;
 	margin-top:2px;
+	height:49px;
+}
+
+div.mainmenu_icons_click {
+	margin-top:3px;
 }
 
 div.mainmenu div.mainmenu_icons li {
@@ -147,6 +152,7 @@ div.mainmenu ul {
 .tabheader .tabcorner span		{ margin-bottom:2px; }
 .tabpane { float:left; margin-top:5px; margin-left:5px; margin-bottom:5px; padding-top:5px; }
 .tabsend {}
+.tabcorner img {margin-left:2px;}
 
 /* ***** MultiTabs (table based) ***** */
 

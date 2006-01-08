@@ -29,29 +29,35 @@ else $newguild = false;
 			<li><a href="<?=sessionLink("../stats/gen_pts.php")?>">Highscore</a></li>
 			<li><a href="<?=sessionLink("../info/profile.php?sid=?")?>">Einstell.</a></li>
 			<li><a href="http://zwischenwelt.org/wiki/" target="_blank">Hilfe</a></li>
-			<li><a href="<?=sessionLink("../logout.php")?>" target="_parent">Logout</a></li>
 			<li <?=($newguild)?"class=\"highlight\"":""?>>
 				<a href="<?=sessionLink("../info/guild.php")?>">Gilde</a>
 			</li>
+			<li><a href="<?=sessionLink("../logout.php")?>" target="_parent">Logout</a></li>
 		</ul>
 	</div>
 	<div class="mainmenu_icons">
-		<ul>
-			<li>
-				<a href="#" onclick="javascript:window.open('<?=query("../info/note.php?sid=?")?>', 'note', 'toolbar=0,scrollbars=0,location=0,statusbar=0,menubar=0,resizable=1,width=400,height=400');">
-					<img border=0 src="<?=g("note.png")?>" alt="Notiz" title="Notiz">
-				</a>
-			</li>
-			<li><img src="<?=g($gTimeGfx) ?>" alt="<?=$gTimeStr?>" title="<?=$gTimeStr?>"></li>
-			<li><img src="<?=g($gWeatherGfx[$gWeather])?>" alt="<?=$gWeatherType[$gWeather]?>" title="<?=$gWeatherType[$gWeather]?>"></li>
-			<li>
-				<?php if ($gUser->admin == 1) { $o = sqlgetobject("SELECT * FROM `building` WHERE `type` = 10");?>
-					<a href="<?=Query("../info/info.php?sid=?&x=".$o->x."&y=".$o->y)?>"><img src="<?=g("icon/admin.png")?>" alt="zur Entwickleranstalt springen" title="zur Entwickleranstalt springen" border=0></a>
-				<?php } else { ?>
-					<a href="<?=query("msg.php?show=compose&to=Admin&sid=?")?>"><img border=0 src="<?=g("icon/help2.png")?>" alt="Nachricht an die Admins schreiben" title="Nachricht an die Admins schreiben"></a>
-				<?php } ?>
-			</li>
-		</ul>
+		<div class="mainmenu_icons_show">
+			<ul>
+				<li><img src="<?=g($gTimeGfx) ?>" alt="<?=$gTimeStr?>" title="<?=$gTimeStr?>"></li>
+				<li><img src="<?=g($gWeatherGfx[$gWeather])?>" alt="<?=$gWeatherType[$gWeather]?>" title="<?=$gWeatherType[$gWeather]?>"></li>
+			</ul>
+		</div>
+		<div class="mainmenu_icons_click">
+			<ul>
+				<li>
+					<a href="#" onclick="javascript:window.open('<?=query("../info/note.php?sid=?")?>', 'note', 'toolbar=0,scrollbars=0,location=0,statusbar=0,menubar=0,resizable=1,width=400,height=400');">
+						<img border=0 src="<?=g("note.png")?>" alt="Notiz" title="Notiz">
+					</a>
+				</li>
+				<li>
+					<?php if ($gUser->admin == 1) { $o = sqlgetobject("SELECT * FROM `building` WHERE `type` = 10");?>
+						<a href="<?=Query("../info/info.php?sid=?&x=".$o->x."&y=".$o->y)?>"><img src="<?=g("icon/admin.png")?>" alt="zur Entwickleranstalt springen" title="zur Entwickleranstalt springen" border=0></a>
+					<?php } else { ?>
+						<a href="<?=query("msg.php?show=compose&to=Admin&sid=?")?>"><img border=0 src="<?=g("icon/help2.png")?>" alt="Nachricht an die Admins schreiben" title="Nachricht an die Admins schreiben"></a>
+					<?php } ?>
+				</li>			
+			</ul>
+		</div>
 	</div>
 	<div class="mainmenu_res">
 		<ul>
