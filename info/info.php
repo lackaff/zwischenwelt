@@ -820,7 +820,7 @@ if (isset($f_blind)) { // blind modus im dummy frame, fuer schnellere map-click-
 
 <?php
 if ($gInfoTabsSelected == -1) $gInfoTabsSelected = count($gInfoTabs)-1;
-if (isset($_COOKIE["activeinfotab"]) && $_COOKIE["activeinfotabx"] == $f_x && $_COOKIE["activeinfotaby"] == $f_y) {
+if ($gInfoTabsPriority < 100 && isset($_COOKIE["activeinfotab"]) && $_COOKIE["activeinfotabx"] == $f_x && $_COOKIE["activeinfotaby"] == $f_y) {
 	$gInfoTabsSelected = intval($_COOKIE["activeinfotab"]);
 }
 foreach($gInfoTabs as $i=>$v)$gInfoTabs[$i][0] = "<img border=0 src=\"".g("1px.gif")."\" width=1 height=18>".$gInfoTabs[$i][0];

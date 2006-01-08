@@ -344,7 +344,7 @@ class cInfoHQ extends cInfoBuilding {
 		rob_ob_start(); 
 		$overviewtabs = array();
 		$overviewtabs[] = array("Gebäude",			"",Query("summary_buildings.php?sid=?"));
-		$overviewtabs[] = array("Forschung",		"",Query("tech.php?sid=?"));
+		$overviewtabs[] = array("Forschung",		"",Query("summary_techs.php?sid=?"));
 		$overviewtabs[] = array("Truppen",			"",Query("summary_units.php?sid=?"));
 		$overviewtabs[] = array("Zauber",			"",Query("summary.php?sid=?"));
 		$overviewtabs[] = array("Waren",			"",Query("waren.php?sid=?"));

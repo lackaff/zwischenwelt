@@ -863,7 +863,7 @@ class cInfoBuilding extends cInfoBase {
 						<?php /* #### FORSCHUNG LÄUFT #### */?>
 						<?php if ($tech->upgradetime > 0 && $tech->upgradebuilding == $gObject->id) {?>
 							<?php 
-								$max = cTechnology::GetUpgradeDuration($tech->type,$tech->level);
+								$max = max(1,cTechnology::GetUpgradeDuration($tech->type,$tech->level));
 								$timeleft = max(0,$tech->upgradetime - time());
 								$cur = $max - $timeleft;
 								$percent = min(100,max(0,floor((100.0*$cur)/$max)));

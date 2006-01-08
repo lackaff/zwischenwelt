@@ -155,7 +155,7 @@ $count_start = 0;
 $count_end = 0;
 foreach ($buildings as $o) {
 	if ($o->upgradetime > 0 && ($o->upgradetime < $time || kZWTestMode)) {
-		$count_start++;
+		$count_end++;
 		// upgrade finished
 		if (isset($sieges[$o->id])) continue;
 		$maxhp = cBuilding::calcMaxBuildingHp($o->type,$o->level+1);
@@ -176,7 +176,7 @@ foreach ($buildings as $o) {
 		$o->upgradetime = 0;
 		Hook_UpgradeBuilding($o);
 	} else if ($o->upgradetime == 0) {
-		$count_end++;
+		$count_start++;
 		// test if upgrade can be started
 		if (!isset($hqlevels[$o->user])) continue;
 		if (isset($sieges[$o->id])) continue;

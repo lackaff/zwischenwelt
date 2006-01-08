@@ -65,6 +65,8 @@ function SetTechnologyUpgrades($typeid,$buildingid,$num) {
 	global $gTechnologyType;
 	$techtype =  $gTechnologyType[$typeid];
 	if (!$techtype) return;
+	$tech = GetTechnologyObject($techtype->id);
+	if ($tech->upgradetime > 0) $buildingid = $tech->upgradebuilding;
 
 	$building = sqlgetobject("SELECT * FROM `building` WHERE `id` = ".intval($buildingid));
 	if (!$building) return;
@@ -72,9 +74,8 @@ function SetTechnologyUpgrades($typeid,$buildingid,$num) {
 	if (intval($building->level) < intval($techtype->buildinglevel)) return;
 	if (!HasReq($techtype->req_geb,$techtype->req_tech)) return;
 
-	$tech = GetTechnologyObject($techtype->id);
-	if ($tech->upgradebuilding && $tech->upgrades > 0 && $tech->upgradebuilding != $building->id) return;
-
+	// if ($tech->upgradetime && $tech->upgrades > 0 && $tech->upgradebuilding != $building->id) return;
+	
 	$num = max(($tech->upgradetime == 0)?0:1,min($techtype->maxlevel-$tech->level,intval($num)));
 	//$num = max(($tech->upgradetime == 0)?0:1,intval($num)); // maxlevel limit aus ?
 	if ($num == 0) $buildingid = 0;

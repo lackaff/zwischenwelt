@@ -39,6 +39,11 @@ if (isset($f_allupgrades)) {
 	}
 	$f_selbtype = 0;
 }
+if (isset($f_singleupgrades)) {
+	foreach ($f_plan as $id => $planlevel) {
+		sql("UPDATE `building` SET `upgrades` = ".intval($planlevel)." - `level` WHERE `id` = ".intval($id));
+	}
+}
 
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 transitional//EN"
@@ -77,13 +82,86 @@ if (isset($f_listtype)) {
 	$cond[] = "`type` = ".intval($f_listtype);
 	if ($f_listlevel > -1)	$cond[] = "`level` = ".intval($f_listlevel);
 	if ($f_listup > -1)		$cond[] = "`upgrades` = ".intval($f_listup);
-	$buildings = sqlgettable("SELECT * FROM `building` WHERE ".implode(" AND ",$cond));
+	$buildings = sqlgettable("SELECT * FROM `building` WHERE ".implode(" AND ",$cond)." ORDER BY `level`,`upgrades`");
 	$typepic = "<img src=\"".GetBuildingPic(intval($f_listtype),$gUser)."\">";
 	?>
 	<a href="<?=Query("?sid=?&selbtype=".$f_listtype)?>">(zurück zur Übersicht)</a><br>
 	<?php
-	echo "Liste aller(".count($buildings).") ".$typepic." auf Stufe ".intval($f_listlevel)." mit ".intval($f_listup)." geplanten Upgrades :<br>";
-	foreach ($buildings as $o) echo opos2txt($o)." ";
+	echo "Liste aller(".count($buildings).") ".$typepic;
+	if ($f_listlevel != -1) echo " auf Stufe ".intval($f_listlevel);
+	if ($f_listup != -1) echo " mit ".intval($f_listup)." geplanten Upgrades";
+	echo " :<br>";
+	$timetip = "Restzeit des derzeit lauffenden Upgrades";
+	$maxplan = 0;
+	$countplanner = 0;
+	?>
+	<form method="post" action="<?=Query("?sid=?&listtype=?&liestlevel=?&listup=?")?>">
+		<table border=1 cellspacing=0>
+		<tr>
+			<th></th>
+			<th>Pos</th>
+			<th>Stufe</th>
+			<th>Upgrades</th>
+			<th>nächstes Upgrade</th>
+			<th><img src="<?=g("sanduhrklein.gif")?>" alt="<?=$timetip?>" title="<?=$timetip?>"></th>
+			<th>geplant bis</th>
+			<th>max</th>
+		</tr>
+		<?php foreach ($buildings as $o) {?>
+			<?php
+			$maxplan = max($maxplan,$o->level + $o->upgrades);
+			$nextlevel = $o->level + $o->upgrades + 1;
+			$upmod = cBuilding::calcUpgradeCostsMod($nextlevel); 
+			$time = cBuilding::calcUpgradeTime($o->type,$nextlevel);
+			$costarr = array(
+				$gBuildingType[$o->type]->cost_lumber * $upmod,
+				$gBuildingType[$o->type]->cost_stone * $upmod,
+				$gBuildingType[$o->type]->cost_food * $upmod,
+				$gBuildingType[$o->type]->cost_metal * $upmod,
+				$gBuildingType[$o->type]->cost_runes * $upmod
+				);
+			?>
+			<tr>
+				<td><?="<img border=0 src=\"".GetBuildingPic($o->type,$gUser,$o->level)."\">"?></td>
+				<td align="center"><?=oposinfolink($o)?></td>
+				<td align="right"><?=$o->level?></td>
+				<td align="right"><?=$o->upgrades?></td>
+				<td align="left"><img src="<?=g("sanduhrklein.gif")?>"><?=Duration2Text($time)?><?=cost2txt($costarr,$gUser)?></td>
+				<td align="left">
+					<?php
+						$mytimeleft = max(0,$o->upgradetime-time());
+						$mymax = max(1,cBuilding::calcUpgradeTime($o->type,$o->level+1));
+						$mycur = $mymax - $mytimeleft;
+						$percent = min(100,max(0,floor((100.0*$mycur)/$mymax)));
+					?>
+					<?php if ($o->upgradetime) {?>
+						<table border=0 width="100%"><tr><td norwap>
+						<?="$percent% ".Duration2Text($mytimeleft)?>
+						</td></tr><tr>
+						<td height=5 style="border:1px solid black"><?=DrawBar($mycur,$mymax,GradientRYG(GetFraction($cur,$max)),"black")?></td>
+						</tr></table>
+					<?php } else { // ?>
+						&nbsp;
+					<?php } // endif?>
+				</td>
+				<td align="right"><input align="right" style="width:40px" type="text" id="planner_<?=$countplanner++?>" name="plan[<?=$o->id?>]" value="<?=$o->upgrades+$o->level?>"></td>
+				<td align="right"><?=($o->level>=$maxlevel)?"max Gebäudestufe":""?></td>
+			</tr>
+		<?php } // endforeach?>
+		<tr>
+			<th colspan=6 align="left">Summe:</th>
+			<th align="right">
+				<a href="javascript:planall('planner_',<?=$countplanner?>,'plansetvalue')">
+				<img border=0 src="<?=g("scroll/n.png")?>" alt="alle setzten" title="alle setzten"></a>
+				<input align="right"  type="text" id="plansetvalue" name="plansetvalue" value="<?=$maxplan?>" style="width:40px">
+			</th>
+			<th align="right"><?=$maxlevel?></th>
+		</tr>
+		</table>
+		<input type="submit" name="singleupgrades" value="speichern">
+		(max Gebäudestufe <b><?=$maxlevel?></b> bei <?="<img src=\"".GetBuildingPic(kBuilding_HQ,$gUser)."\">"?> Stufe <b><?=$hqlevel?></b>)
+	</form>
+	<?php
 } else {
 	$buildinggroups = sqlgettable("SELECT *,COUNT(*) as `c`,`level`+`upgrades` as `planlevel` FROM `building` WHERE `user` = ".$gUser->id." AND `construction` = 0 GROUP BY `type`,`level`,`upgrades` ORDER BY `type`,`level` DESC,`upgrades` DESC");
 	$buildinggroups2 = sqlgettable("SELECT *,COUNT(*) as `c`,MAX(`level`+`upgrades`) as `planlevel`,MAX(`level`) as `level_max`,MIN(`level`) as `level_min` FROM `building` WHERE `user` = ".$gUser->id." AND `construction` = 0 GROUP BY `type` ORDER BY `type`");
@@ -110,7 +188,6 @@ if (isset($f_listtype)) {
 				<?php if ($btype!=0) {?>
 					<th>Upgrades</th>
 					<th>nächstes Upgrade</th>
-					<th><img src="<?=g("sanduhrklein.gif")?>"></th>
 				<?php } // endif?>
 				<th>geplant bis</th>
 			</tr>
@@ -142,13 +219,12 @@ if (isset($f_listtype)) {
 				$totalups += $o->c * $o->upgrades;
 				?>
 				<tr>
-					<td><a href="<?=Query("?sid=?&listtype=".$o->type."&listlevel=".$o->level."&listup=".$o->upgrades)?>"><?="<img border=0 src=\"".GetBuildingPic($o->type,$gUser,$o->level_max)."\">"?></a></td>
+					<td><a href="<?=Query("?sid=?&listtype=".$o->type."&listlevel=".(($btype==0)?-1:$o->level)."&listup=".(($btype==0)?-1:$o->upgrades))?>"><?="<img border=0 src=\"".GetBuildingPic($o->type,$gUser,$o->level_max)."\">"?></a></td>
 					<td align="right"><?=($btype==0)?($o->level_min."-".$o->level_max):$o->level?></td>
 					<td align="right"><?=$o->c?></td>
 					<?php if ($btype!=0) {?>
 						<td align="right"><?=$o->upgrades?></td>
-						<td align="left"><?=cost2txt($costarr,$gUser)?></td>
-						<td align="right"><?=Duration2Text($time)?></td>
+						<td align="left"><img src="<?=g("sanduhrklein.gif")?>"><?=Duration2Text($time)?><?=cost2txt($costarr,$gUser)?></td>
 					<?php } // endif?>
 					<td align="right"><input align="right" style="width:40px" type="text" id="planner_<?=$btype?>_<?=$countplanner++?>" name="plan[<?=$o->type?>][<?=$o->level?>][<?=$o->upgrades?>]" value="<?=$o->planlevel?>"></td>
 				</tr>
@@ -158,8 +234,12 @@ if (isset($f_listtype)) {
 					<th><?=$totalcount?></th>
 					<?php if ($btype!=0) {?>
 						<th><?=$totalups?></th>
-						<th><?=cost2txt($totalcost)?></th>
-						<th><?=Duration2Text($totaltime)?></th>
+						<th>
+							<?php if ($totaltime>0) {?>
+								<img src="<?=g("sanduhrklein.gif")?>"><?=Duration2Text($totaltime)?>
+							<?php } // endif?>
+							<?=cost2txt($totalcost)?>
+						</th>
 					<?php } // endif?>
 					<th align="right">
 						<?php if ($btype!=0) {?>

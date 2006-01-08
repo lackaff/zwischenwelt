@@ -41,11 +41,11 @@ $o = null;
 $o->time = $time;
 $o->type = kStats_SysInfo_Activity;
 //aktiv in 2h
-$o->i1 = sqlgetone("SELECT COUNT(`id`) FROM `user` WHERE admin=0 AND `lastlogin`>".($t-60*60*2));
+$o->i1 = sqlgetone("SELECT COUNT(`id`) FROM `user` WHERE admin=0 AND `lastlogin`>".($time-60*60*2));
 //aktiv in 24h
-$o->i2 = sqlgetone("SELECT COUNT(`id`) FROM `user` WHERE admin=0 AND `lastlogin`>".($t-60*60*24));
+$o->i2 = sqlgetone("SELECT COUNT(`id`) FROM `user` WHERE admin=0 AND `lastlogin`>".($time-60*60*24));
 //aktiv in 3t
-$o->i3 = sqlgetone("SELECT COUNT(`id`) FROM `user` WHERE admin=0 AND `lastlogin`>".($t-60*60*24*3));
+$o->i3 = sqlgetone("SELECT COUNT(`id`) FROM `user` WHERE admin=0 AND `lastlogin`>".($time-60*60*24*3));
 //$o->f1 = 0;
 //$o->f2 = 0;
 //$o->f3 = 0;

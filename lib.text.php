@@ -173,6 +173,15 @@ function pos2txt ($x,$y,$text=false,$nosession=false) {
 function opos2txt ($o,$text=false,$nosession=false) {
 	return pos2txt($o->x,$o->y,$text,$nosession);
 }
+function posinfolink ($x,$y,$text=false) {
+	$infourl = Query(BASEURL."/info/info.php?sid=?&x=".$x."&y=".$y);
+	$mapurl = Query(BASEURL."/".kMapScript."?sid=?&x=".$x."&y=".$y);
+	if (!$text) $text = "($x,$y)";
+	return "<a target='map' href='".$mapurl."'>".$text."</a> <a href='".$infourl."'>(info)</a>";
+}
+function oposinfolink ($o,$text=false) {
+	return posinfolink($o->x,$o->y,$text);
+}
 function quest2txt ($quest) {
 	if (!$quest) return "no_quest";
 	global $gQuestTypeNames;
