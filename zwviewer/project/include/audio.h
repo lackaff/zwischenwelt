@@ -1,6 +1,7 @@
 #ifndef _AUDIO_H_
 #define _AUDIO_H_
 
+#if 0
 #include <SDL/SDL.h>
 #include <SDL/SDL_mixer.h>
 
@@ -26,5 +27,6 @@ private:
 	Mix_Music *music;
 };
 
+#endif
 
 #endif

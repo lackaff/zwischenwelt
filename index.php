@@ -25,7 +25,13 @@ Aber am besten einfach anmelden und testen.<br>
 Screenshots gibts [<a href="http://zwischenwelt.org/screenshot/">hier</a>].<br>
 <br>
 Ein paar Tipps für erste Schritte im Spiel findet man hier : [<a href="http://zwischenwelt.milchkind.net/zwwiki/index.php/Erste_Schritte">erste schritte</a>]<br>
-Die Weltkarte (aber nicht aktuell) kann man sich hier anguggen: [<a href="images/worldmap.png">Weltkarte</a>]<br>
+<?php
+$lastminimap = sqlgetone("SELECT `value` FROM `global` WHERE `name` = 'lastpngmap' LIMIT 1");
+$minimapfile = "tmp/pngmap_".$lastminimap.".png";
+?>
+<?php if (file_exists($minimapfile)) {?>
+Die Weltkarte (Stand:<?=date("d-m-Y H:i",$lastminimap)?>) kann man sich hier anguggen: [<a target="_blank" href="<?=$minimapfile?>">Weltkarte</a>]<br>
+<?php } // endif?>
 <br>
 das Zwischenwelt Team
 </div>

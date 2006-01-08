@@ -236,7 +236,7 @@ if (isset($f_x) || isset($f_cross_x) || isset($f_u)) {
 		$top = $gGlobal["minimap_top"];
 		if (isset($f_u)) {
 			foreach ($f_u as $key => $val) {
-				$hq = sqlgetobject("SELECT * FROM `building` WHERE `type` = ".kBuilding_HQ." AND `user` = ".intval($key));
+				$hq = sqlgetobject("SELECT * FROM `building` WHERE `type` = ".kBuilding_HQ." AND `user` = ".intval($key)." LIMIT 1");
 				$f_x = $hq->x-$left;
 				$f_y = $hq->y-$top;
 				break;

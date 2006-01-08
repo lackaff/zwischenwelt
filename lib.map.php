@@ -299,22 +299,22 @@ class cMap {
 		unset($l);
 
 		$lseg64 = sqlgettable("SELECT * FROM `terrainsegment64` 
-			WHERE `x`>=($x64) AND `x`<($x64+$dx64) AND `y`>=($y64) AND `y`<($y64+$dy64)");
+			WHERE `x` >= $x64 AND `x` < ".($x64+$dx64)." AND `y` >= $y64 AND `y` < ".($y64+$dy64));
 		$this->seg64 = array();
 		foreach($lseg64 as $o)$this->seg64[$o->x][$o->y] = $o;
 		unset($lseg64);
 
 		$lseg4  = sqlgettable("SELECT * FROM `terrainsegment4`  
-			WHERE `x`>=($x4) AND `x`<($x4+$dx4) AND `y`>=($y4) AND `y`<($y4+$dy4)");
+			WHERE `x` >= $x4 AND `x` < ".($x4+$dx4)." AND `y` >= $y4  AND `y` < ".($y4+$dy4));
 		$this->seg4 = array();
 		foreach($lseg4 as $o)$this->seg4[$o->x][$o->y] = $o;
 		unset($lseg4);
 		
 		if(!$onlyterrain){
-			$this->army = sqlgettable("SELECT * FROM `army` WHERE `x`>=($x) AND `x`<($x+$dx) AND `y`>=($y) AND `y`<($y+$dy)");
-			$this->item = sqlgettable("SELECT * FROM `item` WHERE `x`>=($x) AND `x`<($x+$dx) AND `y`>=($y) AND `y`<($y+$dy)");
-			$this->building = sqlgettable("SELECT * FROM `building` WHERE `x`>=($x) AND `x`<($x+$dx) AND `y`>=($y) AND `y`<($y+$dy)");
-			$this->construction = sqlgettable("SELECT * FROM `construction` WHERE `x`>=($x) AND `x`<($x+$dx) AND `y`>=($y) AND `y`<($y+$dy)");
+			$this->army = sqlgettable("SELECT * FROM `army` WHERE `x` >= $x AND `x` < ".($x+$dx)." AND `y` >= $y AND `y` < ".($y+$dy));
+			$this->item = sqlgettable("SELECT * FROM `item` WHERE `x` >= $x AND `x` < ".($x+$dx)." AND `y` >= $y AND `y`< ".($y+$dy));
+			$this->building = sqlgettable("SELECT * FROM `building` WHERE `x` >= $x AND `x` < ".($x+$dx)." AND `y` >= $y AND `y` < ".($y+$dy));
+			$this->construction = sqlgettable("SELECT * FROM `construction` WHERE `x` >= $x AND `x` < ".($x+$dx)." AND `y` >= $y AND `y` < ".($y+$dy));
 		}
 		
 		//echo "[1:($x,$y,$dx,$dy,".sizeof($this->seg1).") 64:($x64,$y64,$dx64,$dy64,".sizeof($this->seg64).") 4:($x4,$y4,$dx4,$dy4,".sizeof($this->seg4).")]";

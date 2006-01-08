@@ -65,9 +65,10 @@ function renderMinimap_walkhex2imgcolor (&$item,$key,$im) {
 	$item->imgcolor = hex2imgcolor($im,$item->color);
 }
 
+// minimap 2 file : $filename = "tmp/minimap/seg_".$mode."_".$px."_".$py.".png";
 //renders a part of the minimap from top to almost bottom
 //segment*segment terrainfields a read in one step
-function renderMinimap($top,$left,$bottom,$right,$filename,$mode="normal",$segment=128){
+function renderMinimap($top,$left,$bottom,$right,$filename,$mode="normal",$segment=128,$fullmap=false){
 	//echo "renderMinimap($top,$left,$bottom,$right,$filename,$mode,$segment)<br>";
 
 	global $gTerrainType,$gBuildingType,$gAllGuilds,$gAllUsers,$gBodenSchatzBuildings,$gUnitType;
@@ -96,30 +97,54 @@ function renderMinimap($top,$left,$bottom,$right,$filename,$mode="normal",$segme
 	$color_portal3 = hex2imgcolor($im,"#000088");
 	$color_bodenschatz = hex2imgcolor($im,"#000000");
 	$color_bodenschatz2 = hex2imgcolor($im,"#FFFFFF");
-	imagefill($im,0,0,$background_color);
+	
+	imagefilledrectangle($im,0,0,$dx,$dy,$background_color); // 0.03 sec...
+	// imagefill($im,0,0,$background_color); // 0.08 sec.. ignorable difference
+	
 	
 	//echo "draw terrain<br>\n";
 	//draw terrain
-	for($xx=0;$xx<$sx;++$xx)for($yy=0;$yy<$sy;++$yy){
-		$sleft = $left + $xx*$segment;
-		$stop = $top + $yy*$segment;
-		$sright = $sleft + $segment;
-		$sbottom = $stop + $segment;
+	
+	if (1) {
+		$x = $left;$y = $top;
+		$x64 = floor($x/64);$y64 = floor($y/64);
+		$xe64 = ceil(($x+$dx-1)/64);$ye64 = ceil(($y+$dy-1)/64);
+		$cond64 = $fullmap?"":(" WHERE `x` >= ".$x64." AND x <= ".($xe64)." AND `y` >= ".$y64." AND y <= ".($ye64)); 
 		
-		$map = getMapAtPosition($sleft,$stop,$segment,$segment,true);
-		for($xxx=$sleft;$xxx<$sleft+$segment;++$xxx)for($yyy=$stop;$yyy<$stop+$segment;++$yyy){
-			$type = $map->getTerrainTypeAt($xxx,$yyy);
-			if($type != kTerrain_Grass){
-				imagesetpixel($im, $xxx-$left,$yyy-$top,$gTerrainType[$type]->imgcolor);
-			}
+		$l = sqlgettable("SELECT * FROM `terrainsegment64` ".$cond64);
+		foreach ($l as $o) if ($o->type != kTerrain_Grass) {
+			$col = $gTerrainType[$o->type]->imgcolor;
+			imagefilledrectangle($im,
+				max(0,min($dx-1,$o->x*64-$left)),
+				max(0,min($dy-1,$o->y*64-$top)),
+				max(0,min($dx-1,$o->x*64+64-$left)),
+				max(0,min($dy-1,$o->y*64+64-$top)),
+				$col);
 		}
-	/*		
-		$l = sqlgettable("SELECT `x`,`y`,`type` FROM `terrain` WHERE `x`>=$sleft AND `x`<$sright AND `y`>=$stop AND `y`<$sbottom");
-		foreach($l as $x)if ($x->type != kTerrain_Grass && $gTerrainType[$x->type]->speed > 0) {
-			imagesetpixel($im, $x->x-$left,$x->y-$top,$gTerrainType[$x->type]->imgcolor);
-		}*/
+		unset($l);
+		
+		$x4 = floor($x/4);$y4 = floor($y/4);
+		$xe4 = ceil(($x+$dx-1)/4);$ye4 = ceil(($y+$dy-1)/4);
+		$cond4 = $fullmap?"":(" WHERE `x` >= ".$x4." AND x <= ".($xe4)." AND `y` >= ".$y4." AND y <= ".($ye4)); 
+		
+		$l = sqlgettable("SELECT * FROM `terrainsegment4` ".$cond4);
+		foreach ($l as $o) {
+			$col = $gTerrainType[$o->type]->imgcolor;
+			imagefilledrectangle($im,
+				max(0,min($dx-1,$o->x*4-$left)),
+				max(0,min($dy-1,$o->y*4-$top)),
+				max(0,min($dx-1,$o->x*4+4-$left)),
+				max(0,min($dy-1,$o->y*4+4-$top)),
+				$col);
+		}
+		unset($l);
+		
+		$cond1 = $fullmap?"":(" WHERE `x` >= ".$x." AND x < ".($x+$dx)." AND `y` >= ".$y." AND y <= ".($y+$dy)); 
+		
+		$l = sqlgettable("SELECT `x`,`y`,`type` FROM `terrain` ".$cond1);
+		foreach ($l as $o) imagesetpixel($im, $o->x-$left,$o->y-$top,$gTerrainType[$o->type]->imgcolor);
+		unset($l);
 	}
-	//unset($l);
 	
 	if ($mode == "creep") {
 		//echo "draw creep<br>\n";
@@ -134,70 +159,79 @@ function renderMinimap($top,$left,$bottom,$right,$filename,$mode="normal",$segme
 		}
 	}
 	
-	$l = sqlgettable("SELECT `x`,`y`,`user`,`type` FROM `building` WHERE `x`>=$left AND `x`<=$right AND `y`>=$top AND `y`<=$bottom");
-	if (0 && $mode != "creep") {
-		//echo "draw ressources<br>\n";
-		array_walk($gBuildingType,"renderMinimap_walkgetbodenschatzpic");
-		$bs_size = 23;
-		foreach($l as $o) if ($o->user == 0 && in_array($o->type,$gBodenSchatzBuildings)) {
-			if (!isset($gBuildingType[$o->type]->pic)) continue;
-			imagecopy($im,$gBuildingType[$o->type]->pic,$o->x-$left-$bs_size/2,$o->y-$top-$bs_size/2,0,0,$bs_size,$bs_size);
-		}
-	}
-
-	//echo "draw buildings<br>\n";
-	foreach($l as $x) {
-		if ($x->user == 0 && in_array($x->type,$gBodenSchatzBuildings)) {
-			imagesetpixel($im, $x->x-$left,		$x->y-$top,$color_bodenschatz);
-			imagesetpixel($im, $x->x-$left-1,		$x->y-$top-1,$color_bodenschatz);
-			imagesetpixel($im, $x->x-$left-1,		$x->y-$top,$color_bodenschatz2);
-			imagesetpixel($im, $x->x-$left,		$x->y-$top-1,$color_bodenschatz2);
-		} else {
-			switch($x->type) {
-				case 3:
-				case 5:
-					$color = $gBuildingType[$x->type]->imgcolor;
-				break;
-				default:
-					if ($x->user == 0 || !isset($gAllUsers[$x->user])) 
-						$color = $color_nonplayer;
-					else {
-						$myuser = $gAllUsers[$x->user];
-						if (isset($f_mode) && $f_mode == "guild") {
-							if ($myuser->guild > 0 && isset($gAllGuilds[$myuser->guild])) 
-									$color = $gAllGuilds[$myuser->guild]->imgcolor;
-							else	$color = $color_no_guild;
-						} else {
-							$color = $myuser->imgcolor;
-						}
-					}
-				break;
+	$portallist = array();
+	$condxy = $fullmap?"":(" WHERE `x` >= ".$x." AND x < ".($x+$dx)." AND `y` >= ".$y." AND y <= ".($y+$dy)); 
+	
+	if (1) {
+		$l = sqlgettable("SELECT `x`,`y`,`user`,`type` FROM `building` ".$condxy);
+		if (0 && $mode != "creep") {
+			//echo "draw ressources<br>\n";
+			array_walk($gBuildingType,"renderMinimap_walkgetbodenschatzpic");
+			$bs_size = 23;
+			foreach($l as $o) if ($o->user == 0 && in_array($o->type,$gBodenSchatzBuildings)) {
+				if (!isset($gBuildingType[$o->type]->pic)) continue;
+				imagecopy($im,$gBuildingType[$o->type]->pic,$o->x-$left-$bs_size/2,$o->y-$top-$bs_size/2,0,0,$bs_size,$bs_size);
 			}
-			imagesetpixel($im,$x->x-$left,$x->y-$top,$color);
 		}
+
+		//echo "draw buildings<br>\n";
+		foreach($l as $x) {
+			if ($x->type == kBuilding_Portal) $portallist[] = $x;
+			if ($x->user == 0 && in_array($x->type,$gBodenSchatzBuildings)) {
+				imagesetpixel($im, $x->x-$left,		$x->y-$top,$color_bodenschatz);
+				imagesetpixel($im, $x->x-$left-1,		$x->y-$top-1,$color_bodenschatz);
+				imagesetpixel($im, $x->x-$left-1,		$x->y-$top,$color_bodenschatz2);
+				imagesetpixel($im, $x->x-$left,		$x->y-$top-1,$color_bodenschatz2);
+			} else {
+				switch($x->type) {
+					case kBuilding_Path:
+					case kBuilding_Wall:
+						$color = $gBuildingType[$x->type]->imgcolor;
+					break;
+					default:
+						if ($x->user == 0 || !isset($gAllUsers[$x->user])) 
+							$color = $color_nonplayer;
+						else {
+							$myuser = $gAllUsers[$x->user];
+							if (isset($f_mode) && $f_mode == "guild") {
+								if ($myuser->guild > 0 && isset($gAllGuilds[$myuser->guild])) 
+										$color = $gAllGuilds[$myuser->guild]->imgcolor;
+								else	$color = $color_no_guild;
+							} else {
+								$color = $myuser->imgcolor;
+							}
+						}
+					break;
+				}
+				imagesetpixel($im,$x->x-$left,$x->y-$top,$color);
+			}
+		}
+		unset($l);
 	}
-	unset($l);
+	
+	
 	
 	// armeen
-	$l = sqlgettable("SELECT `x`,`y` FROM `army` WHERE $left<=`x` AND `x`<=($right) AND $top<=`y` AND `y`<=($bottom)");
+	$l = sqlgettable("SELECT `x`,`y` FROM `army` ".$condxy);
 	//echo "draw armies<br>\n";
-	foreach($l as $x) {
-		imagesetpixel($im, $x->x-$left,$x->y-$top,$color_red);
-		imagesetpixel($im, $x->x+1-$left,$x->y-$top,$color_red);
-		imagesetpixel($im, $x->x-$left,$x->y+1-$top,$color_red);
-		imagesetpixel($im, $x->x+1-$left,$x->y+1-$top,$color_red);
-	}
+	foreach($l as $x) 
+			imagefilledrectangle($im,
+				$x->x-$left,
+				$x->y-$top,
+				$x->x-$left+1,
+				$x->y-$top+1,
+				$color_red);
 	unset($l);
 	
 	// portale
 	//echo "draw portals<br>\n";
-	$l = sqlgettable("SELECT `x`,`y` FROM `building` WHERE `type` = 23 AND $left<=`x` AND `x`<=($right) AND $top<=`y` AND `y`<=($bottom)");
-	foreach($l as $x) {
+	//$portallist = sqlgettable("SELECT `x`,`y` FROM `building` WHERE `type` = ".kBuilding_Portal." AND $left<=`x` AND `x`<=($right) AND $top<=`y` AND `y`<=($bottom)");
+	foreach($portallist as $x) {
 		imagefilledrectangle($im,$x->x-$left-2,$x->y-$top-2,$x->x-$left+2,$x->y-$top+2,$color_portal3);
 		imagefilledrectangle($im,$x->x-$left-1,$x->y-$top-1,$x->x-$left+1,$x->y-$top+1,$color_portal2);
 		imagesetpixel($im, $x->x-$left,		$x->y-$top,$color_portal);
 	}
-	unset($l);
+	unset($portallist);
 	
 	imagepng($im,$filename);
 }

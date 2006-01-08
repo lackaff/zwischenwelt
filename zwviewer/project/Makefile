@@ -1,5 +1,5 @@
 CFLAGS = -L/usr/lib -g -w -I/usr/include -Iinclude 
-LFLAGS = -lstdc++ -lGL -lGLU -lGLEW `sdl-config --libs` -lSDL_mixer -lSDL_image
+LFLAGS = -lstdc++ -lGL -lGLU -lGLEW `sdl-config --libs` -lSDL_image
 CC = gcc-3.3
 RM = rm
 

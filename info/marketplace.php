@@ -282,6 +282,7 @@ class cInfoMarket extends cInfoBuilding {
 		<?php }?>
 		
 		<?php profile_page_end();
-		RegisterInfoTab("Handeln",rob_ob_end(),10);
+		$content = trim(rob_ob_end());
+		if (!empty($content)) RegisterInfoTab("Handeln",$content,10);
 	}
 }?>

@@ -33,11 +33,12 @@ SetGlobal("minimap_top",$top);
 SetGlobal("minimap_bottom",$bottom);
 
 $modes = array("user","creep","guild");
+// $modes = array(0=>"user"); // TODO : REMOVE ME, only while optimizing/debugging
 foreach($modes as $mode){
 	$global = GetMiniMapGlobal($mode);
 	$filename = GetMiniMapFile($mode,$time);
 	echo "rendering $mode minimap to file $filename ...<br>\n";
-	renderMinimap($top,$left,$bottom,$right,$filename,$mode);
+	renderMinimap($top,$left,$bottom,$right,$filename,$mode,128,true);
 	SetGlobal($global,$time);
 }
 
