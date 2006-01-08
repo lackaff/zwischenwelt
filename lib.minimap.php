@@ -106,7 +106,7 @@ function renderMinimap($top,$left,$bottom,$right,$filename,$mode="normal",$segme
 		$sright = $sleft + $segment;
 		$sbottom = $stop + $segment;
 		
-		$map = getMapAtPosition($sleft,$stop,$segment,$segment);
+		$map = getMapAtPosition($sleft,$stop,$segment,$segment,true);
 		for($xxx=$sleft;$xxx<$sleft+$segment;++$xxx)for($yyy=$stop;$yyy<$stop+$segment;++$yyy){
 			$type = $map->getTerrainTypeAt($xxx,$yyy);
 			if($type != kTerrain_Grass){
@@ -134,8 +134,7 @@ function renderMinimap($top,$left,$bottom,$right,$filename,$mode="normal",$segme
 		}
 	}
 	
-	//$l = sqlgettable("SELECT `x`,`y`,`user`,`type` FROM `building` WHERE `x`>=$left AND `x`<=$right AND `y`>=$top AND `y`<=$bottom");
-	
+	$l = sqlgettable("SELECT `x`,`y`,`user`,`type` FROM `building` WHERE `x`>=$left AND `x`<=$right AND `y`>=$top AND `y`<=$bottom");
 	if (0 && $mode != "creep") {
 		//echo "draw ressources<br>\n";
 		array_walk($gBuildingType,"renderMinimap_walkgetbodenschatzpic");
@@ -147,7 +146,7 @@ function renderMinimap($top,$left,$bottom,$right,$filename,$mode="normal",$segme
 	}
 
 	//echo "draw buildings<br>\n";
-	foreach($map->building as $x) {
+	foreach($l as $x) {
 		if ($x->user == 0 && in_array($x->type,$gBodenSchatzBuildings)) {
 			imagesetpixel($im, $x->x-$left,		$x->y-$top,$color_bodenschatz);
 			imagesetpixel($im, $x->x-$left-1,		$x->y-$top-1,$color_bodenschatz);
@@ -177,17 +176,18 @@ function renderMinimap($top,$left,$bottom,$right,$filename,$mode="normal",$segme
 			imagesetpixel($im,$x->x-$left,$x->y-$top,$color);
 		}
 	}
-	//unset($l);
+	unset($l);
 	
 	// armeen
-	//$l = sqlgettable("SELECT `x`,`y` FROM `army` WHERE $left<=`x` AND `x`<=($right) AND $top<=`y` AND `y`<=($bottom)");
+	$l = sqlgettable("SELECT `x`,`y` FROM `army` WHERE $left<=`x` AND `x`<=($right) AND $top<=`y` AND `y`<=($bottom)");
 	//echo "draw armies<br>\n";
-	foreach($map->army as $x) {
+	foreach($l as $x) {
 		imagesetpixel($im, $x->x-$left,$x->y-$top,$color_red);
 		imagesetpixel($im, $x->x+1-$left,$x->y-$top,$color_red);
 		imagesetpixel($im, $x->x-$left,$x->y+1-$top,$color_red);
 		imagesetpixel($im, $x->x+1-$left,$x->y+1-$top,$color_red);
 	}
+	unset($l);
 	
 	// portale
 	//echo "draw portals<br>\n";
