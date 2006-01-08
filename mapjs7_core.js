@@ -27,7 +27,7 @@ gNWSEDebug = false; // shows typeid and connect-to infos in maptip
 gPathDetected = 0;
 
 // compare version with kBaseJSMapVersion from mapjs7.php and kNaviJSMapVersion available with GetkNaviJSMapVersion
-kCoreJSMapVersion = 36;
+kCoreJSMapVersion = 37;
 kMapTipName = "maptip";
 kMapTip_xoff = 29;
 kMapTip_yoff = 56;

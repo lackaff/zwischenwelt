@@ -44,5 +44,5 @@ define("kMapTileSize",25);
 define("kMapScript","mapjs7.php");
 define("kMapNaviScript","mapnavi7.php");
 define("kZWStyle_Neutral","zwstyle.css");
-define("kJSMapVersion","36"); // muss mit kJSMapVersion in mapjs7_core.js uebereinstimmen
+define("kJSMapVersion","37"); // muss mit kJSMapVersion in mapjs7_core.js uebereinstimmen
 ?>
