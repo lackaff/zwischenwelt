@@ -139,7 +139,7 @@ if (isset($f_techs)) {
 					<?php if ($tech->level+$tech->upgrades < $o->maxlevel) {?>
 						<img src="<?=g("sanduhrklein.gif")?>"><?=Duration2Text($time)?> <?=cost2txt($costarr,$gUser)?>
 					<?php } else { // ?>
-						max erreicht
+						<span style="color:green">max erreicht</span>
 					<?php } // endif?>
 					</td>
 					<td norwap>
