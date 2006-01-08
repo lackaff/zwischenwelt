@@ -273,6 +273,11 @@ function getMapAtPosition($x,$y,$dx,$dy,$onlyterrain=false){
 }
 
 class cMap {
+	function StaticGetTerrainAtPos ($x,$y) {
+		$map = getMapAtPosition($x,$y,1,1,true);
+		return $map->getTerrainTypeAt($x,$y);
+	}
+
 	function cMap($x,$y,$dx,$dy,$onlyterrain){
 		$x = intval($x)-1;$y = intval($y)-1;
 		$dx = intval($dx)+2;$dy = intval($dy)+2;

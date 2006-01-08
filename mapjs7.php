@@ -185,15 +185,7 @@ $gBuildings = sqlgettable("SELECT * FROM `building` WHERE ".$xylimit);
 echo 'gBuildings = "';
 foreach ($gBuildings as $o) {
 	$gLocalUserIDs[] = $o->user;
-	$o->jsflags = 0;
-	$o->hp = floor($o->hp);
-	
-	if ($o->type == kBuilding_Portal) {
-		if (intval(GetBParam($o->id,"target"))>0) $o->jsflags |= kJSMapBuildingFlag_Open;
-	} else {
-		if (cBuilding::BuildingOpenForUser($o,$gUser->id)) $o->jsflags |= kJSMapBuildingFlag_Open;
-	}
-	echo obj2jsparams($o,"x,y,type,user,level,hp,construction,jsflags").";";
+	echo cBuilding::GetJavaScriptBuildingData($o).";";
 }
 echo "\";\n";
 

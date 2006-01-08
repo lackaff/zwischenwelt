@@ -35,11 +35,7 @@ if (!isset($f_building) && !isset($f_army) && isset($f_do)) switch ($f_do) {
 				
 				require_once("lib.map.php");
 				RegenAreaNWSE($x-1,$y-1,$x+2+$template->cx,$y+2+$template->cy,false);
-				?>
-				<script language="javascript">
-					parent.map.location.href = parent.map.location.href;
-				</script>
-				<?php
+				$gJSCommands[] = "parent.map.location.href = parent.map.location.href;";
 			}
 			if (isset($f_new)) {
 				$x1 = intval($f_x1);$y1 = intval($f_y1);
@@ -89,16 +85,19 @@ if (!isset($f_building) && !isset($f_army) && isset($f_do)) switch ($f_do) {
 		case "completeconstruction": // finish construction
 			if (!$gUser->admin)break;
 			sql("UPDATE `building` SET `construction`=".time()." WHERE `id`=".intval($f_id));
+			JSRefreshCell($f_x,$f_y,true);
 		break;
 		case "genriver":// admin command
 			if (!$gUser->admin)break;
 			require_once("../lib.map.php");
 			generateRiver(intval($f_x),intval($f_y),intval($f_steps));
+			$gJSCommands[] = "parent.map.location.href = parent.map.location.href;";
 		break;
 		case "terraingen":// admin command
 			if (!$gUser->admin)break;
 			require_once("../lib.map.php");
 			terraingen($f_x,$f_y,$f_type,$f_dur,$f_ang,1.0,($f_type==kTerrain_River)?true:false,$f_split);
+			$gJSCommands[] = "parent.map.location.href = parent.map.location.href;";
 		break;
 		case "gotobuildingid":// admin command
 			if (!$gUser->admin)break;
@@ -120,34 +119,20 @@ if (!isset($f_building) && !isset($f_army) && isset($f_do)) switch ($f_do) {
 			if (!$gUser->admin) break;
 			if (!empty($f_x) && !empty($f_y) && !empty($f_type))
 				cItem::SpawnItem($f_x,$f_y,$f_type,$f_anzahl,isset($f_quest)?$f_quest:0);
-			?>
-			<script language="javascript">
-				parent.map.JSInsertItem(<?="$f_x,$f_y,$f_type,$f_anzahl"?>);
-			</script>
-			<?php
+			JSRefreshCell($f_x,$f_y);
 		break;
 		case "adminsetarmy":// admin command
 			if (!$gUser->admin)break;
 			require_once("../lib.army.php");
 			$units = cUnit::Simple($f_unit,$f_anzahl);
 			$newarmy = cArmy::SpawnArmy($f_x,$f_y,$units,false,-1,$f_user,$f_quest,0,-1);
-			$jsunits = ""; 
-			foreach ($units as $u) $jsunits .= $u->type.":".floor($u->amount)."|";
-			?>
-			<script language="javascript">
-				parent.map.JSInsertArmy(<?=$newarmy->id?>,<?="$f_x,$f_y"?>,"<?=$newarmy->name?>",<?=$newarmy->type?>,<?=$newarmy->user?>,<?=$jsunits?>,"",0);
-			</script>
-			<?php
+			JSRefreshArmy($newarmy);
 		break;
 		case "adminzap":// admin command
 			if (!$gUser->admin)break;
 			require_once("../lib.broid.php");
 			$cssclassarr = zap($f_x,$f_y);
-			?>
-			<script language="javascript">
-				parent.map.JSZap(<?=intval($f_x)?>,<?=intval($f_y)?>);
-			</script>
-			<?php
+			JSRefreshCell($f_x,$f_y,true);
 		break;
 		case "adminruin":// admin command (geb&auml;ude in ruine verwandeln)
 			if (!$gUser->admin)break;
@@ -177,21 +162,13 @@ if (!isset($f_building) && !isset($f_army) && isset($f_do)) switch ($f_do) {
 					sql("INSERT INTO `terrain` SET ".obj2sql($schutt));
 				}
 				$cssclassarr = RegenSurroundingNWSE($f_x,$f_y,true);
-				?>
-				<script language="javascript">
-					parent.map.JSRuin(<?=intval($f_x)?>,<?=intval($f_y)?>);
-				</script>
-				<?php
+				JSRefreshCell($f_x,$f_y,true);
 			}
 		break;
 		case "adminremoveitems":// admin command
 			if (!$gUser->admin)break;
 			sql("DELETE FROM `item` WHERE `x`=".intval($f_x)." AND `y`=".intval($f_y));
-			?>
-			<script language="javascript">
-				parent.map.JSRemoveItems(<?=intval($f_x)?>,<?=intval($f_y)?>);
-			</script>
-			<?php
+			JSRefreshCell($f_x,$f_y);
 		break;
 		case "adminclear":// admin command
 			if (!$gUser->admin) break;
@@ -199,21 +176,13 @@ if (!isset($f_building) && !isset($f_army) && isset($f_do)) switch ($f_do) {
 			zap($f_x,$f_y,true);
 			sql("DELETE FROM `terrain` WHERE `x`=".intval($f_x)." AND `y`=".intval($f_y));
 			$cssclassarr = RegenSurroundingNWSE($f_x,$f_y,true);
-			?>
-			<script language="javascript">
-				parent.map.JSAdminClear(<?=intval($f_x)?>,<?=intval($f_y)?>);
-			</script>
-			<?php
+			JSRefreshCell($f_x,$f_y,true);
 		break;
 		case "adminremovearmy":// admin command
 			if (!$gUser->admin) break;
 			$army = sqlgetobject("SELECT * FROM `army` WHERE `x`=".intval($f_x)." AND `y`=".intval($f_y));
 			cArmy::DeleteArmy($army);
-			?>
-			<script language="javascript">
-				parent.map.JSRemoveArmy(<?=intval($f_x)?>,<?=intval($f_y)?>);
-			</script>
-			<?php
+			JSRefreshCell($f_x,$f_y);
 		break;
 		case "adminteleportarmy":// admin command (geb&auml;ude in ruine verwandeln)
 			if (!$gUser->admin)break;
@@ -224,6 +193,8 @@ if (!isset($f_building) && !isset($f_army) && isset($f_do)) switch ($f_do) {
 				$tarmy->y = intval($f_dy);
 				QuestTrigger_TeleportArmy($tarmy,false,$f_dx,$f_dy);
 			}
+			JSRefreshCell($f_x,$f_y);
+			JSRefreshCell($f_dx,$f_dy);
 		break;
 		case "admineditbuilding":// admin command (geb&auml;ude in ruine verwandeln)
 			if (!$gUser->admin)break;
@@ -287,18 +258,15 @@ if (!isset($f_building) && !isset($f_army) && isset($f_do)) switch ($f_do) {
 							continue;
 						sql("INSERT INTO `terrain` SET ".obj2sql($myterrain));
 						$patch[] = "t,".$myterrain->x.",".$myterrain->y.",".$myterrain->type;
-				
+						JSRefreshCell($myterrain->x,$myterrain->y,true); // TODO : replace by js brush
 					}
 					if ($f_x == $endx && $f_y == $endy) break;
 					else list($f_x,$f_y) = GetNextStep($f_x,$f_y,$startx,$starty,$endx,$endy);
 				} while (true) ;
 				
 				$cssclassarr = RegenAreaNWSE($minx,$miny,$maxx,$maxy,true);
-				?>
-				<script language="javascript">
-					parent.map.JSSetTerrain(<?=intval($f_x)?>,<?=intval($f_y)?>,<?=intval($f_terrain)?>,<?=$brushrad?>);
-				</script>
-				<?php
+				// TODO : implement brush,lines...
+				// parent.map.JSTerrainBrush(intval($f_x),intval($f_y),intval($f_terrain),$brushrad);
 			}
 		break;
 		case "adminsetbuilding":// admin command
@@ -312,7 +280,6 @@ if (!isset($f_building) && !isset($f_army) && isset($f_do)) switch ($f_do) {
 				$mybuilding->user = intval($f_buser);
 				$mybuilding->type = intval($f_btype);
 				$mybuilding->level = intval($f_blevel);
-				$lev = ($mybuilding->level<10)?0:1;
 				$mybuilding->hp = cBuilding::calcMaxBuildingHp($mybuilding->type,$mybuilding->level);
 				if($mybuilding->type==kBuilding_Bridge || $mybuilding->type==kBuilding_GB)
 					$mybuilding->param=getBridgeParam($mybuilding->x,$mybuilding->y);
@@ -334,23 +301,20 @@ if (!isset($f_building) && !isset($f_army) && isset($f_do)) switch ($f_do) {
 					if ($mybuilding->type == kBuilding_GB || $mybuilding->type == kBuilding_Bridge)
 					{
 						sql("DELETE FROM `terrain` WHERE `x` = ".$mybuilding->x." AND `y` = ".$mybuilding->y);
-						sql("INSERT INTO `terrain` SET `type` = 2, `x` = ".$mybuilding->x.", `y` = ".$mybuilding->y);
+						sql("INSERT INTO `terrain` SET `type` = ".kTerrain_River.", `x` = ".$mybuilding->x.", `y` = ".$mybuilding->y);
+						// TODO : unhardcode me !!!!
 					}
 					sql("DELETE FROM `building` WHERE `x` = ".$mybuilding->x." AND `y` = ".$mybuilding->y);
 					sql("INSERT INTO `building` SET ".obj2sql($mybuilding));
 					$patch[] = "b,".$mybuilding->x.",".$mybuilding->y.",".$mybuilding->user.",".$mybuilding->type.",".$mybuilding->level;
-				
+					JSRefreshCell($f_x,$f_y,true); // TODO : replace by js brush/line ?
 					if ($f_x == $endx && $f_y == $endy) break;
 					else list($f_x,$f_y) = GetNextStep($f_x,$f_y,$startx,$starty,$endx,$endy);
 				} while (true) ;
 				
 				$cssclassarr = RegenAreaNWSE($minx,$miny,$maxx,$maxy,true);
-				?>
-				<script language="javascript">
-					parent.map.JSSetBuilding(<?=intval($f_x)?>,<?=intval($f_y)?>,<?=intval($f_btype)?>,<?=$brushrad?>);
-					parent.navi.addpatch("<?=implode("|",$patch)?>|");
-				</script>
-				<?php
+				// parent.navi.addpatch("implode("|",$patch)|");
+				// parent.map.JSSetBuilding(intval($f_x),intval($f_y),intval($f_btype),$brushrad);
 			}
 		break;
 		case "hellhole_admin_think": if (!$gUser->admin) break;
@@ -380,11 +344,7 @@ if (!isset($f_building) && !isset($f_army) && isset($f_do)) switch ($f_do) {
 				}
 				echo "<hr>";
 			}
-			?>
-			<script language="javascript">
-				parent.map.location.href = parent.map.location.href;
-			</script>
-			<?php
+			$gJSCommands[] = "parent.map.location.href = parent.map.location.href;";
 		break;
 		case "hellhole_admin_create": if (!$gUser->admin) break;
 			$hellhole->x = intval($f_x);

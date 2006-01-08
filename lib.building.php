@@ -11,6 +11,20 @@ require_once("lib.hook.php");
 
 class cBuilding {
 	
+	function GetJavaScriptBuildingData ($building,$userid=false) {
+		global $gUser;
+		if ($userid === false) $userid = $gUser->id;
+		$building->jsflags = 0;
+		$building->hp = floor($building->hp);
+		
+		if ($building->type == kBuilding_Portal) {
+			if (intval(GetBParam($building->id,"target"))>0) $building->jsflags |= kJSMapBuildingFlag_Open;
+		} else {
+			if (cBuilding::BuildingOpenForUser($building,$userid)) $building->jsflags |= kJSMapBuildingFlag_Open;
+		}
+		return obj2jsparams($building,"x,y,type,user,level,hp,construction,jsflags");
+	}
+	
 	function CanControllBuilding ($building,$user) { 
 		return $user->id == $building->user || ($building->user == 0 && $user->admin);
 	}

@@ -39,6 +39,41 @@ function JSRefreshArmy ($army) {
 	$gJSCommands[] = "parent.map.JSActivateArmy(".$army->id.",\"".cArmy::GetJavaScriptWPs($army->id)."\");";
 }
 
+// collect data for a single cell, and send to js map
+// surrounding : also refresh adjacted cells
+// noupdate : send only data, not update command (used for surrounding recursion)
+function JSRefreshCell ($x,$y,$surrounding=false,$noupdate=false) {
+	global $gJSCommands;
+	$x = intval($x); $y = intval($y);
+	$gJSCommands[] = "parent.map.JSClear($x,$y);";
+	$localusers = array(); // ignored for now // TODO : implement me
+	$building = sqlgetobject("SELECT * FROM `building` WHERE `x` = ".$x." AND `y` = ".$y." LIMIT 1");
+	if ($building) $gJSCommands[] = "parent.map.JSBuildingUpdate(".cBuilding::GetJavaScriptBuildingData($building).");";
+	if ($building) $localusers[] = $building->user;
+	$army = sqlgetobject("SELECT * FROM `army` WHERE `x` = ".$x." AND `y` = ".$y." LIMIT 1");
+	if ($army) $gJSCommands[] = "parent.map.JSArmyUpdate(".cArmy::GetJavaScriptArmyData($army).");";
+	if ($army) $localusers[] = $army->user;
+	$items = sqlgettable("SELECT * FROM `item` WHERE `army` = 0 AND `building` = 0 AND `x` = ".$x." AND `y` = ".$y);
+	foreach ($items as $item) $gJSCommands[] = "parent.map.JSInsertItem($item->x,$item->y,$item->type,$item->amount);";
+	if ($surrounding) {
+		JSRefreshCell($x-1,$y,false,true);
+		JSRefreshCell($x+1,$y,false,true);
+		JSRefreshCell($x,$y-1,false,true);
+		JSRefreshCell($x,$y+1,false,true);
+	}
+	$terraintype = cMap::StaticGetTerrainAtPos($x,$y);
+	$gJSCommands[] = "parent.map.JSSetTerrain($x,$y,$terraintype,1);";
+	if (!$noupdate) {
+		$gJSCommands[] = "parent.map.JSRefreshCell($x,$y);";
+		if ($surrounding) {
+			$gJSCommands[] = "parent.map.JSRefreshCell(".($x-1).",".($y).");";
+			$gJSCommands[] = "parent.map.JSRefreshCell(".($x+1).",".($y).");";
+			$gJSCommands[] = "parent.map.JSRefreshCell(".($x).",".($y-1).");";
+			$gJSCommands[] = "parent.map.JSRefreshCell(".($x).",".($y+1).");";
+		}
+	}
+}
+
 $guildcommander = FALSE;
 if ($gUser->guild > 0) {
 	$gc = getGuildCommander($gUser->guild);
@@ -215,7 +250,7 @@ if (!isset($f_building) && !isset($f_army) && isset($f_do)) {
 					$con = CancelConstruction($con->id,$gUser->id);
 					if ($con) {
 						echo "Bauplan abgebrochen <!-- 2 -->";
-						$gJSCommands[] = "pparent.map.JSRemovePlan(".intval($f_x).",".intval($f_y).");";
+						$gJSCommands[] = "parent.map.JSRemovePlan(".intval($f_x).",".intval($f_y).");";
 					}
 				}
 			}

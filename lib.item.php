@@ -93,6 +93,7 @@ class cItem {
 	}
 	
 	function SpawnItem		($x,$y,$typeid,$amount=1.0,$quest=0,$param=0) {
+		if ($amount < 1) return;
 		if (itemspawn_debugout) echo "SpawnItem($x,$y,$typeid,$amount=1.0,$quest=0,$param=0)<br>";
 		global $gItemType;
 		$item = false;

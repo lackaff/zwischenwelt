@@ -81,34 +81,76 @@ function JSInsertPlan (x,y,type,priority) {
 }
 function JSRemovePlan (x,y) {
 	if (!gBig && gBigMapWindow && !gBigMapWindow.closed) gBigMapWindow.JSRemovePlan(x,y);
-	var i;
-	for (i in gPlans) if (gPlans[i].x == x && gPlans[i].y == y) {
-		gPlans[i] = false;
-		RefreshCell(x-gLeft,y-gTop);
-		return;
-	}
+	var i; 
+	for (i in gPlans) if (gPlans[i].x == x && gPlans[i].y == y) gPlans[i] = false;
+	RefreshCell(x-gLeft,y-gTop);
 }
-function JSInsertItem (x,y,type,amount) {}
-function JSInsertArmy (id,x,y,name,type,user,units,items,jsflags) {}
-function JSZap (x,y) {}
-function JSRuin (x,y) {}
-function JSRemoveItems (x,y) {}
-function JSAdminClear (x,y) {}
-function JSRemoveArmy (x,y) {}
-function JSSetTerrain (x,y,type,brushrad) { /* ./infoadmincmd.php:298:  ... more params : line,terraformer-limit.. */ }
-function JSSetBuilding (x,y,type,brushrad) { /* ./infoadmincmd.php:352:  ... more params : line,level.. */ }
+function JSZap (x,y) { JSAdminClear(x,y); }
+function JSRuin (x,y) { JSAdminClear(x,y); }
+function JSRemoveItems (x,y) { JSAdminClear(x,y); }
+function JSRemoveArmy (x,y) { JSAdminClear(x,y); }
+function JSAdminClear (x,y) { JSClear(x,y); }
+	
+function JSClear (x,y) {
+	if (!gBig && gBigMapWindow && !gBigMapWindow.closed) gBigMapWindow.JSClear(x,y);
+	if (y-gTop+1 < 0 || y-gTop+1 >= gCY+2 || x-gLeft+1 < 0 || x-gLeft+1 >= gCX+2) return;
+	var i;
+	for (i in gArmies) if (gArmies[i].x == x && gArmies[i].y == y) gArmies[i] = false;
+	for (i in gItems) if (gItems[i].x == x && gItems[i].y == y) gItems[i] = false; 
+	gBuildingsCache[y-gTop+1][x-gLeft+1] = false;
+}
+function JSSetTerrain (x,y,type,brushrad) { 
+	if (!gBig && gBigMapWindow && !gBigMapWindow.closed) gBigMapWindow.JSSetTerrain (x,y,type,brushrad);
+	if (y-gTop+1 < 0 || y-gTop+1 >= gCY+2 || x-gLeft+1 < 0 || x-gLeft+1 >= gCX+2) return;
+	// ./infoadmincmd.php:298:  ... more params : line,terraformer-limit..
+	// TODO : implement brush/line, currently ignored
+	x -= gLeft; y -= gTop;
+	if (type == 0) type = kDefaultTerrainID;
+	gTerrain[y+1][x+1] = type;
+}
 
-function JSUpdateNaviPos () {
-	if (gBig) return;
-	var naviframe = GetNaviFrame();
-	if (!naviframe) return;
-	naviframe.updatepos(gLeft+gXMid,gTop+gYMid);
+function JSRefreshCell (x,y) { 
+	if (!gBig && gBigMapWindow && !gBigMapWindow.closed) gBigMapWindow.JSRefreshCell(x,y);
+	if (y-gTop+1 < 0 || y-gTop+1 >= gCY+2 || x-gLeft+1 < 0 || x-gLeft+1 >= gCX+2) return;
+	var relx = x - gLeft;
+	var rely = y - gTop;
+	var type = gTerrain[rely+1][relx+1];
+	gTerrainMap_raw[rely+1][relx+1] = gTerrainType[type].gfx;
+	gTerrainMap_nwse[rely+1][relx+1] = GetNWSE(gTerrainType[type],relx,rely);
+	// patches have been ignored for speed here
+	gTerrainMap[rely+1][relx+1] = g_nwse(gTerrainMap_raw[rely+1][relx+1],gTerrainMap_nwse[rely+1][relx+1]);
+	
+	RefreshCell(x-gLeft,y-gTop);
+}
+
+function JSInsertItem (x,y,type,amount) {
+	var res = new Object();
+	res.x = x;
+	res.y = y;
+	res.type = type;
+	res.amount = amount;
+	gItems[gItems.length] = res;
+}
+function JSBuildingUpdate (x,y,type,user,level,hp,construction,jsflags) {
+	if (!gBig && gBigMapWindow && !gBigMapWindow.closed) gBigMapWindow.JSBuildingUpdate(x,y,type,user,level,hp,construction,jsflags);
+	if (y-gTop+1 < 0 || y-gTop+1 >= gCY+2 || x-gLeft+1 < 0 || x-gLeft+1 >= gCX+2) return;
+	var res = new Object();
+	res.x = x;
+	res.y = y;
+	res.type = type;
+	res.user = user;
+	res.level = level;
+	res.hp = hp;
+	res.construction = construction;
+	res.jsflags = jsflags;
+	gBuildingsCache[y-gTop+1][x-gLeft+1] = res;
 }
 
 function JSArmyUpdate (id,x,y,name,type,user,unitstxt,itemstxt,flags) {
 	jsArmy(id,x,y,name,type,user,unitstxt,itemstxt,flags);
+	gArmies[id].units = ParseTypeAmountList(gArmies[id].unitstxt);
+	gArmies[id].items = ParseTypeAmountList(gArmies[id].itemstxt);
 	if (!gBig && gBigMapWindow && !gBigMapWindow.closed) gBigMapWindow.JSArmyUpdate(id,x,y,name,type,user,unitstxt,itemstxt,flags);
-	// bigmap 
 }
 
 function JSActivateArmy (armyid,wps) {
@@ -124,7 +166,13 @@ function JSActivateArmy (armyid,wps) {
 		var naviframe = GetNaviFrame();
 		if (naviframe) naviframe.SelectArmy(gActiveArmyID);
 	}
-	// bigmap
+}
+
+function JSUpdateNaviPos () {
+	if (gBig) return;
+	var naviframe = GetNaviFrame();
+	if (!naviframe) return;
+	naviframe.updatepos(gLeft+gXMid,gTop+gYMid);
 }
 
 // speedup
@@ -150,7 +198,7 @@ function jsParseBuildings () {
 function ParseArmyData () {
 	// parse and summarize units in armies (summoned units are added to normal units)
 	var i;
-	for (i in gArmies) {
+	for (i in gArmies) if (gArmies[i]) {
 		gArmies[i].units = ParseTypeAmountList(gArmies[i].unitstxt);
 		gArmies[i].items = ParseTypeAmountList(gArmies[i].itemstxt);
 	}
@@ -167,6 +215,7 @@ function DirToNWSE1 (dx,dy) {
 function CompileWPs () {
 	gWPMap = false;
 	if (gActiveArmyID == 0) return;
+	if (!gArmies[gActiveArmyID]) return;
 	var movablemask = GetUnitsMovableMask(gArmies[gActiveArmyID].units);
 	var i,x,y,dx1,dy1,dx2,dy2,relx,rely;
 	var cur,last,step,foot,head,blocked;
@@ -556,7 +605,7 @@ function GetCellHTML (relx,rely) {
 			layers[layers.length] = g(kConstructionPic);
 		} else {
 			layers[layers.length] = GetBuildingPic(building,relx,rely);
-			if (building.user > 0 && gBuildingType[building.type].border && gMapMode!=kJSMapMode_Plan && gMapMode!=kJSMapMode_Bauzeit) 
+			if (building.user > 0 && gUsers[building.user] && gBuildingType[building.type].border && gMapMode!=kJSMapMode_Plan && gMapMode!=kJSMapMode_Bauzeit) 
 				backgroundcolor = gUsers[building.user].color;
 		}
 		if (gMapMode==kJSMapMode_HP) {
@@ -601,17 +650,17 @@ function GetCellHTML (relx,rely) {
 		}
 		if (gUnitType[unittype])
 			layers[layers.length] = g2(gUnitType[unittype].gfx,nwsecode);
-		if (army.user > 0) backgroundcolor = gUsers[army.user].color;
+		if (army.user > 0 && gUsers[army.user]) backgroundcolor = gUsers[army.user].color;
 	}
 	
 	// wps
 	var wp = SearchPos(gWPs,relx,rely);
-	if (wp) {
+	if (wp && gArmies[gActiveArmyID]) {
 		var movablemask = GetUnitsMovableMask(gArmies[gActiveArmyID].units);
 		var blocked = (GetPosSpeed(relx,rely,movablemask,gActiveArmyID) == 0) ? "b" : ""; // appended to nwse
 		layers[layers.length] = g("mapwp/dot"+blocked+".gif");
 		var army = GetActiveArmy();
-		if (army && army.user > 0) backgroundcolor = gUsers[army.user].color;
+		if (army && army.user > 0 && gUsers[army.user]) backgroundcolor = gUsers[army.user].color;
 	}
 	if (gWPMap) for (i in gWPMap[relx][rely]) layers[layers.length] = gWPMap[relx][rely][i];
 	
@@ -705,7 +754,7 @@ function ShowMapTip(relx,rely) {
 			tiptext += "<tr><td nowrap><img src=\""+GetBuildingPic(building,relx,rely)+"\"></td><td nowrap colspan=2 align=\"left\">";
 			tiptext += "<span>"+gBuildingType[building.type].name + " Stufe "+building.level + "</span><br>";
 			tiptext += "<span>"+"HP : "+building.hp+"/"+calcMaxBuildingHp(building.type,building.level) + "</span><br>";
-			if (building.user > 0) tiptext += "<span>"+gUsers[building.user].name + "</span>";
+			if (building.user > 0 && gUsers[building.user]) tiptext += "<span>"+gUsers[building.user].name + "</span>";
 			if (gNWSEDebug) tiptext += "<br><span>type="+building.type+"flags="+building.jsflags+"</span>";
 			if (gNWSEDebug) tiptext += "<br><span>tc="+gBuildingType[building.type].connectto_terrain.join(",")+"</span>";
 			if (gNWSEDebug) tiptext += "<br><span>bc="+gBuildingType[building.type].connectto_building.join(",")+"</span>";
@@ -733,7 +782,7 @@ function ShowMapTip(relx,rely) {
 	if (gActiveArmyID) {
 		var wp = SearchPos(gWPs,relx,rely);
 		var army = GetActiveArmy();
-		var user = (army && army.user > 0)?gUsers[army.user]:false;
+		var user = (army && army.user > 0 && gUsers[army.user])?gUsers[army.user]:false;
 		if (wp || (gWPMap && gWPMap[relx][rely].length > 1)) {
 			tiptext += "<tr><td nowrap>";
 			if (!wp) {
@@ -766,7 +815,7 @@ function ShowMapTip(relx,rely) {
 	if (army) {
 		tiptext += "<tr><td nowrap colspan=3>";
 		tiptext += "<span>"+army.name+"</span><br>";
-		if (army.user > 0) tiptext += "<span>"+gUsers[army.user].name+"</span><br>";
+		if (army.user > 0 && gUsers[army.user]) tiptext += "<span>"+gUsers[army.user].name+"</span><br>";
 		tiptext += "<span>";
 		if (army.units.length > 0) for (i in army.units) if (gUnitType[i])
 			tiptext += "<img src=\""+g(gUnitType[i].gfx)+"\">"+TausenderTrenner(army.units[i]);
@@ -870,7 +919,7 @@ function TausenderTrenner (nummertext) {
 // type at position
 
 function SearchPos (arr,relx,rely) {
-	var i; for (i in arr) {
+	var i; for (i in arr) if (arr[i]) {
 		if (arr[i].x == relx + gLeft && 
 			arr[i].y == rely + gTop) return arr[i];
 	}
@@ -878,7 +927,7 @@ function SearchPos (arr,relx,rely) {
 }
 function SearchPosArr (arr,relx,rely) {
 	var res = new Array();
-	var i; for (i in arr) {
+	var i; for (i in arr) if (arr[i]) {
 		if (arr[i].x == relx + gLeft && 
 			arr[i].y == rely + gTop) res[res.length] = arr[i];
 	}
@@ -913,7 +962,7 @@ function GetBuildDist (relx,rely) {
 }
 function GetActiveArmy () { 
 	for (i in gArmies) 
-		if (gArmies[i].id == gActiveArmyID) 
+		if (gArmies[i] && gArmies[i].id == gActiveArmyID) 
 			return gArmies[i];
 	return false;
 }
