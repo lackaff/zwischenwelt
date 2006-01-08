@@ -32,7 +32,7 @@ set output \"| convert - $tmp.png\"
 set grid
 set size 1,0.7
 set xdata time
-set timefmt \"%Hh_%d.%m\"
+set timefmt \"%Hh_%d.%m.%Y\"
 plot \"$tmp.dat\" using 1:2 smooth csplines with lines title '".$_REQUEST["title"]."'";
 //smooth csplines";
 

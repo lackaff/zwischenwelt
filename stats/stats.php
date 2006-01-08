@@ -78,7 +78,7 @@ include("../stats/header.php");
 	foreach($t as $o)
 	{
 		//$x[] = $o->time /60 /60 /24;
-		$x[] = date("G\h_j.n.",$o->time);
+		$x[] = date("G\h_j.n.y",$o->time);
 		$y[1][] = $o->i1;
 		$y[2][] = $o->i2;
 		$y[3][] = $o->i3;
@@ -112,7 +112,7 @@ include("../stats/header.php");
 	foreach($t as $o)
 	{
 		//$x[] = $o->time /60 /60 /24;
-		$x[] = date("G\h_j.n.",$o->time);
+		$x[] = date("G\h_j.n.y",$o->time);
 		$y[1][] = $o->i1;
 		$y[2][] = $o->i2;
 		$y[3][] = $o->i3;
