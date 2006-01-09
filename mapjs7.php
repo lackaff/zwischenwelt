@@ -136,6 +136,7 @@ if($gUser && $gUser->usegfxpath && !empty($gUser->gfxpath)){
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/transitional.dtd">
 <html><head>
+<link rel="stylesheet" type="text/css" href="../styles.css">
 <link rel="stylesheet" type="text/css" href="<?=GetZWStylePath()?>"></link>
 <script src="mapjs7_core.js?<?=$jsparam?>" type="text/javascript"></script>
 <script src="<?="mapjs7_globals.js.php".$styleparam."&".$jsparam?>" type="text/javascript"></script>

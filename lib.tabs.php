@@ -48,9 +48,11 @@ function GenerateTabs ($cssclass,$tabs,$corner="",$jschangecallback=false,$selec
 				<?php $hasurl = isset($tupel[2]) && $tupel[2];?>
 				<?php if ($hasurl && 0) {?><a href="<?=$tupel[2]?>"><?php } // endif?>
 				<li name="tabhead<?=$gTabPaneNumber?>" id="tabhead<?=$gTabPaneNumber?>_<?=$i?>" 
-					class="<?=$selected==$id?"activetab":"inactivetab"?>" 
-					<?=$hasurl?("onClick=\"location.href='".$tupel[2]."'\""):("onClick=\"TabPane".$gTabPaneNumber."Activate(".$i.")\"")?> 
-					><span class="tabhead"><?=($tupel[0])?></span></li>
+					class="<?=$selected==$id?"activetab":"inactivetab"?>">
+					<span class="tabhead">
+						<a href="<?=$hasurl?($tupel[2]):("javascript:TabPane".$gTabPaneNumber."Activate(".$i.")")?>"><?=($tupel[0])?></a>
+					</span>
+				</li>
 				<?php if ($hasurl && 0) {?></a><?php } // endif?>
 				<?php ++$i; } // endforeach?>
 			</ul>

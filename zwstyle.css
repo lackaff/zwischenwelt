@@ -110,8 +110,6 @@ div.mainmenu ul {
   float:left;
   width:100%;
   background:#DAE0D2 url("gfx/tab/bg.png") repeat-x bottom;
-  font-size:93%;
-  line-height:normal;
 }
 .tabheader ul {
   margin:0;
@@ -129,9 +127,14 @@ div.mainmenu ul {
   display:block;
   background:url("gfx/tab/right.png") no-repeat right top;
   padding:1px 3px 0px 0px;
+}
+
+.tabhead a {
+  font-size:93%;
+  line-height:normal;
   text-decoration:none;
   font-weight:bold;
-  color:#765;
+  color:#765;	
 }
 
 .tabheader ul .tabhead img {
@@ -147,6 +150,7 @@ div.mainmenu ul {
 
 .tabheader .activetab			{ background-image:url("gfx/tab/left_on.png"); }
 .tabheader .activetab .tabhead	{ background-image:url("gfx/tab/right_on.png"); color:#333; padding-bottom:1px; }
+.tabheader .activetab .tabhead	a	{ color:#333; }
 .tabheader	{ margin-top:2px; margin-right:2px; }
 .tabcorner	{ margin-right:5px; float:right; }
 .tabheader .tabcorner span		{ margin-bottom:2px; }

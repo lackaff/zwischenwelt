@@ -14,6 +14,10 @@ if($cpost->num == 0)$newpost = false;
 else $newpost = true;
 if($gpost > 0 || $cgpost > 0)$newguild = true;
 else $newguild = false;
+//hat der user unbeantwortete umfragen?
+if(sqlgetone("select p1.`id` from poll as p1 left outer join (SELECT id from poll as p RIGHT JOIN poll_answer as a ON  p.id=a.poll where a.user=".($gUser->id).") as p2 on p1.id=p2.id where ISNULL(p2.id) LIMIT 1")>0)$newpoll = true;
+else $newpoll = false;
+
 ?>
 
 <!-- ########################### GANZE NEUES MENU ################################# -->
@@ -31,6 +35,9 @@ else $newguild = false;
 			<li><a href="http://zwischenwelt.org/wiki/" target="_blank">Hilfe</a></li>
 			<li <?=($newguild)?"class=\"highlight\"":""?>>
 				<a href="<?=sessionLink("../info/guild.php")?>">Gilde</a>
+			</li>
+			<li <?=($newpoll)?"class=\"highlight\"":""?>>
+				<a href="<?=Query("../info/poll.php?sid=?")?>">Umfrage</a>
 			</li>
 			<li><a href="<?=sessionLink("../logout.php")?>" target="_parent">Logout</a></li>
 		</ul>
