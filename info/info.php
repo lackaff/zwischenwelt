@@ -22,6 +22,12 @@ $gInfoTabsCorner = "";
 $info_message = ""; //ausgabevariable fuer z.b. spells
 
 
+// TODO : complete me !!!!
+function JSSetInfoMessage ($html) {
+	global $gJSCommands;
+	$gJSCommands[] = "SetInfoMessage();";
+}
+
 
 function RegisterInfoTab ($head,$content,$select_priority=false) {
 	global $gInfoTabs,$gInfoTabsSelected,$gInfoTabsPriority;
@@ -431,9 +437,11 @@ if (!isset($f_blind)) {
 	
 	<?php /* oeffentliches portal */ ?>
 	<?php
-	$x = intval($f_x); $y = intval($f_y);
-	$portal = sqlgetobject("SELECT *,((`x`-($x))*(`x`-($x)) + (`y`-($y))*(`y`-($y))) as `dist` FROM `building` WHERE `type` = ".kBuilding_Portal." AND `user` = 0 ORDER BY `dist` LIMIT 1");
-	if ($portal) echo "Nächstes öffentliches Portal : ".opos2txt($portal)."<br>";
+	if (count($gMapArmy) == 0 && count($gMapBuilding) == 0 && count($gItems) == 0 && count($gMapCons) == 0 && count($gMapWaypoints) == 0) {
+		$x = intval($f_x); $y = intval($f_y);
+		$portal = sqlgetobject("SELECT *,((`x`-($x))*(`x`-($x)) + (`y`-($y))*(`y`-($y))) as `dist` FROM `building` WHERE `type` = ".kBuilding_Portal." AND `user` = 0 ORDER BY `dist` LIMIT 1");
+		if ($portal) echo "Nächstes öffentliches Portal : ".opos2txt($portal)."<br>";
+	}
 	?>
 	
 	<?php /* testmode */ ?>
@@ -779,7 +787,12 @@ if (!isset($f_blind)) {
 <title>Zwischenwelt - info</title>
 <SCRIPT LANGUAGE="JavaScript" type="text/javascript">
 <!--
-	<?php foreach ($gJSCommands as $cmd) echo $cmd."\n";?>
+	function SetInfoMessage (html) {
+		document.getElementById('dynamicinfomessage').innerHTML = html;
+	}
+	function OnInfoLoad () {
+		<?php foreach ($gJSCommands as $cmd) echo $cmd."\n";?>
+	}
 	function WPMap (army) {
 		var x = parent.map.getx();
 		var y = parent.map.gety();
@@ -801,7 +814,7 @@ if (!isset($f_blind)) {
 //-->
 </SCRIPT>
 </head>
-<body>
+<body onLoad="OnInfoLoad()">
 
 <?php 
 if (isset($f_blind)) { // blind modus im dummy frame, fuer schnellere map-click-befehle
@@ -814,6 +827,7 @@ if (isset($f_blind)) { // blind modus im dummy frame, fuer schnellere map-click-
 
 <?php include("../menu.php");?>
 
+<div id="dynamicinfomessage"></div>
 <?php /* info message */ ?>
 <?php if($info_message!="") {?><div><?=$info_message?></div><hr><?}?>
 <?php if(isset($pastinclude) && is_file($pastinclude))include($pastinclude); ?>

@@ -18,15 +18,6 @@ function GenerateTabs ($cssclass,$tabs,$corner="",$jschangecallback=false,$selec
 	<SCRIPT LANGUAGE="JavaScript" type="text/javascript"><!--
 	function TabPane<?=$gTabPaneNumber?>Activate (tabnum) {
 		var i,head,pane,nochange = false;
-		//var heads = document.getElementsByName("tabhead<?=$gTabPaneNumber?>");
-		//var panes = document.getElementsByName("tabpane<?=$gTabPaneNumber?>");
-		//var heads = document.getElementsByName("tabhead<?=$gTabPaneNumber?>");
-		//var panes = document.getElementsByName("tabpane<?=$gTabPaneNumber?>");
-		//var gumbas = document.getElementsByName("gumba");
-		//var gumba = gumbas[0];
-		//alert("len="+gumbas.length+",gumbas[0] = "+gumba);
-		//for(i in heads)alert(i+" = "+);
-		//alert(tabnum+" / "+heads+" / "+heads[tabnum]);
 		for (i=0;i<<?=$anzahl_tabs?>;++i) {
 			head = document.getElementById("tabhead<?=$gTabPaneNumber?>_"+i);
 			pane = document.getElementById("tabpane<?=$gTabPaneNumber?>_"+i);
@@ -42,7 +33,7 @@ function GenerateTabs ($cssclass,$tabs,$corner="",$jschangecallback=false,$selec
 			head = document.getElementById("tabhead<?=$gTabPaneNumber?>_"+tabnum);
 			pane = document.getElementById("tabpane<?=$gTabPaneNumber?>_"+tabnum);
 			head.className = "activetab";
-			pane.style.display = "inline"; // TODO : is this the evil tabs bug ??
+			pane.style.display = "inline";
 		}
 		<?php if ($jschangecallback) {?> <?=$jschangecallback?>(tabnum); <?php }?>
 	}
