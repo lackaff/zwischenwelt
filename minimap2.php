@@ -20,8 +20,6 @@ if (isset($f_set_tv)) {
 if (isset($_COOKIE[$cookiebase."th"])) $tiles_h = max(0,min(10,intval($_COOKIE[$cookiebase."th"])));
 if (isset($_COOKIE[$cookiebase."tv"])) $tiles_v = max(0,min(10,intval($_COOKIE[$cookiebase."tv"])));
 
-
-
 define("kScreenOffsetX",66);
 define("kScreenOffsetY",66);
 define("kCrossHairOffset",15);
@@ -102,6 +100,15 @@ if(isset($_REQUEST["cross_x"])){
 	$clicked = true;
 }
 
+if(($gUser->flags & kUserFlags_TerraFormer) || $gUser->admin){
+	for($y=0;$y<kShowSegmentHeight;++$y)
+		for($x=0;$x<kShowSegmentWidth;++$x){
+			$px = $tmp_left_seg+$x;
+			$py = $tmp_top_seg+$y;
+			$filename = "tmp/minimap/seg_".$mode."_".$px."_".$py.".png";
+			unlink($filename);
+		}
+}
 
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
@@ -132,7 +139,14 @@ ImgBorderStart("s1","jpg","#ffffee","",32,33);
 	<tr>
 		<td></td>
 		<td align=center><a href="<?=query("?army=?&sid=?&crossx=?&crossy=?&mode=?&cx=".($cx)."&cy=".($cy-kSegmentSize))?>"><img src="<?=g("minimap/up.png")?>" border=0></a></td>
-		<td></td>
+		<td align=right valign=top>
+			<?php if(($gUser->flags & kUserFlags_TerraFormer) || $gUser->admin){ ?>
+			<a alt="Segmente neugenerieren" title="Segmente neugenerieren" 
+			href="<?=query("?regen=1&army=?&sid=?&crossx=?&crossy=?&mode=?&cx=?&cy=?")?>">
+				<img border=0 src="<?=g("icon/reload.png")?>">
+			</a>
+			<?php } ?>
+		</td>
 	</tr>
 	<tr>
 		<td valign=middle><a href="<?=query("?army=?&sid=?&crossx=?&crossy=?&mode=?&cx=".($cx-kSegmentSize)."&cy=".($cy))?>"><img src="<?=g("minimap/left.png")?>" border=0></a></td>
