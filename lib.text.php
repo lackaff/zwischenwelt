@@ -214,6 +214,14 @@ function BuildingAction2txt ($action) {
 		break;
 	}
 }
+// text=false is replaced by building picture
+function GetBuildingTypeLink ($type,$x,$y,$text=false,$user=false,$level=10) {
+	global $gObject,$gBuildingType;
+	if (!is_object($type)) $type = $gBuildingType[$type];
+	if (!$text) $text = "<img border=0 src=\"".GetBuildingPic($type,$user,$level)."\" alt=\"".$type->name."\" title=\"".$type->name."\">";
+	$url = Query("info.php?sid=?&x=".$x."&y=".$x."&infobuildingtype=".$type->id);
+	return "<a href=\"$url\">$text</a>";
+}
 
 function magictext($text) {
 	// positions

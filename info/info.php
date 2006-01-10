@@ -187,19 +187,91 @@ if (!isset($f_building) && !isset($f_army) && isset($f_do)) {
 			// todo : report error
 			// todo : report error
 			// todo : report error
-			//JSAddInfoMessage("irgendwas gebaut<br>");
+			//
 			// todo : report error
 			// todo : error check : as in cron : InBuildCross($con->x,$con->y,$con->user,-1) && CanBuildHere($con->x,$con->y,$con->type)
+			
+			
+			function JSAddInfoMessage_BuildError($btype,$x,$y,$reason) {
+				JSAddInfoMessage(GetBuildingTypeLink($btype,$x,$y)." konnte bei ".pos2txt($x,$y)." nicht gebaut werden : ".$reason."<br>");
+			}
+			
 			$baulist = GetBuildlist($f_x,$f_y,false,true,false);
 			foreach ($f_build as $typeid => $val) {
-				if(!isset($baulist[$typeid]) || !$baulist[$typeid])continue;
+				$btype = $gBuildingType[intval($typeid)]; 
+				
+				// check other plans
+				if (OwnConstructionInProcess($f_x,$f_y)) {
+					JSAddInfoMessage_BuildError($btype,$f_x,$f_y,"hier ist bereits ein Bauplan");
+					continue; // todo : report error
+				}
+				// check build cross
+				if (!InBuildCross($f_x,$f_y,$gUser->id)) {
+					JSAddInfoMessage_BuildError($btype,$f_x,$f_y,"kein eigenes Gebäude in der Nähe");
+					continue; // todo : report error
+				}
+				// check req
+				if (!HasReq($btype->req_geb,$btype->req_tech,$gUser->id)) {
+					$anforderungen = GetBuildingTypeLink($btype,$f_x,$f_y,"<font color=\"red\"><b>Anforderungen</b></font>");
+					JSAddInfoMessage_BuildError($btype,$f_x,$f_y,"$anforderungen sind nicht erfüllt");
+					continue;
+				}
+				
+				// check nearby terrain
 				$terrain = sqlgetone("SELECT `type` FROM `terrain` WHERE `x` = ".$f_x." AND `y` = ".$f_y);
-				$terraintype = $gTerrainType[$terrain?$terrain:kTerrain_Grass];
-				//if ($typeid != kBuilding_Bridge && $typeid != kBuilding_GB && !
-				if (!$terraintype->buildable && $gBuildingType[$typeid]->terrain_needed != $terraintype->id)	continue;
-				if (sqlgetone("SELECT 1 FROM `building` WHERE `x` = ".$f_x." AND `y` = ".$f_y)) continue;
-				if (OwnConstructionInProcess($f_x,$f_y)) continue; // todo : report error
-				if (!InBuildCross($f_x,$f_y,$gUser->id)) continue; // todo : report error
+				if ($btype->terrain_needed > 0 && $btype->terrain_needed != $terrain) {
+					$reqpic = "<img border=0 src=\"".g($gTerrainType[$btype->terrain_needed]->gfx)."\">";
+					JSAddInfoMessage_BuildError($btype,$f_x,$f_y,"kann nur auf $reqpic gebaut werden");
+					continue;
+				}
+				if ($gTerrainType[$terrain]->buildable == 0 && $btype->terrain_needed != $terrain) {
+					$reqpic = "<img border=0 src=\"".g($gTerrainType[$terrain]->gfx)."\">";
+					JSAddInfoMessage_BuildError($btype,$f_x,$f_y,"Gelände $reqpic ist nicht bebaubar");
+					continue;
+				}
+				
+				// check for blocking building
+				$blockerbuilding = sqlgetobject("SELECT * FROM `building` WHERE `x` = ".$f_x." AND `y` = ".$f_y);
+				if ($blockerbuilding) {
+					$reqpic = GetBuildingTypeLink($blockerbuilding->type,$f_x,$f_y,false,$blockerbuilding->user,$blockerbuilding->level);
+					JSAddInfoMessage_BuildError($btype,$f_x,$f_y,"hier befindet sich bereits ein Gebäude : ".$reqpic."");
+					continue;
+				}
+				
+				// TODO : aufschluesseln !
+				if (!CanBuildHere($x,$y,$btype->id)) {
+					JSAddInfoMessage_BuildError($btype,$f_x,$f_y,"kann hier nicht gebaut werden");
+					continue;
+				}
+				
+				// todo : add aditional error messages when extending GetBuildlist()
+				if(!isset($baulist[$typeid]) || !$baulist[$typeid]) {
+					switch ($btype->id) {
+						case kBuilding_Steg:
+							$reqpic1 = GetBuildingTypeLink(kBuilding_Harbor,$f_x,$f_y);
+							$reqpic2 = GetBuildingTypeLink(kBuilding_Steg,$f_x,$f_y);
+							JSAddInfoMessage_BuildError($btype,$f_x,$f_y,"$reqpic1 oder $reqpic2 muss in der nähe sein");
+						break;
+						case kBuilding_SeaWall:
+							$reqpic1 = GetBuildingTypeLink(kBuilding_SeaWall,$f_x,$f_y);
+							$reqpic2 = GetBuildingTypeLink(kBuilding_Wall,$f_x,$f_y);
+							JSAddInfoMessage_BuildError($btype,$f_x,$f_y,"$reqpic1 oder $reqpic2 muss in der nähe sein");
+						break;
+						case kBuilding_SeaGate:
+							$reqpic1 = GetBuildingTypeLink(kBuilding_SeaWall,$f_x,$f_y);
+							$reqpic2 = GetBuildingTypeLink(kBuilding_Wall,$f_x,$f_y);
+							JSAddInfoMessage_BuildError($btype,$f_x,$f_y,"$reqpic1 oder $reqpic2 muss in der nähe sein");
+						break;
+						case kBuilding_Harbor:
+							$reqpic = "<img border=0 src=\"".g($gTerrainType[kTerrain_Sea]->gfx)."\">";
+							JSAddInfoMessage_BuildError($btype,$f_x,$f_y,"$reqpic muss in der nähe sein");
+						break;
+						default:
+							JSAddInfoMessage_BuildError($btype,$f_x,$f_y,"hier nicht erlaubt"); // unknown error
+						break;
+					}
+					continue;
+				}
 
 				sql("LOCK TABLES `phperror` WRITE, `terrain` READ,`construction` WRITE,`sqlerror` WRITE,  `building` WRITE");
 			
@@ -352,7 +424,7 @@ $gMapArmy = sqlgettable("SELECT * FROM `army` WHERE ".$xylimit,"id");
 $gMapCons = sqlgettable("SELECT * FROM `construction` WHERE ".$xylimit." AND `user` = ".$gUser->id);
 $gMapWaypoints = sqlgettable("SELECT * FROM `waypoint` WHERE ".$xylimit);
 $terrain = sqlgetobject("SELECT * FROM `terrain` WHERE ".$xylimit);
-$terraintype = sqlgetobject("SELECT * FROM `terraintype` WHERE `id` = ".($terrain?$terrain->type:1));
+$terraintype = sqlgetobject("SELECT * FROM `terraintype` WHERE `id` = ".($terrain?$terrain->type:kTerrain_Grass));
 $gItems = sqlgettable("SELECT * FROM `item` WHERE `army`=0 AND `building`=0 AND ".$xylimit." ORDER BY `type`");
 $gArmy = cArmy::getMyArmies(FALSE,$gUser->id);
 
@@ -817,7 +889,7 @@ if (!isset($f_blind)) {
 <SCRIPT LANGUAGE="JavaScript" type="text/javascript">
 <!--
 	function AddInfoMessage (html) {
-		document.getElementById('dynamicinfomessage').innerHTML += html;
+		document.getElementById('dynamicinfomessage').innerHTML = html + document.getElementById('dynamicinfomessage').innerHTML;
 	}
 	function OnInfoLoad () {
 		<?php foreach ($gJSCommands as $cmd) echo $cmd."\n";?>

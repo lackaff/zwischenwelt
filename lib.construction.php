@@ -194,6 +194,9 @@ function PrintBuildTimeHelp ($x,$y,$type=-1,$priority=-1,$userid=false) {
 	<?php
 }
 
+// TODO : kann leicht ausgetrickst werden wegen den bauplaenen
+// TODO : unschoen, obsolete, wird von der cron nicht benutzt (nur info und navi), auf CanBuildHere() umstellen
+// TODO : schoener machen mit fkt die gUser unabhaengige fehlermeldung zurueckgibt -> info:print , cron:false==noerror
 function GetBuildlist ($x,$y,$unsafe=FALSE,$withhq=TRUE,$ignorereq=TRUE,$ignoreterrain=FALSE) {
 	global $gUser,$gBuildingType,$gTerrainType;
 	if(!$unsafe && !inBuildCross($x,$y,$gUser->id))
@@ -216,29 +219,33 @@ function GetBuildlist ($x,$y,$unsafe=FALSE,$withhq=TRUE,$ignorereq=TRUE,$ignoret
 		if($o->special>0)continue;
 		if(!$ignorereq && !HasReq($o->req_geb,$o->req_tech,$gUser->id))continue;
 		
-		if(!$ignoreterrain)
+		if(!$ignoreterrain) {
+			$continue = false; // Warning ! continue has a special meaning inside a switch (break or recheck ??)
+			$condxy = "((`x`=$x AND `y`=$y+1) OR (`x`=$x AND `y`=$y-1) OR (`x`=$x+1 AND `y`=$y) OR (`x`=$x-1 AND `y`=$y))";
+			$cond = "`user` = ". $gUser->id." AND ".$condxy;
 			switch($o->id){
 				case kBuilding_Steg:
-					if(!sqlgetobject("SELECT 1 FROM `building` WHERE (`type`=".kBuilding_Harbor." OR `type`=".kBuilding_Steg.") 
-					AND ((`x`=$x AND `y`=$y+1) OR (`x`=$x AND `y`=$y-1) OR (`x`=$x+1 AND `y`=$y) OR (`x`=$x-1 AND `y`=$y)) LIMIT 1"))		
-						continue;
+					if (!sqlgetone("SELECT 1 FROM `building`		WHERE `type` IN (".kBuilding_Harbor.",".kBuilding_Steg.") AND $cond LIMIT 1") &&
+						!sqlgetone("SELECT 1 FROM `construction`	WHERE `type` IN (".kBuilding_Harbor.",".kBuilding_Steg.") AND $cond LIMIT 1"))		
+						$continue = true;
 				break;
 				case kBuilding_SeaWall:
-					if(!sqlgetobject("SELECT 1 FROM `building` WHERE (`type`=".kBuilding_SeaWall." OR `type`=".kBuilding_Wall.") 
-					AND ((`x`=$x AND `y`=$y+1) OR (`x`=$x AND `y`=$y-1) OR (`x`=$x+1 AND `y`=$y) OR (`x`=$x-1 AND `y`=$y)) LIMIT 1"))
-						continue;
+					if (!sqlgetone("SELECT 1 FROM `building`		WHERE `type` IN (".kBuilding_SeaWall.",".kBuilding_Wall.") AND $cond LIMIT 1") &&
+						!sqlgetone("SELECT 1 FROM `construction`	WHERE `type` IN (".kBuilding_SeaWall.",".kBuilding_Wall.") AND $cond LIMIT 1"))		
+						$continue = true;
 				break;
 				case kBuilding_SeaGate:
-				if(!sqlgetobject("SELECT 1 FROM `building` WHERE (`type`=".kBuilding_SeaWall." OR `type`=".kBuilding_Wall.") 
-					AND ((`x`=$x AND `y`=$y+1) OR (`x`=$x AND `y`=$y-1) OR (`x`=$x+1 AND `y`=$y) OR (`x`=$x-1 AND `y`=$y)) LIMIT 1"))
-						continue;
+					if (!sqlgetone("SELECT 1 FROM `building`		WHERE `type` IN (".kBuilding_SeaWall.",".kBuilding_Wall.") AND $cond LIMIT 1") &&
+						!sqlgetone("SELECT 1 FROM `construction`	WHERE `type` IN (".kBuilding_SeaWall.",".kBuilding_Wall.") AND $cond LIMIT 1"))		
+						$continue = true;
 				break;
 				case kBuilding_Harbor:
-					if(!sqlgetobject("SELECT 1 FROM `terrain` WHERE (`type`=".kTerrain_Sea.") 
-					AND ((`x`=$x AND `y`=$y+1) OR (`x`=$x AND `y`=$y-1) OR (`x`=$x+1 AND `y`=$y) OR (`x`=$x-1 AND `y`=$y)) LIMIT 1"))
-						continue;
+					if(!sqlgetone("SELECT 1 FROM `terrain` WHERE `type`=".kTerrain_Sea." AND ".$condxy." LIMIT 1"))
+						$continue = true;
 				break;
 			}
+			if ($continue) continue;
+		}
 		
 		$r[$o->id]=$o->id;
 		//if(HasReq($o->req_geb,$o->req_tech,$gUser->id) && $o->special==0)
