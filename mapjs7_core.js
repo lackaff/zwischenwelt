@@ -538,10 +538,10 @@ function CreateMap() {
 	if (!gBig)	gMapHTML += "<a href=\"javascript:OpenMap(5)\"><img alt=\"diplomap\" title=\"diplomap\" border=0 src=\""+g("icon/diplomap.png")+"\"></a>";
 	gMapHTML += "		</div>";
 	gMapHTML += "		<ul>";
-	gMapHTML += "			<li class=\""+(gMapMode==kJSMapMode_Normal?	"activetab":"inactivetab")+"\"><span class=\"tabhead\"><a href=\"javascript:SetMapMode(kJSMapMode_Normal)\">Normal</a></span></li>";
-	gMapHTML += "			<li class=\""+(gMapMode==kJSMapMode_Plan?	"activetab":"inactivetab")+"\"><span class=\"tabhead\"><a href=\"javascript:SetMapMode(kJSMapMode_Plan)\">Pl&auml;ne</a></span></li>";
-	gMapHTML += "			<li class=\""+(gMapMode==kJSMapMode_Bauzeit?"activetab":"inactivetab")+"\"><span class=\"tabhead\"><a href=\"javascript:SetMapMode(kJSMapMode_Bauzeit)\">Bauzeit</a></span></li>";
-	gMapHTML += "			<li class=\""+(gMapMode==kJSMapMode_HP?		"activetab":"inactivetab")+"\"><span class=\"tabhead\"><a href=\"javascript:SetMapMode(kJSMapMode_HP)\">HP</a></span></li>";
+	gMapHTML += "			<li class=\""+(gMapMode==kJSMapMode_Normal?	"activetab":"inactivetab")+"\"><span class=\"tabhead\"><img border=0 src=\"gfx/1px.gif\" width=1 height=18><a href=\"javascript:SetMapMode(kJSMapMode_Normal)\">Normal</a></span></li>";
+	gMapHTML += "			<li class=\""+(gMapMode==kJSMapMode_Plan?	"activetab":"inactivetab")+"\"><span class=\"tabhead\"><img border=0 src=\"gfx/1px.gif\" width=1 height=18><a href=\"javascript:SetMapMode(kJSMapMode_Plan)\">Pl&auml;ne</a></span></li>";
+	gMapHTML += "			<li class=\""+(gMapMode==kJSMapMode_Bauzeit?"activetab":"inactivetab")+"\"><span class=\"tabhead\"><img border=0 src=\"gfx/1px.gif\" width=1 height=18><a href=\"javascript:SetMapMode(kJSMapMode_Bauzeit)\">Bauzeit</a></span></li>";
+	gMapHTML += "			<li class=\""+(gMapMode==kJSMapMode_HP?		"activetab":"inactivetab")+"\"><span class=\"tabhead\"><img border=0 src=\"gfx/1px.gif\" width=1 height=18><a href=\"javascript:SetMapMode(kJSMapMode_HP)\">HP</a></span></li>";
 	gMapHTML += "		</ul>";
 	gMapHTML += "	</div>";
 	gMapHTML += "	<div class=\"tabpane\">";
