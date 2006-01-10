@@ -172,6 +172,8 @@ if (isset($f_regentypes)) {
 	var lineinit = false;
 	var linex = 0;
 	var liney = 0;
+	var gDummyFrameCycler = 0;
+	kDummyFrames = <?=kDummyFrames?>;
 	kNaviJSMapVersion = <?=intval(kJSMapVersion)?>;
 	function GetkNaviJSMapVersion () {
 		return kNaviJSMapVersion;
@@ -283,7 +285,14 @@ if (isset($f_regentypes)) {
 		//alert(url);
 		if (curtool == 0 || curtool == 20) 
 				parent.info.location.href = url;
-		else	parent.dummy.location.href = url + "&blind=1";
+		else {
+			<?php for ($i=0;$i<kDummyFrames;++$i) {?>
+			if (gDummyFrameCycler == <?=$i?>) parent.dummy<?=$i?>.location.href = url + "&blind=1";
+			<?php } // endforeach?>
+		}
+		
+		gDummyFrameCycler++;
+		if (gDummyFrameCycler >= kDummyFrames) gDummyFrameCycler = 0;
 	}
 	function clearline () { lineinit = false; }
 	function myreload () { 

@@ -70,12 +70,14 @@ else {
 </div>
 <div id=links>
 	<table cellpadding=2 cellspacing=2>
+		<?php if ($_SERVER["REMOTE_ADDR"] != "127.0.0.1") {?>
 		<tr><td><form style="margin:0px;" action="http://www.browsergames24.de/modules.php?name=Web_Links" method="post"><input type="hidden" name="lid" value="845"><input type="hidden" name="l_op" value="ratelink"><input type="image" src="http://www.browsergames24.de/votebg.gif" name="text" align="align"></form></td></tr>
 		<tr><td><a href="http://www.galaxy-news.de/?page=charts&op=vote&game_id=411" target="_blank"><img src="images/gvote.gif" border="0"></a></td></tr>
 		<tr><td><a href="http://www.gamingfacts.de/charts.php?was=abstimmen2&spielstimme=332" target="_blank"><img src="images/gamingfacts_charts.gif" border="0"></a></td></tr>
 		<tr><td><a href="http://www.mozilla.org/products/firefox/" target="_blank"><img border=0 src="images/firefox.png"></a></td></tr>
 		<tr><td><a target="_blank" href="http://www.nosoftwarepatents.com/"><img border=0 src="images/nswpat80x15.gif"></a></td></tr>
 		<tr><td><a href="http://sourceforge.net"><img src="http://sourceforge.net/sflogo.php?group_id=138787&amp;type=1" width="88" height="31" border="0" alt="SourceForge.net Logo" /></a></td></tr>
+		<?php } // endif?>
 	</table>
 </div>
 

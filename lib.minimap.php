@@ -111,8 +111,8 @@ function renderMinimap($top,$left,$bottom,$right,$filename,$mode="normal",$segme
 		$xe64 = ceil(($x+$dx-1)/64);$ye64 = ceil(($y+$dy-1)/64);
 		$cond64 = $fullmap?"":(" WHERE `x` >= ".$x64." AND x <= ".($xe64)." AND `y` >= ".$y64." AND y <= ".($ye64)); 
 		
-		$l = sqlgettable("SELECT * FROM `terrainsegment64` ".$cond64);
-		foreach ($l as $o) if ($o->type != kTerrain_Grass) {
+		$r = sql("SELECT * FROM `terrainsegment64` ".$cond64);
+		while ($o = mysql_fetch_object($r)) if ($o->type != kTerrain_Grass) {
 			$col = $gTerrainType[$o->type]->imgcolor;
 			imagefilledrectangle($im,
 				max(0,min($dx-1,$o->x*64-$left)),
@@ -121,14 +121,14 @@ function renderMinimap($top,$left,$bottom,$right,$filename,$mode="normal",$segme
 				max(0,min($dy-1,$o->y*64+64-$top)),
 				$col);
 		}
-		unset($l);
+		mysql_free_result($r);
 		
 		$x4 = floor($x/4);$y4 = floor($y/4);
 		$xe4 = ceil(($x+$dx-1)/4);$ye4 = ceil(($y+$dy-1)/4);
 		$cond4 = $fullmap?"":(" WHERE `x` >= ".$x4." AND x <= ".($xe4)." AND `y` >= ".$y4." AND y <= ".($ye4)); 
 		
-		$l = sqlgettable("SELECT * FROM `terrainsegment4` ".$cond4);
-		foreach ($l as $o) {
+		$r = sql("SELECT * FROM `terrainsegment4` ".$cond4);
+		while ($o = mysql_fetch_object($r)) {
 			$col = $gTerrainType[$o->type]->imgcolor;
 			imagefilledrectangle($im,
 				max(0,min($dx-1,$o->x*4-$left)),
@@ -137,13 +137,13 @@ function renderMinimap($top,$left,$bottom,$right,$filename,$mode="normal",$segme
 				max(0,min($dy-1,$o->y*4+4-$top)),
 				$col);
 		}
-		unset($l);
+		mysql_free_result($r);
 		
 		$cond1 = $fullmap?"":(" WHERE `x` >= ".$x." AND x < ".($x+$dx)." AND `y` >= ".$y." AND y <= ".($y+$dy)); 
 		
-		$l = sqlgettable("SELECT `x`,`y`,`type` FROM `terrain` ".$cond1);
-		foreach ($l as $o) imagesetpixel($im, $o->x-$left,$o->y-$top,$gTerrainType[$o->type]->imgcolor);
-		unset($l);
+		$r = sql("SELECT `x`,`y`,`type` FROM `terrain` ".$cond1);
+		while ($o = mysql_fetch_object($r)) imagesetpixel($im, $o->x-$left,$o->y-$top,$gTerrainType[$o->type]->imgcolor);
+		mysql_free_result($r);
 	}
 	
 	if ($mode == "creep") {
@@ -163,7 +163,8 @@ function renderMinimap($top,$left,$bottom,$right,$filename,$mode="normal",$segme
 	$condxy = $fullmap?"":(" WHERE `x` >= ".$x." AND x < ".($x+$dx)." AND `y` >= ".$y." AND y <= ".($y+$dy)); 
 	
 	if (1) {
-		$l = sqlgettable("SELECT `x`,`y`,`user`,`type` FROM `building` ".$condxy);
+		$r = sql("SELECT `x`,`y`,`user`,`type` FROM `building` ".$condxy);
+		/*
 		if (0 && $mode != "creep") {
 			//echo "draw ressources<br>\n";
 			array_walk($gBuildingType,"renderMinimap_walkgetbodenschatzpic");
@@ -173,9 +174,10 @@ function renderMinimap($top,$left,$bottom,$right,$filename,$mode="normal",$segme
 				imagecopy($im,$gBuildingType[$o->type]->pic,$o->x-$left-$bs_size/2,$o->y-$top-$bs_size/2,0,0,$bs_size,$bs_size);
 			}
 		}
+		*/
 
 		//echo "draw buildings<br>\n";
-		foreach($l as $x) {
+		while ($x = mysql_fetch_object($r)) {
 			if ($x->type == kBuilding_Portal) $portallist[] = $x;
 			if ($x->user == 0 && in_array($x->type,$gBodenSchatzBuildings)) {
 				imagesetpixel($im, $x->x-$left,		$x->y-$top,$color_bodenschatz);
@@ -206,22 +208,22 @@ function renderMinimap($top,$left,$bottom,$right,$filename,$mode="normal",$segme
 				imagesetpixel($im,$x->x-$left,$x->y-$top,$color);
 			}
 		}
-		unset($l);
+		mysql_free_result($r);
 	}
 	
 	
 	
 	// armeen
-	$l = sqlgettable("SELECT `x`,`y` FROM `army` ".$condxy);
+	$r = sql("SELECT `x`,`y` FROM `army` ".$condxy);
 	//echo "draw armies<br>\n";
-	foreach($l as $x) 
+	while ($x = mysql_fetch_object($r)) 
 			imagefilledrectangle($im,
 				$x->x-$left,
 				$x->y-$top,
 				$x->x-$left+1,
 				$x->y-$top+1,
 				$color_red);
-	unset($l);
+	mysql_free_result($r);
 	
 	// portale
 	//echo "draw portals<br>\n";

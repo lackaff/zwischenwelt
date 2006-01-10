@@ -22,10 +22,9 @@ $gInfoTabsCorner = "";
 $info_message = ""; //ausgabevariable fuer z.b. spells
 
 
-// TODO : complete me !!!!
-function JSSetInfoMessage ($html) {
+function JSAddInfoMessage ($html) {
 	global $gJSCommands;
-	$gJSCommands[] = "SetInfoMessage();";
+	$gJSCommands[] = "parent.info.AddInfoMessage(\"".addslashes($html)."\");";
 }
 
 
@@ -188,6 +187,7 @@ if (!isset($f_building) && !isset($f_army) && isset($f_do)) {
 			// todo : report error
 			// todo : report error
 			// todo : report error
+			//JSAddInfoMessage("irgendwas gebaut<br>");
 			// todo : report error
 			// todo : error check : as in cron : InBuildCross($con->x,$con->y,$con->user,-1) && CanBuildHere($con->x,$con->y,$con->type)
 			$baulist = GetBuildlist($f_x,$f_y,false,true,false);
@@ -602,7 +602,8 @@ if (!isset($f_blind)) {
 
 if (!isset($f_blind)) if ($gUser->admin) {
 	/* admin terrain set */
-
+	$adminprio = false;
+	
 	rob_ob_start();
 	?>
 	<?php if (count($gPHP_Errors) > 0) { echo "<h3>PHP-ERRORS</h3>";vardump2($gPHP_Errors); }?>
@@ -706,8 +707,36 @@ if (!isset($f_blind)) if ($gUser->admin) {
 	<input type="submit" value="terraingen"><br>
 	f&uuml;r fl&uuml;sse am besten $ang=20-40 und $steps=$dur/3 oder sowas<br>
 	</FORM>
+	
+	
+	<?php if (kAdminCanAccessMysql) {?>
+		<form method="post" action="<?=Query("?sid=?&x=?&y=?")?>">
+			<INPUT TYPE="hidden" NAME="do" VALUE="adminsql">
+			<textarea name="sqlcommand" cols=60 rows=5><?=isset($f_sqlcommand)?htmlspecialchars($f_sqlcommand):""?></textarea>
+			<input type="submit" value="mysql_query">
+		</form>
+		<?php if (isset($gAdminSQLResult)) { $adminprio = 200; $first = true; ?>
+			<table border=1>
+			<?php foreach ($gAdminSQLResult as $o) {  $arr = obj2arr($o); ?>
+			<?php if ($first) { $first = false;?>
+			<tr>
+				<?php foreach ($arr as $n=>$v) {?>
+				<th><?=htmlspecialchars($n)?></th>
+				<?php } // endforeach?>
+			</tr>
+			<?php } // endif?>
+			<tr>
+				<?php foreach ($arr as $n=>$v) {?>
+				<td><?=htmlspecialchars($v)?></td>
+				<?php } // endforeach?>
+			</tr>
+			<?php } // endforeach?>
+			</table>
+		<?php } // endif?>
+	<?php } // endif?>
+	
 	<?php 
-	RegisterInfoTab("Admin",rob_ob_end());
+	RegisterInfoTab("Admin",rob_ob_end(),$adminprio);
 }
 
 
@@ -778,8 +807,8 @@ if (!isset($f_blind)) {
 
 
 ?>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-       "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 transitional//EN"
+   "http://www.w3.org/TR/html4/transitional.dtd">
 <html>
 <head>
 <link rel="stylesheet" type="text/css" href="../styles.css">
@@ -787,8 +816,8 @@ if (!isset($f_blind)) {
 <title>Zwischenwelt - info</title>
 <SCRIPT LANGUAGE="JavaScript" type="text/javascript">
 <!--
-	function SetInfoMessage (html) {
-		document.getElementById('dynamicinfomessage').innerHTML = html;
+	function AddInfoMessage (html) {
+		document.getElementById('dynamicinfomessage').innerHTML += html;
 	}
 	function OnInfoLoad () {
 		<?php foreach ($gJSCommands as $cmd) echo $cmd."\n";?>
@@ -825,7 +854,7 @@ if (isset($f_blind)) { // blind modus im dummy frame, fuer schnellere map-click-
 }
 ?>
 
-<?php include("../menu.php");?>
+<?php if (!isset($f_blind)) include("../menu.php");?>
 
 <div id="dynamicinfomessage"></div>
 <?php /* info message */ ?>

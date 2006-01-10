@@ -100,13 +100,14 @@ if(isset($_REQUEST["cross_x"])){
 	$clicked = true;
 }
 
+if (isset($f_regenerate_minimap2))
 if(($gUser->flags & kUserFlags_TerraFormer) || $gUser->admin){
 	for($y=0;$y<kShowSegmentHeight;++$y)
 		for($x=0;$x<kShowSegmentWidth;++$x){
 			$px = $tmp_left_seg+$x;
 			$py = $tmp_top_seg+$y;
 			$filename = "tmp/minimap/seg_".$mode."_".$px."_".$py.".png";
-			unlink($filename);
+			if (file_exists($filename)) unlink($filename);
 		}
 }
 
@@ -214,6 +215,10 @@ TileLink(4,3);
 TileLink(4,4);
 TileLink(5,5);
 ?>
+<br>
+<?php if (($gUser->flags & kUserFlags_TerraFormer) || $gUser->admin) {?>
+<a href="<?=Query("?sid=?&mode=?&cx=?&cy=?&crossx=?&crossy=?&f_regenerate_minimap2=1")?>">Terraformer : Sichtbare Minimap Felder neu generieren</a>
+<?php } // endif?>
 
 </BODY>
 </HTML>

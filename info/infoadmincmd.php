@@ -87,6 +87,11 @@ if (!isset($f_building) && !isset($f_army) && isset($f_do)) switch ($f_do) {
 			sql("UPDATE `building` SET `construction`=".time()." WHERE `id`=".intval($f_id));
 			JSRefreshCell($f_x,$f_y,true);
 		break;
+		case "adminsql":// admin command
+			if (!kAdminCanAccessMysql) break;
+			if (!$gUser->admin)break;
+			$gAdminSQLResult = sqlgettable($f_sqlcommand); 
+		break;
 		case "genriver":// admin command
 			if (!$gUser->admin)break;
 			require_once("../lib.map.php");

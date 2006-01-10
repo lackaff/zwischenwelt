@@ -1,6 +1,8 @@
 <?php
 include("lib.main.php");
 Lock();
+$dummyframesetrows_add = "";
+for($i=0;$i<kDummyFrames;++$i) $dummyframesetrows_add .= ",0";
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
 <html>
@@ -10,15 +12,19 @@ Lock();
 </head>
 <frameset cols="*,360" noresize>
 	<?php if((intval($gUser->flags) & kUserFlags_ShowLogFrame) == 0){ ?>
-	<frameset rows="*,0" noresize>
+	<frameset rows="*,0<?=$dummyframesetrows_add?>" noresize>
 		<frame src="<?=SessionLink("info.php".((isset($f_fc) && $f_fc==1)?"?fc=1":""));?>" name="info" frameborder="0" noresize>
-		<frame src="about:blank" name="dummy" noresize frameborder="0">
+		<?php for($i=0;$i<kDummyFrames;++$i) {?>
+		<frame src="about:blank" name="dummy<?=$i?>" noresize frameborder="0">
+		<?php } // endforeach?>
 	</frameset>
 	<?php } else { ?>
-	<frameset rows="*,100,0" noresize>
+	<frameset rows="*,100<?=$dummyframesetrows_add?>" noresize>
 		<frame src="<?=SessionLink("info.php".((isset($f_fc) && $f_fc==1)?"?fc=1":""));?>" name="info" frameborder="1">
 		<frame src="<?=SessionLink("log.php");?>" name="log" frameborder="0">
-		<frame src="about:blank" name="dummy" noresize frameborder="0">
+		<?php for($i=0;$i<kDummyFrames;++$i) {?>
+		<frame src="about:blank" name="dummy<?=$i?>" noresize frameborder="0">
+		<?php } // endforeach?>
 	</frameset>
 	<?php } ?>
 	<?php if (kMapScript == "mapjs5.php") {?>

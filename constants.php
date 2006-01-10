@@ -5,6 +5,8 @@ define("kURL_Chess","http://zwischenwelt.org/~hagish/occ/");
 define("kURL_Wiki","http://zwischenwelt.milchkind.net/zwwiki/index.php/");
 
 
+define("kAdminCanAccessMysql",true);
+
 define("kMapNaviGotoCat_Pos",1);
 define("kMapNaviGotoCat_Mark",2);
 define("kMapNaviGotoCat_Own",3);
