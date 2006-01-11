@@ -143,7 +143,7 @@ ImgBorderStart("s1","jpg","#ffffee","",32,33);
 		<td align=right valign=top>
 			<?php if(($gUser->flags & kUserFlags_TerraFormer) || $gUser->admin){ ?>
 			<a alt="Segmente neugenerieren" title="Segmente neugenerieren" 
-			href="<?=query("?regen=1&army=?&sid=?&crossx=?&crossy=?&mode=?&cx=?&cy=?")?>">
+			href="<?=query("?regenerate_minimap2=1&army=?&sid=?&crossx=?&crossy=?&mode=?&cx=?&cy=?")?>">
 				<img border=0 src="<?=g("icon/reload.png")?>">
 			</a>
 			<?php } ?>
@@ -217,7 +217,7 @@ TileLink(5,5);
 ?>
 <br>
 <?php if (($gUser->flags & kUserFlags_TerraFormer) || $gUser->admin) {?>
-<a href="<?=Query("?sid=?&mode=?&cx=?&cy=?&crossx=?&crossy=?&f_regenerate_minimap2=1")?>">Terraformer : Sichtbare Minimap Felder neu generieren</a>
+<a href="<?=Query("?sid=?&mode=?&cx=?&cy=?&crossx=?&crossy=?&regenerate_minimap2=1")?>">Terraformer : Sichtbare Minimap Felder neu generieren</a>
 <?php } // endif?>
 
 </BODY>
