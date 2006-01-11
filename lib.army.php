@@ -384,7 +384,7 @@ class cArmy {
 		$army = sqlgetobject("SELECT * FROM `army` WHERE `id`=".intval($armyid));
 		$guild = $user->guild?sqlgetobject("SELECT * FROM `guild` WHERE `id` = ".$user->guild):false;
 		$army_max_take = max(0,floor(cUnit::GetUnitsSum(cUnit::GetUnits($army->id),"last") - cArmy::GetArmyTotalWeight($army)));
-		
+		$debug = false;
 		// overflow to guild possible, if guild exists, and ressources are put in
 		/*
 			if ($user->guildstatus%kSiloGive!=0) // user kann nicht einzahlen
@@ -392,7 +392,7 @@ class cArmy {
 		*/
 		
 		if($user && $army) {
-			foreach($gRes as $n=>$f) echo $$f.","; echo " begin<br>";
+			if ($debug) foreach($gRes as $n=>$f) echo $$f.","; echo " begin<br>";
 			
 			// limit by silo (guild+user) capacity   or  available ressources (user only, not guild)
 			foreach($gRes as $n=>$f) {
@@ -406,7 +406,7 @@ class cArmy {
 				}
 			}
 			
-			foreach($gRes as $n=>$f) echo $$f.","; echo " after silo<br>";
+			if ($debug) foreach($gRes as $n=>$f) echo $$f.","; echo " after silo<br>";
 			
 			// limit by army capacity
 			$take_out = false;
@@ -416,7 +416,7 @@ class cArmy {
 				$army_max_take -= $$f;
 			}
 			
-			foreach($gRes as $n=>$f) echo $$f.","; echo " end <br>";
+			if ($debug) foreach($gRes as $n=>$f) echo $$f.","; echo " end <br>";
 			
 			$msg = array();
 			
