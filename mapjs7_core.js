@@ -772,7 +772,7 @@ function ShowMapTip(relx,rely) {
 	if (plan && gBuildingType[plan.type]) {
 		tiptext += "<tr><td nowrap>";
 		tiptext += "<img src=\""+g(kTransCP)+"\"></td><td nowrap>";
-		tiptext += "<img src=\""+g3(gBuildingType[plan.type].gfx,HackNWSE(plan.type,0,relx,rely),0)+"\"></td><td nowrap>";
+		tiptext += "<img src=\""+g3(gBuildingType[plan.type].gfx,HackNWSE(plan.type,10,relx,rely),0)+"\"></td><td nowrap>";
 		tiptext += "<span>Bauplan</span><br>";
 		tiptext += "<span>"+gBuildingType[plan.type].name+"</span>";
 		tiptext += "</td></tr>";

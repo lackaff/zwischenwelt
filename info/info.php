@@ -87,9 +87,7 @@ if ($gUser->guild > 0) {
 
 $f_x = intval($f_x);
 $f_y = intval($f_y);
-RegenSurroundingNWSE($f_x,$f_y);
 $gDoReload = true;
-
 
 if (!isset($f_building) && !isset($f_army) && isset($f_do)) {
 	rob_ob_start();
@@ -119,7 +117,7 @@ if (!isset($f_building) && !isset($f_army) && isset($f_do)) {
 				$f_tower = sqlgetone("SELECT `id` FROM `building` WHERE `user` = ".intval($gUser->id)." ORDER BY `mana` DESC");
 				// $spelltypeid = intval($f_spellid);
 				$spelltype = $gSpellType[intval($f_spellid)];
-				$f_count[$spelltype->id] = 1;
+				$f_count = array($spelltype->id=>1);
 			}
 			$pastinclude="magic.php";
 			//$gSpellType = sqlgettable("SELECT * FROM `spelltype`","id");
@@ -171,44 +169,31 @@ if (!isset($f_building) && !isset($f_army) && isset($f_do)) {
 				}
 			}
 		break;
-		case "build":  
-			// todo : report error
-			// todo : report error
-			// todo : report error
-			// todo : report error
-			// todo : report error
-			// todo : report error
-			// todo : report error
-			// todo : report error
-			// todo : report error
-			// todo : report error
-			// todo : report error
-			// todo : report error
-			// todo : report error
-			// todo : report error
-			// todo : report error
-			//
-			// todo : report error
-			// todo : error check : as in cron : InBuildCross($con->x,$con->y,$con->user,-1) && CanBuildHere($con->x,$con->y,$con->type)
-			
-			
+		case "build":
 			function JSAddInfoMessage_BuildError($btype,$x,$y,$reason) {
 				JSAddInfoMessage(GetBuildingTypeLink($btype,$x,$y)." konnte bei ".pos2txt($x,$y)." nicht gebaut werden : ".$reason."<br>");
 			}
 			
-			$baulist = GetBuildlist($f_x,$f_y,false,true,false);
-			foreach ($f_build as $typeid => $val) {
+			foreach ($f_build as $typeid => $val) { // this array won't have more than one entry
 				$btype = $gBuildingType[intval($typeid)]; 
+				$x = $f_x;
+				$y = $f_y;
+				
+				// check other plans
+				if ($typeid == kBuilding_HQ && !isPositionInBuildableRange($f_x,$f_y)) {
+					JSAddInfoMessage_BuildError($btype,$f_x,$f_y,"momentan gesperrter Bereich, bitte nur zwischen ".$gGlobal["hq_min_x"].",".$gGlobal["hq_min_y"]." und ".$gGlobal["hq_max_x"].",".$gGlobal["hq_max_y"]." bauen");
+					continue;
+				} 
 				
 				// check other plans
 				if (OwnConstructionInProcess($f_x,$f_y)) {
 					JSAddInfoMessage_BuildError($btype,$f_x,$f_y,"hier ist bereits ein Bauplan");
-					continue; // todo : report error
+					continue;
 				}
 				// check build cross
 				if (!InBuildCross($f_x,$f_y,$gUser->id)) {
 					JSAddInfoMessage_BuildError($btype,$f_x,$f_y,"kein eigenes Gebäude in der Nähe");
-					continue; // todo : report error
+					continue;
 				}
 				// check req
 				if (!HasReq($btype->req_geb,$btype->req_tech,$gUser->id)) {
@@ -238,37 +223,51 @@ if (!isset($f_building) && !isset($f_army) && isset($f_do)) {
 					continue;
 				}
 				
-				// TODO : aufschluesseln !
-				if (!CanBuildHere($x,$y,$btype->id)) {
-					JSAddInfoMessage_BuildError($btype,$f_x,$f_y,"kann hier nicht gebaut werden");
+				// check building requirements
+				if (sizeof($btype->exclude_building)>0 && 
+					GetNearBuilding($x,$y,$gUser->id,kBuildingRequirenment_ExcludeRadius,$btype->exclude_building)) {
+					$piclist = "";
+					foreach ($btype->exclude_building as $b) $piclist .= GetBuildingTypeLink($b,$f_x,$f_y);
+					JSAddInfoMessage_BuildError($btype,$f_x,$f_y,"$piclist darf nicht direkt daneben sein");
+					continue;
+				}
+				if (sizeof($btype->neednear_building)>0 && 
+					!GetNearBuilding($x,$y,$gUser->id,kBuildingRequirenment_NearRadius,$btype->neednear_building)) {
+					$piclist = "";
+					foreach ($btype->neednear_building as $b) $piclist .= GetBuildingTypeLink($b,$f_x,$f_y);
+					JSAddInfoMessage_BuildError($btype,$f_x,$f_y,"$piclist muss in der Nähe sein");
+					continue;
+				}
+				if (sizeof($btype->require_building)>0 && 
+					!GetNearBuilding($x,$y,$gUser->id,kBuildingRequirenment_NextToRadius,$btype->require_building)) {
+					$piclist = "";
+					foreach ($btype->require_building as $b) $piclist .= GetBuildingTypeLink($b,$f_x,$f_y);
+					JSAddInfoMessage_BuildError($btype,$f_x,$f_y,"$piclist muss direkt daneben sein");
 					continue;
 				}
 				
-				// todo : add aditional error messages when extending GetBuildlist()
-				if(!isset($baulist[$typeid]) || !$baulist[$typeid]) {
+				// final check, CanBuildHere() is main function also used by cron
+				if (!CanBuildHere($x,$y,$btype->id,$gUser->id)) {
 					switch ($btype->id) {
 						case kBuilding_Steg:
-							$reqpic1 = GetBuildingTypeLink(kBuilding_Harbor,$f_x,$f_y);
-							$reqpic2 = GetBuildingTypeLink(kBuilding_Steg,$f_x,$f_y);
-							JSAddInfoMessage_BuildError($btype,$f_x,$f_y,"$reqpic1 oder $reqpic2 muss in der nähe sein");
+							if (sizeof($btype->require_building) == 0) $btype->require_building = array(0=>kBuilding_Harbor,kBuilding_Steg);
+							$piclist = "";
+							foreach ($btype->require_building as $b) $piclist .= GetBuildingTypeLink($b,$f_x,$f_y);
+							JSAddInfoMessage_BuildError($btype,$f_x,$f_y,"$piclist muss direkt daneben sein");
 						break;
 						case kBuilding_SeaWall:
-							$reqpic1 = GetBuildingTypeLink(kBuilding_SeaWall,$f_x,$f_y);
-							$reqpic2 = GetBuildingTypeLink(kBuilding_Wall,$f_x,$f_y);
-							JSAddInfoMessage_BuildError($btype,$f_x,$f_y,"$reqpic1 oder $reqpic2 muss in der nähe sein");
-						break;
 						case kBuilding_SeaGate:
-							$reqpic1 = GetBuildingTypeLink(kBuilding_SeaWall,$f_x,$f_y);
-							$reqpic2 = GetBuildingTypeLink(kBuilding_Wall,$f_x,$f_y);
-							JSAddInfoMessage_BuildError($btype,$f_x,$f_y,"$reqpic1 oder $reqpic2 muss in der nähe sein");
+							if (sizeof($btype->require_building) == 0) $btype->require_building = array(0=>kBuilding_SeaWall,kBuilding_Wall);
+							$piclist = "";
+							foreach ($btype->require_building as $b) $piclist .= GetBuildingTypeLink($b,$f_x,$f_y);
+							JSAddInfoMessage_BuildError($btype,$f_x,$f_y,"$piclist muss direkt daneben sein");
 						break;
 						case kBuilding_Harbor:
 							$reqpic = "<img border=0 src=\"".g($gTerrainType[kTerrain_Sea]->gfx)."\">";
 							JSAddInfoMessage_BuildError($btype,$f_x,$f_y,"$reqpic muss in der nähe sein");
 						break;
 						default:
-							JSAddInfoMessage_BuildError($btype,$f_x,$f_y,"hier nicht erlaubt"); // unknown error
-						break;
+							JSAddInfoMessage_BuildError($btype,$f_x,$f_y,"kann hier nicht gebaut werden");
 					}
 					continue;
 				}
@@ -294,12 +293,6 @@ if (!isset($f_building) && !isset($f_army) && isset($f_do)) {
 					$mycon->y = intval($f_y);
 					$mycon->type = $typeid;
 					
-					//set param if this is a bridge
-					if($mycon->type == kBuilding_Bridge)
-						$mycon->param = getBridgeParam($mycon->x,$mycon->y);
-					if($mycon->type == kBuilding_GB)
-						$mycon->param = getBridgeParam($mycon->x,$mycon->y);
-					
 					$mycon->priority = intval(sqlgetone("SELECT MAX(`priority`) FROM `construction` WHERE `user` = ".$gUser->id)) + 1;
 					$r = sql("SELECT `id` FROM `construction` WHERE `x`=".$mycon->x." AND `y`=".$mycon->y." AND `user`=".$mycon->user);
 					if(mysql_num_rows($r) == 0)	sql("INSERT INTO `construction` SET ".obj2sql($mycon));
@@ -321,8 +314,6 @@ if (!isset($f_building) && !isset($f_army) && isset($f_do)) {
 					JSRefreshArmy($army);
 				}
 			} else {
-				// TODO : CANCEL WP of active ARMY  $f_cancel_wp_armyid
-				// $con = sqlgetobject("SELECT * FROM `construction` WHERE `x` = ".intval($f_x)." AND  `y` = ".intval($f_y)." AND `user` = ".$gUser->id);
 				$con = sqlgetobject("SELECT * FROM `construction` WHERE `x` = ".intval($f_x)." AND  `y` = ".intval($f_y)." AND `user` = ".$gUser->id);
 				if ($con) {
 					$con = CancelConstruction($con->id,$gUser->id);
@@ -334,9 +325,14 @@ if (!isset($f_building) && !isset($f_army) && isset($f_do)) {
 			}
 		break;
 		case "cancelconstructionplan":
-			require_once("../lib.construction.php");
-			if (isset($f_buildnext))
-				BuildNext(intval($f_id),$gUser->id);
+			if (isset($f_buildnext)) {
+				// move construction to the front of the building-queue and adjust all priorities
+				$con = sqlgetobject("SELECT * FROM `construction` WHERE `id` = ".intval($f_id)." LIMIT 1");
+				if ($con && $gUser->id == $con->user) {
+					sql("UPDATE `construction` SET `priority` = `priority`+1 WHERE `user`=".$con->user." AND `priority`<".$con->priority);
+					sql("UPDATE `construction` SET `priority` = 1 WHERE `id`=".$con->id);
+				}
+			}
 			if (isset($f_cancelone)) {
 				$con = CancelConstruction(intval($f_id),$gUser->id);
 				if ($con) {
@@ -423,8 +419,8 @@ $gMapBuilding = sqlgettable("SELECT * FROM `building` WHERE ".$xylimit);
 $gMapArmy = sqlgettable("SELECT * FROM `army` WHERE ".$xylimit,"id");
 $gMapCons = sqlgettable("SELECT * FROM `construction` WHERE ".$xylimit." AND `user` = ".$gUser->id);
 $gMapWaypoints = sqlgettable("SELECT * FROM `waypoint` WHERE ".$xylimit);
-$terrain = sqlgetobject("SELECT * FROM `terrain` WHERE ".$xylimit);
-$terraintype = sqlgetobject("SELECT * FROM `terraintype` WHERE `id` = ".($terrain?$terrain->type:kTerrain_Grass));
+$terrain = cMap::StaticGetTerrainAtPos($f_x,$f_y);
+$terraintype = sqlgetobject("SELECT * FROM `terraintype` WHERE `id` = ".($terrain?$terrain:kTerrain_Grass));
 $gItems = sqlgettable("SELECT * FROM `item` WHERE `army`=0 AND `building`=0 AND ".$xylimit." ORDER BY `type`");
 $gArmy = cArmy::getMyArmies(FALSE,$gUser->id);
 
@@ -450,7 +446,7 @@ if (!isset($f_blind)) {
 if (!isset($f_blind)) {
 	/* TERRAIN , wegpunkt setzen, magie */ 
 	rob_ob_start();
-	$terrainpic = "<img class=\"info_terrainpic\" alt=\"".($terraintype->name)."\" title=\"".($terraintype->name)."\" src=\"".g($terraintype->gfx,$terrain->nwse)."\">";
+	$terrainpic = "<img class=\"info_terrainpic\" alt=\"".($terraintype->name)."\" title=\"".($terraintype->name)."\" src=\"".g($terraintype->gfx,"we")."\">";
 	?>
 	
 	<?=$terrainpic?>
@@ -568,14 +564,17 @@ if (!isset($f_blind)) foreach($gMapCons as $gObject) {
 	rob_ob_start();
 	$btype = $gBuildingType[$gObject->type];
 	?>
+	
 	<table cellspacing=0 cellpadding=0>
 	<tr><td rowspan=2 valign="top"><img src="<?=g(kConstructionPlanPic)?>" border=1></td>
 		<td rowspan=2 valign="top">-&gt;</td>
-		<td rowspan=2 valign="top" width=30><img src="<?=g($btype->gfx,"we",0,$gUser->race)?>" border=1></td>
-		<td><?=$btype->name?> | Nummer : <?=$gObject->priority?></td>
+		<td rowspan=2 valign="top" width=30><img src="<?=GetBuildingPic($btype,$gObject->user,0)?>" border=1></td>
+		<td><?=$btype->name?></td>
 	</tr>
 	<tr><td colspan=2><?=$btype->descr?></td></tr>
 	</table>
+	
+	<?php if ($gObject->user == $gUser->id) {?>
 		<?php PrintBuildTimeHelp($gObject->x,$gObject->y,$gObject->type,$gObject->priority); ?>
 		<table border=1 cellspacing=0 rules="all">
 		<tr>
@@ -593,12 +592,38 @@ if (!isset($f_blind)) foreach($gMapCons as $gObject) {
 			<?php 
 				foreach ($gBuildingType as $o) 
 					if (in_array($o->id,$gSpeedyBuildingTypes)) 
-						echo "<img src='".g($o->gfx,"we",0,$gUser->race)."' title='".$o->name."' alt='".$o->name."'>"; 
+						echo "<img src='".GetBuildingPic($o->id,$gUser,0)."' title='".$o->name."' alt='".$o->name."'>"; 
 			?>
 			<br>
 		<?php } // endif?>
 		TechFaktor: kann mit der Forschung "Architektur" (in der Werkstatt) gesenkt werden.<br>
-	<?php include("construction.php");?>
+
+		<?php 		
+		$buildingtype = $gBuildingType[$gObject->type];
+		$minprio = sqlgetone("SELECT MIN(`priority`) FROM `construction` WHERE `user` = ".$gUser->id);
+
+		if ($gObject->priority > $minprio) {	
+			$prevcon = sqlgetobject("SELECT * FROM `construction` WHERE `user` = ".$gUser->id." AND `priority` < ".$gObject->priority." ORDER BY `priority` DESC LIMIT 1");
+			$firstcon = sqlgetobject("SELECT * FROM `construction` WHERE `user` = ".$gUser->id." AND `priority` = ".$minprio);
+		}
+		$nextcon = sqlgetobject("SELECT * FROM `construction` WHERE `user` = ".$gUser->id." AND `priority` > ".$gObject->priority." ORDER BY `priority` LIMIT 1");
+		?>
+		<FORM METHOD=POST ACTION="<?=Query("?sid=?&x=?&y=?")?>">
+		<INPUT TYPE="hidden" NAME="do" VALUE="cancelconstructionplan">
+		<INPUT TYPE="hidden" NAME="id" VALUE="<?=$gObject->id?>">
+		<INPUT TYPE="submit" NAME="buildnext" VALUE="als n&auml;chstes bauen">
+		<INPUT TYPE="submit" NAME="cancelone" VALUE="abbrechen">
+		</FORM>
+		<a href="<?=Query("bauplan.php?sid=?")?>"><b>Baupl&auml;ne</b></a>&nbsp;
+		<a href="<?=Query("kosten.php?sid=?")?>"><b>Kosten</b></a><br>
+		<?php if (isset($prevcon)) {?>
+			<a href="<?=Query("?sid=?&x=".$firstcon->x."&y=".$firstcon->y)?>">zum ersten Plan</a><br>
+			<a href="<?=Query("?sid=?&x=".$prevcon->x."&y=".$prevcon->y)?>">zum vorherigen Plan</a><br>
+		<?php }?>
+		<?php if (isset($nextcon)) {?>
+			<a href="<?=Query("?sid=?&x=".$nextcon->x."&y=".$nextcon->y)?>">zum n&auml;chsten Plan</a><br>
+		<?php }?>
+	<?php }?>
 	<hr>
 	<?php 
 
@@ -608,63 +633,48 @@ if (!isset($f_blind)) foreach($gMapCons as $gObject) {
 
 
 
-/* build info */
+/* build list */
 if (!isset($f_blind)) {
-	if (count($gMapBuilding) == 0 && !OwnConstructionInProcess($f_x,$f_y)) {   // TODO : REWRITE !!!!
+	if (count($gMapBuilding) == 0 && !OwnConstructionInProcess($f_x,$f_y) && InBuildCross($f_x,$f_y,$gUser->id)) {
+		$userhashq = UserHasBuilding($gUser->id,kBuilding_HQ);
 		rob_ob_start();
+		$timetip = "Effektive Bauzeit";
 		?>
-		<?php if (InBuildCross($f_x,$f_y,$gUser->id)) {?>
-			<?php PrintBuildTimeHelp($f_x,$f_y); ?>
-			<FORM METHOD=POST ACTION="<?=Query("?sid=?&x=?&y=?")?>">
-			<INPUT TYPE="hidden" NAME="do" VALUE="build">
-			<table border=1 cellspacing=0 rules="all">
+		<?php PrintBuildTimeHelp($f_x,$f_y); ?>
+		<FORM METHOD=POST ACTION="<?=Query("?sid=?&x=?&y=?")?>">
+		<INPUT TYPE="hidden" NAME="do" VALUE="build">
+		<table border=1 cellspacing=0 rules="all">
+		<tr>
+			<th><?=$planpic?></th>
+			<th></th>
+			<?php foreach($gRes as $n=>$f)echo '<th><img src="'.g('res_'.$f.'.gif').'"></th>'; ?>
+			<th><img src="<?=g("sanduhr.gif")?>" alt="<?=$timetip?>" alt="<?=$timetip?>"></th>
+			<th></th>
+		</tr>
+		<?php
+		foreach ($gBuildingType as $o) if (CanBuildHere($f_x,$f_y,$o->id,$gUser->id)) {
+			if ($userhashq && $o->id == kBuilding_HQ) continue;
+			if (!$userhashq && $o->id != kBuilding_HQ) continue;
+			$hasreq = HasReq($o->req_geb,$o->req_tech,$gUser->id);
+			if (!$hasreq)
+					$bb=GetBuildingTypeLink($o->id,$f_x,$f_y,"<font color='red'>Anforderungen</font>");
+			else	$bb="<INPUT TYPE='submit' NAME='build[".$o->id."]' VALUE='bauen'>";
+			$buildtime = GetBuildTime($f_x,$f_y,$o->id);
+			?>
 			<tr>
-				<th><?=$planpic?></th>
-				<th></th>
-				<?php foreach($gRes as $n=>$f)echo '<th><img src="'.g('res_'.$f.'.gif').'"></th>'; ?>
-				<th><img src="<?=g("sanduhr.gif")?>"></th>
-				<th></th>
-			</tr>
-			<?php 
-				if (UserHasBuilding($gUser->id,kBuilding_HQ,0)){
-				$baulist = GetBuildlist($f_x,$f_y);
-				foreach ($gBuildingType as $o)if(isset($baulist[$o->id]) && $baulist[$o->id]){ 
-				   if($o->special == 0 && $o->id!=1){
-					if(!HasReq($o->req_geb,$o->req_tech,$gUser->id) || !CanBuildHere($f_x,$f_y,$o->id)) $bb="<a style='color:red' href='".Query("?sid=?&x=?&y=?&infobuildingtype=".$o->id)."'>Anforderungen</a>";
-					else $bb="<INPUT TYPE='submit' NAME='build[".$o->id."]' VALUE='bauen'>";
-			?>
-				<tr>
-				<td align=center>
-					<?php $infourl = Query("?sid=?&x=?&y=?&infobuildingtype=".$o->id);?>
-					<a href="<?=$infourl?>"><img title="<?=strip_tags($o->descr)?>" alt="<?=strip_tags($o->descr)?>" class="picframe" src="<?=GetBuildingPic($o)?>"></a>
-				</td>
-				<td><?=cText::Wiki("building",$o->id)?><a href="<?=$infourl?>"><?=$o->name?></a></td>
-				<?php foreach($gRes as $n=>$f)echo '<td align=right>'.$o->{"cost_".$f}.'</td>'; ?>
-				<td align=right nowrap><?=Duration2Text(GetBuildTime($f_x,$f_y,$o->id))?></td>
+				<td align=center><?=GetBuildingTypeLink($o->id,$f_x,$f_y)?></td>
+				<td><?=cText::Wiki("building",$o->id)?><?=GetBuildingTypeLink($o->id,$f_x,$f_y,$o->name)?></td>
+				<?php foreach($gRes as $n=>$f) echo ($o->id == kBuilding_HQ)?0:('<td align=right>'.$o->{"cost_".$f}.'</td>'); ?>
+				<td align=right nowrap><?=($buildtime>0)?Duration2Text($buildtime):"sofort fertig"?></td>
 				<td><?=$bb?></td>
 				</tr>
-				<?php }
-			}?>
-			<?php }else{ 
-				$o=$gBuildingType[kBuilding_HQ];
-				$bb="<INPUT TYPE='submit' NAME='build[".$o->id."]' VALUE='bauen'>";
-			?>
-				<tr>
-				<td align=center>
-					<?php $infourl = Query("?sid=?&x=?&y=?&infobuildingtype=".$o->id);?>
-					<a href="<?=$infourl?>"><img title="<?=strip_tags($o->descr)?>" alt="<?=strip_tags($o->descr)?>" class="picframe" src="<?=GetBuildingPic($o)?>"></a>
-				</td>
-				<td><?=cText::Wiki("building",$o->id)?><a href="<?=$infourl?>"><?=$o->name?></a></td>
-				<?php foreach($gRes as $n=>$f)echo '<td align=right>'.$o->{"cost_".$f}.'</td>'; ?>
-				<td align=right nowrap><?="sofort fertig"?></td>
-				<td><?=$bb?></td>
-				</tr>
-			<?php }?>
-			</table>
-			</FORM>
-		<?php } else {?>
-			Feld kann nicht bebaut werden, kein eigenes Geb&auml;ude in der N&auml;he.<br>
-		<?php }?>
+			<tr>
+			<?php
+		}
+		?>
+		</table>
+		</FORM>
+			
 		<?php 
 		RegisterInfoTab($planpic."Bauen",rob_ob_end(),1);
 	}
@@ -904,7 +914,6 @@ if (!isset($f_blind)) {
 			document.getElementsByName(name)[i].checked = check;
 	}
 	function ActivateInfoTab (tabum) {
-		// todo : set cookie
 		var verfall = 1000 * 60 * 60 * 24 * 365;
 		var jetzt = new Date();
 		var Auszeit = new Date(jetzt.getTime() + verfall);

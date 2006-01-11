@@ -35,7 +35,7 @@ $dummyframesetcols = implode(",",$dummyframesetcols);
 	<?php if (kMapScript == "mapjs5.php") {?>
 	<frame src="<?=SessionLink(kMapScript);?>" name="map" id="map" noresize frameborder="1">
 	<?php } else {?>
-	<frameset rows="410,*" noresize>
+	<frameset rows="383,*" noresize>
 		<frame src="<?=SessionLink(kMapScript);?>" name="map" scrolling=no frameborder="1">
 		<frame src="<?=SessionLink(kMapNaviScript);?>" name="navi" scrolling=yes frameborder="1">
 	</frameset>

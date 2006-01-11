@@ -38,6 +38,7 @@ if (isset($f_gotocat)) {
 		case kMapNaviGotoCat_Search:
 			// $f_searchcounter
 			$foundplayerid = 0;
+			$f_search = trim($f_search);
 			if (!empty($f_search)) switch ($f_gotocat2) {
 				case 0: // Spieler
 					$mylist = sqlgetonetable("SELECT `id` FROM `user` WHERE `name` LIKE '%".addslashes($f_search)."%'");

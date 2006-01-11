@@ -1,12 +1,36 @@
 <?php
 
 require_once("lib.technology.php");
+require_once("lib.map.php");
 
 
+// check if other building in 2x2 cross
+// TODO : userID ! ensure
+// priority=-1 means all plans, new building-plan
+// priority=0 means ignore plans, for a constructionstart (cron)
+function InBuildCross ($x,$y,$user,$priority=-1) {
+	$x = intval($x);
+	$y = intval($y);
+	$d = kBuildingRequirenment_CrossRadius;
+
+	// allow building of first building anywhere
+	if (!UserHasBuilding($user,kBuilding_HQ)) return true;
+
+	// can only build near own buildings
+	$cond = "`x` >= ".($x-$d)." AND `x` <= ".($x+$d)." AND 
+			 `y` >= ".($y-$d)." AND `y` <= ".($y+$d)." AND `user` = ".$user;
+	if (sqlgetone("SELECT 1 FROM `building` WHERE $cond LIMIT 1")) return true;
+	if ($priority == 0) return false;
+
+	// also check plans
+	$priocond = ($priority == -1)?"1":("`priority` < ".intval($priority));
+	if (sqlgetone("SELECT 1 FROM `construction` WHERE $cond AND $priocond LIMIT 1")) return true;
+	return false;
+}
 
 // distance from hq,silo,harbor...
-// priority=-1 means new building/plan
-// priority=0 means for a construction
+// priority=-1 means all plans, new building-plan
+// priority=0 means ignore plans, for a constructionstart (cron)
 function GetBuildDistance ($x,$y,$userid=0,$priority=-1) { 
 	global $gUser,$gBuildDistanceSources; 
 	if ($userid == 0) $userid = $gUser->id;
@@ -25,90 +49,107 @@ function GetBuildDistance ($x,$y,$userid=0,$priority=-1) {
 }
 
 
-// check if other building in 2x2 cross
-function InBuildCross ($x,$y,$user,$priority=false) {
-	$x = intval($x);
-	$y = intval($y);
-
-	// allow building of first building anywhere
-	if (!UserHasBuilding($user,kBuilding_HQ))
-		return true;
-
-	// must be within 2 fields of own building, or building plan
-	if (sqlgetone("SELECT 1 FROM `building` WHERE 
-		`x` >= ".($x-2)." AND `x` <= ".($x+2)." AND 
-		`y` >= ".($y-2)." AND `y` <= ".($y+2)." AND `user` = ".$user." LIMIT 1"))
-		return true;
-	if ($priority == -1) return false;
-
-	// if $priority == false, set to max priority
-	if (!$priority)
-		$priority = intval(sqlgetone("SELECT MAX(`priority`) FROM `construction` WHERE `user` = ".$user)) + 1;
-
-	// check constructions with smaller(build first) priority !
-	if (sqlgetone("SELECT 1 FROM `construction` WHERE 
-		`x` >= ".($x-2)." AND `x` <= ".($x+2)." AND 
-		`y` >= ".($y-2)." AND `y` <= ".($y+2)." AND `user` = ".$user." AND `priority` < ".intval($priority)." LIMIT 1"))
-		return true;
-		
-	return false;
+// $dist=0 means directly adjacted, NOT DIAGONALLY
+// $neartypes is array(btypeid,btypeid,...); ONE match is enough
+// priority=-1 means all plans, new building-plan
+// priority=0 means ignore plans, for a constructionstart (cron)
+function GetNearBuilding ($x,$y,$userid,$dist,$neartypes,$priority=-1) {
+	global $gBuildingType;
+	$x = intval($x); $y = intval($y);
+	$debug = false;
+	if ($dist == 0)
+			$condxy = "((`x`=$x AND (`y`=$y+1 OR `y`=$y-1)) OR (`y`=$y AND (`x`=$x+1 OR `x`=$x-1)))";
+	else	$condxy = "`x` >= ".($x-$dist)." AND `x` <= ".($x+$dist)." AND `y` >= ".($y-$dist)." AND `y` <= ".($y+$dist);
+	
+	if ($debug) echo "GetNearBuilding($x,$y,$userid,$dist,(".implode(",",$neartypes)."),$priority)<br>\n";
+	$res = sqlgetobject("SELECT * FROM `building` WHERE 
+		`type` IN (".implode(",",$neartypes).") AND 
+		`user` = ".intval($userid)." AND ".$condxy." LIMIT 1");
+	if ($priority == 0 || $res) return $res;
+	// consider plans
+	$priocond = ($priority == -1)?"1":("`priority` < ".intval($priority));
+	$res = sqlgetobject("SELECT * FROM `construction` WHERE 
+		`type` IN (".implode(",",$neartypes).") AND 
+		`user` = ".intval($userid)." AND ".$condxy." LIMIT 1");
+	return $res;
 }
 
-//checks the build requirenments
-//excludes, need nears and required
-// todo : add param : priority, and conside buildingplans with lower priority,
-// todo : this is neccessary in order to check build-plans
-function CanBuildHere($x,$y,$buildingtypeid){
-	$x = intval($x);$y = intval($y);$buildingtypeid = intval($buildingtypeid);
-	global $gBuildingType;
-	$debug = false;
+// checks the build requirenments
+// terrain_needed, terraintype->buildable
+// excludes, need nears and required
+// harbour hack (must be next to water)
+// DOES NOT CHECK Build-cross, use InBuildCross
+// DOES NOT CHECK TECH-reqs, use HasReq
+// priority=-1 means all plans, new building-plan
+// priority=0 means ignore plans, for a constructionstart (cron)
+function CanBuildHere($x,$y,$buildingtypeid,$user=false,$priority=-1,$ignoreterrain=false) {
+	global $gBuildingType,$gTerrainType,$gUser;
+	if ($user === false) $user = $gUser;
+	if (!is_object($user)) $user = sqlgetobject("SELECT * FROM `user` WHERE `id` = ".intval($user));
+	$x = intval($x);
+	$y = intval($y);
+	$buildingtypeid = intval($buildingtypeid);
 	$b = $gBuildingType[$buildingtypeid];
 	assert(!empty($b));
 	
-	if($debug)echo "CanBuildHere($x,$y,$buildingtypeid)<br>\n";
-	//print_r($b);
+	$debug = false;
+	if ($debug) echo "CanBuildHere($x,$y,$buildingtypeid,$user->id,$priority)<br>\n";
 	
-	//check excludes
-	if(sizeof($b->exclude_building)>0){
-		if($debug)echo "check for excludes<br>\n";
-		$l = "(".implode($b->exclude_building,",").")";
-		if($debug)echo "SELECT COUNT(*) FROM `building` WHERE `type` IN $l AND ((`x`=($x) AND ABS(`y`-($y))=1) OR (`y`=($y) AND ABS(`x`-($x))=1))<br>\n";
-		$c = sqlgetone("SELECT COUNT(*) FROM `building` WHERE `type` IN $l AND ((`x`=($x) AND ABS(`y`-($y))=1) OR (`y`=($y) AND ABS(`x`-($x))=1))");
-		if($debug)echo "$c excludes found<br>\n";
-		if($c > 0)return false;
-	} else if($debug)echo "no excludes<br>\n";
+	// players may not build special buildings
+	if ($b->special > 0) if ($debug) echo "players may not build special buildings<br>\n";
+	if ($b->special > 0) return false;
+	
+	// check terrain
+	if (!$ignoreterrain) {
+		$tid = cMap::StaticGetTerrainAtPos($x,$y);
+		if (!$tid) $tid = kTerrain_Grass;
+		if ($debug) echo "tid=$tid<br>\n";
+		if ($b->terrain_needed > 0 && $b->terrain_needed != $tid) if ($debug) echo "terrain_needed $b->terrain_needed<br>\n";
+		if ($b->terrain_needed > 0 && $b->terrain_needed != $tid) return false;
+		if ($gTerrainType[$tid]->buildable == 0 && $b->terrain_needed != $tid) if ($debug) echo "terrain unbuildable<br>\n";
+		if ($gTerrainType[$tid]->buildable == 0 && $b->terrain_needed != $tid) return false;
+	}
+	
+	// check race and req
+	if ($b->race > 0 && $user->race != $b->race) if ($debug) echo "race mismatch<br>\n";
+	if ($b->race > 0 && $user->race != $b->race) return false;
+	// if (!HasReq($b->req_geb,$b->req_tech,$user->id)) return false;
+	
+	// HACK : place all special conditions here =)
+	switch ($b->id) {
+		case kBuilding_Steg:
+			if (sizeof($b->require_building) == 0) $b->require_building = array(0=>kBuilding_Harbor,kBuilding_Steg);
+		break;
+		case kBuilding_SeaWall:
+		case kBuilding_SeaGate:
+			if (sizeof($b->require_building) == 0) $b->require_building = array(0=>kBuilding_SeaWall,kBuilding_Wall);
+		break;
+		case kBuilding_Harbor:
+			$condxy = "((`x`=$x AND `y`=$y+1) OR (`x`=$x AND `y`=$y-1) OR (`x`=$x+1 AND `y`=$y) OR (`x`=$x-1 AND `y`=$y))";
+			if(!sqlgetone("SELECT 1 FROM `terrain` WHERE `type`=".kTerrain_Sea." AND ".$condxy." LIMIT 1"))
+				return false;
+		break;
+	}
+	
+	if ($debug) echo "check needs..<br>\n";
 	
 	//check needs
-	if(sizeof($b->neednear_building)>0){
-		if($debug)echo "check for need nears<br>\n";
-		$l = "(".implode($b->neednear_building,",").")";
-		if($debug)echo "SELECT COUNT(*) FROM `building` WHERE `type` IN $l AND ABS(`x`-($x))<=".kBuildingRequirenment_NearRadius." AND ABS(`y`-($y))<=".kBuildingRequirenment_NearRadius." AND (`x`<>$x OR `y`<>$y)<br>\n";
-		$c = sqlgetone("SELECT COUNT(*) FROM `building` WHERE `type` IN $l AND ABS(`x`-($x))<=".kBuildingRequirenment_NearRadius." AND ABS(`y`-($y))<=".kBuildingRequirenment_NearRadius." AND (`x`<>$x OR `y`<>$y)");
-		if($debug)echo "$c need nears found<br>\n";
-		if($c == 0)return false;
-	} else if($debug)echo "no need nears<br>\n";
-	
-	//check requirements
-	if(sizeof($b->require_building)>0){
-		if($debug)echo "check for requirements<br>\n";
-		$l = "(".implode($b->require_building,",").")";
-		if($debug)echo "SELECT COUNT(*) FROM `building` WHERE `type` IN $l AND ((`x`=($x) AND ABS(`y`-($y))=1) OR (`y`=($y) AND ABS(`x`-($x))=1))<br>\n";
-		$c = sqlgetone("SELECT COUNT(*) FROM `building` WHERE `type` IN $l AND ((`x`=($x) AND ABS(`y`-($y))=1) OR (`y`=($y) AND ABS(`x`-($x))=1))");
-		if($debug)echo "$c requirements found<br>\n";
-		if($c == 0)return false;
-	} else if($debug)echo "no requirements<br>\n";
+	if (sizeof($b->exclude_building)>0 && 
+		GetNearBuilding($x,$y,$user->id,kBuildingRequirenment_ExcludeRadius,$b->exclude_building,$priority)) return false;
+	if (sizeof($b->neednear_building)>0 && 
+		!GetNearBuilding($x,$y,$user->id,kBuildingRequirenment_NearRadius,$b->neednear_building,$priority)) return false;
+	if (sizeof($b->require_building)>0 && 
+		!GetNearBuilding($x,$y,$user->id,kBuildingRequirenment_NextToRadius,$b->require_building,$priority)) return false;
 	
 	return true;
 }
 
+
 function OwnConstructionInProcess ($x,$y) {
 	global $gUser;
-	// check ob schon ein bau geplant ist wird
-	// verhindern das 2 baupläne auf dem selben feld entstehen
-	if (sqlgetone("SELECT 1 FROM `construction` WHERE 
-		`x` = ".intval($x)." AND `y` = ".intval($y)." AND `user` = ".$gUser->id." LIMIT 1")) 
-		return true;
-	return false;
+	// check ob schon ein eigener bau geplant ist wird
+	return sqlgetone("SELECT 1 FROM `construction` WHERE 
+		`x` = ".intval($x)." AND `y` = ".intval($y)." AND `user` = ".$gUser->id." LIMIT 1") == 1;
 }
 
 
@@ -128,8 +169,8 @@ function GetBuildTechFactor ($userid) {
 }
 
 // btypeid=-1 means any speedy building
-// priority=-1 means new building/plan
-// priority=0 means for a construction
+// priority=-1 means all plans, new building-plan
+// priority=0 means ignore plans, for a constructionstart (cron)
 function GetBuildNewbeeFactor ($btypeid=-1,$priority=-1,$userid=false) {
 	global $gSpeedyBuildingTypes,$gUser;
 	if ($btypeid != -1 && !in_array($btypeid,$gSpeedyBuildingTypes)) return 1.0;
@@ -148,8 +189,9 @@ function GetBuildNewbeeFactor ($btypeid=-1,$priority=-1,$userid=false) {
 	else	return 1.0;
 }
 			
-// priority=-1 means for a new building
-// priority=0 means for a construction
+// priority=-1 means all plans, new building-plan
+// priority=0 means ignore plans, for a constructionstart (cron)
+// typeid=-1 means for a speedy building
 function GetBuildTime ($x,$y,$typeid,$priority=-1,$userid=false) { // object(building or construction) or id
 	global $gUser,$gBuildingType;
 	if ($userid === false) $userid = $gUser->id;
@@ -162,8 +204,8 @@ function GetBuildTime ($x,$y,$typeid,$priority=-1,$userid=false) { // object(bui
 }
 
 // print an explanation for how GetBuildTime works
-// priority=-1 means for a new building/plan
-// priority=0 means for a construction
+// priority=-1 means all plans, new building-plan
+// priority=0 means ignore plans, for a constructionstart (cron)
 // type=-1 means for a speedy building
 function PrintBuildTimeHelp ($x,$y,$type=-1,$priority=-1,$userid=false) {
 	global $gUser;
@@ -194,67 +236,6 @@ function PrintBuildTimeHelp ($x,$y,$type=-1,$priority=-1,$userid=false) {
 	<?php
 }
 
-// TODO : kann leicht ausgetrickst werden wegen den bauplaenen
-// TODO : unschoen, obsolete, wird von der cron nicht benutzt (nur info und navi), auf CanBuildHere() umstellen
-// TODO : schoener machen mit fkt die gUser unabhaengige fehlermeldung zurueckgibt -> info:print , cron:false==noerror
-function GetBuildlist ($x,$y,$unsafe=FALSE,$withhq=TRUE,$ignorereq=TRUE,$ignoreterrain=FALSE) {
-	global $gUser,$gBuildingType,$gTerrainType;
-	if(!$unsafe && !inBuildCross($x,$y,$gUser->id))
-		return array();
-	$x=intval($x);
-	$y=intval($y);
-	$tid = sqlgetone("SELECT `type` FROM `terrain` WHERE `x`=(".intval($x).") AND `y`=(".intval($y).")");
-	if(empty($tid))$tid = kTerrain_Grass;
-	$r = array();
-	foreach($gBuildingType as $o){
-		if(!$ignoreterrain && $o->terrain_needed > 0 && $o->terrain_needed != $tid)continue;
-		if(!$ignoreterrain && $gTerrainType[$tid]->buildable == 0 && $o->terrain_needed != $tid)continue;
-		//echo "[$o->id $o->race $gUser->race]";
-		if($o->race > 0 && $gUser->race != $o->race)continue;
-		
-		//skip the hq?
-		if(!$withhq && $o->id==kBuilding_HQ) continue;
-//		else if($o->id==kBuilding_HQ && !isPositionInBuildableRange($x,$y))continue;
-		
-		if($o->special>0)continue;
-		if(!$ignorereq && !HasReq($o->req_geb,$o->req_tech,$gUser->id))continue;
-		
-		if(!$ignoreterrain) {
-			$continue = false; // Warning ! continue has a special meaning inside a switch (break or recheck ??)
-			$condxy = "((`x`=$x AND `y`=$y+1) OR (`x`=$x AND `y`=$y-1) OR (`x`=$x+1 AND `y`=$y) OR (`x`=$x-1 AND `y`=$y))";
-			$cond = "`user` = ". $gUser->id." AND ".$condxy;
-			switch($o->id){
-				case kBuilding_Steg:
-					if (!sqlgetone("SELECT 1 FROM `building`		WHERE `type` IN (".kBuilding_Harbor.",".kBuilding_Steg.") AND $cond LIMIT 1") &&
-						!sqlgetone("SELECT 1 FROM `construction`	WHERE `type` IN (".kBuilding_Harbor.",".kBuilding_Steg.") AND $cond LIMIT 1"))		
-						$continue = true;
-				break;
-				case kBuilding_SeaWall:
-					if (!sqlgetone("SELECT 1 FROM `building`		WHERE `type` IN (".kBuilding_SeaWall.",".kBuilding_Wall.") AND $cond LIMIT 1") &&
-						!sqlgetone("SELECT 1 FROM `construction`	WHERE `type` IN (".kBuilding_SeaWall.",".kBuilding_Wall.") AND $cond LIMIT 1"))		
-						$continue = true;
-				break;
-				case kBuilding_SeaGate:
-					if (!sqlgetone("SELECT 1 FROM `building`		WHERE `type` IN (".kBuilding_SeaWall.",".kBuilding_Wall.") AND $cond LIMIT 1") &&
-						!sqlgetone("SELECT 1 FROM `construction`	WHERE `type` IN (".kBuilding_SeaWall.",".kBuilding_Wall.") AND $cond LIMIT 1"))		
-						$continue = true;
-				break;
-				case kBuilding_Harbor:
-					if(!sqlgetone("SELECT 1 FROM `terrain` WHERE `type`=".kTerrain_Sea." AND ".$condxy." LIMIT 1"))
-						$continue = true;
-				break;
-			}
-			if ($continue) continue;
-		}
-		
-		$r[$o->id]=$o->id;
-		//if(HasReq($o->req_geb,$o->req_tech,$gUser->id) && $o->special==0)
-		//	$r[$o->id]=$o->id;
-	}
-	return $r;
-}
-
-
 
 function CancelConstruction ($id,$user=false) {
 	global $gUser;
@@ -271,54 +252,6 @@ function CancelConstruction ($id,$user=false) {
 		`priority` > ".$con->priority." AND `user` = ".$con->user);
 	return $con;
 }
-
-
-function BuildNext ($id,$userid=false) {
-	global $gUser;
-	// param : construction id
-	// checks if user owns this construction, if user is specified
-	// cancel a construction, and correct the other construction priorities
-	// returns canceled construction, for x,y read
-
-	$con = sqlgetobject("SELECT * FROM `construction` WHERE `id` = ".$id." LIMIT 1");
-	if (!$con) return false;
-	if ($userid && $con->user != $userid) return false;
-
-	sql("UPDATE `construction` SET `priority` = `priority`+1 WHERE `user`=".$con->user." AND `priority`<".$con->priority);
-	sql("UPDATE `construction` SET `priority` = 1 WHERE `id`=".$con->id);
-}
-
-
-function &TableToXYIndex($table) {
-	$t = array();
-	foreach($table as $x)
-		$t[$x->x][$x->y] =& $x;
-	return $t;
-}
-
-
-function getBridgeParam($x,$y,$t=null) {
-	$x = intval($x);
-	$y = intval($y);
-	if($t == null)$t = TableToXYIndex(sqlgettable("SELECT * FROM `terrain` WHERE ABS(`x`-($x)) <= 2 AND ABS(`y`-($y)) <= 2"));
-	for ($mx=$x-1;$mx<=$x+1;$mx++)
-	for ($my=$y-1;$my<=$y+1;$my++)
-		if (!isset($t[$mx][$my])) $t[$mx][$my]->type = kTerrain_Grass;
-
-	//ist das ein gerade flußstück?
-	if (	$t[$x+1][$y]->type == kTerrain_River && 
-			$t[$x-1][$y]->type == kTerrain_River && 
-			$t[$x][$y+1]->type != kTerrain_River && 
-			$t[$x][$y-1]->type != kTerrain_River)
-		return "ns";
-	else if($t[$x+1][$y]->type != kTerrain_River && 
-			$t[$x-1][$y]->type != kTerrain_River && 
-			$t[$x][$y+1]->type == kTerrain_River && 
-			$t[$x][$y-1]->type == kTerrain_River)
-		return "we";
-	else return "";
-}
-
 
 
 

@@ -416,7 +416,6 @@ $gNaviToolTabs[] = array($head,$content);
 $user_has_hq = UserHasBuilding($gUser->id,kBuilding_HQ);
 if ($user_has_hq) {
 	// normal build menu
-	// obsolete : $buildable = GetBuildlist(0,0,TRUE,FALSE,FALSE,TRUE);
 	foreach ($gBuildingTypeGroups as $name => $buildingtypeids) {
 		$head = "<img src=\"".g($gBuildingTypeGroupsPics[$name])."\" alt=\"".$name."\" title=\"".$name."\">";
 		$content = "<div class=\"mapnavitool_buildings\">";
@@ -425,7 +424,6 @@ if ($user_has_hq) {
 			if ($id == kBuilding_HQ) continue;
 			if (!isset($gBuildingType[$id])) continue;
 			$canbuild = HasReq($gBuildingType[$id]->req_geb,$gBuildingType[$id]->req_tech,$gUser->id);
-			// HasReq($o->req_geb,$o->req_tech,$gUser->id)
 			$content .= NaviTool(g($gBuildingType[$id]->gfx,"we",1),1,$id,$gBuildingType[$id]->name.($canbuild?"":"(noch nicht baubar)"),$canbuild?"buildable":"unbuildable");
 		}
 		$content .= "</div>\n";

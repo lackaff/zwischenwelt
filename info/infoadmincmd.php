@@ -286,8 +286,6 @@ if (!isset($f_building) && !isset($f_army) && isset($f_do)) switch ($f_do) {
 				$mybuilding->type = intval($f_btype);
 				$mybuilding->level = intval($f_blevel);
 				$mybuilding->hp = cBuilding::calcMaxBuildingHp($mybuilding->type,$mybuilding->level);
-				if($mybuilding->type==kBuilding_Bridge || $mybuilding->type==kBuilding_GB)
-					$mybuilding->param=getBridgeParam($mybuilding->x,$mybuilding->y);
 					
 				$f_x = intval($f_x);$f_y = intval($f_y);
 				$minx = ($f_x);$miny = ($f_y);

@@ -372,7 +372,10 @@ define("kQuestFlag_RepeatOnFinish",					(1<<3));
 
 // buildings
 
+define("kBuildingRequirenment_CrossRadius",2); // max dist to any owned building
 define("kBuildingRequirenment_NearRadius",2);
+define("kBuildingRequirenment_NextToRadius",0); // 0 means adjacted
+define("kBuildingRequirenment_ExcludeRadius",0); // 0 means adjacted
 define("kHQ_Upgrade_BaseTime",43200);
 
 define("kBuilding_HQ",1);

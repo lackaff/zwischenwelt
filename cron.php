@@ -107,6 +107,8 @@ sql("LOCK TABLES	`user` WRITE,
 					`siege` READ,
 					`profile` WRITE,
 					`terrain` WRITE,
+					`terrainsegment4` WRITE,
+					`terrainsegment64` WRITE,
 					`newlog` WRITE,
 					`triggerlog` WRITE,
 					`quest` WRITE,
@@ -127,13 +129,19 @@ foreach($gAllUsers as $x) {
 	if($o) { 
 		if($time > $o->construction || kZWTestMode) {
 			if ($gVerbose) echo "fertiggestellt : ".$gBuildingType[$o->type]->name."(".$o->x.",".$o->y.")<br>";
+			
+			$now = microtime_float();
 			CompleteBuild($o);
+			echo "Profile CompleteBuild : ".sprintf("%0.3f",microtime_float()-$now)."<br>\n";
 		}
 	} else {
 		$mycon = sqlgetobject("SELECT * FROM `construction` WHERE `user`=".$x->id." ORDER BY `priority` LIMIT 1");
-		if ($mycon)
-		if (startBuild($mycon))
-			if ($gVerbose) echo "gestartet : ".$gBuildingType[$mycon->type]->name."(".$mycon->x.",".$mycon->y.")<br>";
+		if ($mycon) {
+			$now = microtime_float();
+			if (startBuild($mycon))
+				if ($gVerbose) echo "gestartet : ".$gBuildingType[$mycon->type]->name."(".$mycon->x.",".$mycon->y.")<br>";
+			echo "Profile startBuild : ".sprintf("%0.3f",microtime_float()-$now)."<br>\n";
+		}
 	}
 }
 unset($cons);
@@ -146,14 +154,15 @@ profile_page_start("cron.php - upgrade buildings",true);
 
 
 $time = time();
-$buildings = sqlgettable("SELECT * FROM `building` WHERE `upgrades` > 0 ORDER BY `level`");
 $hqlevels = sqlgettable("SELECT `user`,`level` FROM `building` WHERE `type`=".kBuilding_HQ,"user");
 $sieges = sqlgettable("SELECT `building` FROM `siege`","building");
 
-echo "testing ".count($buildings)." buildings for upgrades<br>\n";
 $count_start = 0;
 $count_end = 0;
-foreach ($buildings as $o) {
+//$buildings = sqlgettable("SELECT * FROM `building` WHERE `upgrades` > 0 ORDER BY `level`");  OLD
+$mysqlresult = sql("SELECT * FROM `building` WHERE `upgrades` > 0");
+echo "testing ".mysql_num_rows($mysqlresult)." buildings for upgrades<br>\n";
+while ($o = mysql_fetch_object($mysqlresult)) {
 	if ($o->upgradetime > 0 && ($o->upgradetime < $time || kZWTestMode)) {
 		$count_end++;
 		// upgrade finished
@@ -199,7 +208,7 @@ foreach ($buildings as $o) {
 }
 echo "<br>\ns=".($count_start++);
 echo "<br>\ne=".($count_end++)."<br>\n";
-unset($buildings);
+mysql_free_result($mysqlresult);
 unset($sieges);
 unset($hqlevels);
 
