@@ -25,7 +25,7 @@ class cInfoArmy extends cInfoBase {
 		if ($army && ($cancontrollarmy || $gUser->admin))
 		switch ($f_do) {
 			case "admin_armystep" : if (!$gUser->admin) break;
-				require_once("lib.armythink.php");
+				require_once("lib.armythink.php"); // warning ! generates big globals
 				ArmyThinkTimeShift($army->id,$f_minutes*60);
 				echo "$f_minutes minutes have passed....<br>";
 				$army = sqlgetobject("SELECT * FROM `army` WHERE `id` = ".intval($army->id));
@@ -222,7 +222,7 @@ class cInfoArmy extends cInfoBase {
 			break;
 			case "setwaypointlist":
 				if (intval($army->flags) & kArmyFlag_SelfLock) break;
-				$points = explode(" ",$f_pointlist);
+				$points = split("[ \t;]+",$f_pointlist);
 				if (count($points) > 0)
 				foreach ($points as $point) {
 					$coords = split("[/,]",$point);
@@ -363,6 +363,8 @@ class cInfoArmy extends cInfoBase {
 		global $gBuildingType;
 		profile_page_start("army.php");
 		rob_ob_start();
+		
+		//if ($this->infobase_cmdout) echo $this->infobase_cmdout;
 		
 		$this->display_header();
 				
@@ -826,7 +828,7 @@ class cInfoArmy extends cInfoBase {
 						break;
 						case ARMY_ACTION_WAIT:
 							$wp = sqlgetobject("SELECT * FROM `waypoint` WHERE `id` = ".$c->param1);
-							echo "bei WegPunkt ".$wp->priority." ".pos2txt($wp->x,$wp->y)." ".$c->param2." Sekunden warten"; break;
+							echo "bei WegPunkt ".pos2txt($wp->x,$wp->y)." ".$c->param2." Sekunden warten"; break;
 					}?></td>
 					</tr>
 				<?php }?>

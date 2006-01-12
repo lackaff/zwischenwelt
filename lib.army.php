@@ -523,25 +523,23 @@ class cArmy {
 		$wp->x = intval($x);
 		$wp->y = intval($y);
 		$wp->army = $army->id;
-		$wp->priority = $waypointmaxprio+1;
+		$wp->priority = intval($waypointmaxprio)+1;
 		sql("INSERT INTO `waypoint` SET ".obj2sql($wp));
 		return array($wp->x,$wp->y);
 	}
 	
 	
 	function ArmyCancelWaypoint($army,$wp) {
-		if (!is_object($wp))
-			$wp = sqlgetobject("SELECT * FROM `waypoint` WHERE `id` = ".intval($wp));
-		if (!is_object($army))
-			$army = sqlgetobject("SELECT * FROM `army` WHERE `id` = ".intval($army));
-		if (!$wp || $wp->army != $army->id) return;
-		$waypointmaxprio = sqlgetone("SELECT COUNT(*) FROM `waypoint` WHERE `army` = ".$wp->army);
-		if ($waypointmaxprio > 2) {
-			// startwp (prio 0) and at least 1 wp left
+		if (!is_object($wp))	$wp = sqlgetobject("SELECT * FROM `waypoint` WHERE `id` = ".intval($wp));
+		if (!is_object($army))	$army = sqlgetobject("SELECT * FROM `army` WHERE `id` = ".intval($army));
+		if (!$wp || !$army || $wp->army != $army->id) return;
+		
+		$wps = sqlgettable("SELECT * FROM `waypoint` WHERE `army` = ".$wp->army." ORDER BY `priority` LIMIT 3");
+		if (count($wps) > 2) {
+			// there are waypoints left
 			sql("DELETE FROM `waypoint` WHERE `id` = ".$wp->id);
-			if ($wp->priority == 1)
-				sql("UPDATE `waypoint` SET `x` = ".$army->x.", `y` = ".$army->y." WHERE `priority` = 0 AND `army` = ".$wp->army);
-			sql("UPDATE `waypoint` SET `priority` = `priority` - 1 WHERE `priority` > ".$wp->priority." AND `army` = ".$wp->army);
+			if ($wps[1]->id == $wp->id) // deleted next wp -> adjust startwp(0)
+				sql("UPDATE `waypoint` SET `x` = ".$army->x.", `y` = ".$army->y." , `priority` = 0 WHERE `id` = ".$wps[0]->id);
 		} else {
 			// remove all wp
 			sql("DELETE FROM `waypoint` WHERE `army` = ".$wp->army);

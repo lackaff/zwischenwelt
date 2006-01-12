@@ -70,27 +70,31 @@ function ArmyThink ($army,$debug=false) {
 	}
 	
 	// harvest
-	$maxlast = cUnit::GetUnitsSum($army->units,"last");
-	$curlast = cArmy::GetArmyTotalWeight($army);
-	if ($curlast < $maxlast) {
-		$t = sqlgetobject("SELECT * FROM `terrain` WHERE `x`=".$army->x." AND `y`=".$army->y);
-		$coltime = cArmy::GetArmyCollectTime($army,$t->type);
-		if ($coltime > 0 && (
-			($t->type == kTerrain_Forest && ($army->flags & kArmyFlag_HarvestForest)) || 
-			($t->type == kTerrain_Rubble && ($army->flags & kArmyFlag_HarvestRubble)) || 
-			($t->type == kTerrain_Field && ($army->flags & kArmyFlag_HarvestField)) )) {
-			if ($army->idle >= $coltime) {
-				if ($debug) echo "harvesting ".$gTerrainType[$t->type]->name."<br>";
-				cArmy::ArmyCollect($army,$t);
-				$army->idle = 0;
-				sql("UPDATE `army` SET `idle`=0 WHERE `id`=".$army->id);
-				return;
-			} else {
-				if ($debug) echo "waiting to harvest ".$gTerrainType[$t->type]->name."<br>";
-				$wait_here = true;
+	if ($army->flags & (kArmyFlag_HarvestForest|kArmyFlag_HarvestRubble|kArmyFlag_HarvestField)) {
+		$maxlast = cUnit::GetUnitsSum($army->units,"last");
+		$curlast = cArmy::GetArmyTotalWeight($army); // todo : otpimize me !
+		if ($curlast < $maxlast) {
+			$t = sqlgetobject("SELECT * FROM `terrain` WHERE `x`=".$army->x." AND `y`=".$army->y." LIMIT 1");
+			$coltime = cArmy::GetArmyCollectTime($army,$t->type);
+			if ($coltime > 0 && (
+				($t->type == kTerrain_Forest && ($army->flags & kArmyFlag_HarvestForest)) || 
+				($t->type == kTerrain_Rubble && ($army->flags & kArmyFlag_HarvestRubble)) || 
+				($t->type == kTerrain_Field && ($army->flags & kArmyFlag_HarvestField)) )) {
+				if ($army->idle >= $coltime) {
+					if ($debug) echo "harvesting ".$gTerrainType[$t->type]->name."<br>";
+					cArmy::ArmyCollect($army,$t);
+					$army->idle = 0;
+					sql("UPDATE `army` SET `idle`=0 WHERE `id`=".$army->id);
+					return;
+				} else {
+					if ($debug) echo "waiting to harvest ".$gTerrainType[$t->type]->name."<br>";
+					$wait_here = true;
+				}
 			}
 		}
 	}
+	
+	// OPTIMIZING : 12.01.06 : taking a break, continue here...
 	
 	// look for nearby armies
 	$enemies = array();
@@ -195,13 +199,14 @@ function ArmyThink ($army,$debug=false) {
 	}
 	
 	// AutoPillage
-	if (($army->flags & kArmyFlag_AutoPillage) && !($army->flags & kArmyFlag_BuildingWait)) foreach ($nearbuildings as $building) {
+	if ( ($army->flags & kArmyFlag_AutoPillage) && 
+		!($army->flags & kArmyFlag_AutoPillageOff)) foreach ($nearbuildings as $building) {
 		if ($building->type != kBuilding_Silo) continue;
 		if ($army->user == 0 && $building->user == 0) continue;
 		if ($army->user > 0 && GetFOF($army->user,$building->user) != kFOF_Enemy) continue;
 		if ($debug) echo "AutoPillage buildingid:$building->id<br>";
 		if (TryExecArmyAction($army,ARMY_ACTION_PILLAGE,$building->x,$building->y,-1,0,$debug)) {
-			sql("UPDATE `army` SET `flags` = `flags` | ".kArmyFlag_BuildingWait." WHERE `id` = ".$army->id);
+			sql("UPDATE `army` SET `flags` = `flags` | ".kArmyFlag_AutoPillageOff." WHERE `id` = ".$army->id);
 			return;
 		}
 	}
@@ -274,7 +279,7 @@ function ArmyThink ($army,$debug=false) {
 	
 	// wander or waypoint
 	if (!$pos) {
-		$wps = sqlgettable("SELECT * FROM `waypoint` WHERE `army` = ".$army->id." ORDER BY `priority` LIMIT 2");
+		$wps = sqlgettable("SELECT * FROM `waypoint` WHERE `army` = ".$army->id." ORDER BY `priority` LIMIT 3");
 		if (count($wps) < 2 && ($army->flags & kArmyFlag_Wander)) {
 			$d = rand(0,1)?-1:1;
 			$pos = rand(0,1)?array($x,$y+$d):array($x+$d,$y);
@@ -303,22 +308,30 @@ function ArmyThink ($army,$debug=false) {
 			if ($debug) echo "army walking to waypoint (".$wps[1]->x.",".$wps[1]->y.")<br>";
 			$pos = GetNextStep($x,$y,$wps[0]->x,$wps[0]->y,$wps[1]->x,$wps[1]->y);
 			if ($pos[0] == $x && $pos[1] == $y) {
-				if ($debug) echo "arrive at waypoint($x,$y)<br>";
 				// arrive at waypoint
-				ArmyArriveAtWaypoint($army->id,$wps[1]);
+				if ($debug) echo "arrive at waypoint($x,$y)<br>";
 				$army->flags = $army->flags | kArmyFlag_LastWaypointArrived;
 				$army->flags = $army->flags & (~kArmyFlag_BuildingWait); // don't try again and again...
+				$army->flags = $army->flags & (~kArmyFlag_AutoPillageOff); // don't pillage again and again, even if not moving
 				sql("UPDATE `army` SET `flags` = ".$army->flags." WHERE `id` = ".$army->id);
-				if ($army->flags & kArmyFlag_Patrol) {
-					// patroullienmodus
-					cArmy::ArmySetWaypoint($army->id,$x,$y);
-					if ($debug) echo "Patrol:repeat waypoint(".$x.",".$y.")<br>";
+				
+				if (count($wps) > 2) {
+					sql("DELETE FROM `waypoint` WHERE `id` = ".$wps[0]->id); // delete old startwp
+					sql("UPDATE `waypoint` SET `priority` = 0 WHERE `id` = ".$wps[1]->id); // set new startwp
+					
+					if ($army->flags & kArmyFlag_Patrol) {
+						// patroullienmodus
+						cArmy::ArmySetWaypoint($army->id,$x,$y);
+						if ($debug) echo "Patrol:repeat waypoint(".$x.",".$y.")<br>";
+					}
+					if ($debug) echo "army walking to waypoint (".$wps[2]->x.",".$wps[2]->y.")<br>";
+					$pos = GetNextStep($x,$y,$wps[1]->x,$wps[1]->y,$wps[2]->x,$wps[2]->y);
+					if ($pos[0] == $x && $pos[1] == $y) return;
+				} else {
+					// arrived at final wp => remove all wp
+					sql("DELETE FROM `waypoint` WHERE `army` = ".$army->id);
+					return;
 				}
-				$wps = sqlgettable("SELECT * FROM `waypoint` WHERE `army` = ".$army->id." ORDER BY `priority` LIMIT 2");
-				if (count($wps) < 2) return;
-				if ($debug) echo "army walking to waypoint (".$wps[1]->x.",".$wps[1]->y.")<br>";
-				$pos = GetNextStep($x,$y,$wps[0]->x,$wps[0]->y,$wps[1]->x,$wps[1]->y);
-				if ($pos[0] == $x && $pos[1] == $y) return;
 			} 
 		}
 	}
@@ -363,6 +376,7 @@ function ArmyThink ($army,$debug=false) {
 			//armee bewegt sich ,update $gAllArmys cache
 			$gAllArmys[$army->id]->x = $pos[0];
 			$gAllArmys[$army->id]->y = $pos[1];
+			$army->flags = $army->flags & (~kArmyFlag_AutoPillageOff); // don't pillage again and again, even if not moving
 			sql("UPDATE `army` SET `flags` = ".$army->flags." , `nextactiontime` = ".($time+$speed)." , `idle`=0,`x` = ".$pos[0]." , `y` = ".$pos[1]." WHERE `id` = ".$army->id);
 			cArmy::AddSteps($pos[0],$pos[1],$army->size);
 			QuestTrigger_ArmyMove($army,$pos[0],$pos[1]);
@@ -373,19 +387,6 @@ function ArmyThink ($army,$debug=false) {
 
 
 
-function ArmyArriveAtWaypoint($army,$wp) { // army : id , wp : obj
-	// should be wp with prio 1
-	if (!$wp || $wp->army != $army) return;
-	$waypointmaxprio = sqlgetone("SELECT COUNT(`id`) FROM `waypoint` WHERE `army` = ".$wp->army);
-	if ($waypointmaxprio > 2) {
-		// startwp (prio 0) and at least 1 wp left
-		sql("DELETE FROM `waypoint` WHERE `priority` < ".$wp->priority." AND `army` = ".$wp->army);
-		sql("UPDATE `waypoint` SET `priority` = `priority` - 1 WHERE `army` = ".$wp->army);
-	} else {
-		// arrived at final wp => remove all wp
-		sql("DELETE FROM `waypoint` WHERE `army` = ".$wp->army);
-	}
-}
 
 
 

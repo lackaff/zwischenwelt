@@ -328,7 +328,7 @@ if (!isset($f_building) && !isset($f_army) && isset($f_do)) switch ($f_do) {
 			global $f_x,$f_y;
 			$f_x = $hellhole->x;
 			$f_y = $hellhole->y;
-			require_once("lib.armythink.php");
+			require_once("lib.armythink.php"); // warning ! generates big globals
 			$f_minutes = 60;
 			echo "$f_minutes minutes have passed....<br>";
 			$monsters = sqlgettable("SELECT * FROM `army` WHERE `hellhole` = ".intval($f_hellhole));

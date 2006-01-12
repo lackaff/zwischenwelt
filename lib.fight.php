@@ -74,6 +74,10 @@ class cFight {
 		if ($army->user)		LogMe($army->user,		NEWLOG_TOPIC_FIGHT,NEWLOG_PILLAGE_ATTACKER_START,$building->x,$building->y,0,$army->name,$busername);
 		if ($building->user)	LogMe($building->user,	NEWLOG_TOPIC_FIGHT,NEWLOG_PILLAGE_DEFENDER_START,$building->x,$building->y,0,$army->name,$armyownername);
 		
+		// TODO : pillagestep mit parameter fuer den ersten durchlauf, wenn dann was geklaut und es der erste durchlauf ist, erst dann wird nachricht geschickt
+		// TODO : pillagestep aus pillagestart heraus aufrufen.
+		// TODO : pillagestart bei fehlgeschlagenem pillagestep fehlerhaft beenden ( kein pillage eintrag, armee wird nicht aufgehalten)
+		
 		// report
 		if ($building->user) {
 			$topic = "Plünderung bei ($building->x,$building->y)";
@@ -86,11 +90,14 @@ class cFight {
 					sqlgetone("SELECT `guild` FROM `user` WHERE `id` = ".$building->user),
 					"Plünderung","");
 		}
+		return true;
 	}
 	
 	
 	function PillageStep ($pillage,$debug=false) {
 		global $gResFields;
+		//if ($debug) echo "pillage<br>";
+		//if ($debug) vardump2($pillage);
 		$army = sqlgetobject("SELECT * FROM `army` WHERE `id` = ".$pillage->army);
 		$building = sqlgetobject("SELECT * FROM `building` WHERE `id` = ".$pillage->building);
 		if (!$building || !$army) {

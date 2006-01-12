@@ -224,7 +224,7 @@ function DrawBar ($cur,$max,$color="green",$bgcolor="#eeeeee",$border=false) {
 	if ($cur <= 0)
 	{
 		?>
-		<table width="100%" cellspacing=2 <?=$border?>>
+		<table width="100%" style="height:100%" cellspacing=0 <?=$border?>>
 		<tr><td bgcolor="<?=$bgcolor?>"></td></tr></table>
 		<?php
 		return;
@@ -232,14 +232,14 @@ function DrawBar ($cur,$max,$color="green",$bgcolor="#eeeeee",$border=false) {
 	if ($cur >= $max)
 	{
 		?>
-		<table width="100%" cellspacing=2 <?=$border?>>
+		<table width="100%" style="height:100%" cellspacing=0 <?=$border?>>
 		<tr><td bgcolor="<?=$color?>"></td></tr></table>
 		<?php
 		return;
 	}
 	$factor = $cur / $max;
 	?>
-	<table width="100%" cellspacing=2 <?=$border?>
+	<table width="100%" style="height:100%" cellspacing=0 <?=$border?>>
 	<tr>
 		<td width="<?=floor($factor*100)?>%" bgcolor="<?=$color?>"></td>
 		<td width="<?=floor((1-$factor)*100)?>%" bgcolor="<?=$bgcolor?>"></td>

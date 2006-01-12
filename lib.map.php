@@ -279,8 +279,14 @@ function getMapAtPosition($x,$y,$dx,$dy,$onlyterrain=false){
 
 class cMap {
 	function StaticGetTerrainAtPos ($x,$y) {
-		$map = getMapAtPosition($x,$y,1,1,true);
-		return $map->getTerrainTypeAt($x,$y);
+		$x = intval($x); $y = intval($y);
+		$type = sqlgetone("SELECT `type` FROM `terrain` WHERE `x` = ".$x." AND `y` = ".$y." LIMIT 1");
+		if ($type) return $type;
+		$type = sqlgetone("SELECT `type` FROM `terrainsegment4` WHERE `x` = ".floor($x/4)." AND `y` = ".floor($y/4)." LIMIT 1");
+		if ($type) return $type;
+		$type = sqlgetone("SELECT `type` FROM `terrainsegment64` WHERE `x` = ".floor($x/64)." AND `y` = ".floor($y/64)." LIMIT 1");
+		if ($type) return $type;
+		return kTerrain_Grass;
 	}
 
 	function cMap($x,$y,$dx,$dy,$onlyterrain){

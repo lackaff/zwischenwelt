@@ -409,8 +409,10 @@ $gInfoObjects[] = new cInfoBuilding();
 
 // execute commands
 function walk_command (&$item, $key) { $item->command(); }
+rob_ob_start();
 array_walk($gInfoObjects,"walk_command");
-
+$content = rob_ob_end();
+if (!empty($content)) RegisterInfoTab("info",$content,200);
 
 
 // now that the commands have had their chance to update stuff, get object data
@@ -530,11 +532,12 @@ if (!isset($f_blind)) {
 	if ($c > 0) {
 		rob_ob_start();
 		foreach ($gMapWaypoints as $wp) if ($wp->priority > 0) {
+			$army = sqlgetobject("SELECT * FROM `army` WHERE `id` = ".$wp->army);
+			if (!cArmy::CanControllArmy($army,$gUser)) continue;
+			$wpnumber = sqlgetone("SELECT COUNT(*) FROM `waypoint` WHERE `army` = ".$wp->army." AND `priority` < ".$wp->priority);
 			?>
-			<?php $army = sqlgetobject("SELECT * FROM `army` WHERE `id` = ".$wp->army);?>
-			<?php if (!cArmy::CanControllArmy($army,$gUser)) continue;?>
 			<img alt="army" src="<?=g("army.png")?>">
-			Wegpunkt <?=$wp->priority?> von <a href="<?=Query("?sid=?&x=".$army->x."&y=".$army->y)?>"><?=$army->name?></a>.
+			Wegpunkt <?=$wpnumber?> von <a href="<?=Query("?sid=?&x=".$army->x."&y=".$army->y)?>"><?=$army->name?></a>.
 			<a href="<?=Query("?sid=?&x=?&y=?&do=delwaypoint&id=".$wp->id)?>">(l&ouml;schen)</a>
 			<a href="<?=Query("?sid=?&x=?&y=?&do=delallwaypointafter&id=".$wp->id)?>">(alle ab diesem l&ouml;schen)</a>
 			<?php /* ***** Warten ***** */ ?>
@@ -551,7 +554,8 @@ if (!isset($f_blind)) {
 			<hr>
 			<?php 
 		}
-		RegisterInfoTab("Wegpunkte",rob_ob_end());
+		$content = rob_ob_end();
+		if (!empty($content)) RegisterInfoTab("Wegpunkte",$content);
 	}
 }
 	

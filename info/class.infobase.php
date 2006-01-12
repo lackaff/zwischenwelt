@@ -19,10 +19,10 @@ class cInfoBase {
 	
 	// execute form posts in mycommand(), output buffered to display()
 	function command () {
-		rob_ob_start();
+		//rob_ob_start();
 		$this->mycommand();
 		$this->classcommand();
-		$this->infobase_cmdout = trim(rob_ob_end());
+		//$this->infobase_cmdout = trim(rob_ob_end());
 	}
 	
 	

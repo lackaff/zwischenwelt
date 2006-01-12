@@ -240,6 +240,7 @@ define("kArmyFlag_BuildingWait",			(1<<21)); // systemflag
 define("kArmyFlag_AutoGive_Own",			(1<<22)); // worker
 define("kArmyFlag_AutoGive_Guild",			(1<<23)); // worker
 define("kArmyFlag_AutoGive_Friend",			(1<<24)); // worker
+define("kArmyFlag_AutoPillageOff",			(1<<25)); // systemflag
 define("kArmyFlag_AllSet",					(1<<30)-1); // (at least one above the others)-1
 $gArmyFlagNames = array(
 	kArmyFlag_GuildCommand=>			"unter Gildenkommando",
@@ -263,7 +264,8 @@ $gArmyFlagNames = array(
 	kArmyFlag_AutoSiege => 				"Feinde automatisch belagern",
 	kArmyFlag_AutoPillage => 			"Feinde automatisch plündern",
 	kArmyFlag_AutoDeposit => 			"automatisch in freundliche Lager einzahlen",
-	kArmyFlag_BuildingWait => 			"wait for wp bevore next auto-building action", // stops kArmyFlag_AutoPillage,kArmyFlag_AutoDeposit
+	kArmyFlag_BuildingWait => 			"wait for wp bevore next auto-building action", // stops kArmyFlag_AutoDeposit
+	kArmyFlag_AutoPillageOff => 		"wait for move bevore next auto-pillage action", // stops kArmyFlag_AutoPillage
 	kArmyFlag_AutoGive_Own => 			"Eigene Armeen/Karawanen automatisch beladen",
 	kArmyFlag_AutoGive_Guild => 		"Gilden-Armeen/Karawanen automatisch beladen",
 	kArmyFlag_AutoGive_Friend => 		"Freundliche Armeen/Karawanen automatisch beladen",

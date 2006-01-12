@@ -85,6 +85,10 @@ if(isset($f_do)){
 		
 		case "nachrichtenliste":
 			if(!isset($f_folder))break;
+			if (isset($f_deleteallinfolder)) {
+				sql("DELETE FROM `message` WHERE `folder` = ".intval($f_folder)." AND (`to`=".intval($gUser->id)." OR `from`=".intval($gUser->id).")");
+				break;
+			}
 			$msg=sqlgettable("SELECT `id` FROM `message` WHERE `folder`=".intval($f_folder));
 			if(isset($f_delete)){
 				foreach ($msg as $m)
@@ -328,12 +332,30 @@ switch ($f_show){
 		$inbox = $folder->type==kFolderTypeSent || $folder->type==kFolderTypeSentSub;
 		ImgBorderStart("s2","jpg","#ffffee","bg-s2",32,33);
 		$messagescount=sqlgetone("SELECT COUNT(*) FROM `message` WHERE `folder`=".intval($f_folder)." AND (`from`=".intval($gUser->id)." OR `to`=".intval($gUser->id).") ORDER BY `date` DESC");
-		$messages=sqlgettable("SELECT `id`,`folder`,`from`,`to`,`subject`,`date`,`status`,`type`,`html`".($messagescount<100?",`text`":"")." FROM `message` WHERE `folder`=".intval($f_folder)." AND (`from`=".intval($gUser->id)." OR `to`=".intval($gUser->id).") ORDER BY `date` DESC");
+		$cond = "`folder`=".intval($f_folder)." AND (`from`=".intval($gUser->id)." OR `to`=".intval($gUser->id).")";
+		$pagesize = 20;
+		$page = isset($f_page)?intval($f_page):0;
+		$foldersize = sqlgetone("SELECT COUNT(*) FROM `message` WHERE ".$cond);
+		$pagecount = ceil($foldersize/$pagesize);
+		$messages=sqlgettable("SELECT `id`,`folder`,`from`,`to`,`subject`,`date`,`status`,`type`,`html`".($messagescount<100?",`text`":"")." FROM `message` WHERE ".$cond." ORDER BY `date` DESC LIMIT ".($page*$pagesize).",".$pagesize);
 		?>
 		<form method=post action="<?=Query("?sid=?")?>" id="nachrichtenform" name="nachrichtenform">
 		<input type="hidden" name="do" value="nachrichtenliste">
 		<input type="hidden" name="folder" value="<?=$f_folder?>">
 		<table cellspacing=2 cellpadding=2 border=0  width=490px;>
+			<tr><th></th><th></th><th></th><th>
+				<?php if ($page>0) {?>
+				<a href="<?=Query("?sid=?&show=?&folder=?&page=".($page-1))?>">&lt;&lt;&lt;</a>
+				<?php } else { // ?>
+				&lt;&lt;&lt;
+				<?php } // endif?>
+				Seite <?=$page+1?>/<?=max(1,$pagecount)?>
+				<?php if ($page<$pagecount-1) {?>
+				<a href="<?=Query("?sid=?&show=?&folder=?&page=".($page+1))?>">&gt;&gt;&gt;</a>
+				<?php } else { // ?>
+				&gt;&gt;&gt;
+				<?php } // endif?>
+				</th><th></th><th></th></tr>
 			<tr><th></th><th></th><th><?=$inbox?"Empfänger":"Absender"?></th><th>Betreff</th><th>Datum</th><th></th></tr>
 		<?if(count($messages)>0){
 			foreach ($messages as $m){?>
@@ -373,7 +395,7 @@ switch ($f_show){
 				<tr>
 					<td></td>
 					<td></td>
-					<td></td>
+					<td><input type=submit name=deleteallinfolder value="Alle im Ordner L&ouml;schen"></td>
 					<td><input type=submit name=delete value="L&ouml;schen"></td>
 				</tr>
 			</table>

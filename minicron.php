@@ -53,7 +53,7 @@ foreach ($thinkarmies as $army) if ($army) {
 		if ($army->useditemobj && $army->useditemobj->type == kItem_Spam) $verbrauch *= 0.5;
 		
 		if ($verbrauch > 0) {
-			$hungerschaden = max(0,$verbrauch - sqlgetone("SELECT `food` FROM `user` WHERE `id`=".$army->user));
+			$hungerschaden = max(0,$verbrauch - $gAllUsers[$army->user]->food);
 			sql("UPDATE `user` SET `food`=GREATEST(0,`food`-$verbrauch) WHERE `id`=".$army->user);
 			if ($hungerschaden > 0) {
 				if($army->type == kArmyType_Fleet) {
