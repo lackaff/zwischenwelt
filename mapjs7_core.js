@@ -27,7 +27,6 @@ gNWSEDebug = false; // shows typeid and connect-to infos in maptip
 gPathDetected = 0;
 
 // compare version with kBaseJSMapVersion from mapjs7.php and kNaviJSMapVersion available with GetkNaviJSMapVersion
-kCoreJSMapVersion = 37;
 kMapTipName = "maptip";
 kMapTip_xoff = 29;
 kMapTip_yoff = 56;
@@ -514,6 +513,10 @@ function CreateMapStep () {
 		//profiling("sending html to browser");
 		MapReport("");
 		document.getElementById("mapzone").innerHTML = gMapHTML;
+		
+		
+		VersionCheckNavi();
+	
 		// done constructing map
 		return true;
 	}
@@ -690,10 +693,22 @@ function GetCellHTML (relx,rely) {
 	return res;
 }
 
+function SetOverlayGraphic (relx,rely,path) {
+	if (relx < 0 || rely < 0 || relx >= gCX || rely >= gCY) return;
+	document.getElementById("mouselistener_"+rely+"_"+relx).style.backgroundImage = "url("+path+")";
+}
+function SetTempOverlayGraphic (relx,rely,path) {
+	SetOverlayGraphic(relx,rely,path);
+	window.setTimeout("SetOverlayGraphic("+relx+","+rely+",'')",1000);	
+}
+
 function mapclick (relx,rely) {
 	if (!VersionCheckNavi()) return;
 	var naviframe = GetNaviFrame();
-	if (naviframe) naviframe.mapclicktool(relx+gLeft,rely+gTop,gActiveArmyID);
+	if (naviframe) {
+		if (naviframe.mapclicktool_hasoverlay()) SetTempOverlayGraphic(relx,rely,g1("sanduhrklein.gif"));
+		naviframe.mapclicktool(relx+gLeft,rely+gTop,gActiveArmyID);
+	}
 	KillTip();
 }
 

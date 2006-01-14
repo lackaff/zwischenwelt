@@ -7,6 +7,7 @@ header('Last-Modified: '.date("r",floor((time()-$maxage)/$maxage)*$maxage));
 header('Cache-Control: max-age='.$maxage.', must-revalidate');
 
 ?>
+kCoreJSMapVersion = <?=intval(kJSMapVersion)?>;
 kDefaultTerrainID = <?=kTerrain_Grass?>;
 kNWSE_N = <?=kNWSE_N?>;
 kNWSE_W = <?=kNWSE_W?>;

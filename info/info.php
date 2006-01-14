@@ -10,6 +10,7 @@ require_once("class.infobase.php");
 require_once("class.infobuilding.php");
 require_once("class.inforeq.php");
 
+$infostarttime = microtime_float();
 
 Lock();
 
@@ -953,6 +954,9 @@ if ($gInfoTabsPriority < 100 && isset($_COOKIE["activeinfotab"]) && $_COOKIE["ac
 }
 foreach($gInfoTabs as $i=>$v)$gInfoTabs[$i][0] = "<img border=0 src=\"".g("1px.gif")."\" width=1 height=18>".$gInfoTabs[$i][0];
 echo GenerateTabs("infotabs",$gInfoTabs,$gInfoTabsCorner,"ActivateInfoTab",$gInfoTabsSelected); // echo "<div class=\"tabpane\">";
+
+$diff = microtime_float()-$infostarttime;
+if ($gUser->admin) echo "took ".sprintf("%0.3f",$diff)." seconds";
 ?>
 
 </body>

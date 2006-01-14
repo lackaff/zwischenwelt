@@ -198,6 +198,13 @@ if (isset($f_regentypes)) {
 		//if (document.getElementsByName("patchcheck")[0].checked)
 		//	document.getElementsByName("patch")[0].value += text;
 	}
+	function mapclicktool_hasoverlay () {
+		if (curtool == 1) return true;
+		if (curtool == 2) return true;
+		if (curtool == 3) return true;
+		if (curtool == 4) return true;
+		return false;
+	}
 	function mapclicktool (x,y,activearmyid) {
 		updatepos(x,y);
 		if (curtool == 9) {

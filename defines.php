@@ -44,6 +44,6 @@ define("kMapTileSize",25);
 define("kMapScript","mapjs7.php");
 define("kMapNaviScript","mapnavi7.php");
 define("kZWStyle_Neutral","zwstyle.css");
-define("kJSMapVersion","37"); // muss mit kJSMapVersion in mapjs7_core.js uebereinstimmen
+define("kJSMapVersion","38"); // muss mit kJSMapVersion in mapjs7_core.js uebereinstimmen
 define("kDummyFrames",10); // soviele dummy-befehls-empfaenger frames gibt es, viele -> schnell aufeinander folgende mapclicks können besser bearbeitet werden
 ?>
