@@ -40,6 +40,11 @@ gProfileLastLine = "";
 gMapConstructionCurY = -1;
 gMapHTML = false;
 
+// set border around map, used to indicate brushline modus
+function SetBorder (colorcode) {
+	document.getElementById("totalmapborder").style.borderColor = colorcode + " " + colorcode + " " + colorcode + " " + colorcode;
+	if (!gBig && gBigMapWindow && !gBigMapWindow.closed) gBigMapWindow.SetBorder(colorcode);
+}
 function MapReport (text) {
 	document.getElementById("mapdebug").innerHTML = text;
 }
@@ -508,7 +513,7 @@ function CreateMapStep () {
 
 		var maptiphtml = "<span class=\"maptip\" onClick=\"KillTip()\" id=\""+kMapTipName+"\" style=\"position:absolute;top:0px;left:0px; visibility:hidden;\">&nbsp;</span>";
 		
-		gMapHTML += "</table>" + tab_post + maptiphtml;
+		gMapHTML += "</table></div>" + tab_post + maptiphtml;
 		
 		//profiling("sending html to browser");
 		MapReport("");
@@ -549,7 +554,7 @@ function CreateMap() {
 	gMapHTML += "	</div>";
 	gMapHTML += "	<div class=\"tabpane\">";
 		
-	gMapHTML += "<table class=\"map\" onMouseout=\"AbortTip()\" border=0 cellpadding=0 cellspacing=0>\n";
+	gMapHTML += "<div id=\"totalmapborder\" style=\"border:2px solid white;\"><table class=\"map\" onMouseout=\"AbortTip()\" border=0 cellpadding=0 cellspacing=0>\n";
 	
 	while (!CreateMapStep()) ; // one step triggers the next
 }

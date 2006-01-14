@@ -14,7 +14,6 @@ $infostarttime = microtime_float();
 
 Lock();
 
-
 $gJSCommands = array();
 $gInfoTabs = array();
 $gInfoTabsSelected = -1; // -1 is replaced by the last one
@@ -177,129 +176,135 @@ if (!isset($f_building) && !isset($f_army) && isset($f_do)) {
 			
 			foreach ($f_build as $typeid => $val) { // this array won't have more than one entry
 				$btype = $gBuildingType[intval($typeid)]; 
-				$x = $f_x;
-				$y = $f_y;
 				
-				// check other plans
-				if ($typeid == kBuilding_HQ && !isPositionInBuildableRange($f_x,$f_y)) {
-					JSAddInfoMessage_BuildError($btype,$f_x,$f_y,"momentan gesperrter Bereich, bitte nur zwischen ".$gGlobal["hq_min_x"].",".$gGlobal["hq_min_y"]." und ".$gGlobal["hq_max_x"].",".$gGlobal["hq_max_y"]." bauen");
-					continue;
-				} 
-				
-				// check other plans
-				if (OwnConstructionInProcess($f_x,$f_y)) {
-					JSAddInfoMessage_BuildError($btype,$f_x,$f_y,"hier ist bereits ein Bauplan");
-					continue;
-				}
-				// check build cross
-				if (!InBuildCross($f_x,$f_y,$gUser->id)) {
-					JSAddInfoMessage_BuildError($btype,$f_x,$f_y,"kein eigenes Gebäude in der Nähe");
-					continue;
-				}
-				// check req
-				if (!HasReq($btype->req_geb,$btype->req_tech,$gUser->id)) {
-					$anforderungen = GetBuildingTypeLink($btype,$f_x,$f_y,"<font color=\"red\"><b>Anforderungen</b></font>");
-					JSAddInfoMessage_BuildError($btype,$f_x,$f_y,"$anforderungen sind nicht erfüllt");
-					continue;
-				}
-				
-				// check nearby terrain
-				$terrain = sqlgetone("SELECT `type` FROM `terrain` WHERE `x` = ".$f_x." AND `y` = ".$f_y);
-				if ($btype->terrain_needed > 0 && $btype->terrain_needed != $terrain) {
-					$reqpic = "<img border=0 src=\"".g($gTerrainType[$btype->terrain_needed]->gfx)."\">";
-					JSAddInfoMessage_BuildError($btype,$f_x,$f_y,"kann nur auf $reqpic gebaut werden");
-					continue;
-				}
-				if ($gTerrainType[$terrain]->buildable == 0 && $btype->terrain_needed != $terrain) {
-					$reqpic = "<img border=0 src=\"".g($gTerrainType[$terrain]->gfx)."\">";
-					JSAddInfoMessage_BuildError($btype,$f_x,$f_y,"Gelände $reqpic ist nicht bebaubar");
-					continue;
-				}
-				
-				// check for blocking building
-				$blockerbuilding = sqlgetobject("SELECT * FROM `building` WHERE `x` = ".$f_x." AND `y` = ".$f_y);
-				if ($blockerbuilding) {
-					$reqpic = GetBuildingTypeLink($blockerbuilding->type,$f_x,$f_y,false,$blockerbuilding->user,$blockerbuilding->level);
-					JSAddInfoMessage_BuildError($btype,$f_x,$f_y,"hier befindet sich bereits ein Gebäude : ".$reqpic."");
-					continue;
-				}
-				
-				// check building requirements
-				if (sizeof($btype->exclude_building)>0 && 
-					GetNearBuilding($x,$y,$gUser->id,kBuildingRequirenment_ExcludeRadius,$btype->exclude_building)) {
-					$piclist = "";
-					foreach ($btype->exclude_building as $b) $piclist .= GetBuildingTypeLink($b,$f_x,$f_y);
-					JSAddInfoMessage_BuildError($btype,$f_x,$f_y,"$piclist darf nicht direkt daneben sein");
-					continue;
-				}
-				if (sizeof($btype->neednear_building)>0 && 
-					!GetNearBuilding($x,$y,$gUser->id,kBuildingRequirenment_NearRadius,$btype->neednear_building)) {
-					$piclist = "";
-					foreach ($btype->neednear_building as $b) $piclist .= GetBuildingTypeLink($b,$f_x,$f_y);
-					JSAddInfoMessage_BuildError($btype,$f_x,$f_y,"$piclist muss in der Nähe sein");
-					continue;
-				}
-				if (sizeof($btype->require_building)>0 && 
-					!GetNearBuilding($x,$y,$gUser->id,kBuildingRequirenment_NextToRadius,$btype->require_building)) {
-					$piclist = "";
-					foreach ($btype->require_building as $b) $piclist .= GetBuildingTypeLink($b,$f_x,$f_y);
-					JSAddInfoMessage_BuildError($btype,$f_x,$f_y,"$piclist muss direkt daneben sein");
-					continue;
-				}
-				
-				// final check, CanBuildHere() is main function also used by cron
-				if (!CanBuildHere($x,$y,$btype->id,$gUser->id)) {
-					switch ($btype->id) {
-						case kBuilding_Steg:
-							if (sizeof($btype->require_building) == 0) $btype->require_building = array(0=>kBuilding_Harbor,kBuilding_Steg);
-							$piclist = "";
-							foreach ($btype->require_building as $b) $piclist .= GetBuildingTypeLink($b,$f_x,$f_y);
-							JSAddInfoMessage_BuildError($btype,$f_x,$f_y,"$piclist muss direkt daneben sein");
-						break;
-						case kBuilding_SeaWall:
-						case kBuilding_SeaGate:
-							if (sizeof($btype->require_building) == 0) $btype->require_building = array(0=>kBuilding_SeaWall,kBuilding_Wall);
-							$piclist = "";
-							foreach ($btype->require_building as $b) $piclist .= GetBuildingTypeLink($b,$f_x,$f_y);
-							JSAddInfoMessage_BuildError($btype,$f_x,$f_y,"$piclist muss direkt daneben sein");
-						break;
-						case kBuilding_Harbor:
-							$reqpic = "<img border=0 src=\"".g($gTerrainType[kTerrain_Sea]->gfx)."\">";
-							JSAddInfoMessage_BuildError($btype,$f_x,$f_y,"$reqpic muss in der nähe sein");
-						break;
-						default:
-							JSAddInfoMessage_BuildError($btype,$f_x,$f_y,"kann hier nicht gebaut werden");
+				$f_brushrad = 0; // building brushsize forced to 0
+				$fields = GetBrushFields($f_x,$f_y,$f_brushrad,100,$f_brush,$f_brushline,$f_brushlastx,$f_brushlasty);
+				foreach ($fields as $posarr) {
+					list($f_x,$f_y) = $posarr;
+					$x = $f_x;
+					$y = $f_y;
+					
+					// check other plans
+					if ($typeid == kBuilding_HQ && !isPositionInBuildableRange($f_x,$f_y)) {
+						JSAddInfoMessage_BuildError($btype,$f_x,$f_y,"momentan gesperrter Bereich, bitte nur zwischen ".$gGlobal["hq_min_x"].",".$gGlobal["hq_min_y"]." und ".$gGlobal["hq_max_x"].",".$gGlobal["hq_max_y"]." bauen");
+						continue;
+					} 
+					
+					// check other plans
+					if (OwnConstructionInProcess($f_x,$f_y)) {
+						JSAddInfoMessage_BuildError($btype,$f_x,$f_y,"hier ist bereits ein Bauplan");
+						continue;
 					}
-					continue;
-				}
+					// check build cross
+					if (!InBuildCross($f_x,$f_y,$gUser->id)) {
+						JSAddInfoMessage_BuildError($btype,$f_x,$f_y,"kein eigenes Gebäude in der Nähe");
+						continue;
+					}
+					// check req
+					if (!HasReq($btype->req_geb,$btype->req_tech,$gUser->id)) {
+						$anforderungen = GetBuildingTypeLink($btype,$f_x,$f_y,"<font color=\"red\"><b>Anforderungen</b></font>");
+						JSAddInfoMessage_BuildError($btype,$f_x,$f_y,"$anforderungen sind nicht erfüllt");
+						continue;
+					}
+					
+					// check nearby terrain
+					$terrain = sqlgetone("SELECT `type` FROM `terrain` WHERE `x` = ".$f_x." AND `y` = ".$f_y);
+					if ($btype->terrain_needed > 0 && $btype->terrain_needed != $terrain) {
+						$reqpic = "<img border=0 src=\"".g($gTerrainType[$btype->terrain_needed]->gfx)."\">";
+						JSAddInfoMessage_BuildError($btype,$f_x,$f_y,"kann nur auf $reqpic gebaut werden");
+						continue;
+					}
+					if ($gTerrainType[$terrain]->buildable == 0 && $btype->terrain_needed != $terrain) {
+						$reqpic = "<img border=0 src=\"".g($gTerrainType[$terrain]->gfx)."\">";
+						JSAddInfoMessage_BuildError($btype,$f_x,$f_y,"Gelände $reqpic ist nicht bebaubar");
+						continue;
+					}
+					
+					// check for blocking building
+					$blockerbuilding = sqlgetobject("SELECT * FROM `building` WHERE `x` = ".$f_x." AND `y` = ".$f_y);
+					if ($blockerbuilding) {
+						$reqpic = GetBuildingTypeLink($blockerbuilding->type,$f_x,$f_y,false,$blockerbuilding->user,$blockerbuilding->level);
+						JSAddInfoMessage_BuildError($btype,$f_x,$f_y,"hier befindet sich bereits ein Gebäude : ".$reqpic."");
+						continue;
+					}
+					
+					// check building requirements
+					if (sizeof($btype->exclude_building)>0 && 
+						GetNearBuilding($x,$y,$gUser->id,kBuildingRequirenment_ExcludeRadius,$btype->exclude_building)) {
+						$piclist = "";
+						foreach ($btype->exclude_building as $b) $piclist .= GetBuildingTypeLink($b,$f_x,$f_y);
+						JSAddInfoMessage_BuildError($btype,$f_x,$f_y,"$piclist darf nicht direkt daneben sein");
+						continue;
+					}
+					if (sizeof($btype->neednear_building)>0 && 
+						!GetNearBuilding($x,$y,$gUser->id,kBuildingRequirenment_NearRadius,$btype->neednear_building)) {
+						$piclist = "";
+						foreach ($btype->neednear_building as $b) $piclist .= GetBuildingTypeLink($b,$f_x,$f_y);
+						JSAddInfoMessage_BuildError($btype,$f_x,$f_y,"$piclist muss in der Nähe sein");
+						continue;
+					}
+					if (sizeof($btype->require_building)>0 && 
+						!GetNearBuilding($x,$y,$gUser->id,kBuildingRequirenment_NextToRadius,$btype->require_building)) {
+						$piclist = "";
+						foreach ($btype->require_building as $b) $piclist .= GetBuildingTypeLink($b,$f_x,$f_y);
+						JSAddInfoMessage_BuildError($btype,$f_x,$f_y,"$piclist muss direkt daneben sein");
+						continue;
+					}
+					
+					// final check, CanBuildHere() is main function also used by cron
+					if (!CanBuildHere($x,$y,$btype->id,$gUser->id)) {
+						switch ($btype->id) {
+							case kBuilding_Steg:
+								if (sizeof($btype->require_building) == 0) $btype->require_building = array(0=>kBuilding_Harbor,kBuilding_Steg);
+								$piclist = "";
+								foreach ($btype->require_building as $b) $piclist .= GetBuildingTypeLink($b,$f_x,$f_y);
+								JSAddInfoMessage_BuildError($btype,$f_x,$f_y,"$piclist muss direkt daneben sein");
+							break;
+							case kBuilding_SeaWall:
+							case kBuilding_SeaGate:
+								if (sizeof($btype->require_building) == 0) $btype->require_building = array(0=>kBuilding_SeaWall,kBuilding_Wall);
+								$piclist = "";
+								foreach ($btype->require_building as $b) $piclist .= GetBuildingTypeLink($b,$f_x,$f_y);
+								JSAddInfoMessage_BuildError($btype,$f_x,$f_y,"$piclist muss direkt daneben sein");
+							break;
+							case kBuilding_Harbor:
+								$reqpic = "<img border=0 src=\"".g($gTerrainType[kTerrain_Sea]->gfx)."\">";
+								JSAddInfoMessage_BuildError($btype,$f_x,$f_y,"$reqpic muss in der nähe sein");
+							break;
+							default:
+								JSAddInfoMessage_BuildError($btype,$f_x,$f_y,"kann hier nicht gebaut werden");
+						}
+						continue;
+					}
 
-				sql("LOCK TABLES `phperror` WRITE, `terrain` READ,`construction` WRITE,`sqlerror` WRITE,  `building` WRITE");
-			
-				//if this player has no building, then the hq is build imediatly
-				if(!UserHasBuilding($gUser->id,kBuilding_HQ) && $typeid == kBuilding_HQ && isPositionInBuildableRange(intval($f_x),intval($f_y))) {
-					$o = null;
-					$o->user = $gUser->id;
-					$o->x = intval($f_x);
-					$o->y = intval($f_y);
-					$o->hp = $gBuildingType[kBuilding_HQ]->maxhp;
-					$o->type = kBuilding_HQ;
-					
-					sql("INSERT INTO `building` SET ".obj2sql($o));
-					$gJSCommands[] = "parent.map.location.href = parent.map.location.href;";
-					$gJSCommands[] = "parent.navi.location.href = parent.navi.location.href;";
-				} else if ($typeid != kBuilding_HQ) {
-					$mycon = false;
-					$mycon->user = $gUser->id;
-					$mycon->x = intval($f_x);
-					$mycon->y = intval($f_y);
-					$mycon->type = $typeid;
-					
-					$mycon->priority = intval(sqlgetone("SELECT MAX(`priority`) FROM `construction` WHERE `user` = ".$gUser->id)) + 1;
-					$r = sql("SELECT `id` FROM `construction` WHERE `x`=".$mycon->x." AND `y`=".$mycon->y." AND `user`=".$mycon->user);
-					if(mysql_num_rows($r) == 0)	sql("INSERT INTO `construction` SET ".obj2sql($mycon));
-					$gJSCommands[] = "parent.map.JSInsertPlan(".$mycon->x.",".$mycon->y.",".$mycon->type.",0);";
+					sql("LOCK TABLES `phperror` WRITE, `terrain` READ,`construction` WRITE,`sqlerror` WRITE,  `building` WRITE");
+				
+					//if this player has no building, then the hq is build imediatly
+					if(!UserHasBuilding($gUser->id,kBuilding_HQ) && $typeid == kBuilding_HQ && isPositionInBuildableRange(intval($f_x),intval($f_y))) {
+						$o = null;
+						$o->user = $gUser->id;
+						$o->x = intval($f_x);
+						$o->y = intval($f_y);
+						$o->hp = $gBuildingType[kBuilding_HQ]->maxhp;
+						$o->type = kBuilding_HQ;
+						
+						sql("INSERT INTO `building` SET ".obj2sql($o));
+						$gJSCommands[] = "parent.map.location.href = parent.map.location.href;";
+						$gJSCommands[] = "parent.navi.location.href = parent.navi.location.href;";
+					} else if ($typeid != kBuilding_HQ) {
+						$mycon = false;
+						$mycon->user = $gUser->id;
+						$mycon->x = intval($f_x);
+						$mycon->y = intval($f_y);
+						$mycon->type = $typeid;
+						
+						$mycon->priority = intval(sqlgetone("SELECT MAX(`priority`) FROM `construction` WHERE `user` = ".$gUser->id)) + 1;
+						$r = sql("SELECT `id` FROM `construction` WHERE `x`=".$mycon->x." AND `y`=".$mycon->y." AND `user`=".$mycon->user);
+						if(mysql_num_rows($r) == 0)	sql("INSERT INTO `construction` SET ".obj2sql($mycon));
+						$gJSCommands[] = "parent.map.JSInsertPlan(".$mycon->x.",".$mycon->y.",".$mycon->type.",0);";
+					}
+					sql("UNLOCK TABLES");
 				}
-				sql("UNLOCK TABLES");
 			}
 		break;
 		case "cancel":
@@ -315,12 +320,18 @@ if (!isset($f_building) && !isset($f_army) && isset($f_do)) {
 					JSRefreshArmy($army);
 				}
 			} else {
-				$con = sqlgetobject("SELECT * FROM `construction` WHERE `x` = ".intval($f_x)." AND  `y` = ".intval($f_y)." AND `user` = ".$gUser->id);
-				if ($con) {
-					$con = CancelConstruction($con->id,$gUser->id);
+				$f_brushrad = 0; // building brushsize forced to 0
+				$fields = GetBrushFields($f_x,$f_y,$f_brushrad,100,$f_brush,$f_brushline,$f_brushlastx,$f_brushlasty);
+				foreach ($fields as $posarr) {
+					list($f_x,$f_y) = $posarr;
+				
+					$con = sqlgetobject("SELECT * FROM `construction` WHERE `x` = ".intval($f_x)." AND  `y` = ".intval($f_y)." AND `user` = ".$gUser->id);
 					if ($con) {
-						echo "Bauplan abgebrochen <!-- 2 -->";
-						$gJSCommands[] = "parent.map.JSRemovePlan(".intval($f_x).",".intval($f_y).");";
+						$con = CancelConstruction($con->id,$gUser->id);
+						if ($con) {
+							echo "Bauplan abgebrochen <!-- 2 -->";
+							$gJSCommands[] = "parent.map.JSRemovePlan(".intval($f_x).",".intval($f_y).");";
+						}
 					}
 				}
 			}

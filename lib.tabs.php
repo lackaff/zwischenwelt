@@ -71,35 +71,39 @@ function GenerateTabs ($cssclass,$tabs,$corner="",$jschangecallback=false,$selec
 
 
 // for large quantities of tabs
-function GenerateTabsMultiRow ($cssclass,$tabs,$max_per_row,$selected=0) {
+function GenerateTabsMultiRow ($cssclass,$tabs,$max_per_row,$selected=0,$corner="",$jschangecallback=false) {
 	global $gTabPaneNumber;
 	$anzahl_tabs = count($tabs);
 	rob_ob_start();
 	?>
 	<SCRIPT LANGUAGE="JavaScript" type="text/javascript"><!--
 	function MultiTabPane<?=$gTabPaneNumber?>Activate (tabnum) {
-		<?php if ($jschangecallback) {?> <?=$jschangecallback?>(tabnum); <?php }?>
-		var i,head,pane;
+		var i,head,pane,nochange = false;
 		for (i=0;i<<?=$anzahl_tabs?>;++i) {
 			head = document.getElementById("tabhead<?=$gTabPaneNumber?>_"+i);
 			pane = document.getElementById("tabpane<?=$gTabPaneNumber?>_"+i);
 			if (head.className == "activemultitab") {
-				if (i == tabnum) return; // nothing to activate
-				head.className = "inactivemultitab";
-				pane.style.display = "none";
+				if (i == tabnum) nochange = true; // nothing to activate
+				if (!nochange) {
+					head.className = "inactivemultitab";
+					pane.style.display = "none";
+				}
 			}
 		}
-		head = document.getElementById("tabhead<?=$gTabPaneNumber?>_"+tabnum);
-		pane = document.getElementById("tabpane<?=$gTabPaneNumber?>_"+tabnum);
-		head.className = "activemultitab";
-		pane.style.display = "block";
+		if (!nochange) {
+			head = document.getElementById("tabhead<?=$gTabPaneNumber?>_"+tabnum);
+			pane = document.getElementById("tabpane<?=$gTabPaneNumber?>_"+tabnum);
+			head.className = "activemultitab";
+			pane.style.display = "block";
+		}
+		<?php if ($jschangecallback) {?> <?=$jschangecallback?>(tabnum); <?php }?>
 	}
 	//-->
 	</SCRIPT>
 	<div class="<?=$cssclass?>">
 	<div class="multitabs">
 		<div class="multitabheader">
-		<table>
+		<table border=0>
 		<tr>
 			<?php $i = 0; foreach ($tabs as $id => $tupel) {?>
 				<th name="tabhead<?=$gTabPaneNumber?>" id="tabhead<?=$gTabPaneNumber?>_<?=$i?>"
@@ -109,6 +113,9 @@ function GenerateTabsMultiRow ($cssclass,$tabs,$max_per_row,$selected=0) {
 					</tr><tr>
 				<?php } // endif?>
 			<?php ++$i; } // endforeach?>
+			<?php if (!empty($corner)) {?>
+			<th nowrap><?=$corner?></th>
+			<?php } // endif?>
 		</tr>
 		</table>
 		</div>

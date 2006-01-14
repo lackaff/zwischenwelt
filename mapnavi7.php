@@ -23,6 +23,10 @@ if (isset($f_regentypes)) {
 	//@unlink("stats/".kTypeCacheFile);
 	require_once("generate_types.php");
 	require_once(kTypeCacheFile);
+	// the following affects javascript version(for mapjs7_globals.php.js->types) and stylesheet
+	// $gGlobal["typecache_version_adder"]
+	$n = "typecache_version_adder";
+	SetGlobal($n,intval(isset($gGlobal[$n])?$gGlobal[$n]:0)+1);
 }
 
 ?>
@@ -165,16 +169,17 @@ if (isset($f_regentypes)) {
 		ShowList("gotocat3",sublist);
 	}
 	
+	var gBrush = 0;
+	var gBrushLineOn = false;
+	var gBrushLastX = 0;
+	var gBrushLastY = 0;
 	var gSID = "<?=$gSID?>";
 	var curtool = 0;
 	var curtoolparam = 0;
 	var bigmap = null;
-	var lineinit = false;
-	var linex = 0;
-	var liney = 0;
 	var gDummyFrameCycler = 0;
 	kDummyFrames = <?=kDummyFrames?>;
-	kNaviJSMapVersion = <?=intval(kJSMapVersion)?>;
+	kNaviJSMapVersion = <?=intval(kJSMapVersion)+intval($gGlobal["typecache_version_adder"])?>;
 	function GetkNaviJSMapVersion () {
 		return kNaviJSMapVersion;
 	}
@@ -183,11 +188,13 @@ if (isset($f_regentypes)) {
 	}
 	function updatepos (x,y) {
 		document.getElementsByName("pos")[0].value = x+","+y;
+		SetBrushBorder();
 	}
 	function settool (tool,param,gfx) {
 		curtool = tool;
 		curtoolparam = param;
 		document.getElementsByName("curtoolpic")[0].src = gfx;
+		StopBrushLine();
 	}
 	function resettool () {
 		//if (curtool == 3 || curtool == 4)
@@ -196,6 +203,7 @@ if (isset($f_regentypes)) {
 	}
 	function addpatch (text) {
 		//if (document.getElementsByName("patchcheck")[0].checked)
+		//if (document.getElementsByName("grassonly")[0].checked)
 		//	document.getElementsByName("patch")[0].value += text;
 	}
 	function mapclicktool_hasoverlay () {
@@ -203,6 +211,8 @@ if (isset($f_regentypes)) {
 		if (curtool == 2) return true;
 		if (curtool == 3) return true;
 		if (curtool == 4) return true;
+		if (curtool == 5) return true;
+		if (curtool >= 6) return true;
 		return false;
 	}
 	function mapclicktool (x,y,activearmyid) {
@@ -226,16 +236,13 @@ if (isset($f_regentypes)) {
 				urladd = "&do=build&build["+curtoolparam+"]=bauen";
 			break;
 			case 2:
-				urladd = "&do=adminsetterrain&terrain="+curtoolparam+"&brushrad="+document.getElementsByName("brushrad")[0].value;
+				urladd = "&do=adminsetterrain&terrain="+curtoolparam;
 			break;
 			case 3:
 				urladd = "&do=setwaypoint&army="+army+"&button_wp=1";
 			break;
 			case 4:
 				urladd = "&do=setwaypoint&army="+army+"&button_route=1";
-			break;
-			case 20:
-				urladd = "&do=quickmagic&spellid="+curtoolparam;
 			break;
 			case 5:
 				urladd = "&do=cancel&cancel_wp_armyid="+army;
@@ -248,7 +255,6 @@ if (isset($f_regentypes)) {
 			break;
 			case 7:
 				urladd = "&do=adminsetarmy&unit="+curtoolparam+
-					"&brushrad="+document.getElementsByName("brushrad")[0].value+
 					"&anzahl="+document.getElementsByName("sellevel")[0].value+
 					"&user="+document.getElementsByName("seluser")[0].value+
 					"&quest="+document.getElementsByName("selquest")[0].value;
@@ -256,7 +262,6 @@ if (isset($f_regentypes)) {
 			case 8:
 				urladd = "&do=adminsetitem&type="+curtoolparam+
 					"&anzahl="+document.getElementsByName("sellevel")[0].value+
-					"&brushrad="+document.getElementsByName("brushrad")[0].value+
 					"&quest="+document.getElementsByName("selquest")[0].value;
 			break;
 			case 11:
@@ -274,23 +279,29 @@ if (isset($f_regentypes)) {
 			case 15:
 				urladd = "&do=adminclear";
 			break;
+			case 20:
+				urladd = "&do=quickmagic&spellid="+curtoolparam;
+			break;
 		}
-		if (document.getElementsByName("line")[0] != null && document.getElementsByName("line")[0].checked) {
-			if (lineinit)
-				urladd += "&linex="+linex+"&liney="+liney;
-			if (lineinit && !document.getElementsByName("line2")[0].checked)
-					lineinit = false;
-			else	lineinit = true;
-			linex = x;
-			liney = y;
-		} else lineinit = false;
+		
+		// add brush info to query
+		urladd += "&brush="+gBrush+"&brushline="+(gBrushLineOn?1:0)+"&brushlastx="+gBrushLastX+"&brushlasty="+gBrushLastY;
+		if (document.getElementsByName("brushrad").length > 0)
+				urladd += "&brushrad="+document.getElementsByName("brushrad")[0].value;
+		else	urladd += "&brushrad=0"; // only terraformer and admins
+		if (document.getElementsByName("brushdensity").length > 0)
+				urladd += "&brushdensity="+document.getElementsByName("brushdensity")[0].value;
+		else	urladd += "&brushdensity=100"; // only terraformer and admins
+		if (document.getElementsByName("grassonly").length > 0)
+				urladd += "&brushgrassonly="+(document.getElementsByName("grassonly")[0].checked?"1":"0");
+		else	urladd += "&brushgrassonly=0"; // only terraformer and admins
 		
 		//parent.info.location.href = "info/info.php?blind=1&x="+x+"&y="+y+urladd+"&sid=<?=$gSID?>";
 		// ohne baseurl kommt hier der merkwürdige fehler, dass sich mehrere info/ ansammeln...
 		// vermutlich weil die funktion ueber das map frame aufgerufen wird -> browserbug ?
 		var url = "<?=BASEURL?>info/info.php?x="+x+"&y="+y+urladd+"&sid=<?=$gSID?>";
 		//alert(url);
-		if (curtool == 0 || curtool == 20) 
+		if (curtool == 0 || curtool == 20 || 1) 
 				parent.info.location.href = url;
 		else {
 			<?php for ($i=0;$i<kDummyFrames;++$i) {?>
@@ -298,10 +309,20 @@ if (isset($f_regentypes)) {
 			<?php } // endforeach?>
 		}
 		
+		// update the brush tool
+		if (curtool == 1 || curtool == 2 || curtool == 5 || (curtool >= 6 && curtool <= 15)) {
+			if (gBrushLineOn) {
+				if (gBrush == 1 || gBrush == 3) StopBrushLine();
+			} else {
+				if (gBrush != 0) StartBrushLine();
+			}
+		}
+		gBrushLastX = x;
+		gBrushLastY = y;
+		
 		gDummyFrameCycler++;
 		if (gDummyFrameCycler >= kDummyFrames) gDummyFrameCycler = 0;
 	}
-	function clearline () { lineinit = false; }
 	function myreload () { 
 		parent.map.location.href = parent.map.location.href;
 		parent.navi.location.href = parent.navi.location.href;
@@ -341,6 +362,28 @@ if (isset($f_regentypes)) {
 	gBigMapWin = false; // bigmap is opened from navi, so it can be called even after normal map scroll
 	function OpenBigMap(a,b) { gBigMapWin = window.open(a,b); }
 	function GetBigMap() { return gBigMapWin; }
+	function BrushAdd (add) {
+		// brushsize = brushrad
+		document.getElementsByName('brushrad')[0].value = 
+			Math.max(0,parseInt(document.getElementsByName('brushrad')[0].value) + add);
+	}
+	function SetBrushBorder () {
+		parent.map.SetBorder(gBrushLineOn?"red":"white");
+	}
+	function StartBrushLine () {
+		if (gBrushLineOn) return;
+		gBrushLineOn = true;
+		SetBrushBorder();
+	}
+	function StopBrushLine () {
+		if (!gBrushLineOn) return;
+		gBrushLineOn = false;
+		SetBrushBorder();
+	}
+	function ChangeBrush (newbrushnum) {
+		StopBrushLine();
+		gBrush = newbrushnum;
+	}
 //-->
 </SCRIPT>
 </head><body onLoad="MyOnLoad()">
@@ -469,7 +512,6 @@ foreach ($candospells as $group => $arr) if (count($arr) > 0) {
 if ($gUser->admin || intval($gUser->flags) & kUserFlags_TerraFormer) {
 	$head = "<img src=\"".g("icon/admin.png")."\">";
 	$content = "<div class=\"mapnavitool_terraform\">\n";
-	$content .= "Landschaftsgestaltung: Pinselgrösse:<INPUT TYPE=\"text\" NAME=\"brushrad\" VALUE=\"0\" style=\"width:30px\"><br>\n";
 	foreach($gTerrainType as $o)
 		$content .= NaviTool(g($o->gfx,"ns"),2,$o->id,$o->name,"navtoolicon");
 	$content .= "</div>\n";
@@ -510,6 +552,51 @@ echo GenerateTabs("mapnavitools",$gNaviToolTabs,$tabcorner,"ToolTabChange");
 echo "</td></tr></table>\n"; // cage
 ?>
 
+
+<?php 
+$brushtabs = array();
+rob_ob_start(); ?>
+<img border=0 src="<?=g("brush/brush_normal.png")?>" alt="<?=$tip="Jeder Click betrifft nur ein Feld"?>" title="<?=$tip?>">
+<?php $brushtabs[] = array(rob_ob_end(),""); rob_ob_start();?>
+<img border=0 src="<?=g("brush/brush_lines.png")?>" alt="<?=$tip="Jeder ZWEITE Click erzeugt eine Linie zum letzten"?>" title="<?=$tip?>">
+<?php $brushtabs[] = array(rob_ob_end(),""); rob_ob_start();?>
+<img border=0 src="<?=g("brush/brush_linestrip.png")?>" alt="<?=$tip="Jeder Click erzeugt eine Linie zum letzten"?>" title="<?=$tip?>">
+<?php $brushtabs[] = array(rob_ob_end(),""); rob_ob_start();?>
+<img border=0 src="<?=g("brush/brush_rects.png")?>" alt="<?=$tip="Jeder zweite Click füllt ein Rechteck zum letzten"?>" title="<?=$tip?>">
+<?php $brushtabs[] = array(rob_ob_end(),""); rob_ob_start();?>
+<?php if ($gUser->admin || intval($gUser->flags) & kUserFlags_TerraFormer) {?>
+	<table border=0 cellspacing=0 cellpadding=0>
+	<tr>
+	<td><img border=0 src="<?=g("brush/brush_size.png")?>" alt="<?=$tip="Pinselgrösse (Nur für Landschaft)"?>" title="<?=$tip?>"></td>
+	<td><INPUT TYPE="text" NAME="brushrad" VALUE="0" style="width:30px"></td>
+	<td>
+		<table border=0 cellspacing=2 cellpadding=2>
+		<tr>
+			<td><a href="javascript:BrushAdd(+1)"><img border=0 src="<?=g("plus.png")?>" alt="" title=""></a></td>
+		</tr><tr>
+			<td><a href="javascript:BrushAdd(-1)"><img border=0 src="<?=g("minus.png")?>" alt="" title=""></a></td>
+		</tr>
+		</table>
+	</td>
+	<td><img border=0 src="<?=g("brush/brush_density.png")?>" alt="<?=$tip="Pinseldichte (Nur für Landschaft)"?>" title="<?=$tip?>"></td>
+	<td>
+	<select name="brushdensity">
+		<?php for ($i=100;$i>0;$i-=10) {?>
+		<option value="<?=$i?>"><?=$i?>%</option>
+		<?php } // endforeach?>
+	</select>
+	</td><td>
+	<input type="checkbox" name="grassonly" value="1" checked>
+	<img border=0 src="<?=g($gTerrainType[kTerrain_Grass]->gfx)?>" alt="<?=$tip="nur auf Grass bearbeiten"?>" title="<?=$tip?>">
+	</td>
+	</tr>
+	</table>
+<?php } // endif?>
+<?php $corner = trim(rob_ob_end());
+echo GenerateTabsMultiRow("brushtabs",$brushtabs,8,0,$corner,"ChangeBrush");
+?>
+
+
 <?php if ($gUser->admin) {?> 
 	<?php $quests = sqlgettable("SELECT * FROM `quest` ORDER BY `start`");?>
 	<SELECT NAME="selquest">
@@ -521,16 +608,14 @@ echo "</td></tr></table>\n"; // cage
 		<OPTION VALUE=0>-no_owner-</OPTION>
 		<?php PrintObjOptions($gAllUsers,"id","name")?>
 	</SELECT>
-	line:<INPUT TYPE="checkbox" NAME="line" onChange="clearline()" VALUE="1">
-	<INPUT TYPE="checkbox" NAME="line2" onChange="clearline()" VALUE="1">
 	<br>
-	<a href="<?=Query("?regencss=1&sid=?")?>">(css)</a>
-	<a href="<?=Query("?regennwse=1&sid=?")?>">(nwse)</a>
-	<a href="<?=Query("?regentypes=1&sid=?")?>">(types)</a>
+	<a href="<?=Query("?regentypes=1&sid=?")?>">(clear type cache)</a>
 	<?php if (0) {?><a href="<?=Query("?createbodenschatz=1&sid=?")?>">(bodenschatz)</a><?php }?>
 	
 <?php }?> 
 <a href="javascript:myreload()"><img border=0 src="<?=g("icon/reload.png")?>" alt="reload" title="reload"></a>
+
+
 
 </body>
 </html>

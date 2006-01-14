@@ -23,8 +23,9 @@ require_once(kTypeCacheFile);
 //vardump($gTerrainType);
 
 function GetZWStylePath () {
+	global $gGlobal;
 	// todo : replace by neutral/good/evil, or user-defined
-	return kStyleServerPath.kZWStyle_Neutral."?time=".time(); // TODO : HACK : only for style dev..
+	return kStyleServerPath.kZWStyle_Neutral."?cssv=".(intval(kStyleSheetVersion)+intval($gGlobal["typecache_version_adder"]));
 }
 
 function AdminBtn ($title,$url) {
@@ -791,6 +792,82 @@ function TablesUnlock(){
 	if($gTableLockCounter == 0)sql("UNLOCK TABLES");
 }
 
+// not currently used
+function remove_from_array ($needle,$haystack) {
+	$res = array();
+	foreach ($haystack as $key => $val) if ($val !== $needle) $res[$key] = $val;
+	return $res;
+}
+
+// implements brush functionality from mapnavi to info/info.php and info/infoadmincmd.php
+// lineon=false->force normal, irgnore x2,y2
+// linetrue=false : start at x2y2, end at x1y1, remove first circle
+// brushmode=0:normal;=1,=2:line;=3:rect
+// returns an array with all affected coordinates
+function GetBrushFields ($x1,$y1,$brushrad=0,$brushdensity=100,$brushmode=0,$lineon=false,$x2=0,$y2=0) {
+	$x1 = intval($x1);
+	$y1 = intval($y1);
+	$x2 = intval($x2);
+	$y2 = intval($y2);
+	$brushdensity = intval($brushdensity);
+	$brushrad = intval($brushrad);
+	$brushmode = intval($brushmode);
+	$r2 = $brushrad + 0.5; $r2 = $r2 * $r2;
+	
+	//if ($brushmode == 1 && !$lineon) return;
+	if ($brushmode == 3 && !$lineon) return array(); // only draw rect at full click
+	
+	$debug = false;
+	if ($debug) echo "GetBrushFields($x1,$y1,$brushrad,$brushmode,$lineon,$x2,$y2):";
+	
+	$res = array();
+	$firstdot = array();
+	// calc the first dot, so it can be left out of the following line
+	if ($brushmode == 0 || $brushmode == 1 || $brushmode == 2) {
+		// draw circle
+		$bx = $lineon?$x2:$x1;
+		$by = $lineon?$y2:$y1;
+		if ($debug) echo "draw circle;";
+		for ($x=-$brushrad;$x<=$brushrad;$x++)
+		for ($y=-$brushrad;$y<=$brushrad;$y++) {
+			if ($x*$x+$y*$y > $r2) continue;
+			$firstdot[] = array($bx+$x,$by+$y);
+		}
+	}
+	
+	
+	if ($brushmode == 0 || !$lineon) {
+		$res = $firstdot;
+	} else if ($brushmode == 3) {
+		// draw rect
+		if ($debug) echo "draw rect;";
+		for ($x=$x2;$x<=max($x1,$x2) && $x>=min($x1,$x2);$x+=($x1>=$x2)?1:-1)
+		for ($y=$y2;$y<=max($y1,$y2) && $y>=min($y1,$y2);$y+=($y1>=$y2)?1:-1)
+			$res[] = array($x,$y);
+	} else {
+		// draw line
+		if ($debug) echo "draw line;";
+		$bx = $x2;
+		$by = $y2;
+		do {
+			for ($x=-$brushrad;$x<=$brushrad;$x++)
+			for ($y=-$brushrad;$y<=$brushrad;$y++) {
+				if ($x*$x+$y*$y > $r2) continue;
+				$new = array($bx+$x,$by+$y);
+				if (!in_array($new,$res) && !in_array($new,$firstdot)) $res[] = $new;
+			}
+			if ($bx == $x1 && $by == $y1) break;
+			list($bx,$by) = GetNextStep($bx,$by,$x2,$y2,$x1,$y1);
+		} while (1);
+	}
+	// if density is used (<100) then break up the solid brush
+	if ($brushdensity < 100) {
+		$softened = array();
+		foreach ($res as $pos) if (rand(1,100) <= $brushdensity) $softened[] = $pos;
+		return $softened;
+	}
+	return $res;
+}
 
 
 /**

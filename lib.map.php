@@ -190,6 +190,7 @@ function RegenSurroundingNWSE ($x,$y,$report_css_change=false) {
 
 // TODO: DOOMED, OBSOLETE
 function RegenAreaNWSE ($x1,$y1,$x2,$y2,$report_css_change=false) {
+	return array(); // DEACTIVATED
 	$xylimit = "`x` >= ".intval($x1)." AND `x` <= ".intval($x2)." AND 
 				`y` >= ".intval($y1)." AND `y` <= ".intval($y2);
 	

@@ -219,59 +219,54 @@ if (!isset($f_building) && !isset($f_army) && isset($f_do)) switch ($f_do) {
 			if (!($gUser->admin || (intval($gUser->flags) & kUserFlags_TerraFormer)))break;
 			if ($f_terrain != 0) {
 				require_once("../lib.map.php");
+				
+				// determine brushed area
 				$brushrad = min(20,max(0,intval($f_brushrad)));
-				echo "brushrad ".$brushrad;
-				$myterrain = false;
-				$myterrain->type = intval($f_terrain);
+				$fields = GetBrushFields($f_x,$f_y,$f_brushrad,$f_brushdensity,$f_brush,$f_brushline,$f_brushlastx,$f_brushlasty);
+				$minx = $f_x;$maxx = $f_x;
+				$miny = $f_y;$maxy = $f_y;
+				foreach ($fields as $posarr) {
+					list($x,$y) = $posarr;
+					if ($x < $minx) $minx = $x; if ($x > $maxx) $maxx = $x;
+					if ($y < $miny) $miny = $y; if ($y > $maxy) $maxy = $y;
+				}
 				
-				$f_x = intval($f_x);$f_y = intval($f_y);
-				$minx = ($f_x);$miny = ($f_y);
-				$maxx = ($f_x);$maxy = ($f_y);
-				$endx = isset($f_linex)?intval($f_linex):intval($f_x);
-				$endy = isset($f_liney)?intval($f_liney):intval($f_y);
-				$startx = $f_x;
-				$starty = $f_y;
+				// check terraform-safety
+				$terraform_blocked = false;
+				if (!$gUser->admin) {
+					if (sqlgetone("SELECT 1 FROM `building` WHERE 
+						`x`>=(".($minx-kTerraFormer_SicherheitsAbstand).") AND 
+						`x`<=(".($maxx+kTerraFormer_SicherheitsAbstand).") AND
+						`y`>=(".($miny-kTerraFormer_SicherheitsAbstand).") AND
+						`y`<=(".($maxy+kTerraFormer_SicherheitsAbstand).") AND `user`>0 LIMIT 1"))
+						$terraform_blocked = true;
+					else if (sqlgetone("SELECT 1 FROM `army` WHERE 
+						`x`>=(".($minx-kTerraFormer_SicherheitsAbstand).") AND 
+						`x`<=(".($maxx+kTerraFormer_SicherheitsAbstand).") AND
+						`y`>=(".($miny-kTerraFormer_SicherheitsAbstand).") AND
+						`y`<=(".($maxy+kTerraFormer_SicherheitsAbstand).") AND `user`>0 LIMIT 1"))
+						$terraform_blocked = true;
+				}
 				
-				$patch = array();
-				do {
-					$minx = min($minx,$f_x-$brushrad-1);$miny = min($miny,$f_y-$brushrad-1);
-					$maxx = max($maxx,$f_x+$brushrad+1);$maxy = max($maxy,$f_y+$brushrad+1);
-					if(!$gUser->admin){
-						//nur terraformer kein admin, daher darf er nur un unbesiedeltem gebiet bauen
-						$countb = sqlgetone("SELECT COUNT(*) FROM `building` WHERE 
-							`x`>=(".($minx-kTerraFormer_SicherheitsAbstand).") AND 
-							`x`<=(".($maxx+kTerraFormer_SicherheitsAbstand).") AND
-							`y`>=(".($miny-kTerraFormer_SicherheitsAbstand).") AND
-							`y`<=(".($maxy+kTerraFormer_SicherheitsAbstand).") AND `user`>0");
-						$counta = sqlgetone("SELECT COUNT(*) FROM `army` WHERE 
-							`x`>=(".($minx-kTerraFormer_SicherheitsAbstand).") AND 
-							`x`<=(".($maxx+kTerraFormer_SicherheitsAbstand).") AND
-							`y`>=(".($miny-kTerraFormer_SicherheitsAbstand).") AND
-							`y`<=(".($maxy+kTerraFormer_SicherheitsAbstand).") AND `user`>0");
-						//echo "[b=$countb a=$counta]";
-						 if($countb>0 || $counta>0)break;
-					}
-					for ($x=-$brushrad;$x<=$brushrad;$x++)
-					for ($y=-$brushrad;$y<=$brushrad;$y++) {
-						if (sqrt($x*$x+$y*$y) > $brushrad + 0.5) continue;
-						$myterrain->x = intval($f_x)+$x;
-						$myterrain->y = intval($f_y)+$y;
-						$myterrain->creator = $gUser->id;
-						sql("DELETE FROM `terrain` WHERE `x` = ".$myterrain->x." AND `y` = ".$myterrain->y);
-						//sql("DELETE FROM `building` WHERE `x` = ".$myterrain->x." AND `y` = ".$myterrain->y);
-						if (sqlgetone("SELECT 1 FROM `building` WHERE `x` = ".$myterrain->x." AND `y` = ".$myterrain->y." LIMIT 1"))
-							continue;
+				// report error or create terrain
+				if ($terraform_blocked) {
+					JSAddInfoMessage("terraformer sicherheitsabstand wurde unterschritten<br>");
+				} else {
+					$myterrain = false;
+					$myterrain->type = intval($f_terrain);
+					$myterrain->creator = $gUser->id;
+					foreach ($fields as $posarr) {
+						list($myterrain->x,$myterrain->y) = $posarr;
+						list($x,$y) = $posarr;
+						if (isset($f_brushgrassonly) && $f_brushgrassonly == 1) {
+							if (kTerrain_Grass != cMap::StaticGetTerrainAtPos($x,$y)) continue;
+							if (sqlgetone("SELECT 1 FROM `building` WHERE `x` = ".$x." AND `y` = ".$y." LIMIT 1")) continue;
+						}
+						sql("DELETE FROM `terrain` WHERE `x` = ".$x." AND `y` = ".$y);
 						sql("INSERT INTO `terrain` SET ".obj2sql($myterrain));
-						$patch[] = "t,".$myterrain->x.",".$myterrain->y.",".$myterrain->type;
-						JSRefreshCell($myterrain->x,$myterrain->y,true); // TODO : replace by js brush
+						JSRefreshCell($x,$y,true);
 					}
-					if ($f_x == $endx && $f_y == $endy) break;
-					else list($f_x,$f_y) = GetNextStep($f_x,$f_y,$startx,$starty,$endx,$endy);
-				} while (true) ;
-				
-				$cssclassarr = RegenAreaNWSE($minx,$miny,$maxx,$maxy,true);
-				// TODO : implement brush,lines...
-				// parent.map.JSTerrainBrush(intval($f_x),intval($f_y),intval($f_terrain),$brushrad);
+				}
 			}
 		break;
 		case "adminsetbuilding":// admin command

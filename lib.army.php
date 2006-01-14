@@ -392,7 +392,7 @@ class cArmy {
 		*/
 		
 		if($user && $army) {
-			if ($debug) foreach($gRes as $n=>$f) echo $$f.","; echo " begin<br>";
+			if ($debug) { foreach($gRes as $n=>$f) echo $$f.","; echo " begin<br>"; }
 			
 			// limit by silo (guild+user) capacity   or  available ressources (user only, not guild)
 			foreach($gRes as $n=>$f) {
@@ -406,7 +406,7 @@ class cArmy {
 				}
 			}
 			
-			if ($debug) foreach($gRes as $n=>$f) echo $$f.","; echo " after silo<br>";
+			if ($debug) { foreach($gRes as $n=>$f) echo $$f.","; echo " after silo<br>"; }
 			
 			// limit by army capacity
 			$take_out = false;
@@ -416,7 +416,7 @@ class cArmy {
 				$army_max_take -= $$f;
 			}
 			
-			if ($debug) foreach($gRes as $n=>$f) echo $$f.","; echo " end <br>";
+			if ($debug) { foreach($gRes as $n=>$f) echo $$f.","; echo " end <br>"; }
 			
 			$msg = array();
 			

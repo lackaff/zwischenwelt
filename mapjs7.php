@@ -121,8 +121,8 @@ $xylimit = "`x` >= ".($gLeft-1)." AND `x` < ".($gLeft+$gCX+1)." AND
 			`y` >= ".($gTop-1)." AND `y` < ".($gTop+$gCY+1);
 			
 // produce session-independent querry, to enable caching
-$jsparam = "v2=".kJSMapVersion;
-$styleparam = "?v=8";
+$jsparam = "v2=".(intval(kJSMapVersion)+intval($gGlobal["typecache_version_adder"]));
+$styleparam = "?v=".(8+intval($gGlobal["typecache_version_adder"]));
 if ($gUser->usegfxpath || $gUser->race != 1)
 	$styleparam .= "&uid=".$gUser->id;
 if ($gUser->usegfxpath) 
@@ -142,7 +142,7 @@ if($gUser && $gUser->usegfxpath && !empty($gUser->gfxpath)){
 <script src="mapjs7_core.js?<?=$jsparam?>" type="text/javascript"></script>
 <script src="<?="mapjs7_globals.js.php".$styleparam."&".$jsparam?>" type="text/javascript"></script>
 <SCRIPT LANGUAGE="JavaScript" type="text/javascript"><!--
-kBaseJSMapVersion = <?=intval(kJSMapVersion)?>;
+kBaseJSMapVersion = <?=intval(kJSMapVersion)+intval($gGlobal["typecache_version_adder"])?>;
 kBaseUrl = "<?=BASEURL?>";
 kMapScript = "<?=kMapScript?>";
 gCX = <?=intval($gCX)?>;
