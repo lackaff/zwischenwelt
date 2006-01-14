@@ -301,7 +301,7 @@ if (isset($f_regentypes)) {
 		// vermutlich weil die funktion ueber das map frame aufgerufen wird -> browserbug ?
 		var url = "<?=BASEURL?>info/info.php?x="+x+"&y="+y+urladd+"&sid=<?=$gSID?>";
 		//alert(url);
-		if (curtool == 0 || curtool == 20 || 1) 
+		if (curtool == 0 || curtool == 20) 
 				parent.info.location.href = url;
 		else {
 			<?php for ($i=0;$i<kDummyFrames;++$i) {?>
