@@ -24,7 +24,7 @@ $info_message = ""; //ausgabevariable fuer z.b. spells
 
 function JSAddInfoMessage ($html) {
 	global $gJSCommands;
-	$gJSCommands[] = "parent.info.AddInfoMessage(\"".addslashes($html)."\");";
+	$gJSCommands[] = "if (parent.info.AddInfoMessage) parent.info.AddInfoMessage(\"".addslashes($html)."\");";
 }
 
 
