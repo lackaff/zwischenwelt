@@ -2,7 +2,7 @@ INSERT INTO `global` ( `id` , `name` , `value` )
 VALUES ('', 'wb_max_gp', '60000'), ('', 'gp_pts_ratio', '1000'), ('', 'wb_paybacklimit', '80000'), ('', 'wb_payback_perc', '5');
 INSERT INTO `global` ( `id` , `name` , `value` ) 
 VALUES ('', 'prod_slots_runes', '100'),('', 'prod_slots_stone', '10'),
-('', 'prod_slots_metal', '10'),('', 'prod_slots_limber', '10'),('', 'prod_slots_food', '10');
+('', 'prod_slots_metal', '10'),('', 'prod_slots_lumber', '10'),('', 'prod_slots_food', '10');
 
 CREATE TABLE `terrainpatchtype` (
 `id` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
