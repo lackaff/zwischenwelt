@@ -180,12 +180,11 @@ function setTerrain($x,$y,$type){
 	$y = intval($y);
 	$type = intval($type);
 	
-	$oldtype = sql("SELECT `type` FROM `terrain` WHERE `x`=($x) AND `y`=($y)");
-	
+	$oldtype = cMap::StaticGetTerrainAtPos($x,$y);
 	if($oldtype == $type)return;
 	
-	if(mysql_affected_rows() > 0)sql("UPDATE `terrain` SET `type`=$type WHERE `x`=($x) AND `y`=($y)");
-	else {
+	sql("UPDATE `terrain` SET `type`=$type WHERE `x`=($x) AND `y`=($y)");
+	if (mysql_affected_rows() <= 0) {
 		$o = null;
 		$o->x = $x;$o->y = $y;$o->type = $type;
 		sql("INSERT INTO `terrain` SET ".obj2sql($o));

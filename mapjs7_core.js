@@ -135,7 +135,7 @@ function JSInsertItem (x,y,type,amount) {
 	res.amount = amount;
 	gItems[gItems.length] = res;
 }
-function JSBuildingUpdate (x,y,type,user,level,hp,construction,jsflags) {
+function JSBuildingUpdate (x,y,type,user,level,hp,construction,jsflags,unitstxt) {
 	if (!gBig && gBigMapWindow && !gBigMapWindow.closed) gBigMapWindow.JSBuildingUpdate(x,y,type,user,level,hp,construction,jsflags);
 	if (y-gTop+1 < 0 || y-gTop+1 >= gCY+2 || x-gLeft+1 < 0 || x-gLeft+1 >= gCX+2) return;
 	var res = new Object();
@@ -147,6 +147,7 @@ function JSBuildingUpdate (x,y,type,user,level,hp,construction,jsflags) {
 	res.hp = hp;
 	res.construction = construction;
 	res.jsflags = jsflags;
+	res.units = ParseTypeAmountList(unitstxt);
 	gBuildingsCache[y-gTop+1][x-gLeft+1] = res;
 }
 
@@ -194,7 +195,8 @@ function jsParseBuildings () {
 		res.level = arr[4];
 		res.hp = arr[5];
 		res.construction = arr[6];
-		res.jsflags = arr[7];			
+		res.jsflags = arr[7];	
+		res.units = ParseTypeAmountList(arr[8]);		
 		gBuildingsCache[res.y-gTop+1][res.x-gLeft+1] = res;
 	}
 }
@@ -306,6 +308,7 @@ function VersionCheckBase () {
 function VersionCheckNavi () {
 	var naviframe = GetNaviFrame();
 	if (!naviframe) return true;
+	if (!naviframe.GetkNaviJSMapVersion) return true;
 	var naviversion = naviframe.GetkNaviJSMapVersion();
 	if (kCoreJSMapVersion == naviversion) return true;
 	alert("Update der JavaScriptKarte (Navi von v"+naviversion+" auf v"+kCoreJSMapVersion+"), bitte neu einloggen...");
@@ -615,6 +618,11 @@ function GetCellHTML (relx,rely) {
 			layers[layers.length] = GetBuildingPic(building,relx,rely);
 			if (building.user > 0 && gUsers[building.user] && gBuildingType[building.type].border && gMapMode!=kJSMapMode_Plan && gMapMode!=kJSMapMode_Bauzeit) 
 				backgroundcolor = gUsers[building.user].color;
+			if (gBuildingType[building.type] && (gBuildingType[building.type].flags & kBuildingTypeFlag_DrawMaxTypeOnTop)) {
+				// draw units on top (cannon tower)
+				var unittype = GetMaxUnitType(building.units);
+				if (gUnitType[unittype]) layers[layers.length] = g2(gUnitType[unittype].gfx,0);
+			}
 		}
 		if (gMapMode==kJSMapMode_HP) {
 			backgroundcolor = GradientRYG(GetFraction(building.hp,calcMaxBuildingHp(building.type,building.level)));
@@ -649,7 +657,7 @@ function GetCellHTML (relx,rely) {
 	var army = SearchPos(gArmies,relx,rely);
 	if (army) {
 		nwsecode = 0;
-		var unittype = GetArmyUnitType(relx,rely);
+		var unittype = GetMaxUnitType(army.units);
 		if (UnitTypeHasNWSE(unittype)) { // hyperblob hack
 			if (unittype == GetArmyUnitType(relx,rely-1)) nwsecode += kNWSE_N;
 			if (unittype == GetArmyUnitType(relx-1,rely)) nwsecode += kNWSE_W;
@@ -779,6 +787,12 @@ function ShowMapTip(relx,rely) {
 			if (gNWSEDebug) tiptext += "<br><span>tc="+gBuildingType[building.type].connectto_terrain.join(",")+"</span>";
 			if (gNWSEDebug) tiptext += "<br><span>bc="+gBuildingType[building.type].connectto_building.join(",")+"</span>";
 			// backgroundcolor = GradientRYG(GetFraction(hp,calcMaxBuildingHp(type,level)))
+			if (building.units.length > 0) {
+				tiptext += "<br><span>"; 
+				for (i in building.units) if (gUnitType[i])
+					tiptext += "<img src=\""+g(gUnitType[i].gfx)+"\">"+TausenderTrenner(building.units[i]);
+				tiptext += "</span>";
+			}
 			tiptext += "</td></tr>";
 		} else {
 			tiptext += "<tr><td nowrap colspan=3 align=\"left\">";
@@ -897,10 +911,14 @@ function calcMaxBuildingHp(type,level) {
 function GetArmyUnitType (relx,rely) {
 	var army = SearchPos(gArmies,relx,rely);
 	if (!army) return 0;
+	return GetMaxUnitType(army.units);
+}
+function GetMaxUnitType (units) {
+	if (!units) return 0;
 	var i,maxtype=0,maxamount=0;
-	for (i in army.units)
-		if (maxamount < army.units[i]) {
-			maxamount < army.units[i];
+	for (i in units)
+		if (maxamount < units[i]) {
+			maxamount < units[i];
 			maxtype = i;
 		}
 	return maxtype;

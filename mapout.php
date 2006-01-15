@@ -30,6 +30,7 @@ $bt = sqlgettable("SELECT * FROM `buildingtype`","id");
 $dx = abs($right-$left);
 $dy = abs($bottom-$top);
 
+// TODO : FIXME : terrainsegmente
 $lt = sql("SELECT `type`,`x`,`y`,`nwse` FROM `terrain` WHERE $left<=`x` AND `x`<=($right) AND $top<=`y` AND `y`<=($bottom)");
 while ($x = mysql_fetch_object($lt))
 {

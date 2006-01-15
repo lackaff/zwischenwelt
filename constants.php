@@ -88,7 +88,7 @@ define("kTerrain_Flag_Moveable_River",		1<<3);
 define("kTerrain_Flag_Moveable_Sea",		1<<4);
 define("kTerrain_Flag_Moveable_DeepSea",	1<<5);
 define("kTerrain_Flag_Moveable_Mask_All",	(1<<16)-1);
-$gMovableFlagMainTerrain = array(
+$gMovableFlagMainTerrain = array( // for graphic representation
 	kTerrain_Flag_Moveable_Land => kTerrain_Grass,
 	kTerrain_Flag_Moveable_Wood => kTerrain_Forest,
 	kTerrain_Flag_Moveable_Mountain => kTerrain_Mountain,
@@ -419,9 +419,49 @@ define("kBuilding_Spielhalle",64);
 define("kBuilding_Platz",65);
 define("kBuilding_Leuchtturm",66);
 
-// build distance factor is dependant on the following buildings
-$gBuildDistanceSources = array(0=>kBuilding_HQ,kBuilding_Silo,kBuilding_Harbor);
-$gSpeedyBuildingTypes = array(0=>6,7,8,9,11,12,13,14,15,16,20,22,23);
+
+define("kBuildingTypeFlag_BuildDistSource",		1<<0); // 1 not yet used, set for hq,silo(lager),harbor, affects build-distance
+define("kBuildingTypeFlag_Speedy",				1<<1); // 2 not yet used, affected by newbee factor
+define("kBuildingTypeFlag_Openable",			1<<2); // 4 not yet used, ->$gOpenableBuildingTypes
+define("kBuildingTypeFlag_Taxable",				1<<3); // 8 not yet used, ->$gTaxableBuildingTypes
+define("kBuildingTypeFlag_CanShoot",			1<<4); // 16 used for cannon towers, building can shoot
+define("kBuildingTypeFlag_OthersCanSeeUnits",	1<<5); // 32 used for cannon towers, other players can see units inside
+define("kBuildingTypeFlag_DrawMaxTypeOnTop",	1<<6); // 64 used for cannon towers, draw maximal unit type on top
+define("kBuildingTypeFlag_Bodenschatz",			1<<7); // 128 not yet used -> $gBodenSchatzBuildings
+$gBuildingTypeFlagNames = array(
+	kBuildingTypeFlag_BuildDistSource => 	"BuildDistSource (Abstand zu diesen typen bestimmt den bauzeit faktor)",
+	kBuildingTypeFlag_Speedy => 			"Speedy (newbee Faktor betrifft diese gebäude)",
+	kBuildingTypeFlag_Openable => 			"Openable (absperren : Tor,Portal)",
+	kBuildingTypeFlag_Taxable => 			"Taxable (besteuern : Portal)",
+	kBuildingTypeFlag_CanShoot => 			"kann schiessen (Turm)",
+	kBuildingTypeFlag_OthersCanSeeUnits => 	"fremde Spieler können Einheiten im Gebäude sehen (Turm)",
+	kBuildingTypeFlag_DrawMaxTypeOnTop => 	"Haupt-EinheitenTyp wird über das Gebäudebild gezeichnet (Kanonen-Turm)",
+	kBuildingTypeFlag_Bodenschatz => 		"Bodenschatz",
+);
+
+ // TODO : unhardcode : set flags in db and empty these lists
+$gFlaggedBuildingTypes = array();
+$gFlaggedBuildingTypes[kBuildingTypeFlag_BuildDistSource] = array(0=>kBuilding_HQ,kBuilding_Silo,kBuilding_Harbor);
+$gFlaggedBuildingTypes[kBuildingTypeFlag_Speedy] = array(0=>6,7,8,9,11,12,13,14,15,16,20,22,23);
+$gFlaggedBuildingTypes[kBuildingTypeFlag_Openable] = array(0=>kBuilding_Portal,kBuilding_GB,kBuilding_Gate,kBuilding_SeaGate);
+$gFlaggedBuildingTypes[kBuildingTypeFlag_Taxable] = array(0=>kBuilding_Portal);
+$gFlaggedBuildingTypes[kBuildingTypeFlag_Bodenschatz] = array(55,56,57,58,59,60,61,62,63);
+
+// a list of buildingtype ids with certain flags set
+foreach ($gBuildingTypeFlagNames as $flag => $name) {
+	if (!isset($gFlaggedBuildingTypes[$flag])) $gFlaggedBuildingTypes[$flag] = array();
+	foreach ($gBuildingType as $o)
+		if (intval($o->flags) & intval($flag))
+			$gFlaggedBuildingTypes[$flag][] = $o->id;
+}
+
+// todo : replaceme by $gFlaggedBuildingTypes
+$gBuildDistanceSources = $gFlaggedBuildingTypes[kBuildingTypeFlag_BuildDistSource];
+$gSpeedyBuildingTypes = $gFlaggedBuildingTypes[kBuildingTypeFlag_Speedy];
+$gOpenableBuildingTypes = $gFlaggedBuildingTypes[kBuildingTypeFlag_Openable];
+$gTaxableBuildingTypes = $gFlaggedBuildingTypes[kBuildingTypeFlag_Taxable];
+$gBodenSchatzBuildings = $gFlaggedBuildingTypes[kBuildingTypeFlag_Bodenschatz];
+
 define("kSpeedyBuildingsLimit",121); // 11*11 = 1 map full
 
 $gBuildingTypeGroupsPics = array("Gebäude"=>"tool_house.png","Infrastruktur"=>"tool_street.png","Deko"=>"tool_brunnen.png"); 
@@ -486,10 +526,6 @@ define("kBodenSchatz_EichenHolz",60);
 define("kBodenSchatz_Marmor",61);
 define("kBodenSchatz_Granit",62);
 define("kBodenSchatz_Wild",63);
-$gBodenSchatzBuildings = array(55,56,57,58,59,60,61,62,63); // TODO : unhardcode..
-
-$gOpenableBuildingTypes = array(0=>kBuilding_Portal,kBuilding_GB,kBuilding_Gate,kBuilding_SeaGate);
-$gTaxableBuildingTypes = array(0=>kBuilding_Portal);
 
 // owner can set these flags, all others are system flags
 $gOwnerBuildingFlags = array(kBuildingFlag_Open_Stranger	=> $gOpenableBuildingTypes, 

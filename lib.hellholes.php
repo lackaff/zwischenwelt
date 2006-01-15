@@ -23,8 +23,7 @@ function Reachable ($x1,$y1,$x2,$y2,$movablemask,$findbuilding=false) {
 			global $gBuildingType;
 			if ($building && $building->user != 0 && $gBuildingType[$building->type]->speed == 0) return $building; // ignore ruins, streets, etc
 		}
-		$ter = sqlgetone("SELECT `type` FROM `terrain` WHERE `x` = ".$x." AND `y` = ".$y);
-		if (!$ter) $ter = kTerrain_Grass;
+		$ter = cMap::StaticGetTerrainAtPos($x,$y);
 		if (!(intval($gTerrainType[$ter]->movable_flag) & intval($movablemask))) 
 			{ echo "$debugtxt = blocked($x,$y)<br>"; return false; }
 	}

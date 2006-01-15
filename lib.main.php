@@ -3,6 +3,22 @@
 require_once("lib.php");
 $gGlobal = sqlgettable("SELECT `name`,`value` FROM `global`","name","value");
 
+
+//readout globals
+if (!isset($gTempTypeOverride)) {
+	$gTmpTypesOk = false;
+	if (!file_exists(kTypeCacheFile))
+		require_once("generate_types.php");
+	require_once(kTypeCacheFile);
+	if (!$gTmpTypesOk) {
+		?>
+		<?=kTypeCacheFile?> seems to be broken broken<br>
+		please call <a href="<?="generate_types.php"?>">generate_types.php</a> manually to locate the problem<br>
+		<?php
+		exit();
+	}
+}
+
 require_once("constants.php");
 
 // todo : reduce these includes ??
@@ -15,10 +31,6 @@ require_once("lib.text.php");
 
 //readout global data
 
-//readout globals
-if (!file_exists(kTypeCacheFile))
-	require_once("generate_types.php");
-require_once(kTypeCacheFile);
 
 //vardump($gTerrainType);
 
@@ -739,10 +751,10 @@ function NWSECodeToStr($code){
 
 
 // for export to javascript, list object fields in $fields as comma seperated string (used by mapjs7.php)
-function obj2jsparams ($obj,$fields) {
+function obj2jsparams ($obj,$fields,$quote='"') {
 	$res = array();
 	$fields = explode(",",$fields);
-	foreach ($fields as $field) { $v = $obj->{$field}; $res[] = is_numeric($v)?$v:("\"".addslashes($v)."\""); }
+	foreach ($fields as $field) { $v = $obj->{$field}; $res[] = is_numeric($v)?$v:($quote.addslashes($v).$quote); }
 	return implode(",",$res);
 }
 

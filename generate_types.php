@@ -1,5 +1,6 @@
 <?php
 // generates "tmp/types.php"
+$gTempTypeOverride = true;
 require_once("lib.main.php");
 
 function val_out($val){
@@ -38,7 +39,6 @@ function GenerateTypesPHP () {
 	$fp = fopen(kTypeCacheFile,"w");
 	if (!$fp) return;
 	fwrite($fp,"<?php\n");
-
 	$l = array(
 		"gArmyType"=>"armytype",
 		"gArmyTransfer"=>"armytransfer",
@@ -89,6 +89,7 @@ function GenerateTypesPHP () {
 		$gTerrainType[$id]->connectto_building = explode(",",trim($gTerrainType[$id]->connectto_building,","));
 	}	
 	fwrite($fp,'$gTerrainType = array('.array_out_numkey($gTerrainType).");\n");
+	fwrite($fp,'$gTmpTypesOk = true;'."\n");
 
 	fwrite($fp,'?>');
 	fclose($fp);

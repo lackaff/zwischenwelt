@@ -599,9 +599,9 @@ class Spell_Brandrodung extends Spell {
 	function Birth ($success) { // $success < 0 -> patzer , $success == 0 -> normal failure
 		// if ($success < 0) damage($this->towerid); // böser zauberpatzer ??
 		if (!parent::Birth($success)) return false;
-		$ter = sqlgetone("SELECT `type` FROM `terrain` WHERE `x` = ".intval($this->x)." AND `y` = ".intval($this->y));
-		if ($ter && in_array($ter,array(kTerrain_YoungForest,kTerrain_TreeStumps,kTerrain_Forest,kTerrain_Flowers,kTerrain_Field,kTerrain_Swamp))) {
-			sql("DELETE FROM `terrain` WHERE `x` = ".intval($this->x)." AND `y` = ".intval($this->y));
+		$ter = cMap::StaticGetTerrainAtPos($this->x,$this->y);
+		if (in_array($ter,array(kTerrain_YoungForest,kTerrain_TreeStumps,kTerrain_Forest,kTerrain_Flowers,kTerrain_Field,kTerrain_Swamp))) {
+			sql("REPLACE INTO `terrain` SET `type` = ".kTerrain_Grass." , `x` = ".intval($this->x).", `y` = ".intval($this->y));
 			require_once("lib.map.php");
 			RegenSurroundingNWSE($this->x,$this->y);
 		}

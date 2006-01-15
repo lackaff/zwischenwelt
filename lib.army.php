@@ -454,7 +454,8 @@ class cArmy {
 	function GetFieldMod($x,$y){
 		global $gBuildingType,$gTerrainType;
 		$mod = array("a"=>1.0,"v"=>1.0,"f"=>1.0);
-		$ttype = sqlgetone("SELECT `type` FROM `terrain` WHERE `x`=(".intval($x).") AND `y`=(".intval($y).") LIMIT 1");
+		
+		$ttype = cMap::StaticGetTerrainAtPos(intval($x),intval($y));
 		if(isset($gTerrainType[$ttype])){
 			$mod["a"] *= $gTerrainType[$ttype]->mod_a;
 			$mod["v"] *= $gTerrainType[$ttype]->mod_v;
@@ -676,8 +677,10 @@ class cArmy {
 	function AddSteps ($x,$y,$steps) {
 		if ($steps == 0) return;
 		sql("UPDATE `terrain` SET `steps`=`steps`+".intval($steps)." WHERE `x`=".intval($x)." AND `y`=".intval($y));
-		if (mysql_affected_rows() <= 0)
-			sql("INSERT INTO `terrain` SET `type`=".kTerrain_Grass.",`x`=".intval($x).",`y`=".intval($y).",`steps`=".intval($steps));
+		if (mysql_affected_rows() <= 0) {
+			$oldtype = cMap::StaticGetTerrainAtPos(intval($x),intval($y));
+			sql("INSERT INTO `terrain` SET `type`=".$oldtype.",`x`=".intval($x).",`y`=".intval($y).",`steps`=".intval($steps));
+		}
 	}
 	
 	// $userid for BuildingOpenForUser()

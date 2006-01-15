@@ -47,6 +47,7 @@ if (!isset($f_building) && !isset($f_army) && isset($f_do)) switch ($f_do) {
 				$cond = "`x` >= $x1 AND `x` <= $x2 AND `y` >= $y1 AND `y` <= $y2";
 				
 				$template->terrain = array();
+				// TODO : does not really work with new terrainsegments, FIXME
 				$terrain = sqlgettable("SELECT * FROM `terrain` WHERE $cond");
 				foreach ($terrain as $o) if ($o->type != kTerrain_Grass) $template->terrain[] = implode("|",array($o->x-$x1,$o->y-$y1,$o->type));
 				$template->terrain = implode("#",$template->terrain);

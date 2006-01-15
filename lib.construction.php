@@ -125,8 +125,10 @@ function CanBuildHere($x,$y,$buildingtypeid,$user=false,$priority=-1,$ignoreterr
 			if (sizeof($b->require_building) == 0) $b->require_building = array(0=>kBuilding_SeaWall,kBuilding_Wall);
 		break;
 		case kBuilding_Harbor:
-			$condxy = "((`x`=$x AND `y`=$y+1) OR (`x`=$x AND `y`=$y-1) OR (`x`=$x+1 AND `y`=$y) OR (`x`=$x-1 AND `y`=$y))";
-			if(!sqlgetone("SELECT 1 FROM `terrain` WHERE `type`=".kTerrain_Sea." AND ".$condxy." LIMIT 1"))
+			if (cMap::StaticGetTerrainAtPos($x,$y+1) != kTerrain_Sea &&
+				cMap::StaticGetTerrainAtPos($x,$y-1) != kTerrain_Sea &&
+				cMap::StaticGetTerrainAtPos($x+1,$y) != kTerrain_Sea &&
+				cMap::StaticGetTerrainAtPos($x-1,$y) != kTerrain_Sea)
 				return false;
 		break;
 	}

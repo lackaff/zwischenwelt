@@ -11,18 +11,24 @@ require_once("lib.hook.php");
 
 class cBuilding {
 	
-	function GetJavaScriptBuildingData ($building,$userid=false) {
-		global $gUser;
+	function GetJavaScriptBuildingData ($building,$userid=false,$quote='"') {
+		global $gUser,$gBuildingType;
 		if ($userid === false) $userid = $gUser->id;
 		$building->jsflags = 0;
 		$building->hp = floor($building->hp);
+		
+		$building->unitstxt = ""; 
+		if ($building->user == $userid || intval($gBuildingType[$building->type]->flags) & kBuildingTypeFlag_OthersCanSeeUnits) {
+			$units = cUnit::GetUnits($building->id,kUnitContainer_Building);
+			foreach ($units as $u) $building->unitstxt .= $u->type.":".floor($u->amount)."|";
+		}
 		
 		if ($building->type == kBuilding_Portal) {
 			if (intval(GetBParam($building->id,"target"))>0) $building->jsflags |= kJSMapBuildingFlag_Open;
 		} else {
 			if (cBuilding::BuildingOpenForUser($building,$userid)) $building->jsflags |= kJSMapBuildingFlag_Open;
 		}
-		return obj2jsparams($building,"x,y,type,user,level,hp,construction,jsflags");
+		return obj2jsparams($building,"x,y,type,user,level,hp,construction,jsflags,unitstxt",$quote); // end
 	}
 	
 	function CanControllBuilding ($building,$user) { 
@@ -148,8 +154,7 @@ class cBuilding {
 		sql("UPDATE `technology` SET `upgradebuilding` = 0 , `upgradetime` = 0, `upgrades` = 0
 			WHERE `upgradetime` > 0 AND `upgradebuilding` = ".$building->id);
 				
-		$terraintype = sqlgetone("SELECT `type` FROM `terrain` WHERE `x`=$building->x AND `y`=$building->y");
-		if(empty($terraintype))$terraintype = kTerrain_Grass;
+		$terraintype = cMap::StaticGetTerrainAtPos($building->x,$building->y);
 				
 		// in ruine oder schutt verwandeln, wenn es keine brücke oder ähnliches ist
 		if ($building->type != kBuilding_Bridge && $building->type != kBuilding_GB && rand(0,1) == 0) {

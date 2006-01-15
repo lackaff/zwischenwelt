@@ -16,7 +16,7 @@ function zap($x,$y,$noruin=false)
 		$cssclassarr = cBuilding::removeBuilding($building,$building->user,$noruin,true);
 	} else {
 		sql("DELETE FROM `terrain` WHERE `x`=$x AND `y`=$y");
-		sql("INSERT INTO `terrain` SET `x`=$x,`y`=$y,`type`=5");
+		sql("INSERT INTO `terrain` SET `x`=$x,`y`=$y,`type`=".kTerrain_Hole);
 		$cssclassarr = RegenSurroundingNWSE($x,$y,true);
 	}
 	return $cssclassarr;

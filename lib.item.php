@@ -1,6 +1,7 @@
 <?php
 
 require_once("lib.main.php");
+require_once("lib.map.php");
 require_once("lib.army.php");
 
 define("itemspawn_debugout",false);
@@ -254,8 +255,8 @@ class cItem {
 	function generateSoftTerrain ($x,$y,$newtype) {
 		// used by osterei
 		global $gTerrainType;
-		$type = sqlgetone("SELECT `type` FROM `terrain` WHERE `x` = ".intval($x)." AND `y` = ".intval($y));
-		if ($type && ($gTerrainType[$type]->movable_flag & kTerrain_Flag_Moveable_Land) == 0) return false;
+		$type = cMap::StaticGetTerrainAtPos(intval($x),intval($y));
+		if (($gTerrainType[$type]->movable_flag & kTerrain_Flag_Moveable_Land) == 0) return false;
 		sql("REPLACE INTO `terrain` SET ".arr2sql(array("x"=>intval($x),"y"=>intval($y),"type"=>intval($newtype))));
 		return true;
 	}

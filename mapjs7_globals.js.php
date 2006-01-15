@@ -30,6 +30,15 @@ kJSMapArmyFlag_Fighting_S = <?=kJSMapArmyFlag_Fighting_S?>;
 kJSMapArmyFlag_Fighting_E = <?=kJSMapArmyFlag_Fighting_E?>;
 kJSMapArmyFlag_Shooting = <?=kJSMapArmyFlag_Shooting?>;
 
+kBuildingTypeFlag_BuildDistSource = <?=kBuildingTypeFlag_BuildDistSource?>;
+kBuildingTypeFlag_Speedy = <?=kBuildingTypeFlag_Speedy?>;
+kBuildingTypeFlag_Openable = <?=kBuildingTypeFlag_Openable?>;
+kBuildingTypeFlag_Taxable = <?=kBuildingTypeFlag_Taxable?>;
+kBuildingTypeFlag_CanShoot = <?=kBuildingTypeFlag_CanShoot?>;
+kBuildingTypeFlag_OthersCanSeeUnits = <?=kBuildingTypeFlag_OthersCanSeeUnits?>;
+kBuildingTypeFlag_DrawMaxTypeOnTop = <?=kBuildingTypeFlag_DrawMaxTypeOnTop?>;
+kBuildingTypeFlag_Bodenschatz = <?=kBuildingTypeFlag_Bodenschatz?>;
+
 gMapModiHelp = "<?=addslashes(cText::Wiki("MapModi"))?>";
 
 //kJSMapTileSize = <?=kMapTileSize?>;
@@ -332,7 +341,7 @@ function php2js_objarray ($name,$arr,$fields) {
 }
 
 php2js_objarray("gTerrainType",$gTerrainType,"name,speed,buildable,gfx,mod_a,mod_v,mod_f,movable_flag,connectto_terrain,connectto_building");
-php2js_objarray("gBuildingType",$gBuildingType,"name,maxhp,speed,gfx,mod_a,mod_v,mod_f,connectto_terrain,connectto_building,neednear_building,require_building,exclude_building,border,movable_flag,movable_override_terrain");
+php2js_objarray("gBuildingType",$gBuildingType,"name,maxhp,speed,gfx,flags,mod_a,mod_v,mod_f,connectto_terrain,connectto_building,neednear_building,require_building,exclude_building,border,movable_flag,movable_override_terrain");
 php2js_objarray("gUnitType",$gUnitType,"name,orderval,a,v,f,r,speed,gfx,movable_flag");
 php2js_objarray("gItemType",$gItemType,"name,gfx");
 php2js_objarray("gTerrainPatchType",$gTerrainPatchType,"id,gfx,here,up,down,left,right");

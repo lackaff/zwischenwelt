@@ -74,6 +74,7 @@ function ArmyThink ($army,$debug=false) {
 		$maxlast = cUnit::GetUnitsSum($army->units,"last");
 		$curlast = cArmy::GetArmyTotalWeight($army); // todo : otpimize me !
 		if ($curlast < $maxlast) {
+			// TODO : FIXME : umstellung auf terrain segmente !
 			$t = sqlgetobject("SELECT * FROM `terrain` WHERE `x`=".$army->x." AND `y`=".$army->y." LIMIT 1");
 			$coltime = cArmy::GetArmyCollectTime($army,$t->type);
 			if ($coltime > 0 && (

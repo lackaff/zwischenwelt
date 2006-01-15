@@ -208,7 +208,7 @@ if (!isset($f_building) && !isset($f_army) && isset($f_do)) {
 					}
 					
 					// check nearby terrain
-					$terrain = sqlgetone("SELECT `type` FROM `terrain` WHERE `x` = ".$f_x." AND `y` = ".$f_y);
+					$terrain = cMap::StaticGetTerrainAtPos($f_x,$f_y);
 					if ($btype->terrain_needed > 0 && $btype->terrain_needed != $terrain) {
 						$reqpic = "<img border=0 src=\"".g($gTerrainType[$btype->terrain_needed]->gfx)."\">";
 						JSAddInfoMessage_BuildError($btype,$f_x,$f_y,"kann nur auf $reqpic gebaut werden");

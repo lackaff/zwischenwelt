@@ -290,6 +290,8 @@ class cInfoArmy extends cInfoBase {
 				sql("INSERT INTO `armyaction` SET ".obj2sql($t));
 			break;
 			case "armycollect":
+				// TODO : terrainsegment bug, FIXME
+				//$terraintype = cMap::StaticGetTerrainAtPos($army->x,$army->y);
 				$terrain = sqlgetobject("SELECT * FROM `terrain` WHERE `x` = ".$army->x." AND `y` = ".$army->y." LIMIT 1");
 				$coltime = cArmy::GetArmyCollectTime($army,$terrain->type);
 				echo "try armycollect : ".$terrain->type." coltime $coltime";
@@ -733,8 +735,8 @@ class cInfoArmy extends cInfoBase {
 			<?php /* ###### sonstige Aktionen ###### */ ?>
 			<h3><?=cText::Wiki("ArmeeAktionen")?>sonstige Aktionen</h3>
 		
-			<?php $terrain = sqlgetobject("SELECT * FROM `terrain` WHERE `x` = ".$gArmy->x." AND `y` = ".$gArmy->y." LIMIT 1");?>
-			<?php if (($coltime = cArmy::GetArmyCollectTime($gArmy,$terrain->type)) == 0) { ?>
+			<?php $terraintype = cMap::StaticGetTerrainAtPos($gArmy->x,$gArmy->y);?>
+			<?php if (($coltime = cArmy::GetArmyCollectTime($gArmy,$terraintype)) == 0) { ?>
 				Auf diesem Gelände kann nichts geerntet werden.<br>
 			<?php } else if ($gArmy->idle < $coltime) { ?>
 				Noch <?=$rest = ceil(($coltime - $gArmy->idle)/60)?> <?=($rest > 1)?"Minuten":"Minute"?> bis das Ernten möglich ist.<br>

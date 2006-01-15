@@ -421,11 +421,9 @@ class Spell_Instant_Damage extends Spell {
 		// create terrain
 		if ($this->terrain_change) {
 			$changeable_terrain = array(kTerrain_Swamp,kTerrain_YoungForest,kTerrain_TreeStumps,kTerrain_Forest,kTerrain_Grass,kTerrain_Field,kTerrain_Flowers);
-			$ter = sqlgetobject("SELECT * FROM `terrain` WHERE ".$cond);
-			if (!$ter || in_array($ter->type,$changeable_terrain)) {
-				if ($ter) 
-						sql("UPDATE `terrain` SET `type` = ".$this->terrain_change." WHERE `id` = ".$ter->id);
-				else	sql("INSERT INTO `terrain` SET ".arr2sql(array("type"=>$this->terrain_change,"x"=>$this->x,"y"=>$this->y)));
+			$terraintype = cMap::StaticGetTerrainAtPos($this->x,$this->y);
+			if (in_array($terraintype,$changeable_terrain)) {
+				sql("REPLACE INTO `terrain` SET ".arr2sql(array("type"=>$this->terrain_change,"x"=>$this->x,"y"=>$this->y)));
 			}
 		}
 		
@@ -447,6 +445,7 @@ class Spell_Instant_Damage extends Spell {
 			$army->lost_units = cUnit::GetUnitsDiff($army->vorher_units,$army->units);
 			foreach ($army->lost_units as $o)
 				$spellreport .= "<img src='".g($gUnitType[$o->type]->gfx)."'>".floor($o->amount)."<br>\n";
+			// TODO : terrainkills stimmt hier nicht so richtig, z.b. wenn kein terrain da ist, TODO : einheitliche damage funktion
 			sql("UPDATE `terrain` SET `kills`=`kills`+".round(abs(cUnit::GetUnitsSum($army->lost_units)))." WHERE `x`=".$army->x." AND `y`=".$army->y);
 			$army->size = cUnit::GetUnitsSum($army->units);
 			if ($army->size >= 1.0) 

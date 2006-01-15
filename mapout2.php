@@ -41,6 +41,8 @@ if (0) {
 
 	fwrite($fp,byte2(0).byte4(2).byte2(222)); 
 	
+	// TODO : FIXME : terrainsegmente..
+	
 	// terrain
 	fwrite($fp,byte2(1).byte4(6*sqlgetone("SELECT COUNT(*) FROM `terrain`")));
 	$r = sql("SELECT `type`,`nwse`,`x`,`y` FROM `terrain`");

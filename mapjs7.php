@@ -187,7 +187,7 @@ $gBuildings = sqlgettable("SELECT * FROM `building` WHERE ".$xylimit);
 echo 'gBuildings = "';
 foreach ($gBuildings as $o) {
 	$gLocalUserIDs[] = $o->user;
-	echo cBuilding::GetJavaScriptBuildingData($o).";";
+	echo cBuilding::GetJavaScriptBuildingData($o,false,'').";";
 }
 echo "\";\n";
 
