@@ -689,6 +689,7 @@ class cArmy {
 		
 		$xycondition = "`x` = ".intval($x)." AND `y` = ".intval($y);
 		$movablemask = $units ? cUnit::GetUnitsMovableMask($units) : kTerrain_Mask_Moveable_Default;
+		if ($debug) echo "GetPosSpeed(),unitsmovable=$movablemask<br>\n";
 		$override = true;
 		
 		// check buildings
@@ -712,7 +713,7 @@ class cArmy {
 			$terraintype = sqlgetone("SELECT `type` FROM `terrain` WHERE $xycondition LIMIT 1");
 			if (!$terraintype) $terraintype = kTerrain_Grass;
 			$t_speed = $gTerrainType[$terraintype]->speed;
-			if ($debug) echo "GetPosSpeed(),terrain=$t_speed<br>\n";
+			if ($debug) echo "GetPosSpeed(),terrainspeed=$t_speed,terrainmovable=".$gTerrainType[$terraintype]->movable_flag."<br>\n";
 			//if ($t_speed == 0) return 0;
 			// check movable
 			if (($movablemask & intval($gTerrainType[$terraintype]->movable_flag)) == 0) {
