@@ -685,7 +685,7 @@ class cArmy {
 	// uses $gAllArmys cache if available (cron/minicron)
 	function GetPosSpeed ($x,$y,$userid=0,$units=false,$armyblock=true) {
 		global $gTerrainType,$gBuildingType;
-		$debug = true;
+		$debug = false;
 		
 		$xycondition = "`x` = ".intval($x)." AND `y` = ".intval($y);
 		$movablemask = $units ? cUnit::GetUnitsMovableMask($units) : kTerrain_Mask_Moveable_Default;
@@ -710,7 +710,8 @@ class cArmy {
 		
 		{
 			// check terrain
-			$terraintype = sqlgetone("SELECT `type` FROM `terrain` WHERE $xycondition LIMIT 1");
+			$terraintype = cMap::StaticGetTerrainAtPos($x,$y);
+			//$terraintype = sqlgetone("SELECT `type` FROM `terrain` WHERE $xycondition LIMIT 1");
 			if (!$terraintype) $terraintype = kTerrain_Grass;
 			$t_speed = $gTerrainType[$terraintype]->speed;
 			if ($debug) echo "GetPosSpeed(),terrainspeed=$t_speed,terrainmovable=".$gTerrainType[$terraintype]->movable_flag."<br>\n";
