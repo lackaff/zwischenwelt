@@ -165,8 +165,8 @@ if (!isset($f_building) && !isset($f_army) && isset($f_do)) switch ($f_do) {
 					$schutt->x = intval($f_x);
 					$schutt->y = intval($f_y);
 					sql("DELETE FROM `building` WHERE `id` = ".$building->id." LIMIT 1");
-					sql("DELETE FROM `terrain` WHERE `x` = ".$schutt->x." AND `y` = ".$schutt->y);
-					sql("INSERT INTO `terrain` SET ".obj2sql($schutt));
+					//sql("DELETE FROM `terrain` WHERE `x` = ".$schutt->x." AND `y` = ".$schutt->y);
+					sql("REPLACE INTO `terrain` SET ".obj2sql($schutt));
 				}
 				$cssclassarr = RegenSurroundingNWSE($f_x,$f_y,true);
 				JSRefreshCell($f_x,$f_y,true);
@@ -264,8 +264,8 @@ if (!isset($f_building) && !isset($f_army) && isset($f_do)) switch ($f_do) {
 							if (kTerrain_Grass != cMap::StaticGetTerrainAtPos($x,$y)) continue;
 							if (sqlgetone("SELECT 1 FROM `building` WHERE `x` = ".$x." AND `y` = ".$y." LIMIT 1")) continue;
 						}
-						sql("DELETE FROM `terrain` WHERE `x` = ".$x." AND `y` = ".$y);
-						sql("INSERT INTO `terrain` SET ".obj2sql($myterrain));
+						//sql("DELETE FROM `terrain` WHERE `x` = ".$x." AND `y` = ".$y);
+						sql("REPLACE INTO `terrain` SET ".obj2sql($myterrain));
 						JSRefreshCell($x,$y,true);
 					}
 				}
