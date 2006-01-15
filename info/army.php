@@ -695,8 +695,10 @@ class cInfoArmy extends cInfoBase {
 			
 			<?php if (isset($f_calctraveltime) && intval($f_calctraveltime) == $gArmy->id) {
 				$blocked = false;
+				$blocked_armyspeed = false;
+				$armyspeed = cArmy::GetArmySpeed($gArmy);
 				$traveltime = 0;
-				for ($i=0;$i<$wplen-1&&!$blocked;++$i) {
+				if ($armyspeed > 0) for ($i=0;$i<$wplen-1&&!$blocked;++$i) {
 					$x1 = $gWaypoints[$i]->x;
 					$y1 = $gWaypoints[$i]->y;
 					$x2 = $gWaypoints[$i+1]->x;
@@ -706,13 +708,16 @@ class cInfoArmy extends cInfoBase {
 					else 	{ $x=$x1; $y=$y1; }
 					for (;$x!=$x2||$y!=$y2;) {
 						list($x,$y) = GetNextStep($x,$y,$x1,$y1,$x2,$y2);
-						$speed = min(cArmy::GetArmySpeed($gArmy),cArmy::GetPosSpeed($x,$y,$gUser->id,$gArmy->units));
+						$speed = min($armyspeed,cArmy::GetPosSpeed($x,$y,$gUser->id,$gArmy->units));
 						if ($speed == 0)  { $blocked = array($x,$y); break; }
 						$traveltime += $speed;
 					}
 				}
 				?>
 				<h4>Reisezeit Berechnung</h4>
+				<?php if ($armyspeed <= 0) { ?>
+					<h3><font color=red>Die Armee ist unbeweglich (Armeegeschwindigkeit <?=$armyspeed?>)</font></h3>
+				<?php }?>
 				<?php if ($blocked) { list($x,$y) = $blocked; ?>
 					<h3><font color=red>WEG BLOCKIERT BEI <a href="<?=SessionLink("../".kMapScript."?x=".$x."&y=".$y."&army=".$gArmy->id)?>" target="map">(<?=$x?>,<?=$y?>)</a></font></h3>
 				<?php }?>

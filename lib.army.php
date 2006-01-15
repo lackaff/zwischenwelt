@@ -685,7 +685,7 @@ class cArmy {
 	// uses $gAllArmys cache if available (cron/minicron)
 	function GetPosSpeed ($x,$y,$userid=0,$units=false,$armyblock=true) {
 		global $gTerrainType,$gBuildingType;
-		$debug = false;
+		$debug = true;
 		
 		$xycondition = "`x` = ".intval($x)." AND `y` = ".intval($y);
 		$movablemask = $units ? cUnit::GetUnitsMovableMask($units) : kTerrain_Mask_Moveable_Default;
