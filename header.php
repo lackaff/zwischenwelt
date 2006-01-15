@@ -70,7 +70,7 @@ else {
 </div>
 <div id=links>
 	<table cellpadding=2 cellspacing=2>
-		<?php if ($_SERVER["REMOTE_ADDR"] != "127.0.0.1") {?>
+		<?php if ($_SERVER["REMOTE_ADDR"] != "127.0.0.1" || isset($_REQUEST["nobuttons"])) {?>
 		<tr><td><form style="margin:0px;" action="http://www.browsergames24.de/modules.php?name=Web_Links" method="post"><input type="hidden" name="lid" value="845"><input type="hidden" name="l_op" value="ratelink"><input type="image" src="http://www.browsergames24.de/votebg.gif" name="text" align="align"></form></td></tr>
 		<tr><td><a href="http://www.galaxy-news.de/?page=charts&op=vote&game_id=411" target="_blank"><img src="images/gvote.gif" border="0"></a></td></tr>
 		<tr><td><a href="http://www.gamingfacts.de/charts.php?was=abstimmen2&spielstimme=332" target="_blank"><img src="images/gamingfacts_charts.gif" border="0"></a></td></tr>

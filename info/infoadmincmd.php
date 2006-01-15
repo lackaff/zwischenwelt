@@ -91,6 +91,7 @@ if (!isset($f_building) && !isset($f_army) && isset($f_do)) switch ($f_do) {
 			if (!kAdminCanAccessMysql) break;
 			if (!$gUser->admin)break;
 			$gAdminSQLResult = sqlgettable($f_sqlcommand); 
+			$gAdminSQLResultAffectedRows = mysql_affected_rows(); 
 		break;
 		case "genriver":// admin command
 			if (!$gUser->admin)break;
@@ -272,7 +273,6 @@ if (!isset($f_building) && !isset($f_army) && isset($f_do)) switch ($f_do) {
 		case "adminsetbuilding":// admin command
 			if (!$gUser->admin)break;
 			require_once("../lib.map.php");
-			sql("DELETE FROM `building` WHERE `x` = ".intval($f_x)." AND `y` = ".intval($f_y));
 			if ($f_btype != 0)
 			{
 				$btype = $gBuildingType[intval($f_btype)];
@@ -282,37 +282,24 @@ if (!isset($f_building) && !isset($f_army) && isset($f_do)) switch ($f_do) {
 				$mybuilding->level = intval($f_blevel);
 				$mybuilding->hp = cBuilding::calcMaxBuildingHp($mybuilding->type,$mybuilding->level);
 					
-				$f_x = intval($f_x);$f_y = intval($f_y);
-				$minx = ($f_x);$miny = ($f_y);
-				$maxx = ($f_x);$maxy = ($f_y);
-				$endx = isset($f_linex)?intval($f_linex):intval($f_x);
-				$endy = isset($f_liney)?intval($f_liney):intval($f_y);
-				$startx = $f_x;
-				$starty = $f_y;
-				
-				$patch = array();
-				do {
-					$minx = min($minx,$f_x-1);$miny = min($miny,$f_y-1);
-					$maxx = max($maxx,$f_x+1);$maxy = max($maxy,$f_y+1);
-					$mybuilding->x = intval($f_x);
-					$mybuilding->y = intval($f_y);
+				$brushrad = min(20,max(0,intval($f_brushrad)));
+				$fields = GetBrushFields($f_x,$f_y,$f_brushrad,$f_brushdensity,$f_brush,$f_brushline,$f_brushlastx,$f_brushlasty);
+				foreach ($fields as $posarr) {
+					list($mybuilding->x,$mybuilding->y) = $posarr;
+					list($x,$y) = $posarr;
+					
+					/*
 					if ($mybuilding->type == kBuilding_GB || $mybuilding->type == kBuilding_Bridge)
 					{
 						sql("DELETE FROM `terrain` WHERE `x` = ".$mybuilding->x." AND `y` = ".$mybuilding->y);
 						sql("INSERT INTO `terrain` SET `type` = ".kTerrain_River.", `x` = ".$mybuilding->x.", `y` = ".$mybuilding->y);
 						// TODO : unhardcode me !!!!
-					}
+					}*/
 					sql("DELETE FROM `building` WHERE `x` = ".$mybuilding->x." AND `y` = ".$mybuilding->y);
 					sql("INSERT INTO `building` SET ".obj2sql($mybuilding));
-					$patch[] = "b,".$mybuilding->x.",".$mybuilding->y.",".$mybuilding->user.",".$mybuilding->type.",".$mybuilding->level;
-					JSRefreshCell($f_x,$f_y,true); // TODO : replace by js brush/line ?
-					if ($f_x == $endx && $f_y == $endy) break;
-					else list($f_x,$f_y) = GetNextStep($f_x,$f_y,$startx,$starty,$endx,$endy);
-				} while (true) ;
-				
-				$cssclassarr = RegenAreaNWSE($minx,$miny,$maxx,$maxy,true);
-				// parent.navi.addpatch("implode("|",$patch)|");
-				// parent.map.JSSetBuilding(intval($f_x),intval($f_y),intval($f_btype),$brushrad);
+					
+					JSRefreshCell($x,$y,true);
+				}
 			}
 		break;
 		case "hellhole_admin_think": if (!$gUser->admin) break;

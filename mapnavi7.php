@@ -17,6 +17,8 @@ if (isset($f_regenmini)) {
 	@unlink("tmp/pngmapcreep.png");
 	@unlink("tmp/pngmap.png");
 }
+
+if ($gUser->admin)
 if (isset($f_regentypes)) {  
 	//@unlink(kTypeCacheFile);
 	//@unlink("info/".kTypeCacheFile);
@@ -26,7 +28,7 @@ if (isset($f_regentypes)) {
 	// the following affects javascript version(for mapjs7_globals.php.js->types) and stylesheet
 	// $gGlobal["typecache_version_adder"]
 	$n = "typecache_version_adder";
-	SetGlobal($n,intval(isset($gGlobal[$n])?$gGlobal[$n]:0)+1);
+	SetGlobal($n,intval($f_newadder));
 }
 
 ?>
@@ -609,7 +611,8 @@ echo GenerateTabsMultiRow("brushtabs",$brushtabs,8,0,$corner,"ChangeBrush");
 		<?php PrintObjOptions($gAllUsers,"id","name")?>
 	</SELECT>
 	<br>
-	<a href="<?=Query("?regentypes=1&sid=?")?>">(clear type cache)</a>
+	<?php 	$n = "typecache_version_adder"; $newadder = intval(isset($gGlobal[$n])?$gGlobal[$n]:0)+1;?>
+	<a href="<?=Query("?regentypes=1&sid=?&newadder=".$newadder)?>">(clear type cache)</a>
 	<?php if (0) {?><a href="<?=Query("?createbodenschatz=1&sid=?")?>">(bodenschatz)</a><?php }?>
 	
 <?php }?> 

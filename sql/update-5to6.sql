@@ -40,3 +40,6 @@ PRIMARY KEY ( `number` , `poll` )
 ) TYPE = MYISAM CHARACTER SET latin1 COLLATE latin1_general_ci ;
 
 ALTER TABLE `poll_answer` ADD `time` INT UNSIGNED DEFAULT '0' NOT NULL ;
+
+
+ALTER TABLE `buildingtype` ADD `flags` INT UNSIGNED DEFAULT '0' NOT NULL AFTER `special` ;

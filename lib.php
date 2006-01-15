@@ -354,9 +354,10 @@ function warning ($msg) { echo "WARNING ! ".$msg."<br>".shorttrace()."<br>"; }
 $gConnected = false;
 $gSqlShowQueries = false;
 $gSqlQueries = 0;
+$gSqlLastNonSelectQuery = false;
 //do an sql query on the database and return the result
 function sql	($query) {
-	global $gSqlQueries,$gConnected;
+	global $gSqlQueries,$gConnected,$gUser,$gSqlLastNonSelectQuery;
 	global $gSqlShowQueries;
 	if(!$gConnected) {
 		mysql_connect(MYSQL_HOST,MYSQL_USER,MYSQL_PASS)
@@ -370,6 +371,7 @@ function sql	($query) {
 	$gSqlQueries++;
 	if($gSqlShowQueries)echo "[sqlquery=$query]";
 	$r = mysql_query($query);
+	if (1) if (isset($gUser) && $gUser->admin) if (!eregi("SELECT",$query)) $gSqlLastNonSelectQuery = $query." (".mysql_affected_rows()." affected rows)";
 	if (!$r) {	
 		$errormsg = mysql_error();
 		$s = "MYSQL QUERRY FAILED IN DB '".MYSQL_DB."': ####<br>".$query."<br>####".$errormsg." ".shorttrace();
@@ -419,6 +421,8 @@ function sqlgetfieldarray($query){
 // get a whole sql table as array of objects
 function sqlgettable ($query,$field=false,$valuefield=false) {
 	$r = sql($query);
+	if ($r === true) return true;
+	if ($r === false) return false;
 	$arr = array();
 	if ($valuefield) {
 		if ($field)

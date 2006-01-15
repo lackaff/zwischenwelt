@@ -706,6 +706,12 @@ if (!isset($f_blind)) if ($gUser->admin) {
 	?>
 	<?php if (count($gPHP_Errors) > 0) { echo "<h3>PHP-ERRORS</h3>";vardump2($gPHP_Errors); }?>
 	<br><br><hr>
+	<?php if ($gSqlLastNonSelectQuery) {?>
+	Last Non Select Query : <?=$gSqlLastNonSelectQuery?> <br>
+	<?php } // endif?>
+	<?php foreach ($gMapBuilding as $o) {?>
+	building.id=<?=$o->id?>, building.type=<?=$o->type?>, building.user=<?=$o->user?> <br>
+	<?php } // endif?>
 	<?php /* see infoadmincmd.php for execution */?>
 	<?php $maptemplates = sqlgettable("SELECT `id`,CONCAT('(',`cx`,',',`cy`,')',`name`) as `name` FROM `maptemplate` ORDER BY `name`");?>
 	<form method="post" action="<?=Query("?sid=?&x=?&y=?")?>">
@@ -814,22 +820,28 @@ if (!isset($f_blind)) if ($gUser->admin) {
 			<input type="submit" value="mysql_query">
 		</form>
 		<?php if (isset($gAdminSQLResult)) { $adminprio = 200; $first = true; ?>
-			<table border=1>
-			<?php foreach ($gAdminSQLResult as $o) {  $arr = obj2arr($o); ?>
-			<?php if ($first) { $first = false;?>
-			<tr>
-				<?php foreach ($arr as $n=>$v) {?>
-				<th><?=htmlspecialchars($n)?></th>
+			<?php if ($gAdminSQLResult === true) {?>
+				TRUE (<?=$gAdminSQLResultAffectedRows?> affected rows)
+			<?php } else if ($gAdminSQLResult === false) {?>
+				FALSE (<?=$gAdminSQLResultAffectedRows?> affected rows)
+			<?php } else { // ?>
+				<table border=1>
+				<?php foreach ($gAdminSQLResult as $o) {  $arr = obj2arr($o); ?>
+				<?php if ($first) { $first = false;?>
+				<tr>
+					<?php foreach ($arr as $n=>$v) {?>
+					<th><?=htmlspecialchars($n)?></th>
+					<?php } // endforeach?>
+				</tr>
+				<?php } // endif?>
+				<tr>
+					<?php foreach ($arr as $n=>$v) {?>
+					<td><?=htmlspecialchars($v)?></td>
+					<?php } // endforeach?>
+				</tr>
 				<?php } // endforeach?>
-			</tr>
+				</table>
 			<?php } // endif?>
-			<tr>
-				<?php foreach ($arr as $n=>$v) {?>
-				<td><?=htmlspecialchars($v)?></td>
-				<?php } // endforeach?>
-			</tr>
-			<?php } // endforeach?>
-			</table>
 		<?php } // endif?>
 	<?php } // endif?>
 	
