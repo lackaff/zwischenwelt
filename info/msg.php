@@ -150,11 +150,11 @@ function CheckAll() {
 <tr>
 <td style="padding:5px;" align=center valign=middel><a href="<?=Query("?sid=?&show=compose")?>"><img title="Neu Mitteilung verfassen" src="<?=g("gildeforum/neu.png")?>" border=0></a></td>
 <td  style="padding-left:30px;">&nbsp;</td>
-<td style="padding:5px;" align=center><a href="<?=Query("?sid=?&show=content&folder=".$root->id)?>"><img src="<?=g("post/".(sqlgetone("SELECT COUNT(`id`) FROM `message` WHERE (`to`=".intval($gUser->id)." OR `from`=".intval($gUser->id).") AND `folder`=".$root->id." AND `status`=".kMsgStatusUnread)>0?"inbox-new.png":"inbox.png"))?>" border=0 title="<?=$root->name?>"></a></td>
+<td style="padding:5px;" align=center><a href="<?=Query("?sid=?&show=content&folder=".$root->id)?>"><img src="<?=g("post/".(sqlgetone("SELECT COUNT(`id`) FROM `message` WHERE (`to`=".intval($gUser->id)." OR `from`=".intval($gUser->id).") AND `folder`=".intval($root->id)." AND `status`=".kMsgStatusUnread)>0?"inbox-new.png":"inbox.png"))?>" border=0 title="<?=$root->name?>"></a></td>
 <td  style="padding-left:30px;">&nbsp;</td>
-<td style="padding:5px;" align=center><a href="<?=Query("?sid=?&show=content&folder=".$sent->id)?>"><img src="<?=g("post/".(sqlgetone("SELECT COUNT(`id`) FROM `message` WHERE (`to`=".intval($gUser->id)." OR `from`=".intval($gUser->id).") AND `folder`=".$sent->id." AND `status`=".kMsgStatusUnread)>0?"outbox-new.png":"outbox.png"))?>"  border=0 title="<?=$sent->name?>"></a></td>
+<td style="padding:5px;" align=center><a href="<?=Query("?sid=?&show=content&folder=".$sent->id)?>"><img src="<?=g("post/".(sqlgetone("SELECT COUNT(`id`) FROM `message` WHERE (`to`=".intval($gUser->id)." OR `from`=".intval($gUser->id).") AND `folder`=".intval($sent->id)." AND `status`=".kMsgStatusUnread)>0?"outbox-new.png":"outbox.png"))?>"  border=0 title="<?=$sent->name?>"></a></td>
 <td  style="padding-left:30px;">&nbsp;</td>
-<td style="padding:5px;" align=center><a href="<?=Query("?sid=?&show=content&folder=".$berichte->id)?>"><img src="<?=g("post/".(sqlgetone("SELECT COUNT(`id`) FROM `message` WHERE (`to`=".intval($gUser->id)." OR `from`=".intval($gUser->id).") AND `folder`=".$berichte->id." AND `status`=".kMsgStatusUnread)>0?"berichte-new.png":"berichte.png"))?>"  border=0 title="<?=$berichte->name?>"></a></td>
+<td style="padding:5px;" align=center><a href="<?=Query("?sid=?&show=content&folder=".$berichte->id)?>"><img src="<?=g("post/".(sqlgetone("SELECT COUNT(`id`) FROM `message` WHERE (`to`=".intval($gUser->id)." OR `from`=".intval($gUser->id).") AND `folder`=".intval($berichte->id)." AND `status`=".kMsgStatusUnread)>0?"berichte-new.png":"berichte.png"))?>"  border=0 title="<?=$berichte->name?>"></a></td>
 <td  style="padding-left:30px;">&nbsp;</td>
 <td style="padding:5px;" align=center><a href="<?=Query("?sid=?&show=foldertree")?>"><img src="<?=g("post/einstellungen.png")?>" border=0 title=Einstellungen></a></td>
 <td  style="padding-left:30px;">&nbsp;</td>
