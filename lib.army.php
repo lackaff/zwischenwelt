@@ -686,7 +686,8 @@ class cArmy {
 	// $userid for BuildingOpenForUser()
 	// $units for GetUnitsMovableMask()
 	// uses $gAllArmys cache if available (cron/minicron)
-	function GetPosSpeed ($x,$y,$userid=0,$units=false,$armyblock=true) {
+	// $building = -1 : if building has already been read out, it can be passed here, used in ArmyThink
+	function GetPosSpeed ($x,$y,$userid=0,$units=false,$armyblock=true,$building=-1) {
 		global $gTerrainType,$gBuildingType;
 		$debug = false;
 		
@@ -696,8 +697,8 @@ class cArmy {
 		$override = true;
 		
 		// check buildings
-		$building = sqlgetobject("SELECT * FROM `building` WHERE ".$xycondition." LIMIT 1");
-		if($building){
+		if ($building === -1) $building = sqlgetobject("SELECT * FROM `building` WHERE ".$xycondition." LIMIT 1");
+		if ($building) {
 			// is open for user?
 			$b_speed = cBuilding::BuildingOpenForUser($building,$userid) ? $gBuildingType[$building->type]->speed : 0;
 			$override = $gBuildingType[$building->type]->movable_override_terrain == 1;

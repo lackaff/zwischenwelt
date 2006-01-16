@@ -56,14 +56,13 @@ class cBuilding {
 	function BuildingOpenForUser ($building,$userid) {
 		if (is_object($userid)) $userid = $userid->id;
 		if (!is_object($building)) $building = sqlgetobject("SELECT * FROM `building` WHERE `id`=".intval($building));
-		if (sqlgetone("SELECT 1 FROM `siege` WHERE `building` = ".$building->id)) return false;
-		if ($building->user == $userid) return true;
-		if ($building->type == kBuilding_Portal && $building->user == 0) return true;
-		if ($building->construction > 0 && ($building->type == kBuilding_Bridge || $building->type == kBuilding_GB)) return false;
 		global $gOpenableBuildingTypes;
 		if (!in_array($building->type,$gOpenableBuildingTypes)) return true;
-		
-		$fof = $userid ? GetFOF($building->user,$userid) : kFOF_Enemy;
+		if ($building->type == kBuilding_Portal && $building->user == 0) return true; // HACK
+		if ($building->construction > 0) return false;
+		if (sqlgetone("SELECT 1 FROM `siege` WHERE `building` = ".$building->id." LIMIT 1")) return false;
+		if ($building->user == $userid) return true;
+		$fof = $userid ? GetFOF($building->user,$userid) : ($building->user?kFOF_Enemy:kFOF_Friend); // if both user and building belong to server, allow passage
 		if (!(intval($building->flags) ^ kBuildingFlag_OpenMask)) return true; // open for all ?
 		if ($fof == kFOF_Enemy)							return (intval($building->flags) & kBuildingFlag_Open_Enemy) != 0;
 		if ($fof == kFOF_Friend) 						return (intval($building->flags) & kBuildingFlag_Open_Friend) != 0;

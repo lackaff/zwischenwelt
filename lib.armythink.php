@@ -188,9 +188,12 @@ function ArmyThink ($army,$debug=false) {
 	
 	
 	// look for nearby buildings
+	$nearbuildings = false;
+	$nearbuildings_rad = -1;
 	if ($army->flags & (kArmyFlag_AutoSiege|kArmyFlag_AutoDeposit|kArmyFlag_AutoPillage)) {
 		if (kProfileArmyLoop) LoopProfiler("armyloop:LookNearBuildings");
 		$r = 1;
+		$nearbuildings_rad = $r;
 		$x = $army->x;
 		$y = $army->y;
 		$nearbuildings = sqlgettable("SELECT * FROM `building` WHERE 1
@@ -360,7 +363,14 @@ function ArmyThink ($army,$debug=false) {
 	// try move to $pos
 	if ($pos) {
 		if (kProfileArmyLoop) LoopProfiler("armyloop:getposspeed");
-		$speed = cArmy::GetPosSpeed($pos[0],$pos[1],$army->user,$army->units);
+		$buildingbelow = -1; // GetPosSpeed speedup, if nearbuildings have been read out, use them, otherwise leave as -1
+		if ($nearbuildings_rad >= 1) {
+			$buildingbelow = false;
+			foreach ($nearbuildings as $o) if ($o->x == $pos[0] && $o->y == $pos[1]) {
+				$buildingbelow = $o; break;
+			}
+		}
+		$speed = cArmy::GetPosSpeed($pos[0],$pos[1],$army->user,$army->units,false,$buildingbelow);
 		if (kProfileArmyLoop) LoopProfiler("armyloop:getarmyspeed");
 		$armyspeed = cArmy::GetArmySpeed($army);
 		if (kProfileArmyLoop) LoopProfiler("armyloop:get blocking army");
