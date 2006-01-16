@@ -32,10 +32,13 @@ echo "dtime = $dtime<br><br>";
 //sql("DELETE FROM `unit` WHERE `amount` < 1.0"); 
 sql("UPDATE `army` SET `idle`=`idle`+$dtime");
 
-
+if (kProfileArmyLoop) LoopProfiler_flush();
 
 $thinkarmies = $gAllArmys;
+$c = 0;
 foreach ($thinkarmies as $army) if ($army) {
+	//if ($c++ > 100) break;
+	if (kProfileArmyLoop) LoopProfiler("armyloop:init");
 	if (!isset($gAllArmyUnits[$army->id])) warning("Army $army->id ($army->x,$army->y) has no units ??<br>");
 	$army->units = isset($gAllArmyUnits[$army->id])?$gAllArmyUnits[$army->id]:array(); // constructed in lib.armythink.php
 	$army->size = cUnit::GetUnitsSum($army->units);
@@ -46,6 +49,7 @@ foreach ($thinkarmies as $army) if ($army) {
 	
 	// eating : monsters and siege-armies do not eat
 	if ($army->user != 0 && $army->type != kArmyType_Siege) {
+		if (kProfileArmyLoop) LoopProfiler("armyloop:eat");
 		if ($army->type == kArmyType_Fleet)
 				$verbrauch = $dtime * cUnit::GetUnitsEatSum($army->transport) / 3600.0;
 		else	$verbrauch = $dtime * cUnit::GetUnitsEatSum($army->units) / 3600.0;
@@ -76,6 +80,8 @@ foreach ($thinkarmies as $army) if ($army) {
 	
 	ArmyThink($army);
 }
+
+if (kProfileArmyLoop) LoopProfiler_flush(true); // report profiling
 ?>
 
 <?php

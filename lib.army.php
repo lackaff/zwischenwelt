@@ -571,19 +571,19 @@ class cArmy {
 		return 0;
 	}
 	
-	function ArmyCollect($army,$terrain) {
-		switch ($terrain->type) {
+	function ArmyCollect($army,$terraintype) {
+		switch ($terraintype) {
 			case kTerrain_Forest :
 				cItem::SpawnArmyItem($army,kResItemType_lumber,kHarvestAmount);
-				sql("UPDATE `terrain` SET `type`=".kTerrain_TreeStumps." WHERE `id`=".$terrain->id);
+				sql("REPLACE INTO `terrain` SET `type`=".kTerrain_TreeStumps." , `x` = ".$army->x." , `y` = ".$army->y);
 				break;
 			case kTerrain_Rubble :
 				cItem::SpawnArmyItem($army,kResItemType_stone,kHarvestAmount);
-				sql("UPDATE `terrain` SET `type`=".kTerrain_Grass." WHERE `id`=".$terrain->id);
+				sql("REPLACE INTO `terrain` SET `type`=".kTerrain_Grass." , `x` = ".$army->x." , `y` = ".$army->y);
 				break;
 			case kTerrain_Field :
 				cItem::SpawnArmyItem($army,kResItemType_food,kHarvestAmount);
-				sql("UPDATE `terrain` SET `type`=".kTerrain_Grass." WHERE `id`=".$terrain->id);
+				sql("REPLACE INTO `terrain` SET `type`=".kTerrain_Grass." , `x` = ".$army->x." , `y` = ".$army->y);
 				break;
 		}
 		RegenSurroundingNWSE($army->x,$army->y);

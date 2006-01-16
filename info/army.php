@@ -291,12 +291,11 @@ class cInfoArmy extends cInfoBase {
 			break;
 			case "armycollect":
 				// TODO : terrainsegment bug, FIXME
-				//$terraintype = cMap::StaticGetTerrainAtPos($army->x,$army->y);
-				$terrain = sqlgetobject("SELECT * FROM `terrain` WHERE `x` = ".$army->x." AND `y` = ".$army->y." LIMIT 1");
-				$coltime = cArmy::GetArmyCollectTime($army,$terrain->type);
-				echo "try armycollect : ".$terrain->type." coltime $coltime";
+				$terraintype = cMap::StaticGetTerrainAtPos($army->x,$army->y);
+				$coltime = cArmy::GetArmyCollectTime($army,$terraintype);
+				echo "try armycollect : ".$terraintype." coltime $coltime";
 				if ($coltime > 0 && $army->idle >= $coltime)
-					cArmy::ArmyCollect($army,$terrain);
+					cArmy::ArmyCollect($army,$terraintype);
 			break;
 			case "itempick":
 				cItem::pickupItem(intval($f_item),$army->id);

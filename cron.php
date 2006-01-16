@@ -785,8 +785,22 @@ profile_page_start("cron.php - young forest",true);
 
 define("kStumpToYoung",1.0/(60*24));
 define("kYoungToForest",1.0/(60*24));
-sql("UPDATE `terrain` SET `type` = ".kTerrain_YoungForest." WHERE `type` = ".kTerrain_TreeStumps." AND RAND() < ".kStumpToYoung);
-echo mysql_affected_rows()." units of TreeStumps turned to YoungForest<br>";
+// array(from,to,probability)
+$growarr = array(0=>array(kTerrain_TreeStumps,kTerrain_YoungForest,kStumpToYoung),
+					array(kTerrain_YoungForest,kTerrain_Forest,kYoungToForest));
+foreach ($growarr as $arr) {
+	$c = 0;
+	$r = sql("SELECT * FROM `terrainsegment4` WHERE `type` = ".$arr[0]);
+	while ($seg = mysql_fetch_object($r)) for ($y=0;$y<4;++$y) for ($x=0;$x<4;++$x) if (rand() <  $arr[2]*getrandmax()) {
+		if (sqlgetone("SELECT 1 FROM `terrain` WHERE `x` = ".($seg->x*4 + $x)." AND `y` = ".($seg->y*4 + $y))) continue;
+		sql("REPLACE INTO `terrain` SET `type` = ".$arr[1]." , `x` = ".($seg->x*4 + $x)." , `y` = ".($seg->y*4 + $y));
+		++$c;
+	}
+	mysql_free_result($r);
+	sql("UPDATE `terrain` SET `type` = ".$arr[1]." WHERE `type` = ".$arr[0]." AND RAND() < ".$arr[2]);
+	echo (mysql_affected_rows()+$c)." units of ".$gTerrainType[$arr[0]]->name." turned to ".$gTerrainType[$arr[1]]->name."<br>";
+}
+/*
 $growwood = sqlgettable("SELECT * FROM `terrain` WHERE `type` = ".kTerrain_YoungForest." AND RAND() < ".kYoungToForest);
 echo count($growwood)." units of YoungForest turned to Forest<br>";
 foreach ($growwood as $o) {
@@ -794,7 +808,7 @@ foreach ($growwood as $o) {
 	RegenSurroundingNWSE($o->x,$o->y);
 }
 unset($growwood);
-
+*/
 /*
 //if map to old (1 day) or there is not map then generate
 if(($gGlobal["ticks"] % 60*24) == 0 || !file_exists(GetMiniMapFile("user",GetMiniMapLastTime("user")))){

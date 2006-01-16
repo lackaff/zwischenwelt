@@ -41,6 +41,7 @@ InitArmyThink();
 // TODO : action follow, just activates follow mode ??
 
 function ArmyThink ($army,$debug=false) {
+	if (kProfileArmyLoop) LoopProfiler("armyloop:startthink");
 	global $gAllHellholes,$gAllArmys,$gAllArmyUnits,$gAllActions,$gAllPillages,$gAllSieges,$gAllFights;
 	global $gTerrainType,$gRes,$gRes2ItemType,$gBuildingType,$gBodenSchatzBuildings;
 	if ($debug) echo "thinking army $army->name ($army->x,$army->y)<br>";
@@ -57,7 +58,8 @@ function ArmyThink ($army,$debug=false) {
 	
 	// bodenschaetze
 	if ($army->type == kArmyType_Arbeiter) {
-		$b = sqlgetobject("SELECT * FROM `building` WHERE `x`=".$army->x." AND `y`=".$army->y);
+		if (kProfileArmyLoop) LoopProfiler("armyloop:bodenschatz");
+		$b = sqlgetobject("SELECT * FROM `building` WHERE `x`=".$army->x." AND `y`=".$army->y); // todo : looknear building ausnutzen !!!
 		if (in_array($b->type,$gBodenSchatzBuildings)) {
 			$btype = $gBuildingType[$b->type];
 			$resitems = array();
@@ -71,31 +73,32 @@ function ArmyThink ($army,$debug=false) {
 	
 	// harvest
 	if ($army->flags & (kArmyFlag_HarvestForest|kArmyFlag_HarvestRubble|kArmyFlag_HarvestField)) {
+		if (kProfileArmyLoop) LoopProfiler("armyloop:harvest");
 		$maxlast = cUnit::GetUnitsSum($army->units,"last");
 		$curlast = cArmy::GetArmyTotalWeight($army); // todo : otpimize me !
 		if ($curlast < $maxlast) {
-			// TODO : FIXME : umstellung auf terrain segmente !
-			$t = sqlgetobject("SELECT * FROM `terrain` WHERE `x`=".$army->x." AND `y`=".$army->y." LIMIT 1");
-			$coltime = cArmy::GetArmyCollectTime($army,$t->type);
+			$terraintype = cMap::StaticGetTerrainAtPos($army->x,$army->y);
+			$coltime = cArmy::GetArmyCollectTime($army,$terraintype);
 			if ($coltime > 0 && (
-				($t->type == kTerrain_Forest && ($army->flags & kArmyFlag_HarvestForest)) || 
-				($t->type == kTerrain_Rubble && ($army->flags & kArmyFlag_HarvestRubble)) || 
-				($t->type == kTerrain_Field && ($army->flags & kArmyFlag_HarvestField)) )) {
+				($terraintype == kTerrain_Forest && ($army->flags & kArmyFlag_HarvestForest)) || 
+				($terraintype == kTerrain_Rubble && ($army->flags & kArmyFlag_HarvestRubble)) || 
+				($terraintype == kTerrain_Field && ($army->flags & kArmyFlag_HarvestField)) )) {
 				if ($army->idle >= $coltime) {
-					if ($debug) echo "harvesting ".$gTerrainType[$t->type]->name."<br>";
-					cArmy::ArmyCollect($army,$t);
+					if ($debug) echo "harvesting ".$gTerrainType[$terraintype]->name."<br>";
+					cArmy::ArmyCollect($army,$terraintype);
 					$army->idle = 0;
 					sql("UPDATE `army` SET `idle`=0 WHERE `id`=".$army->id);
 					return;
 				} else {
-					if ($debug) echo "waiting to harvest ".$gTerrainType[$t->type]->name."<br>";
+					if ($debug) echo "waiting to harvest ".$gTerrainType[$terraintype]->name."<br>";
 					$wait_here = true;
 				}
 			}
 		}
 	}
 	
-	// OPTIMIZING : 12.01.06 : taking a break, continue here...
+	
+	if (kProfileArmyLoop) if ($army->follow) LoopProfiler("armyloop:Follow");
 	
 	// look for nearby armies
 	$enemies = array();
@@ -107,6 +110,7 @@ function ArmyThink ($army,$debug=false) {
 	$armylook |= kArmyFlag_RunToEnemy|kArmyFlag_AutoAttackRangeMonster; // far
 	$armylook |= kArmyFlag_AutoGive_Own|kArmyFlag_AutoGive_Guild|kArmyFlag_AutoGive_Friend; //near
 	if ($army->flags & $armylook) {
+		if (kProfileArmyLoop) LoopProfiler("armyloop:lookNear");
 		$r = ($army->flags & (kArmyFlag_RunToEnemy|kArmyFlag_AutoAttackRangeMonster)) ? 7 : 1;
 		$x = $army->x;
 		$y = $army->y;
@@ -139,6 +143,7 @@ function ArmyThink ($army,$debug=false) {
 		
 		// worker : autogive :
 		if (count($near_armies) > 0 && $army->flags & kArmyFlag_AutoGive_Own|kArmyFlag_AutoGive_Guild|kArmyFlag_AutoGive_Friend) {
+			if (kProfileArmyLoop) LoopProfiler("armyloop:autogive");
 			if ($debug) echo "attempting autogive<br>";
 			foreach ($near_armies as $o) {
 				$ok = false;
@@ -159,6 +164,7 @@ function ArmyThink ($army,$debug=false) {
 	
 	// AutoAttack
 	if (($army->flags & kArmyFlag_AutoAttack)) foreach ($enemies as $enemy) if (cFight::FightPossible($army,$enemy,$debug)) {
+		if (kProfileArmyLoop) LoopProfiler("armyloop:AutoAttack");
 		if ($debug) echo "AutoAttack army: $enemy->x,$enemy->y<br>";
 		if (TryExecArmyAction($army,ARMY_ACTION_ATTACK,$enemy->id,0,0,0,$debug)) return;
 	}
@@ -167,6 +173,7 @@ function ArmyThink ($army,$debug=false) {
 	if (($army->flags & kArmyFlag_AutoAttackRangeMonster) && 
 		$army->idle >= kArmyAutoAttackRangeMonster_Timeout && 
 		cArmy::hasDistantAttack($army)) {
+		if (kProfileArmyLoop) LoopProfiler("armyloop:AutoAttackRangeMonster");
 		$found = false;
 		if (isset($gAllActions[$army->id])) foreach ($gAllActions[$army->id] as $act) 
 			if ($act->cmd == ARMY_ACTION_RANGEATTACK) { $found = true; break; } 
@@ -182,6 +189,7 @@ function ArmyThink ($army,$debug=false) {
 	
 	// look for nearby buildings
 	if ($army->flags & (kArmyFlag_AutoSiege|kArmyFlag_AutoDeposit|kArmyFlag_AutoPillage)) {
+		if (kProfileArmyLoop) LoopProfiler("armyloop:LookNearBuildings");
 		$r = 1;
 		$x = $army->x;
 		$y = $army->y;
@@ -192,28 +200,35 @@ function ArmyThink ($army,$debug=false) {
 	}
 	
 	// AutoSiege
-	if ($army->flags & kArmyFlag_AutoSiege) foreach ($nearbuildings as $building) {
-		if ($army->user == 0 && $building->user == 0) continue;
-		if ($army->user > 0 && GetFOF($army->user,$building->user) != kFOF_Enemy) continue;
-		if ($debug) echo "AutoSiege buildingid:$building->id<br>";
-		if (TryExecArmyAction($army,ARMY_ACTION_SIEGE,$building->x,$building->y,0,0,$debug)) return;
+	if ($army->flags & kArmyFlag_AutoSiege) {
+		if (kProfileArmyLoop) LoopProfiler("armyloop:AutoSiege");
+		foreach ($nearbuildings as $building) {
+			if ($army->user == 0 && $building->user == 0) continue;
+			if ($army->user > 0 && GetFOF($army->user,$building->user) != kFOF_Enemy) continue;
+			if ($debug) echo "AutoSiege buildingid:$building->id<br>";
+			if (TryExecArmyAction($army,ARMY_ACTION_SIEGE,$building->x,$building->y,0,0,$debug)) return;
+		}
 	}
 	
 	// AutoPillage
 	if ( ($army->flags & kArmyFlag_AutoPillage) && 
-		!($army->flags & kArmyFlag_AutoPillageOff)) foreach ($nearbuildings as $building) {
-		if ($building->type != kBuilding_Silo) continue;
-		if ($army->user == 0 && $building->user == 0) continue;
-		if ($army->user > 0 && GetFOF($army->user,$building->user) != kFOF_Enemy) continue;
-		if ($debug) echo "AutoPillage buildingid:$building->id<br>";
-		if (TryExecArmyAction($army,ARMY_ACTION_PILLAGE,$building->x,$building->y,-1,0,$debug)) {
-			sql("UPDATE `army` SET `flags` = `flags` | ".kArmyFlag_AutoPillageOff." WHERE `id` = ".$army->id);
-			return;
+		!($army->flags & kArmyFlag_AutoPillageOff)) {
+		if (kProfileArmyLoop) LoopProfiler("armyloop:AutoPillage");
+		foreach ($nearbuildings as $building) {
+			if ($building->type != kBuilding_Silo) continue;
+			if ($army->user == 0 && $building->user == 0) continue;
+			if ($army->user > 0 && GetFOF($army->user,$building->user) != kFOF_Enemy) continue;
+			if ($debug) echo "AutoPillage buildingid:$building->id<br>";
+			if (TryExecArmyAction($army,ARMY_ACTION_PILLAGE,$building->x,$building->y,-1,0,$debug)) {
+				sql("UPDATE `army` SET `flags` = `flags` | ".kArmyFlag_AutoPillageOff." WHERE `id` = ".$army->id);
+				return;
+			}
 		}
 	}
-	
+		
 	// AutoDeposit
 	if (($army->flags & kArmyFlag_AutoDeposit) && !($army->flags & kArmyFlag_BuildingWait)) {
+		if (kProfileArmyLoop) LoopProfiler("armyloop:AutoDeposit");
 		if (count($nearbuildings) > 0 && $army->flags & kArmyFlag_AlwaysCollectItems) cItem::pickupall($army);
 		foreach ($nearbuildings as $building) {
 			if ($building->construction > 0 || $building->type != kBuilding_Silo) continue;
@@ -228,6 +243,7 @@ function ArmyThink ($army,$debug=false) {
 	
 	// execute actions/commands
 	if (isset($gAllActions[$army->id])) {
+		if (kProfileArmyLoop) LoopProfiler("armyloop:ArmyActions");
 		$myactions = $gAllActions[$army->id];
 		if ($debug) echo "execute commands(".count($myactions).")<br>";
 		foreach($myactions as $act) {
@@ -269,6 +285,7 @@ function ArmyThink ($army,$debug=false) {
 	
 	// run to enemy (only those who can be attacked by melee, eg not fleets)
 	if (!$pos && ($army->flags & kArmyFlag_RunToEnemy)) foreach ($enemies as $enemy) if (cFight::FightPossible($army,$enemy,$debug)) {
+		if (kProfileArmyLoop) LoopProfiler("armyloop:runToEnemy");
 		$dx = $enemy->x - $x;
 		$dy = $enemy->y - $y;
 		if ((rand(0,1) && $dx != 0) || $dy == 0) 
@@ -280,8 +297,10 @@ function ArmyThink ($army,$debug=false) {
 	
 	// wander or waypoint
 	if (!$pos) {
+		if (kProfileArmyLoop) LoopProfiler("armyloop:getwps");
 		$wps = sqlgettable("SELECT * FROM `waypoint` WHERE `army` = ".$army->id." ORDER BY `priority` LIMIT 3");
 		if (count($wps) < 2 && ($army->flags & kArmyFlag_Wander)) {
+			if (kProfileArmyLoop) LoopProfiler("armyloop:wander");
 			$d = rand(0,1)?-1:1;
 			$pos = rand(0,1)?array($x,$y+$d):array($x+$d,$y);
 			if ($debug) echo "army is wandering to (".$pos[0].",".$pos[1].")<br>";
@@ -306,6 +325,7 @@ function ArmyThink ($army,$debug=false) {
 				//echo "keine wegpunkte, fertig<br>";
 				return;
 			}
+			if (kProfileArmyLoop) LoopProfiler("armyloop:gotowp");
 			if ($debug) echo "army walking to waypoint (".$wps[1]->x.",".$wps[1]->y.")<br>";
 			$pos = GetNextStep($x,$y,$wps[0]->x,$wps[0]->y,$wps[1]->x,$wps[1]->y);
 			if ($pos[0] == $x && $pos[1] == $y) {
@@ -339,12 +359,16 @@ function ArmyThink ($army,$debug=false) {
 	
 	// try move to $pos
 	if ($pos) {
+		if (kProfileArmyLoop) LoopProfiler("armyloop:getposspeed");
 		$speed = cArmy::GetPosSpeed($pos[0],$pos[1],$army->user,$army->units);
+		if (kProfileArmyLoop) LoopProfiler("armyloop:getarmyspeed");
 		$armyspeed = cArmy::GetArmySpeed($army);
+		if (kProfileArmyLoop) LoopProfiler("armyloop:get blocking army");
 		if ($armyspeed <= 0) $speed = 0; 
 		if ($speed > 0 && $armyspeed > 0) $speed = max($speed,$armyspeed);
 		if ($speed > 0 && sqlgetone("SELECT 1 FROM `army` WHERE `x` = ".$pos[0]." AND `y` = ".$pos[1]." LIMIT 1")) $speed = 0;
 		if ($speed == 0) {
+			if (kProfileArmyLoop) LoopProfiler("armyloop:moveblocked");
 			if ($debug) echo "army is blocked<br>";
 			// armee blockiert
 			if ($army->flags & kArmyFlag_SiegeBlockingBuilding &&
@@ -373,6 +397,7 @@ function ArmyThink ($army,$debug=false) {
 				sql("UPDATE `army` SET `flags` = ".$army->flags." WHERE `id` = ".$army->id);
 			}
 		} else if ($army->idle >= $speed && $speed > 0) {
+			if (kProfileArmyLoop) LoopProfiler("armyloop:moveok");
 			if ($debug) echo "army moves<br>";
 			//armee bewegt sich ,update $gAllArmys cache
 			$gAllArmys[$army->id]->x = $pos[0];
