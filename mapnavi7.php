@@ -18,17 +18,9 @@ if (isset($f_regenmini)) {
 	@unlink("tmp/pngmap.png");
 }
 
-if ($gUser->admin)
-if (isset($f_regentypes)) {  
-	//@unlink(kTypeCacheFile);
-	//@unlink("info/".kTypeCacheFile);
-	//@unlink("stats/".kTypeCacheFile);
-	require_once("generate_types.php");
-	require_once(kTypeCacheFile);
-	// the following affects javascript version(for mapjs7_globals.php.js->types) and stylesheet
-	// $gGlobal["typecache_version_adder"]
-	$n = "typecache_version_adder";
-	SetGlobal($n,intval($f_newadder));
+if ($gUser->admin && isset($f_regentypes)) {
+	RegenTypeCache($f_newadder);
+	require(kTypeCacheFile);
 }
 
 ?>

@@ -148,10 +148,17 @@ unset($cons);
 
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-profile_page_start("cron.php - upgrade buildings",true);
+profile_page_start("cron.php - think buildings",true);
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+$buildings = sqlgettable("SELECT * FROM `building` WHERE `type` IN (".implode(",",$gFlaggedBuildingTypes[kBuildingTypeFlag_CanShoot]).")");
+foreach ($buildings as $o) {
+	cBuilding::Think($o);
+}
 
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+profile_page_start("cron.php - upgrade buildings",true);
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 $time = time();
 $hqlevels = sqlgettable("SELECT `user`,`level` FROM `building` WHERE `type`=".kBuilding_HQ,"user");

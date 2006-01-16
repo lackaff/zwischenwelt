@@ -51,7 +51,7 @@ new cTableEditForm("?sid=?&id=$f_id","SpellType $f_id editieren",
 
 $form->HandleInput();
 // regenerate typecache
-require_once("../generate_types.php");
+RegenTypeCache();
 require(kTypeCacheFile);
 
 require_once("header.php"); 

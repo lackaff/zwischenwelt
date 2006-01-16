@@ -150,7 +150,7 @@ class cInfoBuilding extends cInfoBase {
 				// regenerate typecache
 				global $gTechnologyType; 
 				global $gTechnologyGroup; 
-				require_once("../generate_types.php");
+				RegenTypeCache();
 				require(kTypeCacheFile);
 				
 			break;
@@ -415,10 +415,22 @@ class cInfoBuilding extends cInfoBase {
 	
 	function generate_tab_building() {
 		global $gObject,$gUser,$gBuildingType,$gGlobal,$gRes;
-		global $gTaxableBuildingTypes,$gOpenableBuildingTypes;
+		global $gTaxableBuildingTypes,$gOpenableBuildingTypes,$gFlaggedBuildingTypes;
 		global $gOwnerBuildingFlags,$gBuildingFlagNames;
 		
 		rob_ob_start();
+		
+		if ($gUser->admin) if (in_array($this->type,$gFlaggedBuildingTypes[kBuildingTypeFlag_CanShoot])) {
+			?>
+			<a href="<?=query("?sid=?&x=?&y=?&buildingthink=1")?>">(think)</a><br>
+			<?php
+			global $f_buildingthink;
+			if (isset($f_buildingthink)) {
+				echo "Thinking...(please reload page afterwards)<br>";
+				cBuilding::Think($gObject,true);
+				echo "<br>";
+			}
+		}
 		
 		$btype = $gBuildingType[$gObject->type];
 		if($gObject->type==kBuilding_Portal && intval(sqlgetone("SELECT `value` FROM `buildingparam` WHERE `name`='target' AND `building`=".$gObject->id))>0)

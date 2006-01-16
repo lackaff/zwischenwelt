@@ -80,8 +80,8 @@ class cInfoHospital extends cInfoBuilding {
 					sql("UPDATE `global` SET `value`='0' WHERE `name`='liveupdate'");
 					$gGlobal['liveupdate']=0;
 				}
-				require_once("../generate_types.php");
-				require_once(kTypeCacheFile);
+				RegenTypeCache();
+				require(kTypeCacheFile);
 				Redirect(Query("?sid=?&x=?&y=?"));
 			break;
 			

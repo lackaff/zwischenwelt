@@ -32,6 +32,20 @@ require_once("lib.text.php");
 //readout global data
 
 
+// be sure to require(kTypeCacheFile); again after this function
+function RegenTypeCache ($newadder = -1) {
+	//@unlink(kTypeCacheFile);
+	//@unlink("info/".kTypeCacheFile);
+	//@unlink("stats/".kTypeCacheFile);
+	require_once("generate_types.php");
+	// the following affects javascript version(for mapjs7_globals.php.js->types) and stylesheet
+	// $gGlobal["typecache_version_adder"]
+	global $gGlobal;
+	$n = "typecache_version_adder";
+	if ($newadder == -1) $newadder = intval($gGlobal[$n])+1;
+	SetGlobal($n,intval($newadder));
+}
+
 //vardump($gTerrainType);
 
 function GetZWStylePath () {

@@ -10,6 +10,12 @@ require_once("lib.hook.php");
 
 
 class cBuilding {
+
+	function Think ($building,$debug=false) {
+		if ($debug) echo "Thinking building id ".$building->id."<br>";
+		// if ($building->flags)
+		// todo : search for new enemies, start shootings, DON'T calc shootings, handled differently, activeshooting var ? only one shooting at a time ?
+	}
 	
 	function GetJavaScriptBuildingData ($building,$userid=false,$quote='"') {
 		global $gUser,$gBuildingType;

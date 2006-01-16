@@ -27,7 +27,7 @@ $form = new cTableEditForm("?sid=?&id=$f_id","armeetyp $f_id editieren",
 
 $form->HandleInput();
 // regenerate typecache
-require_once("../generate_types.php");
+RegenTypeCache();
 require(kTypeCacheFile);
 
 

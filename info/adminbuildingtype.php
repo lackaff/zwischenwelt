@@ -41,58 +41,64 @@ $races = array(
 );
 	
 $form = new cTableEditForm("?sid=?&id=$f_id","BuildingType $f_id editieren",
-	new cTableEditCols(array(
-		new cTableEditRows(array(
-			new cTableEditTextField("buildingtype","id",$f_id,"Name","name"),
-			new cTableEditTextArea("buildingtype","id",$f_id,"Beschreibung","descr"),
-			
-			new cTableEditTextField("buildingtype","id",$f_id,"Kosten: Holz","cost_lumber"),
-			new cTableEditTextField("buildingtype","id",$f_id,"Kosten: Stein","cost_stone"),
-			new cTableEditTextField("buildingtype","id",$f_id,"Kosten: Nahrung","cost_food"),
-			new cTableEditTextField("buildingtype","id",$f_id,"Kosten: Metall","cost_metal"),
-			new cTableEditTextField("buildingtype","id",$f_id,"Kosten: Runen","cost_runes"),
-			
-			new cTableEditTextField("buildingtype","id",$f_id,"Req: Geb","req_geb"),
-			new cTableEditTextField("buildingtype","id",$f_id,"Req: Tech","req_tech"),
-			
-			new cTableEditTimeField("buildingtype","id",$f_id,"Bauzeit","buildtime"),
-			new cTableEditTextField("buildingtype","id",$f_id,"MaxHP","maxhp"),
-			new cTableEditTextField("buildingtype","id",$f_id,"BaseMana","basemana"),
+	new cTableEditRows(array(
+		new cTableEditCols(array(
+			new cTableEditRows(array(
+				new cTableEditTextField("buildingtype","id",$f_id,"Name","name"),
+				new cTableEditTextArea("buildingtype","id",$f_id,"Beschreibung","descr"),
+				
+				new cTableEditTextField("buildingtype","id",$f_id,"Kosten: Holz","cost_lumber"),
+				new cTableEditTextField("buildingtype","id",$f_id,"Kosten: Stein","cost_stone"),
+				new cTableEditTextField("buildingtype","id",$f_id,"Kosten: Nahrung","cost_food"),
+				new cTableEditTextField("buildingtype","id",$f_id,"Kosten: Metall","cost_metal"),
+				new cTableEditTextField("buildingtype","id",$f_id,"Kosten: Runen","cost_runes"),
+				
+				new cTableEditTextField("buildingtype","id",$f_id,"Req: Geb","req_geb"),
+				new cTableEditTextField("buildingtype","id",$f_id,"Req: Tech","req_tech"),
+				
+				new cTableEditTimeField("buildingtype","id",$f_id,"Bauzeit","buildtime"),
+				new cTableEditTextField("buildingtype","id",$f_id,"MaxHP","maxhp"),
+				new cTableEditTextField("buildingtype","id",$f_id,"BaseMana","basemana"),
 
-			new cTableEditTextField("buildingtype","id",$f_id,"Script","script"),
-			
-			new cTableEditColorTextField("buildingtype","id",$f_id,"Farbe","color"),
-			new cTableEditTextField("buildingtype","id",$f_id,"Letter","letter"),
-			new cTableEditColorTextField("buildingtype","id",$f_id,"LetterFarbe","lettercolor"),
+				new cTableEditTextField("buildingtype","id",$f_id,"Script","script"),
+				
+				new cTableEditColorTextField("buildingtype","id",$f_id,"Farbe","color"),
+				new cTableEditTextField("buildingtype","id",$f_id,"Letter","letter"),
+				new cTableEditColorTextField("buildingtype","id",$f_id,"LetterFarbe","lettercolor"),
 
-			new cTableEditTextField("buildingtype","id",$f_id,"Geschwindigkeit","speed"),
-			
-			new cTableEditIMGUrl("buildingtype","id",$f_id,"Bild","gfx"),
-			new cTableEditTextField("buildingtype","id",$f_id,"CSS Klasse","cssclass"),
-			
-			new cTableEditTextField("buildingtype","id",$f_id,"OrderVal","orderval"),
-			
-			new cTableEditCheckedField("buildingtype","id",$f_id,"special","special"),
-			new cTableEditCheckedField("buildingtype","id",$f_id,"Rahmen","border"),
-			new cTableEditCheckedField("buildingtype","id",$f_id,"override terrain movable","movable_override_terrain"),
-			new cTableEditTextField("buildingtype","id",$f_id,"Mod A","mod_a"),
-			new cTableEditTextField("buildingtype","id",$f_id,"Mod V","mod_v"),
-			new cTableEditTextField("buildingtype","id",$f_id,"Mod F","mod_f"),
-			
-			new cTableEditRadioField("buildingtype","id",$f_id,"Rasse","race",$races)
+				new cTableEditTextField("buildingtype","id",$f_id,"Geschwindigkeit","speed"),
+				
+				new cTableEditIMGUrl("buildingtype","id",$f_id,"Bild","gfx"),
+				new cTableEditTextField("buildingtype","id",$f_id,"CSS Klasse","cssclass"),
+				
+				new cTableEditTextField("buildingtype","id",$f_id,"OrderVal","orderval"),
+				
+				new cTableEditCheckedField("buildingtype","id",$f_id,"special","special"),
+				new cTableEditCheckedField("buildingtype","id",$f_id,"Rahmen","border"),
+				new cTableEditCheckedField("buildingtype","id",$f_id,"override terrain movable","movable_override_terrain"),
+				new cTableEditTextField("buildingtype","id",$f_id,"Mod A","mod_a"),
+				new cTableEditTextField("buildingtype","id",$f_id,"Mod V","mod_v"),
+				new cTableEditTextField("buildingtype","id",$f_id,"Mod F","mod_f"),
+				
+				new cTableEditRadioField("buildingtype","id",$f_id,"Rasse","race",$races)
+			)),
+			new cTableEditRows(array(
+				new cTableEditFlagField("buildingtype","id",$f_id,"Begehbarkeiten","movable_flag",$flags),
+				new cTableEditFlagField("buildingtype","id",$f_id,"Flags","flags",$gBuildingTypeFlagNames),
+			)),
 		)),
-		new cTableEditFlagField("buildingtype","id",$f_id,"Begehbarkeiten","movable_flag",$flags),
-		new cTableEditRadioField("buildingtype","id",$f_id,"benötigter Untergrund","terrain_needed",$terrains),
-		new cTableEditRadioField("buildingtype","id",$f_id,"Runine","ruinbtype",$buildings),
-		
-		/* unused at the moment
-		new cTableEditListFlagField("buildingtype","id",$f_id,"Verbindung: Building","connectto_building",$buildings),
-		new cTableEditListFlagField("buildingtype","id",$f_id,"Verbindung: Terrain","connectto_terrain",$terrains),
-		*/
-		new cTableEditListFlagField("buildingtype","id",$f_id,"Need near: Building","neednear_building",$buildings2),
-		new cTableEditListFlagField("buildingtype","id",$f_id,"Brauche: Building","require_building",$buildings2),
-		new cTableEditListFlagField("buildingtype","id",$f_id,"Darf nicht: Building","exclude_building",$buildings2),
-		new cTableEditRadioField("buildingtype","id",$f_id,"wird bei Fertigstellung zu Terrain","convert_into_terrain",$terrains),
+		new cTableEditCols(array(
+			new cTableEditRadioField("buildingtype","id",$f_id,"Runine","ruinbtype",$buildings),
+			
+			new cTableEditListFlagField("buildingtype","id",$f_id,"Verbindung:<br>Building","connectto_building",$buildings2),
+			new cTableEditListFlagField("buildingtype","id",$f_id,"Need near:<br>Building","neednear_building",$buildings2),
+			new cTableEditListFlagField("buildingtype","id",$f_id,"Brauche:<br>Building","require_building",$buildings2),
+			new cTableEditListFlagField("buildingtype","id",$f_id,"Darf nicht:<br>Building","exclude_building",$buildings2),
+			
+			new cTableEditRadioField("buildingtype","id",$f_id,"benötigter<br>Untergrund","terrain_needed",$terrains),
+			new cTableEditRadioField("buildingtype","id",$f_id,"wird bei<br>Fertigstellung<br>zu Terrain","convert_into_terrain",$terrains),
+			new cTableEditListFlagField("buildingtype","id",$f_id,"Verbindung:<br>Terrain","connectto_terrain",$terrains2),
+		)),
 	))
 	,"buildingtype","id",$f_id,Query("listall.php?sid=?")
 );
@@ -100,7 +106,7 @@ $form = new cTableEditForm("?sid=?&id=$f_id","BuildingType $f_id editieren",
 
 $form->HandleInput();
 // regenerate typecache
-require_once("../generate_types.php");
+RegenTypeCache();
 require(kTypeCacheFile);
 
 require_once("header.php"); 
