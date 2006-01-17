@@ -294,6 +294,7 @@ if (isset($f_listtype)) {
 	echo GenerateTabsMultiRow("buildingsummarytabs",$mytabs,14,$f_selbtype);
 }
 ?>
+Der Punkt "nächstes Upgrade" stellt die Kosten vom nächsten Upgrade dar, das kommt nach dem alle geplanten fertig sind.
 
 </body>
 </html>
