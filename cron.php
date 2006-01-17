@@ -151,9 +151,11 @@ unset($cons);
 profile_page_start("cron.php - think buildings",true);
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-$buildings = sqlgettable("SELECT * FROM `building` WHERE `type` IN (".implode(",",$gFlaggedBuildingTypes[kBuildingTypeFlag_CanShoot]).")");
-foreach ($buildings as $o) {
-	cBuilding::Think($o);
+if (count($gFlaggedBuildingTypes[kBuildingTypeFlag_CanShoot]) > 0) {
+	$buildings = sqlgettable("SELECT * FROM `building` WHERE `type` IN (".implode(",",$gFlaggedBuildingTypes[kBuildingTypeFlag_CanShoot]).")");
+	foreach ($buildings as $o) {
+		cBuilding::Think($o);
+	}
 }
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
