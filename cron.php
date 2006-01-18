@@ -338,7 +338,7 @@ if (($gGlobal["ticks"] % 30) == 0 || empty($gGlobal["weather"])){  // TODO : unh
 }
 
 
-$gSupportslotsFrequency = 60; // TODO : unhardcode
+$gSupportslotsFrequency = 5*60; // TODO : unhardcode  5 hours makes it less probable to fall together with 6h backup
  
 //update support slots (braucht recht viel rechenzeit, und produziert tonnen von querries (2 pro produktionsgebauede))
 // muss nur sehr selten berechnet werden
@@ -501,7 +501,7 @@ $basemana=$gBuildingType[$gGlobal['building_runes']]->basemana;
 // TODO : unhardcode
 sql("UPDATE `building` SET `mana`=LEAST((`level`+1)*$basemana,`mana`+($basemana*(`level`+1)/(10+`level`/20)*".($dtime/3600).")) WHERE `type`=".$gGlobal['building_runes']);
 
-profile_page_start("cron.php - production and population part 2",true);
+profile_page_start("cron.php - runes production",true);
 
 foreach($gAllUsers as $u){
 	switch($u->race){
@@ -542,7 +542,7 @@ foreach($gAllUsers as $u){
 	}
 }
 
-profile_page_start("cron.php - production and population part 3 (flush to guild)",true);
+profile_page_start("cron.php - flush res to guild",true);
 
 echo "flush user res to guild... <br>";
 TablesLock();
@@ -560,7 +560,7 @@ foreach($gResFields as $r){
 TablesUnlock();
 
 
-profile_page_start("cron.php - production and population part 4 (weltbank)",true);
+profile_page_start("cron.php - weltbank",true);
 // weltbank
 
 //TODO .. dies produziert zu viele sql querys 

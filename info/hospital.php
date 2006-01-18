@@ -344,10 +344,10 @@ class cInfoHospital extends cInfoBuilding {
 		<td align="right"><?=sprintf("%0.2f",$p->time)?></td>
 		<td align="right"><?=sprintf("%0.2f",$p->max)?></td>
 		<td align="right"><?=sprintf("%0.2f",$p->avg)?></td>
-		<td align="right"><?=$p->sqlmax?></td>
+		<td align="right"><?=($p->sqlmax)?></td>
 		<td align="right"><?=sprintf("%0.2f",$p->sqlavg)?></td>
-		<td align="right"><?=$p->memmax?></td>
-		<td align="right"><?=sprintf("%0.2f",$p->memavg)?></td></tr>
+		<td align="right"><?=ktrenner($p->memmax)?></td>
+		<td align="right"><?=ktrenner($p->memavg)?></td></tr>
 		<? } ?>
 		</table>
 		<h3>SQL Fehler</h3>

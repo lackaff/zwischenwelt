@@ -129,8 +129,8 @@ class cFight {
 			if ($army->pillageleft <= 1) break;
 		}
 		
-		$pillagetotal = 0;
-		foreach($gResFields as $res)$pillagetotal += $army->{"pillage_".$res};
+		$pillagetotal = $army->pillage - $army->pillageleft;
+		// foreach($gResFields as $res)$pillagetotal += $army->{"pillage_".$res};
 	
 		global $gAllUsers;
 		$armyownername = cArmy::GetArmyOwnerName($army);
@@ -159,7 +159,7 @@ class cFight {
 		if ($debug) echo "auslastung : $army->last / $army->lastmax<br>";
 		if ($army->last > $army->lastmax - 2) { // TODO : unhardcode
 			cFight::EndPillage($pillage,"Die Plünderer sind vollgeladen.");
-		} else if ($pillagetotal < $army->pillage/2) { // TODO : unhardcode
+		} else if ($pillagetotal < $army->pillage/2) { // TODO : BUG !!! stops as soon as one of the target res is empty
 			cFight::EndPillage($pillage,"Das Lager ist leer.");
 		}
 	}
@@ -683,6 +683,7 @@ class cFight {
 	// notify parties of new fof state
 	function ActOfWar ($attacker_uid,$defender_uid,$what,$x,$y) {
 		if (!$attacker_uid || !$defender_uid) return;
+		if ($attacker_uid == $defender_uid) return;
 		$topic = "Kriegerischer Akt";
 		if (GetFOF($attacker_uid,$defender_uid) != kFOF_Enemy) {
 			$defender_name = sqlgetone("SELECT `name` FROM `user` WHERE `id` = ".intval($defender_uid));
