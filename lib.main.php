@@ -713,7 +713,7 @@ function LoopProfiler_flush ($echo=false) {
 			$p->time += $o->totaltime;
 			sql("UPDATE `profile` SET ".obj2sql($p)." WHERE `page`='".addslashes($name)."'");
 		} else {
-			$p->max = $dt;
+			$p->max = $o->maxtime;
 			$p->sqlmax = $q;
 			$p->sql = $q;
 			//$p->mem = memory_get_usage();

@@ -60,6 +60,7 @@ foreach ($thinkarmies as $army) if ($army) {
 			$hungerschaden = max(0,$verbrauch - $gAllUsers[$army->user]->food);
 			sql("UPDATE `user` SET `food`=GREATEST(0,`food`-$verbrauch) WHERE `id`=".$army->user);
 			if ($hungerschaden > 0) {
+				if (kProfileArmyLoop) LoopProfiler("armyloop:hungerschaden");
 				if($army->type == kArmyType_Fleet) {
 					$army->transport = cUnit::GetUnitsAfterDamage($army->transport,$hungerschaden,$army->user);
 					cUnit::SetUnits($army->transport,$army->id,kUnitContainer_Transport);

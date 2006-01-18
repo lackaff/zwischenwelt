@@ -422,17 +422,18 @@ profile_page_start("cron.php - production and population",true);
 
 echo "calc res,pop mana... ".($dtime/3600)."<br>";
 
-sql("UPDATE `user` SET `pop`=LEAST(`maxpop`,`pop`+".($dtime/300).")"); // TODO : unhardcode
 //sql("UPDATE `user` SET `pop`=`maxpop` WHERE `pop`>`maxpop`");
 
-sql("UPDATE `user` SET `lumber`=`lumber`+`prod_lumber`*".($dtime/3600));
-sql("UPDATE `user` SET `stone`=`stone`+`prod_stone`*".($dtime/3600));
-sql("UPDATE `user` SET `food`=`food`+`prod_food`*".($dtime/3600));
-sql("UPDATE `user` SET `metal`=`metal`+`prod_metal`*".($dtime/3600));
+sql("UPDATE `user` SET	`pop`=LEAST(`maxpop`,`pop`+".($dtime/300).") ,
+						`lumber`=`lumber`+`prod_lumber`*".($dtime/3600)." , 
+						`stone`=`stone`+`prod_stone`*".($dtime/3600)." ,
+						`food`=`food`+`prod_food`*".($dtime/3600)." ,
+						`metal`=`metal`+`prod_metal`*".($dtime/3600));
 
 //gnome:
 sql("UPDATE `user` SET `runes`=`runes`+`prod_runes`*".($dtime/3600)." WHERE `race`=".kRace_Gnome); // TODO : unhardcode
 
+// todo : optimize by select max with group by guild ??
 //calc guild max resources
 echo "calc guild max res...<br>";
 $gGuilds = sqlgettable("SELECT * FROM `guild`");
@@ -448,6 +449,7 @@ foreach($gGuilds as $x){
 }
 echo "enforcing guild max res ....<br>";
 $set="";
+// todo : single query
 foreach($gRes as $f=>$r)
 	sql("UPDATE `guild` SET `$r`=`max_$r` WHERE `$r`>`max_$r");
 echo "done<br><br>";
@@ -457,6 +459,8 @@ echo "calc guild max res...<br>";
 
 echo "repair buildings...<br>";
 //MAXHP: ceil($maxhp + $maxhp/100*1.5*$level);  // NOTE: see also lib.building.php calcMaxBuildingHp
+
+profile_page_start("cron.php - repairing",true);
 
 TablesLock();
 $t = sqlgettable("SELECT `user`.`id` as `id`, COUNT( * ) as `broken`,`user`.`pop` as `pop`,`user`.`worker_repair` as `worker_repair`
@@ -491,10 +495,13 @@ sql("UPDATE `building`, `buildingtype` SET `building`.`hp` = CEIL(`buildingtype`
 echo mysql_affected_rows()." buildings had to much hp and were reduced to maxhp\n<br>";
 TablesUnlock();
 
+profile_page_start("cron.php - mana generation",true);
+
 $basemana=$gBuildingType[$gGlobal['building_runes']]->basemana;
 // TODO : unhardcode
-sql("UPDATE `building` SET `mana`=`mana`+($basemana*(`level`+1)/(10+`level`/20)*".($dtime/3600).") WHERE `type`=".$gGlobal['building_runes']);
-sql("UPDATE `building` SET `mana`=((`level`+1)*$basemana) WHERE `type`=".$gGlobal['building_runes']." AND `mana`>((`level`+1)*$basemana)");
+sql("UPDATE `building` SET `mana`=LEAST((`level`+1)*$basemana,`mana`+($basemana*(`level`+1)/(10+`level`/20)*".($dtime/3600).")) WHERE `type`=".$gGlobal['building_runes']);
+
+profile_page_start("cron.php - production and population part 2",true);
 
 foreach($gAllUsers as $u){
 	switch($u->race){
@@ -535,6 +542,7 @@ foreach($gAllUsers as $u){
 	}
 }
 
+profile_page_start("cron.php - production and population part 3 (flush to guild)",true);
 
 echo "flush user res to guild... <br>";
 TablesLock();
@@ -552,6 +560,7 @@ foreach($gResFields as $r){
 TablesUnlock();
 
 
+profile_page_start("cron.php - production and population part 4 (weltbank)",true);
 // weltbank
 
 //TODO .. dies produziert zu viele sql querys 

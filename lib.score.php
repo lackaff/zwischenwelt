@@ -1,8 +1,9 @@
 <?php
+// $costar kann aus globalen vars berechnet werden -> weniger querries , rentiert sich der umbau ?
 function getBuildingPts($uid,$costar=0){
 	if(!is_array($costar))
 		$costar= sqlgettable("SELECT `id`,`cost_stone`+`cost_food`+`cost_lumber`+`cost_metal` AS `costs` FROM `buildingtype` WHERE 1",'id');
-	$buildings= sqlgettable("SELECT COUNT(`id`) AS `anzahl`,`type`,SUM(`level`) AS `levelsum` FROM `building` WHERE `user`=".intval($uid)." AND `type`!=4 GROUP BY `type`");
+	$buildings= sqlgettable("SELECT COUNT(`id`) AS `anzahl`,`type`,SUM(`level`) AS `levelsum` FROM `building` WHERE `user`=".intval($uid)." AND `type`!=4 GROUP BY `type`"); // 4 : unhardcode me
 	$points=0;
 	foreach ($buildings as $building){
 		$bp=$costar[$building->type]->costs/100;
