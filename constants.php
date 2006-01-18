@@ -43,6 +43,7 @@ define("kJSMapArmyFlag_Fighting_S",(1<<6)); // todo
 define("kJSMapArmyFlag_Fighting_E",(1<<7)); // todo
 define("kJSMapArmyFlag_Shooting",(1<<8)); // todo
 
+		
 define("kNWSE_N",1);
 define("kNWSE_W",2);
 define("kNWSE_S",4);
@@ -293,6 +294,8 @@ define("ARMY_ACTION_RANGEATTACK",7);
 define("kUnitContainer_Army","army");
 define("kUnitContainer_Transport","transport");
 define("kUnitContainer_Building","building");
+$gNumber2ContainerType = array(kUnitContainer_Army,kUnitContainer_Transport,kUnitContainer_Building);
+$gContainerType2Number = array_flip($gNumber2ContainerType);
 
 define("kUnitType_Miliz",1);
 define("kUnitType_Kaempfer",2);
@@ -462,6 +465,18 @@ $gOpenableBuildingTypes = $gFlaggedBuildingTypes[kBuildingTypeFlag_Openable];
 $gTaxableBuildingTypes = $gFlaggedBuildingTypes[kBuildingTypeFlag_Taxable];
 $gBodenSchatzBuildings = $gFlaggedBuildingTypes[kBuildingTypeFlag_Bodenschatz];
 
+define("kBodenSchatz_Weizen",55); // todo : unhardcode us : kBuildingTypeFlag_Bodenschatz
+define("kBodenSchatz_Kristalle",56);
+define("kBodenSchatz_Erz",57);
+define("kBodenSchatz_Fisch",58);
+define("kBodenSchatz_Fruechte",59);
+define("kBodenSchatz_EichenHolz",60);
+define("kBodenSchatz_Marmor",61);
+define("kBodenSchatz_Granit",62);
+define("kBodenSchatz_Wild",63);
+
+define("kBodenSchatzIdealWorkers",10000); // maximum workers that are of use when harvesting "minerals"
+define("kShootingAlarmTimeout",2*3600); // send a new igm when fire is resumed after a longer pause
 define("kSpeedyBuildingsLimit",121); // 11*11 = 1 map full
 
 $gBuildingTypeGroupsPics = array("Gebäude"=>"tool_house.png","Infrastruktur"=>"tool_street.png","Deko"=>"tool_brunnen.png"); 
@@ -504,7 +519,9 @@ define("kBuildingFlag_Tax_Stranger",	(1<<4));
 define("kBuildingFlag_Tax_Guild",		(1<<5));
 define("kBuildingFlag_Tax_Friend",		(1<<6));
 define("kBuildingFlag_Tax_Enemy",		(1<<7));
-define("kBuildingFlag_AllSet",			(1<<9)-1); // (at least one above the others)-1
+define("kBuildingFlag_AutoShoot_Enemy",		(1<<8));
+define("kBuildingFlag_AutoShoot_Strangers",	(1<<9));
+define("kBuildingFlag_AllSet",			(1<<11)-1); // (at least one above the others)-1
 define("kBuildingFlag_OpenMask",	kBuildingFlag_Open_Stranger|
 									kBuildingFlag_Open_Guild|
 									kBuildingFlag_Open_Friend|
@@ -514,29 +531,25 @@ define("kBuildingFlag_TaxMask",		kBuildingFlag_Tax_Stranger|
 									kBuildingFlag_Tax_Friend|
 									kBuildingFlag_Tax_Enemy);
 define("kBuildingFlag_OpenTaxMask",	kBuildingFlag_OpenMask|kBuildingFlag_TaxMask);
+define("kBuildingFlag_ShootMask",	kBuildingFlag_AutoShoot_Enemy|kBuildingFlag_AutoShoot_Strangers);
 
 
-define("kBodenSchatzIdealWorkers",10000);
-define("kBodenSchatz_Weizen",55);
-define("kBodenSchatz_Kristalle",56);
-define("kBodenSchatz_Erz",57);
-define("kBodenSchatz_Fisch",58);
-define("kBodenSchatz_Fruechte",59);
-define("kBodenSchatz_EichenHolz",60);
-define("kBodenSchatz_Marmor",61);
-define("kBodenSchatz_Granit",62);
-define("kBodenSchatz_Wild",63);
 
 // owner can set these flags, all others are system flags
-$gOwnerBuildingFlags = array(kBuildingFlag_Open_Stranger	=> $gOpenableBuildingTypes, 
-								kBuildingFlag_Open_Guild	=> $gOpenableBuildingTypes,
-								kBuildingFlag_Open_Friend	=> $gOpenableBuildingTypes,
-								kBuildingFlag_Open_Enemy	=> $gOpenableBuildingTypes,
-								kBuildingFlag_Tax_Stranger	=> $gTaxableBuildingTypes,
-								kBuildingFlag_Tax_Guild		=> $gTaxableBuildingTypes,
-								kBuildingFlag_Tax_Friend	=> $gTaxableBuildingTypes,
-								kBuildingFlag_Tax_Enemy		=> $gTaxableBuildingTypes);
+$gOwnerBuildingFlags = array(	kBuildingFlag_Open_Stranger			=> $gFlaggedBuildingTypes[kBuildingTypeFlag_Openable], 
+								kBuildingFlag_Open_Guild			=> $gFlaggedBuildingTypes[kBuildingTypeFlag_Openable],
+								kBuildingFlag_Open_Friend			=> $gFlaggedBuildingTypes[kBuildingTypeFlag_Openable],
+								kBuildingFlag_Open_Enemy			=> $gFlaggedBuildingTypes[kBuildingTypeFlag_Openable],
+								kBuildingFlag_Tax_Stranger			=> $gFlaggedBuildingTypes[kBuildingTypeFlag_Taxable],
+								kBuildingFlag_Tax_Guild				=> $gFlaggedBuildingTypes[kBuildingTypeFlag_Taxable],
+								kBuildingFlag_Tax_Friend			=> $gFlaggedBuildingTypes[kBuildingTypeFlag_Taxable],
+								kBuildingFlag_Tax_Enemy				=> $gFlaggedBuildingTypes[kBuildingTypeFlag_Taxable],
+								kBuildingFlag_AutoShoot_Enemy		=> $gFlaggedBuildingTypes[kBuildingTypeFlag_CanShoot],
+								kBuildingFlag_AutoShoot_Strangers	=> $gFlaggedBuildingTypes[kBuildingTypeFlag_CanShoot],
+								);
 								
-$gBuildingFlagNames = array(	); // for further flags
+$gBuildingFlagNames = array(	kBuildingFlag_AutoShoot_Enemy => "Automatisch auf Feinde schiessen",
+								kBuildingFlag_AutoShoot_Strangers => "Automatisch auf Fremde schiessen",
+								);
 
 ?>

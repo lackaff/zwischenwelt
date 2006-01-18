@@ -674,7 +674,7 @@ class cInfoBuilding extends cInfoBase {
 					<table>
 					<?php foreach ($gOwnerBuildingFlags as $flag => $btypes) if (!(intval($flag) & kBuildingFlag_OpenTaxMask) && in_array($gObject->type,$btypes)) {?>
 						<tr>
-							<td><input type="checkbox" name="flags[]" value="<?=$flag?>" <?=($gObject->flags & $flag)?"checked":""?>></td>
+							<td><?=IFlagCheck($gObject,"flags",$flag)?></td>
 							<td><?=$gBuildingFlagNames[$flag]?></td>
 						</tr>
 					<?php $edited = true; }?>
@@ -689,6 +689,7 @@ class cInfoBuilding extends cInfoBase {
 					<?php } // endif?>
 					</FORM>	
 				<?php } // endif verhalten edit
+				
 				
 				// if ($btype->script && strlen($btype->script) > 0 && file_exists($btype->script.".php")) include($btype->script.".php");
 				

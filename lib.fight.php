@@ -1,5 +1,4 @@
 <?php
-
 require_once("lib.army.php");
 require_once("lib.spells.php");
 
@@ -32,6 +31,80 @@ class cFight {
 	}
 		
 		
+	// ##### ##### ##### ##### ##### ##### ##### #####
+	// ##### #####    Shooting  ##### ##### ##### #####
+	// ##### ##### ##### ##### ##### ##### ##### #####
+	
+	function StartShooting ($attacker,$attackertype,$defender,$defendertype) {
+		global $gContainerType2Number,$gNumber2ContainerType;
+		// todo : entry in db
+		$new = false;
+		$new->attacker = $attacker;
+		$new->attackertype = is_numeric($attackertype)?$attackertype:$gContainerType2Number[$attackertype];
+		$new->defender = $defender;
+		$new->defendertype = is_numeric($defendertype)?$defendertype:$gContainerType2Number[$defendertype];
+		$new->start = time();
+		$new->lastshot = 0;
+		sql("INSERT INTO `shooting` SET ".obj2sql($new));
+		$new->id = mysql_insert_id();
+		return $new;
+	}
+	
+	function StepShooting ($shooting,$attackerobj=false,$defenderobj=false,$dmg=0) {
+		global $gContainerType2Number,$gNumber2ContainerType,$gUnitType;
+		if ($dmg <= 0) return; // todo : autocalc from units in attacker
+		if (!$shooting) return;
+		if (is_numeric($shooting->attackertype)) $shooting->attackertype = $gNumber2ContainerType[$shooting->attackertype];
+		if (is_numeric($shooting->defendertype)) $shooting->defendertype = $gNumber2ContainerType[$shooting->defendertype];
+		if (!$attackerobj) $attackerobj = sqlgetobject("SELECT * FROM `".addslashes($shooting->attackertype)."` WHERE `id` = ".intval($shooting->attacker));
+		if (!$defenderobj) $defenderobj = sqlgetobject("SELECT * FROM `".addslashes($shooting->defendertype)."` WHERE `id` = ".intval($shooting->defender));
+		if (!$attackerobj || !$defenderobj) {
+			sql("DELETE FROM `shooting` WHERE `id` = ".intval($shooting->id));
+			return; // error
+		}
+		// peng..
+		$target_killed = false;
+		$now = time();
+		$age = $now - $shooting->lastshot; 
+		//echo "StepShooting(dmg=$dmg) age=$age<br>";
+		if ($age > kShootingAlarmTimeout) {
+			// send a new igm when fire is resumed after a longer pause
+		}
+		
+		// apply damage
+		$report = "";
+		if ($shooting->defendertype == kUnitContainer_Army) {
+			$army = $defenderobj;
+			// todo : der ganze lock block dient nur dem armee-beschädigen, die teile kommen aus dem cron fight, KAPSEL MICH !
+			TablesLock();
+			$army->units = cUnit::GetUnits($army->id);
+			$army->vorher_units = $army->units;
+			$army->units = cUnit::GetUnitsAfterDamage($army->units,$dmg,$army->user);
+			$army->lost_units = cUnit::GetUnitsDiff($army->vorher_units,$army->units);
+			foreach ($army->lost_units as $o)
+				$report .= "<img src='".g($gUnitType[$o->type]->gfx)."'>".floor($o->amount)."<br>\n";
+			// TODO : terrainkills stimmt hier nicht so richtig, z.b. wenn kein terrain da ist, TODO : einheitliche damage funktion
+			sql("UPDATE `terrain` SET `kills`=`kills`+".round(abs(cUnit::GetUnitsSum($army->lost_units)))." WHERE `x`=".$army->x." AND `y`=".$army->y);
+			$army->size = cUnit::GetUnitsSum($army->units);
+			if ($army->size >= 1.0) 
+					cUnit::SetUnits($army->units,$army->id);
+			else {
+				cArmy::DeleteArmy($army,false,"Vom Kanonenturm erschossen"); // TODO :richtige meldung
+				$report .= "Die Armee wurde VERNICHTET !<br>\n";
+				$target_killed = true;
+			}
+			TablesUnlock();
+		}
+		echo $report;
+		
+		if ($target_killed) {
+			sql("DELETE FROM `shooting` WHERE `id` = ".intval($shooting->id));
+		}
+		
+		// if ($army->size < 1) ... kill army&shooting... 
+		sql("UPDATE `shooting` SET ".arr2sql(array("lastshot"=>$now))." WHERE `id` = ".intval($shooting->id));
+	}
+	
 	// ##### ##### ##### ##### ##### ##### ##### #####
 	// ##### #####    PILLAGE  ##### ##### ##### #####
 	// ##### ##### ##### ##### ##### ##### ##### #####

@@ -116,6 +116,9 @@ function changeUserMoral($userid,$deltamoral){
 
 // friend or foe : kFOF_Neutral,kFOF_Friend,kFOF_Enemy
 function GetFOF ($masteruserid,$otheruserid) {
+	if ($masteruserid == $otheruserid) return kFOF_Friend; // one is always one selves friend
+	if ($masteruserid == 0 && $otheruserid > 0) return kFOF_Enemy; // =0 means server, usually monsters
+	if ($otheruserid == 0 && $masteruserid > 0) return kFOF_Enemy; // =0 means server, usually monsters
 	return intval(sqlgetone("SELECT `class` FROM `fof_user` WHERE `master` = ".intval($masteruserid)." AND `other` = ".intval($otheruserid)));
 }
 

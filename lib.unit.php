@@ -239,6 +239,16 @@ class cUnit {
 		return $dmg;
 	}
 	
+	// RANGED attack range
+	function GetUnitsMaxRange ($units) {
+		global $gUnitType;
+		$r = 0;
+		foreach ($units as $o) 
+			if ($o->amount > 0 && $gUnitType[$o->type]->f > 0) 
+				$r = max($r,$gUnitType[$o->type]->r);
+		return $r;
+	}
+	
 	// RANGED Cooldown
 	function GetDistantCooldown($units) {
 		global $gUnitType;

@@ -12,9 +12,76 @@ require_once("lib.hook.php");
 class cBuilding {
 
 	function Think ($building,$debug=false) {
-		if ($debug) echo "Thinking building id ".$building->id."<br>";
-		// if ($building->flags)
-		// todo : search for new enemies, start shootings, DON'T calc shootings, handled differently, activeshooting var ? only one shooting at a time ?
+		global $gContainerType2Number,$gNumber2ContainerType;
+		if (!$building) return;
+		
+		if (!isset($building->units)) $building->units = cUnit::GetUnits($building->id,kUnitContainer_Building);
+		$units = $building->units;
+		$cooldown = cUnit::GetDistantCooldown($units);
+		$r = cUnit::GetUnitsMaxRange($units);
+		$x = $building->x;
+		$y = $building->y;
+		
+		$myshootings = sqlgetgrouptable("SELECT * FROM `shooting` WHERE 
+			`attacker` = ".$building->id." AND 
+			`attackertype` = ".$gContainerType2Number[kUnitContainer_Building],"defendertype","defender");
+		$lastshot = 0;
+		foreach ($myshootings as $ctype => $arr) foreach ($arr as $o) $lastshot = max($lastshot,$o->lastshot);
+		if ($debug) echo "Thinking building id ".$building->id.",cooldown=$cooldown,r=$r,lastshot=".date("d.m.Y H:i",$lastshot)."<br>";
+		if ($lastshot > 0 && time() - $lastshot < $cooldown) return; // not ready yet, still loading (cooling down)
+			
+		if ((intval($building->flags) & (kBuildingFlag_AutoShoot_Enemy|kBuildingFlag_AutoShoot_Strangers)) != 0) {
+			// search for new targets
+			$xylimit = "`x` >= ".($x-$r)." AND `x` <= ".($x+$r)." AND 
+						`y` >= ".($y-$r)." AND `y` <= ".($y+$r);
+			$nearstuff = array();
+			$nearstuff[kUnitContainer_Building] = sqlgettable("SELECT * FROM `building` WHERE ".$xylimit);
+			$nearstuff[kUnitContainer_Army] = sqlgettable("SELECT * FROM `army` WHERE ".$xylimit);
+			foreach ($nearstuff as $ctype => $arr) foreach ($arr as $o) {
+				$ctypenum = $gContainerType2Number[$ctype];
+				if ($debug) echo "checking near : $ctype,".oposinfolink($o)."<br>";
+				if (isset($myshootings[$ctypenum]) && isset($myshootings[$ctypenum][$o->id])) continue; // already added
+				if (cUnit::GetDistantDamage($units,$o->x-$x,$o->y-$y) <= 0) continue; // out of range
+				// now check fof
+				$fof = GetFOF($building->user,$o->user);
+				if ($debug) echo "checking near : $ctype,".oposinfolink($o)." in range, fof=$fof <br>";
+				if ($fof == kFOF_Friend) continue;
+				$attack = false;
+				if ($fof == kFOF_Enemy && (intval($building->flags) & kBuildingFlag_AutoShoot_Enemy)) $attack = true;
+				if ($fof != kFOF_Enemy && (intval($building->flags) & kBuildingFlag_AutoShoot_Strangers)) $attack = true;
+				// start the attack (add to myshootings to consider it right away for next shot
+				if ($attack) {
+					if ($debug) echo "start shooting at $ctype,".oposinfolink($o)."<br>";
+					if (!isset($myshootings[$ctypenum])) $myshootings[$ctypenum] = array();
+					$myshootings[$ctypenum][] = cFight::StartShooting($building->id,kUnitContainer_Building,$o->id,$ctype);
+				}
+			}
+		}
+		
+		// now choose where to shoot next (go for most damage, to use different unit types effectively)
+		$found_maxdmg = 0;
+		$found_shooting = false;
+		$found_target = false;
+		foreach ($myshootings as $ctypenum => $arr) foreach ($arr as $o) {
+			$ctype = $gNumber2ContainerType[$ctypenum];
+			$target = sqlgetobject("SELECT * FROM `". $ctype."` WHERE `id` = ".$o->defender);
+			if (!$target) {
+				// dead
+				sql("DELETE FROM `shooting` WHERE `id` = ".intval($o->id));
+				continue;
+			}
+			$dmg = cUnit::GetDistantDamage($units,$target->x-$x,$target->y-$y);
+			if ($debug) echo "considering at shooting  $ctype,".oposinfolink($target)." : dmg=$dmg<br>";
+			if ($found_maxdmg < $dmg) {
+				$found_maxdmg = $dmg;
+				$found_shooting = $o;
+				$found_target = $target;
+			}
+		}
+		if ($found_shooting) {
+			if ($debug) echo "DECIDED to shoot at ".oposinfolink($found_target)." : dmg=$found_maxdmg<br>";
+			cFight::StepShooting($found_shooting,$building,$found_target,$found_maxdmg);
+		}
 	}
 	
 	function GetJavaScriptBuildingData ($building,$userid=false,$quote='"') {
