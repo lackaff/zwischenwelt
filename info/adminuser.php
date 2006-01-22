@@ -16,7 +16,8 @@ $flags = array(
 	kUserFlags_DropDownMenu => "DropDownMenu",
 	kUserFlags_BugOperator => "BugOperator",
 	kUserFlags_ShowLogFrame => "ShowLogFrame",
-	kUserFlags_DontShowWikiHelp => "DontShowWikiHelp"
+	kUserFlags_DontShowWikiHelp => "DontShowWikiHelp",
+	kUserFlags_AutomaticUpgradeBuildingTo => "AutoUpgradeBuildingTo"
 );
 
 $races = array(

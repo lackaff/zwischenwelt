@@ -75,7 +75,7 @@ function StartBuild ($con) {
 	return $success;
 }
 
-function CompleteBuild ($building) { // object
+function CompleteBuild ($building,$bAutomaticUpgradeBuildingTo=true) { // object
 	if (!$building) return;
 	global $gBuildingType;
 	
@@ -85,9 +85,12 @@ function CompleteBuild ($building) { // object
 		setTerrain($building->x,$building->y,$terrain);
 		sql("DELETE FROM `building` WHERE `id`=".$building->id." LIMIT 1");
 	} else {	
-		$upgradeto = sqlgetone("SELECT MIN(`level`+`upgrades`) FROM `building` 
-			WHERE `user`=".intval($building->user)." AND `type`=".intval($building->type)." AND `construction`=0");
-		if (!$upgradeto) $upgradeto = 0; // no previous buildings found
+		//automaticaly plan upgrades?
+		if($bAutomaticUpgradeBuildingTo){
+			$upgradeto = sqlgetone("SELECT MIN(`level`+`upgrades`) FROM `building` 
+				WHERE `user`=".intval($building->user)." AND `type`=".intval($building->type)." AND `construction`=0");
+			if (!$upgradeto) $upgradeto = 0; // no previous buildings found
+		} else $upgradeto = 0;
 		echo "building complete, $upgradeto upgrades planned<br>\n";
 		sql("UPDATE `building` SET `construction`=0,`upgrades`=".intval($upgradeto)." WHERE `id`=".$building->id." LIMIT 1");
 	}

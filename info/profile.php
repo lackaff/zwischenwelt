@@ -15,10 +15,11 @@ function setPlayerProfil($id,$profil) {
 }
 
 $flaglist = array(
-	"DropDownMenu benutzen (geht nur im Firefox!)?" => kUserFlags_DropDownMenu,
+//	"DropDownMenu benutzen (geht nur im Firefox!)?" => kUserFlags_DropDownMenu,
 	"LogFrame anzeigen?" => kUserFlags_ShowLogFrame,
 	"WikiHilfe ausblenden" => kUserFlags_DontShowWikiHelp,
-	"Monsterkampfberichte entfernen" => kUserFlags_NoMonsterFightReport
+	"Monsterkampfberichte entfernen" => kUserFlags_NoMonsterFightReport,
+	"bei neuen Gebäuden automatisch Upgrades planen" => kUserFlags_AutomaticUpgradeBuildingTo
 );
 
 profile_page_start("profile.php");

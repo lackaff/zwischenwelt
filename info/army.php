@@ -25,7 +25,7 @@ class cInfoArmy extends cInfoBase {
 		if ($army && ($cancontrollarmy || $gUser->admin))
 		switch ($f_do) {
 			case "admin_armystep" : if (!$gUser->admin) break;
-				require_once("lib.armythink.php"); // warning ! generates big globals
+				require_once("../lib.armythink.php"); // warning ! generates big globals
 				ArmyThinkTimeShift($army->id,$f_minutes*60);
 				echo "$f_minutes minutes have passed....<br>";
 				$army = sqlgetobject("SELECT * FROM `army` WHERE `id` = ".intval($army->id));
@@ -166,7 +166,7 @@ class cInfoArmy extends cInfoBase {
 				if ($f_gfxbuttonmode == "route") $f_button_route = 1;
 				if(isset($f_button_wp)) $newwps = array(cArmy::ArmySetWaypoint($army->id,$f_x,$f_y));
 				else if(isset($f_button_route)){
-					require_once("lib.path.php");
+					require_once("../lib.path.php");
 					profile_page_start("pathfinding");
 					$newwps = cPath::ArmySetRouteTo($army->id,$f_x,$f_y);
 					profile_page_end();
