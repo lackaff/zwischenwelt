@@ -97,7 +97,7 @@ function CompleteBuild ($building,$bAutomaticUpgradeBuildingTo=true) { // object
 	
 	//RegenSurroundingNWSE($building->x,$building->y);
 	
-	//LogMe($building->user,NEWLOG_TOPIC_BUILD,NEWLOG_BUILD_FINISHED,$building->x,$building->y,0,$gBuildingType[$building->type]->name,"");
+	LogMe($building->user,NEWLOG_TOPIC_BUILD,NEWLOG_BUILD_FINISHED,$building->x,$building->y,0,$gBuildingType[$building->type]->name,"",false);
 	Hook_CreateBuilding($building);
 }
 

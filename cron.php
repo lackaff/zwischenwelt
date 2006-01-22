@@ -131,7 +131,7 @@ foreach($gAllUsers as $x) {
 			if ($gVerbose) echo "fertiggestellt : ".$gBuildingType[$o->type]->name."(".$o->x.",".$o->y.")<br>";
 			
 			$now = microtime_float();
-			CompleteBuild($o,($c->flags & kUserFlags_AutomaticUpgradeBuildingTo)>0);
+			CompleteBuild($o,($o->flags & kUserFlags_AutomaticUpgradeBuildingTo)>0);
 			echo "Profile CompleteBuild : ".sprintf("%0.3f",microtime_float()-$now)."<br>\n";
 		}
 	} else {
@@ -186,7 +186,7 @@ while ($o = mysql_fetch_object($mysqlresult)) {
 			`hp` = LEAST(`hp`+".($up+$heal)." , $maxhp),
 			`upgradetime` = 0 WHERE `id` = ".$o->id." LIMIT 1");
 		// echo "upgrade auf ".($o->level+1)." fertig : ".$gBuildingType[$o->type]->name."(".$o->x."|".$o->y."), hpup=".$up.", hpheal=".$heal."<br>\n";
-		//LogMe($o->user,NEWLOG_TOPIC_BUILD,NEWLOG_UPGRADE_FINISHED,$o->x,$o->y,$o->level+1,$gBuildingType[$o->type]->name,"");
+		LogMe($o->user,NEWLOG_TOPIC_BUILD,NEWLOG_UPGRADE_FINISHED,$o->x,$o->y,$o->level+1,$gBuildingType[$o->type]->name,"",false);
 		//$o = sqlgetobject("SELECT * FROM `building` WHERE `id`=".$o->id." LIMIT 1");
 		$o->level++;
 		$o->upgrades = max(0,$o->upgrades-1);
@@ -736,7 +736,7 @@ foreach ($technologies as $o) {
 		echo $text."<br>\n";
 		
 		// TODO : neue log meldung machen !
-		//LogMe($o->user,NEWLOG_TOPIC_BUILD,NEWLOG_UPGRADE_FINISHED,$o->x,$o->y,$o->level+1,$gBuildingType[$o->type]->name,"");
+		LogMe($o->user,NEWLOG_TOPIC_BUILD,NEWLOG_UPGRADE_FINISHED,$o->x,$o->y,$o->level+1,$gBuildingType[$o->type]->name,"",false);
 		
 	} else if ($o->upgradetime == 0) {
 		// test if upgrade can be started

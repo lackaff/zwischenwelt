@@ -292,25 +292,30 @@ function GetBuildingPic ($type,$user=false,$level=10,$nwse="we") {
 	
 // userlog, visible in logwindow, see log.php
 //writes a log entry
-function LogMe($user,$topic,$type,$i1,$i2,$i3,$s1,$s2)
+//if bStackMessages is true then it will be tried to stack identical messages
+function LogMe($user,$topic,$type,$i1,$i2,$i3,$s1,$s2,$bStackMessages=true)
 {
 	//check if this message can be merged with almost an identical message
 	if (is_object($s2)) { echo "LogMe,s2 is obj:".stacktrace()."<br>"; vardump2($s2); }
 	if (is_object($s1)) { echo "LogMe,s1 is obj:".stacktrace()."<br>"; vardump2($s1); }
-	$id = sqlgetone("SELECT `id` FROM `newlog` WHERE 
-		`count`<100 AND `type`=".intval($type)." AND 
-		`topic`=".intval($topic)." AND 
-		`user`=".intval($user)." AND
-		`time`>=(".time()."-(60*60*1)) AND
-		`i1`=(".intval($i1).") AND 
-		`i2`=(".intval($i2).") AND 
-		`i3`=(".intval($i3).") AND 
-		`s1`='".addslashes($s1)."' AND 
-		`s2`='".addslashes($s2)."' LIMIT 1");
-	if($id > 0){
-		//oki, same message found, so increase the counter
-		sql("UPDATE `newlog` SET `count`=`count`+1,`time`=".time()." WHERE `id`=".intval($id));
-		return;
+	
+	if($bStackMessages){
+		//try to stack messages
+		$id = sqlgetone("SELECT `id` FROM `newlog` WHERE 
+			`count`<100 AND `type`=".intval($type)." AND 
+			`topic`=".intval($topic)." AND 
+			`user`=".intval($user)." AND
+			`time`>=(".time()."-(60*60*1)) AND
+			`i1`=(".intval($i1).") AND 
+			`i2`=(".intval($i2).") AND 
+			`i3`=(".intval($i3).") AND 
+			`s1`='".addslashes($s1)."' AND 
+			`s2`='".addslashes($s2)."' LIMIT 1");
+		if($id > 0){
+			//oki, same message found, so increase the counter
+			sql("UPDATE `newlog` SET `count`=`count`+1,`time`=".time()." WHERE `id`=".intval($id));
+			return;
+		}
 	}
 
 	//no merging of log so post a new entry
