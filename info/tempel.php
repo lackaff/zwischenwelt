@@ -12,7 +12,7 @@ class cInfoTempel extends cInfoBuilding {
 		if($gUser->id == $gObject->user) { 
 			if(isset($f_sacrifice))
 			{
-				$x = abs(intval($f_sacrifice));
+				$x = min(abs(intval($f_sacrifice)),$gUser->pop);
 				sql("UPDATE `user` SET `pop`=`pop`-$x WHERE `id`=".$gUser->id);
 				sql("UPDATE `user` SET `pop`=0 WHERE `pop`<0 AND `id`=".$gUser->id);
 				$type = rand(1,9);
