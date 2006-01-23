@@ -112,7 +112,7 @@ function changeUserMoral($userid,$deltamoral){
 	// DONE :  moral = GREATEST(0,SMALLEST(200,moral+deltamoral)) oder so...
 	// sonst hat superstarke moralaenderung keinerlei auswirkung, wenn sie über das limit kommen würde
 	//sql("UPDATE `user` SET `moral`=`moral`+($deltamoral) WHERE `id`=$userid AND (`moral`+($deltamoral))>=0 AND (`moral`+($deltamoral))<=200");
-	sql("UPDATE `user` SET `moral`=GREATEST(0,SMALLEST(200,`moral`+($deltamoral))) WHERE `id`=$userid");
+	sql("UPDATE `user` SET `moral`=GREATEST(0,LEAST(200,`moral`+($deltamoral))) WHERE `id`=$userid");
 }
 
 // friend or foe : kFOF_Neutral,kFOF_Friend,kFOF_Enemy
