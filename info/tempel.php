@@ -13,6 +13,10 @@ class cInfoTempel extends cInfoBuilding {
 		if($gUser->id == $gObject->user) { 
 			if(isset($f_sacrifice))
 			{
+        $moral = $gUser->moral;
+        $moral_good = $moral / 100;
+        $moral_bad = 2 - $moral_good;
+        
         $pop = min(abs(intval($f_pop)),$gUser->pop);
         foreach($gRes as $name=>$field)$res[$field] = min(abs(intval(${"f_res_$field"})),$gUser->$field);
         $allres = array_sum($res);
@@ -25,43 +29,48 @@ class cInfoTempel extends cInfoBuilding {
           {
             case 1:
             case 2:
+              $x = $pop * $moral_bad;
               $msg = "Die geopferten Bewohner werden ganz braun und kriegen krustige Haut,
               auf einmal wachsen ihnen Blätter und sie fangen an Wurzeln zu schlagen.
-              Das ist die wahre Macht von rein biologischen Schampoo, du erhälst $pop Holz !";
+              Das ist die wahre Macht von rein biologischen Schampoo, du erhälst $x Holz !";
               changeUserMoral($gUser->id,-round($pop/10000));
-              sql("UPDATE `user` SET `lumber`=`lumber`+$pop WHERE `id`=".$gUser->id);
+              sql("UPDATE `user` SET `lumber`=`lumber`+$x WHERE `id`=".$gUser->id);
             break;
             case 3:
             case 4:
+              $x = $pop * $moral_bad;
               $msg = "Er hat Jehova gesagt ! Steinigt ihn !
               Bääärte ! schöööne flauschige falsche Bääääärte !
               Kann es sein das Weibsfolk anwesend ist ?
               Eine Steinigung frei nach Monty Python.
-              Du erhälst $pop Stein !";
+              Du erhälst $x Stein !";
               changeUserMoral($gUser->id,-round($pop/10000));
-              sql("UPDATE `user` SET `stone`=`stone`+$pop WHERE `id`=".$gUser->id);
+              sql("UPDATE `user` SET `stone`=`stone`+$x WHERE `id`=".$gUser->id);
             break;
             case 5:
             case 6:
-              $msg = "Happy Kannibalen-Wochen bei McTempel, du erhälst $pop Nahrung !";
+              $x = $pop * $moral_bad;
+              $msg = "Happy Kannibalen-Wochen bei McTempel, du erhälst $x Nahrung !";
               changeUserMoral($gUser->id,-round($pop/10000));
-              sql("UPDATE `user` SET `food`=`food`+$pop WHERE `id`=".$gUser->id);
+              sql("UPDATE `user` SET `food`=`food`+$x WHERE `id`=".$gUser->id);
             break;
             case 7:
             case 8:
+              $x = $pop * $moral_bad;
               $msg = "Den armen Opfern werden sämtliche Zahnspangen, Plomben
               und sonstige Implantate entfernt.
-              Du erhälst $pop Metall !";
+              Du erhälst $x Metall !";
               changeUserMoral($gUser->id,-round($pop/10000));
-              sql("UPDATE `user` SET `metal`=`metal`+$pop WHERE `id`=".$gUser->id);
+              sql("UPDATE `user` SET `metal`=`metal`+$x WHERE `id`=".$gUser->id);
             break;
             case 9:
               $pop = floor($pop / 100);
+              $x = $pop * $moral_bad;
               $msg = "*zap*rauch*bruzzel* Oh da haben sich wohl ein paar Leute aufgelöst.
               Ah aber ein paar Zaubersteinchen sind geblieben.
-              Du erhälst $pop Runen !";
+              Du erhälst $x Runen !";
               changeUserMoral($gUser->id,-round($pop/10000));
-              sql("UPDATE `user` SET `runes`=`runes`+$pop WHERE `id`=".$gUser->id);
+              sql("UPDATE `user` SET `runes`=`runes`+$x WHERE `id`=".$gUser->id);
             break;
           }
           $gUser = sqlgetobject("SELECT * FROM `user` WHERE `id` = ".$gUser->id);
@@ -89,7 +98,8 @@ class cInfoTempel extends cInfoBuilding {
           
           //oki there is something to sacrifice
           if($sum>0){
-            $sum = floor($sum * 0.8);
+            $x = floor($sum * 0.8 * $moral_good);
+              
             sql("UPDATE `user` SET ".implode(",",$set)." WHERE `id`=".$gUser->id." AND ".implode(" AND ",$where));
             $type = rand(1,16);
             if(mysql_affected_rows()>0)switch ($type)
@@ -98,9 +108,9 @@ class cInfoTempel extends cInfoBuilding {
               case 2:
                 $msg = "Die geopferten Bewohner werden ganz braun und kriegen krustige Haut,
                 auf einmal wachsen ihnen Blätter und sie fangen an Wurzeln zu schlagen.
-                Das ist die wahre Macht von rein biologischen Schampoo, du erhälst $sum Holz !";
-                changeUserMoral($gUser->id,-round($sum/10000));
-                sql("UPDATE `user` SET `lumber`=`lumber`+$sum WHERE `id`=".$gUser->id);
+                Das ist die wahre Macht von rein biologischen Schampoo, du erhälst $x Holz !";
+                changeUserMoral($gUser->id,round($sum/10000));
+                sql("UPDATE `user` SET `lumber`=`lumber`+$x WHERE `id`=".$gUser->id);
               break;
               case 3:
               case 4:
@@ -108,40 +118,40 @@ class cInfoTempel extends cInfoBuilding {
                 Bääärte ! schöööne flauschige falsche Bääääärte !
                 Kann es sein das Weibsfolk anwesend ist ?
                 Eine Steinigung frei nach Monty Python.
-                Du erhälst $sum Stein !";
-                changeUserMoral($gUser->id,-round($sum/10000));
-                sql("UPDATE `user` SET `stone`=`stone`+$sum WHERE `id`=".$gUser->id);
+                Du erhälst $x Stein !";
+                changeUserMoral($gUser->id,round($sum/10000));
+                sql("UPDATE `user` SET `stone`=`stone`+$x WHERE `id`=".$gUser->id);
               break;
               case 5:
               case 6:
-                $msg = "Happy Kannibalen-Wochen bei McTempel, du erhälst $sum Nahrung !";
-                changeUserMoral($gUser->id,-round($sum/10000));
-                sql("UPDATE `user` SET `food`=`food`+$sum WHERE `id`=".$gUser->id);
+                $msg = "Happy Kannibalen-Wochen bei McTempel, du erhälst $x Nahrung !";
+                changeUserMoral($gUser->id,round($sum/10000));
+                sql("UPDATE `user` SET `food`=`food`+$x WHERE `id`=".$gUser->id);
               break;
               case 7:
               case 8:
                 $msg = "Den armen Opfern werden sämtliche Zahnspangen, Plomben
                 und sonstige Implantate entfernt.
-                Du erhälst $sum Metall !";
-                changeUserMoral($gUser->id,-round($sum/10000));
-                sql("UPDATE `user` SET `metal`=`metal`+$sum WHERE `id`=".$gUser->id);
+                Du erhälst $x Metall !";
+                changeUserMoral($gUser->id,round($sum/10000));
+                sql("UPDATE `user` SET `metal`=`metal`+$x WHERE `id`=".$gUser->id);
               break;
               case 9:
-                $sum = floor($sum / 100);
+                $x = floor($x / 100);
                 $msg = "*zap*rauch*bruzzel* Oh da haben sich wohl ein paar Leute aufgelöst.
                 Ah aber ein paar Zaubersteinchen sind geblieben.
-                Du erhälst $sum Runen !";
-                changeUserMoral($gUser->id,-round($sum/10000));
-                sql("UPDATE `user` SET `runes`=`runes`+$sum WHERE `id`=".$gUser->id);
+                Du erhälst $x Runen !";
+                changeUserMoral($gUser->id,round($sum/10000));
+                sql("UPDATE `user` SET `runes`=`runes`+$x WHERE `id`=".$gUser->id);
               break;
               case 10:
-                $sum = floor($sum / 50);
+                $x = floor($x / 50);
                 $msg = "Nach Stunden der Zeremonie ziehen sich die geopferten Rohstoffe zu seltsamen
                 Formen zusammen und es beginnt stark zu stinken. Durch die dann geöffneten Fenster weht ein
                 Windhauch, der dem Haufen neues Leben einhaucht. Bereits nach einiger Zeit kann man schon
-                fast $sum Menschen erkennen.";
-                changeUserMoral($gUser->id,-round($sum/200));
-                sql("UPDATE `user` SET `pop`=LEAST(`pop`+$sum,`maxpop`) WHERE `id`=".$gUser->id);
+                fast $x Menschen erkennen.";
+                changeUserMoral($gUser->id,round($sum/10000));
+                sql("UPDATE `user` SET `pop`=LEAST(`pop`+$x,`maxpop`) WHERE `id`=".$gUser->id);
               break;
               default:
                 $msg = "Nichts passiert!";
