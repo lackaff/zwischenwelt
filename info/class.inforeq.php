@@ -23,7 +23,7 @@ class cInfoReq {
 	}
 	
 	// entweder $ttype oder $btype oder keines von beiden gesetzt
-	function	PrintRequirements ($minlevel,$maxlevel,$req_geb,$req_tech,$ttype=0,$btype=0) {
+	function	PrintRequirements ($minlevel,$maxlevel,$sReq_geb,$sReq_tech,$ttype=0,$btype=0) {
 		global $gRes;
 		global $gBuildingType;
 		global $gTechnologyType;
@@ -33,106 +33,121 @@ class cInfoReq {
 		$o = $ttype?$gTechnologyType[$ttype]:($btype?$gBuildingType[$btype]:false);
 		$costpre = $ttype?"basecost_":($btype?"cost_":false);
 		$mytypeid = $ttype?$ttype:($btype?$btype:0);
-		$req_geb = ParseReq($req_geb);
-		$req_tech = ParseReq($req_tech);
-		// vardump2($req_tech);
-		// calculate interdepance
-		$where = array(); // wo kann diese forschung erforscht werden ?
-		$mytechs = array(); // was kann hier erforscht werden ?
-		$need = array(); // das wird benötigt
-		$enables = array();
-		$disables = array();
-		$enables_techs = array();
-		foreach ($gBuildingType as $x) if (!$x->special) {
-			// Gebäude
-			$reqs = ParseReq($ttype?$x->req_tech:$x->req_geb);
-			$add = '<a href="'.Query("?sid=?&x=?&y=?&infobuildingtype=".$x->id).'"><img class="picframe" alt="." src="'.g($x->gfx,"ns",1,$gUser->race).'"></a>';
-			if ($o) foreach ($reqs as $req) if ($req->type == $mytypeid) {
-				if (!$req->ismax) {
-					if (!isset($enables[$req->level])) $enables[$req->level] = array();
-					$enables[$req->level][] = $add;
-				} else {
-					if (!isset($disables[$req->level+1])) $disables[$req->level+1] = array();
-					$disables[$req->level+1][] = $add;
-				}
-			}
-			foreach ($req_geb as $req) if ($req->type == $x->id)
-				$need[] = cInfoReq::LevelMinMaxTable($add,$req->level,$req->ismax,0,$x->id);
-			if ($ttype) if ($o->buildingtype == $x->id)
-				$where[] = cInfoReq::LevelMinMaxTable($add,$o->buildinglevel,false,0,$x->id);
-		}
-		foreach ($gTechnologyType as $x) {
-			// Technologien
-			$reqs = ParseReq($ttype?$x->req_tech:$x->req_geb);
-			$add = '<a href="'.Query("?sid=?&x=?&y=?&infotechtype=".$x->id).'"><img border=0 alt="." src="'.g($x->gfx).'"></a>';
-			if ($o) foreach ($reqs as $req) if ($req->type == $mytypeid) {
-				if (!$req->ismax) {
-					if (!isset($enables[$req->level])) $enables[$req->level] = array();
-					$enables[$req->level][] = $add;
-					$enables_techs[] = $x->id;
-				} else {
-					if (!isset($disables[$req->level+1])) $disables[$req->level+1] = array();
-					$disables[$req->level+1][] = $add;
-				}
-			}
-			foreach ($req_tech as $req) if ($req->type == $x->id)
-				$need[] = cInfoReq::LevelMinMaxTable($add,$req->level,$req->ismax,$x->id,0);
-			if ($btype) if ($o->id == $x->buildingtype)
-				$mytechs[] = cInfoReq::LevelMinMaxTable($add,$x->buildinglevel,false,0,$x->buildingtype);
-		}
-		if ($o) foreach ($gUnitType as $x) {
-			// Einheiten
-			if($x->flags & kUnitFlag_Elite) continue;
-			$reqs = ParseReq($ttype?($x->req_tech_a.",".$x->req_tech_v):$x->req_geb);
-			$add = '<a href="'.Query("?sid=?&x=?&y=?&infounittype=".$x->id).'"><img border=0 alt="." src="'.g($x->gfx).'"></a>';
-			foreach ($reqs as $req) if ($req->type == $mytypeid) {
-				if (!$req->ismax) {
-					if (!isset($enables[$req->level])) $enables[$req->level] = array();
-					$enables[$req->level][] = $add;
-				} else {
-					if (!isset($disables[$req->level+1])) $disables[$req->level+1] = array();
-					$disables[$req->level+1][] = $add;
-				}
-			}
-		}
-		if ($o) foreach ($gSpellType as $x) {
-			// Zauber
-			$reqs = ParseReq($ttype?$x->req_tech:$x->req_building);
-			$add = '<a href="'.Query("?sid=?&x=?&y=?&infospelltype=".$x->id).'"><img border=0 alt="." src="'.g($x->gfx).'"></a>';
-			foreach ($reqs as $req) if ($req->type == $mytypeid) {
-				if (!$req->ismax) {
-					if (in_array($x->primetech,$enables_techs)) continue;
-					if (!isset($enables[$req->level])) $enables[$req->level] = array();
-					$enables[$req->level][] = $add;
-				} else {
-					if (!isset($disables[$req->level+1])) $disables[$req->level+1] = array();
-					$disables[$req->level+1][] = $add;
-				}
-			}
-		}
-		ksort($enables);
-		ksort($disables);
-		?>
-		<br>
 		
-		<?php /*Abhaengigkeiten*/?>
-		<table border=0>
-		<?php if (count($need) > 0) {?>
-			<tr><th align="left" nowrap>Benötigt</th><td><?=implode("",$need)?></td></tr>
-		<?php } // endforeach?>
-		<?php if (count($where) > 0) {?>
-			<tr><th align="left" nowrap>Erforschbar in</th><td><?=implode("",$where)?></td></tr>
-		<?php } // endforeach?>
-		<?php if (count($mytechs) > 0) {?>
-			<tr><th align="left" nowrap>Forschungen</th><td><?=implode("",$mytechs)?></td></tr>
-		<?php } // endforeach?>
-		<?php foreach ($disables as $level => $arr) {?>
-			<tr><th align="left" nowrap>Level <?=$level?> verhindert</th><td><?=implode("",$arr)?></td></tr>
-		<?php } // endforeach?>
-		<?php foreach ($enables as $level => $arr) {?>
-			<tr><th align="left" nowrap>Level <?=$level?> ermöglicht</th><td><?=implode("",$arr)?></td></tr>
-		<?php } // endforeach?>
-		</table>
+		$levelsb = ParseReqLevels($sReq_geb);
+		$levelst = ParseReqLevels($sReq_tech);
+		
+		$levels = array_unique(array_merge($levelsb,$levelst));
+		sort($levels);
+		
+		//print_r($level);
+		
+		foreach($levels as $level){
+			$req_geb = ParseReqForATechLevel($sReq_geb,$level);
+			$req_tech = ParseReqForATechLevel($sReq_tech,$level);
+			// vardump2($req_tech);
+			// calculate interdepance
+			$where = array(); // wo kann diese forschung erforscht werden ?
+			$mytechs = array(); // was kann hier erforscht werden ?
+			$need = array(); // das wird benötigt
+			$enables = array();
+			$disables = array();
+			$enables_techs = array();
+			foreach ($gBuildingType as $x) if (!$x->special) {
+				// Gebäude
+				$reqs = ParseReqForATechLevel($ttype?$x->req_tech:$x->req_geb);
+				$add = '<a href="'.Query("?sid=?&x=?&y=?&infobuildingtype=".$x->id).'"><img class="picframe" alt="." src="'.g($x->gfx,"ns",1,$gUser->race).'"></a>';
+				if ($o) foreach ($reqs as $req) if ($req->type == $mytypeid) {
+					if (!$req->ismax) {
+						if (!isset($enables[$req->level])) $enables[$req->level] = array();
+						$enables[$req->level][] = $add;
+					} else {
+						if (!isset($disables[$req->level+1])) $disables[$req->level+1] = array();
+						$disables[$req->level+1][] = $add;
+					}
+				}
+				foreach ($req_geb as $req) if ($req->type == $x->id)
+					$need[] = cInfoReq::LevelMinMaxTable($add,$req->level,$req->ismax,0,$x->id);
+				if ($ttype) if ($o->buildingtype == $x->id)
+					$where[] = cInfoReq::LevelMinMaxTable($add,$o->buildinglevel,false,0,$x->id);
+			}
+			foreach ($gTechnologyType as $x) {
+				// Technologien
+				$reqs = ParseReqForATechLevel($ttype?$x->req_tech:$x->req_geb,GetTechnologyLevel($x->id,$gUser->id));
+				$add = '<a href="'.Query("?sid=?&x=?&y=?&infotechtype=".$x->id).'"><img border=0 alt="." src="'.g($x->gfx).'"></a>';
+				if ($o) foreach ($reqs as $req) if ($req->type == $mytypeid) {
+					if (!$req->ismax) {
+						if (!isset($enables[$req->level])) $enables[$req->level] = array();
+						$enables[$req->level][] = $add;
+						$enables_techs[] = $x->id;
+					} else {
+						if (!isset($disables[$req->level+1])) $disables[$req->level+1] = array();
+						$disables[$req->level+1][] = $add;
+					}
+				}
+				foreach ($req_tech as $req) if ($req->type == $x->id)
+					$need[] = cInfoReq::LevelMinMaxTable($add,$req->level,$req->ismax,$x->id,0);
+				if ($btype) if ($o->id == $x->buildingtype)
+					$mytechs[] = cInfoReq::LevelMinMaxTable($add,$x->buildinglevel,false,0,$x->buildingtype);
+			}
+			if ($o) foreach ($gUnitType as $x) {
+				// Einheiten
+				if($x->flags & kUnitFlag_Elite) continue;
+				$reqs = ParseReqForATechLevel($ttype?($x->req_tech_a.",".$x->req_tech_v):$x->req_geb);
+				$add = '<a href="'.Query("?sid=?&x=?&y=?&infounittype=".$x->id).'"><img border=0 alt="." src="'.g($x->gfx).'"></a>';
+				foreach ($reqs as $req) if ($req->type == $mytypeid) {
+					if (!$req->ismax) {
+						if (!isset($enables[$req->level])) $enables[$req->level] = array();
+						$enables[$req->level][] = $add;
+					} else {
+						if (!isset($disables[$req->level+1])) $disables[$req->level+1] = array();
+						$disables[$req->level+1][] = $add;
+					}
+				}
+			}
+			if ($o) foreach ($gSpellType as $x) {
+				// Zauber
+				$reqs = ParseReqForATechLevel($ttype?$x->req_tech:$x->req_building);
+				$add = '<a href="'.Query("?sid=?&x=?&y=?&infospelltype=".$x->id).'"><img border=0 alt="." src="'.g($x->gfx).'"></a>';
+				foreach ($reqs as $req) if ($req->type == $mytypeid) {
+					if (!$req->ismax) {
+						if (in_array($x->primetech,$enables_techs)) continue;
+						if (!isset($enables[$req->level])) $enables[$req->level] = array();
+						$enables[$req->level][] = $add;
+					} else {
+						if (!isset($disables[$req->level+1])) $disables[$req->level+1] = array();
+						$disables[$req->level+1][] = $add;
+					}
+				}
+			}
+			ksort($enables);
+			ksort($disables);
+			?>
+			<br>
+			
+			<?php /*Abhaengigkeiten*/?>
+			<h3>ab Level <?=$level?></h3><hr>
+			<table border=0>
+			<?php if (count($need) > 0) {?>
+				<tr><th align="left" nowrap>Benötigt</th><td><?=implode("",$need)?></td></tr>
+			<?php } // endforeach?>
+			<?php if (count($where) > 0) {?>
+				<tr><th align="left" nowrap>Erforschbar in</th><td><?=implode("",$where)?></td></tr>
+			<?php } // endforeach?>
+			<?php if (count($mytechs) > 0) {?>
+				<tr><th align="left" nowrap>Forschungen</th><td><?=implode("",$mytechs)?></td></tr>
+			<?php } // endforeach?>
+			<?php foreach ($disables as $level => $arr) {?>
+				<tr><th align="left" nowrap>Level <?=$level?> verhindert</th><td><?=implode("",$arr)?></td></tr>
+			<?php } // endforeach?>
+			<?php foreach ($enables as $level => $arr) {?>
+				<tr><th align="left" nowrap>Level <?=$level?> ermöglicht</th><td><?=implode("",$arr)?></td></tr>
+			<?php } // endforeach?>
+			</table>
+		
+		<?php } ?>
+		
+		<br>
 		
 		<?php /*Kosten*/?>
 		<table border=1 cellspacing=0>

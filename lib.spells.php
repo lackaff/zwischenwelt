@@ -88,7 +88,7 @@ class Spell {
 	
 	// high difficulty is bad, override me =) (algorithm pattern?)
 	function GetDifficulty ($spelltype,$mages,$userid) {
-		$req = ParseReq($spelltype->req_tech);
+		$req = ParseReqForATechLevel($spelltype->req_tech);
 		$f = 1;
 		foreach($req as $r) 
 			$f = max($f,$r->level+2);

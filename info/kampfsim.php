@@ -18,9 +18,9 @@ if ($army) $f_frags[1] = intval($army->frags);
 foreach ($gUnitType as $o)  {
 	if ($o->id != kUnitType_TowerMage && $o->id != kUnitType_Ramme && $o->id != kUnitType_Schatzkiste && $o->gfx) {
 		$simunittypes[] = $o;
-		$req = ParseReq($o->req_tech_a);
+		$req = ParseReqForATechLevel($o->req_tech_a);
 		foreach ($req as $key => $val) if (!$val->ismax) $techids_a[] = $key;
-		$req = ParseReq($o->req_tech_v);
+		$req = ParseReqForATechLevel($o->req_tech_v);
 		foreach ($req as $key => $val) if (!$val->ismax) $techids_v[] = $key;
 	}
 }
@@ -117,7 +117,7 @@ include("../menu.php");
 			</tr><tr>
 			<?php foreach ($simtechtypes as $tech) {?>
 				<td valign=top>			
-				<?php foreach ($simunittypes as $o) { $req = array_keys(ParseReq($gUnitType[$o->id]->req_tech_a)); if (in_array($tech->id,$req)) { ?>
+				<?php foreach ($simunittypes as $o) { $req = array_keys(ParseReqForATechLevel($gUnitType[$o->id]->req_tech_a)); if (in_array($tech->id,$req)) { ?>
 					<img alt="<?=$o->name?>" title="<?=$o->name?>" class="picframe" src="<?=g($o->gfx)?>"><br>
 				<?php } }?>
 				</td>
@@ -128,7 +128,7 @@ include("../menu.php");
 			</tr><tr>
 			<?php foreach ($simtechtypes as $tech) {?>
 				<td valign=top>			
-				<?php foreach ($simunittypes as $o) { $req = array_keys(ParseReq($gUnitType[$o->id]->req_tech_v)); if (in_array($tech->id,$req)) { ?>
+				<?php foreach ($simunittypes as $o) { $req = array_keys(ParseReqForATechLevel($gUnitType[$o->id]->req_tech_v)); if (in_array($tech->id,$req)) { ?>
 					<img alt="<?=$o->name?>" title="<?=$o->name?>" class="picframe" src="<?=g($o->gfx)?>"><br>
 				<?php } }?>
 				</td>
@@ -141,8 +141,8 @@ include("../menu.php");
 			<?php foreach ($simtechtypes as $tech) {?>
 				<td valign=top>			
 				<?php foreach ($simunittypes as $o) { 
-					$reqa = array_keys(ParseReq($gUnitType[$o->id]->req_tech_a)); 
-					$reqv = array_keys(ParseReq($gUnitType[$o->id]->req_tech_v)); 
+					$reqa = array_keys(ParseReqForATechLevel($gUnitType[$o->id]->req_tech_a)); 
+					$reqv = array_keys(ParseReqForATechLevel($gUnitType[$o->id]->req_tech_v)); 
 					if (in_array($tech->id,$reqa) || in_array($tech->id,$reqv)) { ?>
 					<img alt="<?=$o->name?>" title="<?=$o->name?>" class="picframe" src="<?=g($o->gfx)?>"><br>
 				<?php } }?>

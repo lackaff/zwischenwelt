@@ -1,4 +1,8 @@
 <?php
+
+// THIS FILE IS UNUSED!!!
+exit;
+
 require_once("../lib.main.php");
 require_once("../lib.guild.php");
 require_once("../lib.technology.php");

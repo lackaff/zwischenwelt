@@ -38,8 +38,8 @@ $used_b = array();
 $used_u = array();
 
 foreach($t as $x){
-	$x->req_tech = ParseReq ($x->req_tech);
-	$x->req_geb = ParseReq ($x->req_geb);
+	$x->req_tech = ParseReqForATechLevel ($x->req_tech);
+	$x->req_geb = ParseReqForATechLevel ($x->req_geb);
 	foreach($x->req_tech as $o)if(matchCenter($center,"t",$x->id,"t",$o->type)){
 		$dot .=  '"'.unhtmlentities($t[$o->type]->name).'" -> "'.unhtmlentities($x->name).'" [fontname="Verdana",fontsize=10,label="'.($o->ismax?"max ":"").$o->level.'",color="'.($o->ismax?"red":"blue").'",fontcolor="blue"];'."\n";
 		$used_t[$x->id] = 1;
@@ -58,8 +58,8 @@ foreach($t as $x){
 	}
 }
 foreach($b as $x){
-	$x->req_tech = ParseReq ($x->req_tech);
-	$x->req_geb = ParseReq ($x->req_geb);
+	$x->req_tech = ParseReqForATechLevel ($x->req_tech);
+	$x->req_geb = ParseReqForATechLevel ($x->req_geb);
 	foreach($x->req_tech as $o)if(matchCenter($center,"b",$x->id,"t",$o->type)){
 		$dot .=  '"'.unhtmlentities($t[$o->type]->name).'" -> "'.unhtmlentities($x->name).'" [fontname="Verdana",fontsize=10,label="'.($o->ismax?"max ":"").$o->level.'",color="'.($o->ismax?"red":"blue").'",fontcolor="blue"];'."\n";
 		$used_t[$o->type] = 1;
@@ -73,8 +73,8 @@ foreach($b as $x){
 	if(matchCenter($center,"b",$x->id,"",0))$dot .=  '"'.unhtmlentities($x->name).'" [style=filled,shape=box,color="navy",fontcolor="white"];'."\n";
 }
 foreach($u as $x){
-	$x->req_tech = ParseReq (trim($x->req_tech_a.",".$x->req_tech_a," ,"));
-	$x->req_geb = ParseReq ($x->req_geb);
+	$x->req_tech = ParseReqForATechLevel (trim($x->req_tech_a.",".$x->req_tech_a," ,"));
+	$x->req_geb = ParseReqForATechLevel ($x->req_geb);
 	foreach($x->req_geb as $o)if(matchCenter($center,"u",$x->id,"b",$o->type)){
 		$dot .=  '"'.unhtmlentities($b[$o->type]->name).'" -> "'.unhtmlentities($x->name).'" [fontname="Verdana",fontsize=10,label="'.($o->ismax?"max ":"").$o->level.'",color="'.($o->ismax?"red":"navy").'",fontcolor="navy"];'."\n";
 		$used_b[$o->type] = 1;
