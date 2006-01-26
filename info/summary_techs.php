@@ -113,7 +113,7 @@ if (isset($f_techs)) {
 				<?php
 				$detaillink = Query("info.php?sid=?&x=".$x."&y=".$y."&infotechtype=".$o->id);
 				$curlevel = GetTechnologyLevel($o->id);
-				$hasreq = $highest_building && $highest_building->level >= $o->buildinglevel && HasReq($o->req_geb,$o->req_tech,$gUser->id,$curlevel);
+				$hasreq = $highest_building && $highest_building->level >= $o->buildinglevel && HasReq($o->req_geb,$o->req_tech,$gUser->id,$curlevel+1);
 				$tech = GetTechnologyObject($o->id);
 				$plannedbuilding = false;
 				if ($tech->upgrades > 0 && $tech->upgradebuilding) $plannedbuilding = sqlgetobject("SELECT * FROM `building` WHERE `id` = ".intval($tech->upgradebuilding));

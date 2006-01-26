@@ -73,7 +73,7 @@ class cInfoReq {
 			}
 			foreach ($gTechnologyType as $x) {
 				// Technologien
-				$reqs = ParseReqForATechLevel($ttype?$x->req_tech:$x->req_geb,GetTechnologyLevel($x->id,$gUser->id));
+				$reqs = ParseReqForATechLevel($ttype?$x->req_tech:$x->req_geb,$level);
 				$add = '<a href="'.Query("?sid=?&x=?&y=?&infotechtype=".$x->id).'"><img border=0 alt="." src="'.g($x->gfx).'"></a>';
 				if ($o) foreach ($reqs as $req) if ($req->type == $mytypeid) {
 					if (!$req->ismax) {
@@ -81,6 +81,8 @@ class cInfoReq {
 						$enables[$req->level][] = $add;
 						$enables_techs[] = $x->id;
 					} else {
+						//echo "<br>[$sReq_tech]<br>";
+						//print_r($req);
 						if (!isset($disables[$req->level+1])) $disables[$req->level+1] = array();
 						$disables[$req->level+1][] = $add;
 					}

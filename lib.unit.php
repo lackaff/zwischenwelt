@@ -111,7 +111,7 @@ class cUnit {
 		$sum = 0;
 		global $gUnitType;
 		$req = ParseReqForATechLevel(isset($gUnitType[$unittypeid]->{"req_tech_$cat"})?$gUnitType[$unittypeid]->{"req_tech_$cat"}:0);
-		foreach ($req as $k=>$v) if (!$v->ismax) $sum += max(0.0,GetTechnologyLevel($k,$uid)-$v->level) * 3.0;
+		if(sizeof($req)>0)foreach ($req as $k=>$v) if (!$v->ismax) $sum += max(0.0,GetTechnologyLevel($k,$uid)-$v->level) * 3.0;
 		return $sum;
 	}
 	

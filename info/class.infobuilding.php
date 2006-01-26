@@ -855,7 +855,7 @@ class cInfoBuilding extends cInfoBase {
 							<?php if ($tech->level == $o->maxlevel) {?>
 								<td colspan=2><font color="green"><b>Maximum</b></font></td>
 							<?php } else if ( intval($gObject->level) < intval($o->buildinglevel) ||
-										!HasReq($o->req_geb,$o->req_tech,$gObject->user,GetTechnologyLevel($o->id,$gObject->user))) {?>
+										!HasReq($o->req_geb,$o->req_tech,$gObject->user,GetTechnologyLevel($o->id,$gObject->user)+1)) {?>
 								<?php /* anforderungen nicht erfuellt */ ?>
 								<td colspan=2><a href="<?=$detaillink?>"><font color="red"><b>Anforderungen</b></font></a></td>
 							<?php } else if ($upbuilding) {?>

@@ -15,7 +15,7 @@ $second = "";
 
 $candospells = array();
 	foreach ($gSpellType as $spell){
-	if(HasReq($spell->req_building,$spell->req_tech,$gUser->id,0)){ // TODO : replace 0 by current spell-tech level ?
+	if(HasReq($spell->req_building,$spell->req_tech,$gUser->id)){ // TODO : no desired level set, this is probably ok (old:replace 0 by current spell-tech level ?)
 			$group = $spell->primetech ? $gTechnologyType[$spell->primetech]->group : 0;
 			$candospells[$group][$spell->id] = $spell;
 		}

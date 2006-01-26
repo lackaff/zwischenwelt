@@ -37,7 +37,6 @@ class cTechnology {
 	}
 }
 
-// $thistech is the level of the parsed requirement
 function ParseReq ($req) {
 	$level = 0;
 	if (empty($req)) return array();
@@ -65,6 +64,7 @@ function ParseReq ($req) {
 			$newo->type = intval($r[1]);
 			$newo->level = abs(intval($r[3])); // WARNING ! SIGN LOST FOR MAX = 0 !!!
 			$newo->ismax = ($r[2]=="<" || intval($r[3]) < 0)?1:0;
+			//echo "[ismax=$newo->ismax at level=$level by $element]<br>";
 			$newo->inc = isset($r[5])?floatval($r[5]):0;
 			//vardump2($newo);
 			$res[$level][$newo->type] = $newo;
@@ -100,9 +100,11 @@ function ParseReqForATechLevel($req,$level=0){
 	}
 	
 	$r = ParseReq(implode(",",$res));
-	return $r[0];
+	if(sizeof($r)>0)return $r[0];
+	else return array();
 }
 
+//$r = ParseReq("[15],22<15,23<15,24<15");
 //$r = ParseReq("4:5,33:-5,4>5+0.5,[10],4<5+0.5,4<5+5");
 //print_r($r);
 /*
@@ -154,7 +156,7 @@ function SetTechnologyUpgrades($typeid,$buildingid,$num) {
 	if (!$building) return;
 
 	if (intval($building->level) < intval($techtype->buildinglevel)) return;
-	if (!HasReq($techtype->req_geb,$techtype->req_tech)) return;
+	if (!HasReq($techtype->req_geb,$techtype->req_tech,$tech->level+1)) return;
 
 	// if ($tech->upgradetime && $tech->upgrades > 0 && $tech->upgradebuilding != $building->id) return;
 	
@@ -188,31 +190,26 @@ function GetTechnologyObject ($typeid,$userid=0) {
 
 // does a user fullfill some requirements ?
 // $req_tech,$req_geb are arrays, output from ParseReq, or the strings from technologytype
-// $thistech is the current level of the technology/building
-function HasReq ($req_geb,$req_tech,$userid=0,$inclevel=0,$thistech=255) {
+// $techlevel is the level of the technology/building to check reqs for (ie. 15 if you have leel 14)
+function HasReq ($req_geb,$req_tech,$userid=0,$inclevel=0,$techlevel=255) {
 	global $gUser;
 	if ($userid == 0) $userid = $gUser->id;
-	$req_tech = (is_string($req_tech) && !empty($req_tech)) ? ParseReq($req_tech, $thistech) : array();
-	$req_geb = (is_string($req_geb) && !empty($req_geb)) ? ParseReq($req_geb, $thistech) : array();
+	$req_tech = (is_string($req_tech) && !empty($req_tech)) ? ParseReqForATechLevel($req_tech, $techlevel) : array();
+	$req_geb = (is_string($req_geb) && !empty($req_geb)) ? ParseReqForATechLevel($req_geb, $techlevel) : array();
 
 	// check technologies
-	foreach ($req_tech as $level => $req){
-		//skip a part not for this tech level
-		if($thistech < $level)continue;
-		foreach ($req as $type => $o)
-		if (($o->ismax == 0 && GetTechnologyLevel($type,$userid) < floor(abs($o->level) + $o->inc*$inclevel)) ||
-			($o->ismax != 0 && GetTechnologyLevel($type,$userid) > floor(abs($o->level) + $o->inc*$inclevel)) )
-			return false;
+	if(sizeof($req_tech)>0)foreach ($req_tech as $type => $o)
+	if (($o->ismax == 0 && GetTechnologyLevel($type,$userid) < floor(abs($o->level) + $o->inc*$inclevel)) ||
+		($o->ismax != 0 && GetTechnologyLevel($type,$userid) > floor(abs($o->level) + $o->inc*$inclevel)) ){
+		return false;
 	}
 	
 	// check buildings
-	foreach ($req_geb as $level => $req){
-		//skip a part not for this tech level
-		if($thistech < $level)continue;
-		foreach ($req as $type => $o)
+	if(sizeof($req_geb)>0)foreach ($req_geb as $type => $o){
 		if (($o->ismax == 0 && GetMaxBuildingLevel($type,$userid) < floor(abs($o->level) + $o->inc*$inclevel)) ||
-			($o->ismax != 0 && GetMaxBuildingLevel($type,$userid) > floor(abs($o->level) + $o->inc*$inclevel)) )
+			($o->ismax != 0 && GetMaxBuildingLevel($type,$userid) > floor(abs($o->level) + $o->inc*$inclevel)) ){
 			return false;
+		}
 	}
 	
 	return true;

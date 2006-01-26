@@ -748,7 +748,7 @@ foreach ($technologies as $o) {
 			$techtype = $gTechnologyType[$o->type];
 		
 			// only upgrade if the technological requirements are met
-			if (!HasReq($techtype->req_geb,$techtype->req_tech,$o->user,GetTechnologyLevel($o->type,$o->user))) {
+			if (!HasReq($techtype->req_geb,$techtype->req_tech,$o->user,GetTechnologyLevel($o->type,$o->user)+1)) {
 				sql("UPDATE `technology` SET `upgrades` = 0 WHERE `id` = ".$o->id." LIMIT 1");
 				continue;
 			}
