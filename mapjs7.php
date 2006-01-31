@@ -158,13 +158,14 @@ gBig = <?=(isset($f_big) && $f_big)?1:0?>;
 gMapMode = <?=isset($f_mode)?intval($f_mode):kJSMapMode_Normal?>;
 <?php
 // terrain
-$map = getMapAtPosition($gLeft,$gTop,$gCX,$gCY,true);
+//$map = getMapAtPosition($gLeft,$gTop,$gCX,$gCY,true);
 //$gTerrain = sqlgettable("SELECT * FROM `terrain` WHERE ".$xylimit." ORDER BY `y`,`x`");
 echo 'gTerrain = "';
 $i = 0;
 for ($y=-1;$y<$gCY+1;++$y) {
 	for ($x=-1;$x<$gCX+1;++$x) {
-		echo $map->getTerrainTypeAt($gLeft+$x,$gTop+$y).",";
+		//echo $map->getTerrainTypeAt($gLeft+$x,$gTop+$y).",";
+		echo cMap::StaticGetTerrainAtPos($gLeft+$x,$gTop+$y).",";
 		/*
 		if ($gTerrain[$i]->x - $gLeft == $x && $gTerrain[$i]->y - $gTop == $y) {
 			echo $gTerrain[$i]->type.",";
