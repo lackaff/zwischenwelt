@@ -64,8 +64,7 @@ class cInfoTempel extends cInfoBuilding {
               sql("UPDATE `user` SET `metal`=`metal`+$x WHERE `id`=".$gUser->id);
             break;
             case 9:
-              $pop = floor($pop / 100);
-              $x = $pop * $moral_bad;
+              $x = floor($pop * $moral_bad / 100);
               $msg = "*zap*rauch*bruzzel* Oh da haben sich wohl ein paar Leute aufgelöst.
               Ah aber ein paar Zaubersteinchen sind geblieben.
               Du erhälst $x Runen !";
