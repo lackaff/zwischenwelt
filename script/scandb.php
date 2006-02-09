@@ -54,7 +54,7 @@ foreach($t as $u)
 	$c = sqlgetone("SELECT COUNT(*) FROM `construction` WHERE `user`=".$u->id);
 	$dt = floor((time() - $u->lastlogin)/60/60/24);
 	$dtr = floor((time() - $u->registered)/60/60/24);
-	if($dt > 30 && $dtr > 30)$checked = "checked";
+	if($dt > 30 && $dt < 13000 && $dtr > 30)$checked = "checked";
 	else $checked = "";
 	if($b<5)echo "<input value=1 type=checkbox name=\"delid[$u->id]\" $checked> user ".$u->id." '".$u->name."' has $b buildings, $c constructions, $u->logins logins and last login was <b>$dt</b> days ago<br>";
 }
