@@ -36,7 +36,7 @@ if($gUser->admin){
   }
   //eine neue umfrage erstellen
   if(isset($f_poll_create) && !empty($f_name)){
-    sql("INSERT INTO `poll` SET `name`='".addslashes($f_name)."'");
+    sql("INSERT INTO `poll` SET `name`='".addslashes($f_name)."',`created`=".time());
     $id = mysql_insert_id();
     $count = 1;
     for($i=0;$i<10;++$i){
