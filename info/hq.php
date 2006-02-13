@@ -271,7 +271,7 @@ class cInfoHQ extends cInfoBuilding {
 		$x = $this->x;
 		$y = $this->y;
 		
-		$debug_show_all_tips = false;
+		$debug_show_all_tips = true;
 		$minbtable = array();
 		$popicon = "<img src=\"".g("pop-r%R%.png","","",$gUser->race)."\">";
 		$minbtable[] = array(kBuilding_Lumberjack,4,", produziert <img src=\"".g("res_lumber.gif")."\">");
@@ -290,7 +290,7 @@ class cInfoHQ extends cInfoBuilding {
 			FROM `building` WHERE `user` = ".$gUser->id." AND `construction` = 0");
 		
 		
-		if (($allbuildings->minlevel < 5 && $allbuildings->count < 20) || $allbuildings->maxlevel < 5) {
+		if (($allbuildings->minlevel < 5 && $allbuildings->count < 20) || $allbuildings->maxlevel < 5 || $debug_show_all_tips) {
 			$tip[] = "Um neu anzufangen und den Startplatz selber zu wählen, einfach das ".GetBuildingTypeLink(kBuilding_HQ,$x,$y)." abreissen";
 		}
 		
@@ -324,7 +324,7 @@ class cInfoHQ extends cInfoBuilding {
 				".GetBuildingTypeLink(kBuilding_Gate,$x,$y)." bauen, damit sich deine Truppen gut bewegen können";
 		}
 			
-		if (($allbuildings->minlevel < 5 && $allbuildings->count < 20) || $allbuildings->maxlevel < 5) {
+		if (($allbuildings->minlevel < 5 && $allbuildings->count < 20) || $allbuildings->maxlevel < 5 || $debug_show_all_tips) {
 			$tip[] = "vergiss nicht, deine Gebäude aufzustufen (upgraden)";
 			$tip[] = "eine neue Stufe bringt genausoviel wie ein neues Gebäude";
 			$tip[] = "je höher die Stufe, desto teurer das Upgraden";

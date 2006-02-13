@@ -414,13 +414,19 @@ class Hellhole_2 extends Hellhole_0 {
 class Hellhole_3 extends Hellhole_0 {
 	function Hellhole_3 () {
 		// $this->spawndelay = 3600; // should be about one hour
-		$this->search_building_rad = 200; // todo : unhardcode , choosing player buildings only within this range
-		$this->search_silo_rad = 25; // todo : unhardcode , max distance from found player building to silo
-		$this->out_of_base_rad = 5; // todo : unhardcode , ramme exits the base this many fields
-		$this->maxcount_think = 100; // todo : unhardcode? // stop attacking player after about 4 days
-		$this->maxcount_siege = 3; // todo : unhardcode? // stop if 3 sieges failed
-		$this->maxcount_raid = 5; // todo : unhardcode? // stop after 5 raid-attempts
-		$this->victim_minpts = 5000; // todo : unhardcode? // don't attack players below a certain limit
+		$this->raid_rad = 100; // todo : unhardcode , choosing player buildings only within this range
+		$this->spread_rad = 100; // todo : unhardcode , max distance from found player building to silo
+		$this->spread_mindist = 20; // todo : unhardcode , ramme exits the base this many fields
+		$this->victim_minpts = 10000; // todo : unhardcode? // don't attack players below a certain limit
+	}
+	
+	function CheckSpreadPoint ($x,$y) {
+		$xylimit = "";
+		if (sqlgetone("SELECT 1 FROM `hellhole` WHERE `ai_type` = ".intval($this->ai_type)." AND ".$xylimit." LIMIT 1")) return false;
+		$buildings = sqlgetonetable("SELECT `user` FROM `building` WHERE ".$xylimit." GROUP BY `user`");
+		foreach ($buildings as $o) 
+			if (sqlgetone("SELECT `general_pts` FROM `user` WHERE `id` = ".$o->user) < $this->victim_minpts) return false;
+		return true;
 	}
 	
 	function Think () {

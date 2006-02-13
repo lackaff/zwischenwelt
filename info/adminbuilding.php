@@ -20,6 +20,8 @@ foreach($gBuildingType as $x)
 $form = new cTableEditForm("?sid=?&id=$f_id","Building $f_id editieren",
 	new cTableEditCols(array(
 		new cTableEditRows(array(
+			new cTableEditTextField("building","id",$f_id,"x","x"),
+			new cTableEditTextField("building","id",$f_id,"y","y"),
 			new cTableEditTextField("building","id",$f_id,"Owner","user"),
 			new cTableEditTextField("building","id",$f_id,"Level","level"),
 			new cTableEditTextField("building","id",$f_id,"Upgrades","upgrades"),
