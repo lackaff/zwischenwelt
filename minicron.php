@@ -7,7 +7,6 @@ require_once("lib.technology.php");
 require_once("lib.spells.php");
 require_once("lib.army.php"); // sql
 require_once("lib.weather.php");
-require_once("lib.armythink.php"); // warning ! generates big globals
 require_once("lib.fight.php");
 
 $mlock = FALSE;
@@ -29,14 +28,18 @@ if($dtime < 0)$dtime = 0;
 echo "dtime = $dtime<br><br>";
 
 
+// TODO : tables lock needed ? hunger/starvation-damage, shootings..
+
 //sql("DELETE FROM `unit` WHERE `amount` < 1.0"); 
-sql("UPDATE `army` SET `idle`=`idle`+$dtime");
+sql("UPDATE `army` SET `idle`=`idle`+$dtime"); // call before including lib.armythink.php
+require_once("lib.armythink.php"); // warning ! generates big globals, called here, so idletime add is in $gAllArmys
 
 if (kProfileArmyLoop) LoopProfiler_flush();
 
-$thinkarmies = $gAllArmys;
+				
+			
 $c = 0;
-foreach ($thinkarmies as $army) if ($army) {
+foreach ($gAllArmys as $army) if ($army) {
 	//if ($c++ > 100) break;
 	if (kProfileArmyLoop) LoopProfiler("armyloop:init");
 	if (!isset($gAllArmyUnits[$army->id])) warning("Army $army->id ($army->x,$army->y) has no units ??<br>");

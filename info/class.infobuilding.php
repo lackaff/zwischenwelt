@@ -266,6 +266,21 @@ class cInfoBuilding extends cInfoBase {
 				break;
 			}
 		}
+		
+		// #### beschuss (durch tuerme) ####
+		if ($f_building == "shooting" && $this->cancontroll()) {
+			global $gContainerType2Number,$gNumber2ContainerType;
+			switch ($f_do) {
+				case "shootinglist":
+					if (isset($f_cancel)) foreach ($f_sel as $id) {
+						$o = sqlgetobject("SELECT * FROM `shooting` WHERE `id` = ".intval($id));
+						if (!$o || $o->attacker != $gObject->id) continue;
+						if ($gNumber2ContainerType[$o->attackertype] != kUnitContainer_Building) continue;
+						cFight::EndShooting($o,"Abbruch");
+					}
+				break;
+			}
+		}
 	}
 	
 	function producable_units () {
@@ -420,7 +435,7 @@ class cInfoBuilding extends cInfoBase {
 		
 		rob_ob_start();
 		
-		if ($gUser->admin) if (in_array($this->type,$gFlaggedBuildingTypes[kBuildingTypeFlag_CanShoot])) {
+		if ($gUser->admin) if (intval($gBuildingType[$this->type]->flags) & (kBuildingTypeFlag_CanShootArmy | kBuildingTypeFlag_CanShootBuilding)) {
 			?>
 			<a href="<?=query("?sid=?&x=?&y=?&buildingthink=1")?>">(think)</a><br>
 			<?php
@@ -541,7 +556,10 @@ class cInfoBuilding extends cInfoBase {
 							<td><INPUT TYPE="text" NAME="upcount" VALUE="<?=$upgrades?>" style="width:20px"></td>
 							<td><INPUT TYPE="submit" VALUE="Upgrades"></td>
 							<td></td>
-							</tr></table>
+							</tr><tr>
+							<td colspan=3>
+							<a href="<?=Query("summary_buildings.php?sid=?&selbtype=".$gObject->type)?>">(Gebäudeübersicht)</a>
+							</td></tr></table>
 							</FORM>
 							
 						</td><td align="left" nowrap>
@@ -690,6 +708,44 @@ class cInfoBuilding extends cInfoBase {
 					</FORM>	
 				<?php } // endif verhalten edit
 				
+				global $gArmyType,$gBuildingType;
+				global $gContainerType2Number,$gNumber2ContainerType;
+				
+				$myshootings = sqlgettable("SELECT * FROM `shooting` WHERE 
+					`attacker` = ".$this->id." AND 
+					`attackertype` = ".$gContainerType2Number[kUnitContainer_Building]." 
+					ORDER BY `defendertype`");
+				if (count($myshootings) > 0) {
+					?>
+					<h3>Beschuss</h3>
+					<FORM METHOD="POST" ACTION="<?=Query("?sid=?&x=?&y=?")?>">
+					<INPUT TYPE="HIDDEN" NAME="building" VALUE='shooting'>
+					<INPUT TYPE="HIDDEN" NAME="id" VALUE='<?=$gObject->id?>'>
+					<INPUT TYPE="HIDDEN" NAME="do" VALUE="shootinglist">
+						<table>
+						<?php foreach ($myshootings as $o) {?>
+						<?php
+							$shooting = $o;
+							$ctype = $gNumber2ContainerType[$o->defendertype];
+							$target = sqlgetobject("SELECT * FROM `". $ctype."` WHERE `id` = ".$o->defender);
+							$defenderobj = $target;
+							if (!$target) continue;
+							if ($shooting->defendertype == $gContainerType2Number[kUnitContainer_Army])		$defendernametext = $gArmyType[$defenderobj->type]->name." ".$defenderobj->name;
+							if ($shooting->defendertype == $gContainerType2Number[kUnitContainer_Building])	$defendernametext = $gBuildingType[$defenderobj->type]->name." ".$defenderobj->name;
+							$defendernametext .= " bei ($defenderobj->x,$defenderobj->y)";
+							if ($defenderobj->user) $defendernametext .= " von ".sqlgetone("SELECT `name` FROM `user` WHERE `id` = ".$defenderobj->user);
+							
+						?>
+						<tr>
+							<td><input type="checkbox" name="sel[]" value="<?=$o->id?>"></td>
+							<td>Beschuss auf <?=magictext($defendernametext)?></td>
+						</tr>
+						<?php } // endforeach?>
+						</table>
+						<input type="submit" name="cancel" value="abbrechen">
+					</form>
+					<?php
+				}
 				
 				// if ($btype->script && strlen($btype->script) > 0 && file_exists($btype->script.".php")) include($btype->script.".php");
 				
@@ -770,6 +826,10 @@ class cInfoBuilding extends cInfoBase {
 		ksort($localtechtypes);
 		
 		rob_ob_start();
+		
+		?>
+		<a href="<?=Query("summary_techs.php?sid=?")?>">(Forschungsübersicht)</a>
+		<?php
 		
 		if($gUser->admin){ ?>
 			Techadmin:

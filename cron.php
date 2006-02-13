@@ -98,23 +98,7 @@ profile_page_start("cron.php - build buildings",true);
 
 
 // lock around build building, upgrade building and user, for UserPay optimization
-sql("LOCK TABLES	`user` WRITE,
-					`building` WRITE,
-					`construction` WRITE, 
-					`buildingtype` READ,
-					`technology` READ,
-					`army` READ,
-					`siege` READ,
-					`profile` WRITE,
-					`terrain` WRITE,
-					`terrainsegment4` WRITE,
-					`terrainsegment64` WRITE,
-					`newlog` WRITE,
-					`triggerlog` WRITE,
-					`quest` WRITE,
-					`sqlerror` WRITE, 
-					`phperror` WRITE, 
-					`armyaction` WRITE");
+TablesLock();
 $res = Array("lumber","food","stone","metal","runes");
 foreach($res as $r) sql("UPDATE `user` SET `$r`=0 WHERE `$r`<0");
 $gAllUsers = sqlgettable("SELECT * FROM `user` ORDER BY `id`","id");
@@ -151,8 +135,9 @@ unset($cons);
 profile_page_start("cron.php - think buildings",true);
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-if (count($gFlaggedBuildingTypes[kBuildingTypeFlag_CanShoot]) > 0) {
-	$buildings = sqlgettable("SELECT * FROM `building` WHERE `type` IN (".implode(",",$gFlaggedBuildingTypes[kBuildingTypeFlag_CanShoot]).")");
+$typelist = array_merge($gFlaggedBuildingTypes[kBuildingTypeFlag_CanShootArmy],$gFlaggedBuildingTypes[kBuildingTypeFlag_CanShootBuilding]);
+if (count($typelist) > 0) {
+	$buildings = sqlgettable("SELECT * FROM `building` WHERE `type` IN (".implode(",",$typelist).")");
 	foreach ($buildings as $o) {
 		cBuilding::Think($o);
 	}
@@ -327,8 +312,7 @@ foreach($gAllUsers as $u) {
 
 // lock around build building, upgrade building and user, for UserPay optimization
 unset($gPayCache_Users);
-sql("UNLOCK TABLES");
-
+TablesUnlock();
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 if (($gGlobal["ticks"] % 30) == 0 || empty($gGlobal["weather"])){  // TODO : unhardcode
@@ -617,9 +601,20 @@ QuestTrigger_CronStep(); // todo : call at start, so triggers can use quest-cach
 
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-profile_page_start("cron.php - army_fight",true);
+profile_page_start("cron.php - oldshooting",true);
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+$oldshootings = sqlgettable("SELECT * FROM `shooting` WHERE `autocancel` = 1 AND 
+	`start`		< ".($time-kShootingAlarmTimeout)." AND 
+	`lastshot`	< ".($time-kShootingAlarmTimeout));
+foreach ($oldshootings as $o) {
+	cFight::EndShooting($o,"Es wurde lange nicht mehr geschossen");
+} 
+unset($oldshootings);
+
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+profile_page_start("cron.php - army_fight",true);
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 
 $fights = sqlgettable("SELECT * FROM `fight`");
@@ -736,7 +731,7 @@ foreach ($technologies as $o) {
 		echo $text."<br>\n";
 		
 		// TODO : neue log meldung machen !
-		LogMe($o->user,NEWLOG_TOPIC_BUILD,NEWLOG_UPGRADE_FINISHED,$o->x,$o->y,$o->level+1,$gBuildingType[$o->type]->name,"",false);
+		LogMe($o->user,NEWLOG_TOPIC_BUILD,NEWLOG_UPGRADE_FINISHED,0,0,$o->level+1,$gBuildingType[$o->type]->name,"",false);
 		
 	} else if ($o->upgradetime == 0) {
 		// test if upgrade can be started

@@ -555,6 +555,7 @@ if (get_cfg_var("magic_quotes_gpc"))
 
 // session stuff
 
+unset($gSessionObj);
 unset($gSID);
 unset($gUser);
 
@@ -574,6 +575,7 @@ function Lock()
 function UpdateSession ($sid)
 {
 	global $gSID;
+	global $gSessionObj;
 	global $gUser;
 	global $gUID;
 	
@@ -582,19 +584,19 @@ function UpdateSession ($sid)
 	if (!$fastsession)
 		sql("DELETE FROM `session` WHERE `lastuse` < ".(time()-kSessionTimeout));
 
-	$o = sqlgetobject("SELECT * FROM `session` WHERE `sid` = '".addslashes($sid)."'");
-	if (!$o)
+	$gSessionObj = sqlgetobject("SELECT * FROM `session` WHERE `sid` = '".addslashes($sid)."'");
+	if (!$gSessionObj)
 		exit(error("no session found (timeout), please log in again"));
-	$gUser = sqlgetobject("SELECT * FROM `user` WHERE `id` = '".$o->userid."'");
-	if ($o->ip != $ip && $gUser->iplock == 1)
+	$gUser = sqlgetobject("SELECT * FROM `user` WHERE `id` = '".$gSessionObj->userid."'");
+	if ($gSessionObj->ip != $ip && $gUser->iplock == 1)
 		exit(error("ip changed during session, please log in again"));
 
-	$gUID = $o->userid;
+	$gUID = $gSessionObj->userid;
 	if (!$gUser)
 		exit(error("session user deleted : access denied"));
 
 	if (!$fastsession)
-		sql("UPDATE `session` SET `lastuse`=".time()." WHERE `id`='".$o->id."'");
+		sql("UPDATE `session` SET `lastuse`=".time()." WHERE `id`='".$gSessionObj->id."'");
 
 	$gSID = addslashes($sid);
 }

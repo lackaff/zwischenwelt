@@ -136,6 +136,15 @@ class cInfoArmy extends cInfoBase {
 				if (!$pillage || $pillage->army != $army->id) break;
 				cFight::EndPillage($pillage,"Die Plünderung wurde abgebrochen.",true);
 			break;
+			case "shootinglist":
+				global $gContainerType2Number,$gNumber2ContainerType;
+				if (isset($f_cancel)) foreach ($f_sel as $id) {
+					$o = sqlgetobject("SELECT * FROM `shooting` WHERE `id` = ".intval($id));
+					if (!$o || $o->attacker != $army->id) continue;
+					if ($gNumber2ContainerType[$o->attackertype] != kUnitContainer_Army) continue;
+					cFight::EndShooting($o,"Abbruch");
+				}
+			break;
 			case "cancelsiege":
 				$siege = sqlgetobject("SELECT * FROM `siege` WHERE `id`=".intval($f_id));
 				if (!$siege || $siege->army != $army->id) return;
@@ -242,13 +251,7 @@ class cInfoArmy extends cInfoBase {
 				sql("INSERT INTO `armyaction` SET ".obj2sql($t));
 			break;
 			case "rangeattackarmy":
-				$t = false;
-				$t->cmd = ARMY_ACTION_RANGEATTACK;
-				$t->army = $f_army;
-				$t->param1 = intval($f_target);
-				$t->starttime = 0;
-				$t->orderval = sqlgetone("SELECT MAX(`orderval`)+1 FROM `armyaction` WHERE `army`=".intval($f_army));
-				sql("INSERT INTO `armyaction` SET ".obj2sql($t));
+				cFight::StartShooting($army->id,kUnitContainer_Army,intval($f_target),kUnitContainer_Army,false,$army);
 			break;
 			case "lageraction":
 				$t = false;
@@ -280,14 +283,21 @@ class cInfoArmy extends cInfoBase {
 			case "siege":
 				$building = sqlgetobject("SELECT * FROM `building` WHERE `id` = ".intval($f_target));
 				if (!$building) break;
-				$t = false;
-				$t->cmd = ARMY_ACTION_SIEGE;
-				$t->army = $f_army;
-				$t->param1 = $building->x;
-				$t->param2 = $building->y;
-				sql("DELETE FROM `armyaction` WHERE ".obj2sql($t," AND "));
-				$t->orderval = sqlgetone("SELECT MAX(`orderval`)+1 FROM `armyaction` WHERE `army`=".intval($f_army));
-				sql("INSERT INTO `armyaction` SET ".obj2sql($t));
+				
+				if (!isset($army->units)) $army->units = cUnit::GetUnits($army->id);
+				$rangedsiegedmg = cUnit::GetUnitsRangedSiegeDamage($army->units);
+				if ($rangedsiegedmg > 0) {
+					cFight::StartShooting($army->id,kUnitContainer_Army,$building->id,kUnitContainer_Building,false,$army,$building);
+				} else {
+					$t = false;
+					$t->cmd = ARMY_ACTION_SIEGE;
+					$t->army = $f_army;
+					$t->param1 = $building->x;
+					$t->param2 = $building->y;
+					sql("DELETE FROM `armyaction` WHERE ".obj2sql($t," AND "));
+					$t->orderval = sqlgetone("SELECT MAX(`orderval`)+1 FROM `armyaction` WHERE `army`=".intval($f_army));
+					sql("INSERT INTO `armyaction` SET ".obj2sql($t));
+				}
 			break;
 			case "armycollect":
 				// TODO : terrainsegment bug, FIXME
@@ -436,7 +446,40 @@ class cInfoArmy extends cInfoBase {
 			<?php } ?>
 			<br>
 			<?php 
-		}?>
+		}
+		global $gArmyType,$gBuildingType;
+		global $gContainerType2Number,$gNumber2ContainerType;
+		
+		$myshootings = sqlgettable("SELECT * FROM `shooting` WHERE 
+			`attacker` = ".$gArmy->id." AND 
+			`attackertype` = ".$gContainerType2Number[kUnitContainer_Army]." 
+			ORDER BY `defendertype`");
+		if (count($myshootings) > 0) {
+			?>
+			<h3>Beschuss</h3>
+			<FORM METHOD="POST" ACTION="<?=Query("?sid=?&x=?&y=?")?>">
+			<INPUT TYPE="HIDDEN" NAME="army" VALUE='<?=$gArmy->id?>'>
+			<INPUT TYPE="HIDDEN" NAME="do" VALUE="shootinglist">
+				<table>
+				<?php foreach ($myshootings as $o) {?>
+				<?php
+					$ctype = $gNumber2ContainerType[$o->defendertype];
+					$defenderobj = sqlgetobject("SELECT * FROM `". $ctype."` WHERE `id` = ".$o->defender);
+					if (!$defenderobj) continue;
+					$defendernametext = cFight::GetContainerText($defenderobj,$o->defendertype);
+				?>
+				<tr>
+					<td><input type="checkbox" name="sel[]" value="<?=$o->id?>"></td>
+					<td>Beschuss auf <?=magictext($defendernametext)?></td>
+				</tr>
+				<?php } // endforeach?>
+				</table>
+				<input type="submit" name="cancel" value="abbrechen">
+			</form>
+			<?php
+		}
+		
+		?>
 		<br>
 
 		
@@ -450,11 +493,11 @@ class cInfoArmy extends cInfoBase {
 		<?php 
 			$max_army_weight = cUnit::GetMaxArmyWeight($gArmy->type);
 			$army_unit_weight = cUnit::GetUnitsSum($gArmy->units,"weight");
-			$fill = max(0.0,$army_unit_weight/$max_army_weight);
+			$fill = $max_army_weight?max(0.0,$army_unit_weight/$max_army_weight):0;
 			
 			$max_army_last = cUnit::GetUnitsSum($gArmy->units,"last");
 			$cur_army_last = cArmy::GetArmyTotalWeight($gArmy);
-			$fill2 = max(0.0,$cur_army_last/$max_army_last);
+			$fill2 = $max_army_last?max(0.0,$cur_army_last/$max_army_last):0;
 		?>
 		<table width=60%><tr><td align=left nowrap><?=cText::Wiki("armysize")?> ArmeeLimit (<?=ktrenner(intval($army_unit_weight))?>/<?=ktrenner(intval($max_army_weight))?>):</td>
 		<td align=right width="60%"><?php DrawBar(min(1.0,$fill),1);?></td>
@@ -792,14 +835,6 @@ class cInfoArmy extends cInfoBase {
 						<input type="checkbox" name="cancelids[]" value="<?=$c->id?>">
 					</td><td>			
 					<?php switch ($c->cmd) {
-						case ARMY_ACTION_RANGEATTACK:
-							$target = sqlgetobject("SELECT * FROM `army` WHERE `id`=".$c->param1);
-							if($target) {?>
-								Beschuss von <a href="<?=Query("?sid=?&x=".$target->x."&y=".$target->y)?>">
-								<?=$target->name?>
-								(<?=$target->x?>|<?=$target->y?>)</a>
-							<?php } else sql("DELETE FROM `armyaction` WHERE `id`=".$c->id);
-						break;
 						case ARMY_ACTION_ATTACK:
 							$target = sqlgetobject("SELECT * FROM `army` WHERE `id`=".$c->param1);
 							if($target) {?>

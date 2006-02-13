@@ -243,6 +243,9 @@ define("kArmyFlag_AutoGive_Own",			(1<<22)); // worker
 define("kArmyFlag_AutoGive_Guild",			(1<<23)); // worker
 define("kArmyFlag_AutoGive_Friend",			(1<<24)); // worker
 define("kArmyFlag_AutoPillageOff",			(1<<25)); // systemflag
+define("kArmyFlag_HoldFire",				(1<<26)); // dont'shoot, so we can move
+define("kArmyFlag_AutoShoot_Enemy",			(1<<27));
+define("kArmyFlag_AutoShoot_Strangers",		(1<<28));
 define("kArmyFlag_AllSet",					(1<<30)-1); // (at least one above the others)-1
 $gArmyFlagNames = array(
 	kArmyFlag_GuildCommand=>			"unter Gildenkommando",
@@ -271,8 +274,23 @@ $gArmyFlagNames = array(
 	kArmyFlag_AutoGive_Own => 			"Eigene Armeen/Karawanen automatisch beladen",
 	kArmyFlag_AutoGive_Guild => 		"Gilden-Armeen/Karawanen automatisch beladen",
 	kArmyFlag_AutoGive_Friend => 		"Freundliche Armeen/Karawanen automatisch beladen",
+	kArmyFlag_AutoShoot_Enemy => 		"Automatisch auf Feinde schiessen",
+	kArmyFlag_AutoShoot_Strangers => 	"Automatisch auf Fremde schiessen",
+	kArmyFlag_HoldFire => 				"Feuer einstellen (während dem Schiessen ist man unbeweglich)",
 	);
 	
+	
+/*
+ALTER TABLE `armytype` ADD `flags` INT UNSIGNED NOT NULL AFTER `ownerflags` ;
+define("kArmyTypeFlag_CanShootArmy",		1<<0); // used for cannon towers, building can shoot
+define("kArmyTypeFlag_CanShootBuilding",	1<<1); // used for cannon towers, building can shoot
+$gArmyTypeFlagNames = array(
+	kArmyTypeFlag_CanShootArmy => 		"kann Armeen schiessen",
+	kArmyTypeFlag_CanShootBuilding => 	"kann Gebäude schiessen",
+);
+*/
+
+
 define("kArmyRecalcBlockedRoute_Timeout",$gGlobal["kArmyRecalcBlockedRoute_Timeout"]); //5*60);
 define("kArmyAutoAttackRangeMonster_Timeout",$gGlobal["kArmyAutoAttackRangeMonster_Timeout"]); //5*60);
 
@@ -288,7 +306,7 @@ define("ARMY_ACTION_SIEGE",3);
 define("ARMY_ACTION_ALWAYSCOLLECT",4);
 define("ARMY_ACTION_DEPOSIT",5);
 define("ARMY_ACTION_WAIT",6);
-define("ARMY_ACTION_RANGEATTACK",7);
+define("ARMY_ACTION_RANGEATTACK",7); // OBSOLUTE, use table "shooting" instead of "action"
 
 // units
 
@@ -332,6 +350,7 @@ define("kUnitType_Einmaster",39);
 define("kUnitType_TransportShip",4000); // todo : einheit einbauen + id anpassen
 define("kUnitType_Zombie",49);
 define("kUnitType_Ghost",48);
+define("kUnitType_Worker",51);
 
 
 define("kMonster_HyperblobID",kUnitType_HyperBlob);
@@ -428,16 +447,18 @@ define("kBuildingTypeFlag_BuildDistSource",		1<<0); // 1 not yet used, set for h
 define("kBuildingTypeFlag_Speedy",				1<<1); // 2 not yet used, affected by newbee factor
 define("kBuildingTypeFlag_Openable",			1<<2); // 4 not yet used, ->$gOpenableBuildingTypes
 define("kBuildingTypeFlag_Taxable",				1<<3); // 8 not yet used, ->$gTaxableBuildingTypes
-define("kBuildingTypeFlag_CanShoot",			1<<4); // 16 used for cannon towers, building can shoot
-define("kBuildingTypeFlag_OthersCanSeeUnits",	1<<5); // 32 used for cannon towers, other players can see units inside
-define("kBuildingTypeFlag_DrawMaxTypeOnTop",	1<<6); // 64 used for cannon towers, draw maximal unit type on top
-define("kBuildingTypeFlag_Bodenschatz",			1<<7); // 128 not yet used -> $gBodenSchatzBuildings
+define("kBuildingTypeFlag_CanShootArmy",		1<<4); // 16 used for cannon towers, building can shoot armies
+define("kBuildingTypeFlag_CanShootBuilding",	1<<5); // 16 used for cannon towers, building can shoot buildings
+define("kBuildingTypeFlag_OthersCanSeeUnits",	1<<6); // 32 used for cannon towers, other players can see units inside
+define("kBuildingTypeFlag_DrawMaxTypeOnTop",	1<<7); // 64 used for cannon towers, draw maximal unit type on top
+define("kBuildingTypeFlag_Bodenschatz",			1<<8); // 128 not yet used -> $gBodenSchatzBuildings
 $gBuildingTypeFlagNames = array(
 	kBuildingTypeFlag_BuildDistSource => 	"BuildDistSource (Abstand zu diesen typen bestimmt den bauzeit faktor)",
 	kBuildingTypeFlag_Speedy => 			"Speedy (newbee Faktor betrifft diese gebäude)",
 	kBuildingTypeFlag_Openable => 			"Openable (absperren : Tor,Portal)",
 	kBuildingTypeFlag_Taxable => 			"Taxable (besteuern : Portal)",
-	kBuildingTypeFlag_CanShoot => 			"kann schiessen (Turm)",
+	kBuildingTypeFlag_CanShootArmy => 		"kann auf Armeen schiessen (Turm)",
+	kBuildingTypeFlag_CanShootBuilding => 	"kann auf Gebäude schiessen (Turm)",
 	kBuildingTypeFlag_OthersCanSeeUnits => 	"fremde Spieler können Einheiten im Gebäude sehen (Turm)",
 	kBuildingTypeFlag_DrawMaxTypeOnTop => 	"Haupt-EinheitenTyp wird über das Gebäudebild gezeichnet (Kanonen-Turm)",
 	kBuildingTypeFlag_Bodenschatz => 		"Bodenschatz",
@@ -478,7 +499,7 @@ define("kBodenSchatz_Wild",63);
 
 define("kBodenSchatzIdealWorkers",10000); // maximum workers that are of use when harvesting "minerals"
 define("kShootingAlarmTimeout",2*3600); // send a new igm when fire is resumed after a longer pause
-define("kSpeedyBuildingsLimit",121); // 11*11 = 1 map full
+define("kSpeedyBuildingsLimit",121*2); // 11*11 = 1 map full
 
 $gBuildingTypeGroupsPics = array("Gebäude"=>"tool_house.png","Infrastruktur"=>"tool_street.png","Deko"=>"tool_brunnen.png"); 
 $gBuildingTypeGroups = array( // used by for mapnavi tabs
@@ -537,6 +558,7 @@ define("kBuildingFlag_ShootMask",	kBuildingFlag_AutoShoot_Enemy|kBuildingFlag_Au
 
 
 // owner can set these flags, all others are system flags
+$shootertypelist = array_merge($gFlaggedBuildingTypes[kBuildingTypeFlag_CanShootArmy],$gFlaggedBuildingTypes[kBuildingTypeFlag_CanShootBuilding]);
 $gOwnerBuildingFlags = array(	kBuildingFlag_Open_Stranger			=> $gFlaggedBuildingTypes[kBuildingTypeFlag_Openable], 
 								kBuildingFlag_Open_Guild			=> $gFlaggedBuildingTypes[kBuildingTypeFlag_Openable],
 								kBuildingFlag_Open_Friend			=> $gFlaggedBuildingTypes[kBuildingTypeFlag_Openable],
@@ -545,8 +567,8 @@ $gOwnerBuildingFlags = array(	kBuildingFlag_Open_Stranger			=> $gFlaggedBuilding
 								kBuildingFlag_Tax_Guild				=> $gFlaggedBuildingTypes[kBuildingTypeFlag_Taxable],
 								kBuildingFlag_Tax_Friend			=> $gFlaggedBuildingTypes[kBuildingTypeFlag_Taxable],
 								kBuildingFlag_Tax_Enemy				=> $gFlaggedBuildingTypes[kBuildingTypeFlag_Taxable],
-								kBuildingFlag_AutoShoot_Enemy		=> $gFlaggedBuildingTypes[kBuildingTypeFlag_CanShoot],
-								kBuildingFlag_AutoShoot_Strangers	=> $gFlaggedBuildingTypes[kBuildingTypeFlag_CanShoot],
+								kBuildingFlag_AutoShoot_Enemy		=> $shootertypelist,
+								kBuildingFlag_AutoShoot_Strangers	=> $shootertypelist,
 								);
 								
 $gBuildingFlagNames = array(	kBuildingFlag_AutoShoot_Enemy => "Automatisch auf Feinde schiessen",

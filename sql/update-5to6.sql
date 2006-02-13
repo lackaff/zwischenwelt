@@ -43,3 +43,23 @@ ALTER TABLE `poll_answer` ADD `time` INT UNSIGNED DEFAULT '0' NOT NULL ;
 
 
 ALTER TABLE `buildingtype` ADD `flags` INT UNSIGNED DEFAULT '0' NOT NULL AFTER `special` ;
+
+CREATE TABLE `shooting` (
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `attacker` int(10) unsigned NOT NULL default '0',
+  `attackertype` int(10) unsigned NOT NULL default '0',
+  `defender` int(10) unsigned NOT NULL default '0',
+  `defendertype` int(10) unsigned NOT NULL default '0',
+  `start` int(10) unsigned NOT NULL default '0',
+  `lastshot` int(10) unsigned NOT NULL default '0',
+  `fightlog` int(10) unsigned NOT NULL default '0',
+  PRIMARY KEY  (`id`)
+) ENGINE=MyISAM ;
+ALTER TABLE `shooting` ADD `autocancel` TINYINT UNSIGNED DEFAULT '0' NOT NULL ;
+
+ALTER TABLE `fightlog` DROP INDEX `fight` ;
+#ALTER TABLE `fightlog` DROP `fight` ;  # unused but still in table, to keep old fights alive
+ALTER TABLE `fight` ADD `fightlog` INT UNSIGNED NOT NULL ;
+ALTER TABLE `buildingtype` ADD `weightlimit` INT UNSIGNED DEFAULT '0' NOT NULL AFTER `flags` ;
+ALTER TABLE `session` ADD `usegfx` TINYINT UNSIGNED DEFAULT '0' NOT NULL ;
+

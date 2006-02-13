@@ -129,7 +129,7 @@ if ($gUser->usegfxpath)
 	$styleparam .= "&hash=".(substr(base64_encode($gUser->gfxpath),4,8));
 
 // calc gfx path
-if($gUser && $gUser->usegfxpath && !empty($gUser->gfxpath)){
+if($gUser && $gUser->usegfxpath && !empty($gUser->gfxpath) && (!$gSessionObj || $gSessionObj->usegfx)){
 	if($gUser->gfxpath{strlen($gUser->gfxpath)-1} != '/')
 			$gGFXBase = $gUser->gfxpath . "/";
 	else	$gGFXBase = $gUser->gfxpath;
@@ -191,6 +191,17 @@ foreach ($gBuildings as $o) {
 	echo cBuilding::GetJavaScriptBuildingData($o,false,'').";";
 }
 echo "\";\n";
+
+echo "gBuildingData = new Array();\n";
+foreach ($gBuildings as $o) {
+	switch ($o->type) { 
+		case kBuilding_Sign:
+			$text = trim(magictext(htmlspecialchars(GetBParam($o->id,"text"))));
+			$text = "<pre>".$text."</pre>";
+			echo "gBuildingData[".$o->id."] = \"".strtr(addslashes($text),array("\n"=>"\\n","\r"=>""))."\";\n";
+		break;
+	}
+}
 
 // items
 $gItems = sqlgettable("SELECT * FROM `item` WHERE `army` = 0 AND `building` = 0 AND ".$xylimit);

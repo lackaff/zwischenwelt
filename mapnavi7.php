@@ -4,6 +4,7 @@ require_once("lib.army.php");
 require_once("lib.guild.php");
 require_once("lib.construction.php");
 require_once("lib.tabs.php");
+require_once("lib.spells.php");
 Lock();
 
 // todo : not-yet-buildable  buildings shown as tools, but marked as unavailable... 
@@ -434,7 +435,7 @@ function NaviTool ($pic,$param1,$param2,$tooltip="",$css="") {
 }
 
 // general tools tab
-$head = "<img src=\"".g("tool_look.png")."\">";
+$head = "<img src=\"".g("tool_look.png")."\" alt=\"".($tip="anschauen und Wegpunkte setzen")."\" title=\"".$tip."\">";
 $content = "";
 $content .= "<div class=\"mapnavitool_general\">\n";
 $content .= NaviTool(g("tool_look.png"),0,0,"anschauen","navtoolicon");
@@ -484,17 +485,14 @@ if ($user_has_hq) {
 
 
 // magic tabs
-$candospells = array();
-$spelltypes = sqlgettable("SELECT * FROM `spelltype` ORDER BY `orderval` ASC");
-foreach ($spelltypes as $spelltype) {
-	if(HasReq($spelltype->req_building,$spelltype->req_tech,$gUser->id,0)){ // TODO : replace 0 by current spell-tech level ?
-		$group = $spelltype->primetech ? $gTechnologyType[$spelltype->primetech]->group : 0;
-		$candospells[$spelltype->target][$spelltype->id] = $spelltype;
-	}
-}
+$candospells = GetPossibleSpells($gUser->id,true);
+
 // (isset($gTechnologyGroup[$groupkey])?g($gTechnologyGroup[$groupkey]->gfx):g("res_mana.gif"))
 foreach ($candospells as $group => $arr) if (count($arr) > 0) {
-	$head = "<img src=\"".g("tool_mana.png")."\">";
+	$tip = "Zauber";
+	if ($group == MTARGET_PLAYER)	$tip = "Zauber auf Spieler";
+	if ($group == MTARGET_AREA)		$tip = "Zauber auf Gelände";
+	$head = "<img src=\"".g("tool_mana.png")."\" alt=\"".($tip)."\" title=\"".$tip."\">";
 	$content = "<div class=\"mapnavitool_magic\">\n";
 	foreach ($arr as $spelltype)
 		$content .= NaviTool(g($spelltype->gfx),20,$spelltype->id,$spelltype->name,"navtoolicon");
@@ -608,7 +606,10 @@ echo GenerateTabsMultiRow("brushtabs",$brushtabs,8,0,$corner,"ChangeBrush");
 	<?php if (0) {?><a href="<?=Query("?createbodenschatz=1&sid=?")?>">(bodenschatz)</a><?php }?>
 	
 <?php }?> 
+
+<?php if (0) {?>
 <a href="javascript:myreload()"><img border=0 src="<?=g("icon/reload.png")?>" alt="reload" title="reload"></a>
+<?php } // endif?>
 
 
 

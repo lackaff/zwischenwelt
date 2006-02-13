@@ -58,6 +58,7 @@ $form = new cTableEditForm("?sid=?&id=$f_id","BuildingType $f_id editieren",
 				
 				new cTableEditTimeField("buildingtype","id",$f_id,"Bauzeit","buildtime"),
 				new cTableEditTextField("buildingtype","id",$f_id,"MaxHP","maxhp"),
+				new cTableEditTextField("buildingtype","id",$f_id,"MaxGewicht<br>enthaltener Einheiten<br>0=unbegrenzt","weightlimit"),
 				new cTableEditTextField("buildingtype","id",$f_id,"BaseMana","basemana"),
 
 				new cTableEditTextField("buildingtype","id",$f_id,"Script","script"),

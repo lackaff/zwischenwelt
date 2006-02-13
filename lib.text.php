@@ -56,7 +56,8 @@ class cText {
 					$eff_show[$field] = true;
 		
 		$display_f = false;
-		foreach($units as $o) if ($o->amount > 0 && $gUnitType[$o->type]->f > 0) $display_f = true;
+		//foreach($units as $o) if ($o->amount > 0 && $gUnitType[$o->type]->f > 0) $display_f = true;
+		foreach($units as $o) if ($gUnitType[$o->type]->f > 0) $display_f = true;
 		?>
 			<table border=1 cellspacing=0>
 			<tr>
@@ -64,7 +65,7 @@ class cText {
 				<th>A</th>
 				<th>V</th>
 				<?php if ($display_f) {?>
-				<th>F</th>
+				<th>Fernkampf</th>
 				<?php } // endif?>
 				<th>Speed</th>
 				<th>Pl.</th>
@@ -97,8 +98,14 @@ class cText {
 					<?php if ($display_f) {?>
 					<td align=right>
 					<?php if ($type->f > 0) {?>
-						<?=$type->f+cUnit::GetUnitBonus($o->type,$userid,"f")?> (<?=$type->r?>/<?=round($type->cooldown/60,1)?>min) 
-						<?=($armyidle===false)?"":(round(min(100,100*$armyidle/$type->cooldown))."%")?>
+						<table border=0 cellspacing=0 cellpadding=0>
+						<tr><td>Schaden</td>		<td align=right><?=$type->f+cUnit::GetUnitBonus($o->type,$userid,"f")?></td></tr>
+						<tr><td>Reichweite</td>		<td align=right><?=$type->r?></td></tr>
+						<tr><td>Ladezeit</td>		<td nowrap><?=round($type->cooldown/60,1)?> min</td></tr>
+						<?php if ($armyidle !== false) {?>
+						<tr><td>Nachladen</td><td align=right><?=(round(min(100,100*$armyidle/$type->cooldown))."%")?></td></tr>
+						<?php } // endif?>
+						</table>
 					<?php } else echo ""; ?>	
 					</td>
 					<?php } // endif?>
@@ -193,6 +200,8 @@ function usermsglink ($user) { // obj or id
 	if (!is_object($user)) $user = sqlgetobject("SELECT `id`,`name` FROM `user` WHERE `id` = ".intval($user));
 	return "<a href='".query("../info/msg.php?sid=?&show=compose&to=".urlencode($user->name))."'>".GetFOFtxt($gUser->id,$user->id,$user->name)."</a>";
 }
+
+// user false means no coloring
 function cost2txt ($costarr,$user=false) {
 	global $gRes;
 	$out = "";
@@ -201,7 +210,7 @@ function cost2txt ($costarr,$user=false) {
 		$cost = $costarr?$costarr[$i++]:0;
 		if ($cost <= 0) continue;
 		$color = (!$user)?"black":(($user->{$f} >= $cost)?"green":"red");
-		$out .= "<img src='".g("res_$f.gif")."'><font color='$color'>".ktrenner($cost)."</font>";
+		$out .= "<img src='".g("res_$f.gif")."' alt='$n' title='$n'><font color='$color'>".ktrenner($cost)."</font>";
 	}
 	if (empty($out)) $out = "0";
 	return $out;
@@ -221,6 +230,21 @@ function GetBuildingTypeLink ($type,$x,$y,$text=false,$user=false,$level=10) {
 	if (!$text) $text = "<img border=0 src=\"".GetBuildingPic($type,$user,$level)."\" alt=\"".$type->name."\" title=\"".$type->name."\">";
 	$url = Query("info.php?sid=?&x=".$x."&y=".$x."&infobuildingtype=".$type->id);
 	return "<a href=\"$url\">$text</a>";
+}
+// text=false is replaced by unit picture
+function GetUnitTypeLink ($type,$x,$y,$text=false,$user=false) {
+	global $gObject,$gUnitType;
+	if (!is_object($type)) $type = $gUnitType[$type];
+	if (!$text) $text = "<img border=0 src=\"".g($type->gfx)."\" alt=\"".$type->name."\" title=\"".$type->name."\">";
+	$url = Query("info.php?sid=?&x=".$x."&y=".$x."&infounittype=".$type->id);
+	return "<a href=\"$url\">$text</a>";
+}
+// text=false is replaced by terrain picture
+function GetTerrainTypeLink ($type,$x,$y,$text=false,$user=false) {
+	global $gObject,$gTerrainType;
+	if (!is_object($type)) $type = $gTerrainType[$type];
+	if (!$text) $text = "<img border=0 src=\"".g($type->gfx)."\" alt=\"".$type->name."\" title=\"".$type->name."\">";
+	return "$text";
 }
 
 function magictext($text) {

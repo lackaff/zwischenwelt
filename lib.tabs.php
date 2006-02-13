@@ -21,6 +21,7 @@ function GenerateTabs ($cssclass,$tabs,$corner="",$jschangecallback=false,$selec
 		for (i=0;i<<?=$anzahl_tabs?>;++i) {
 			head = document.getElementById("tabhead<?=$gTabPaneNumber?>_"+i);
 			pane = document.getElementById("tabpane<?=$gTabPaneNumber?>_"+i);
+			if (!pane) return;
 			if (head.className == "activetab") {
 				if (i == tabnum) nochange = true; // nothing to activate
 				if (!nochange) {
@@ -32,6 +33,7 @@ function GenerateTabs ($cssclass,$tabs,$corner="",$jschangecallback=false,$selec
 		if (!nochange) {
 			head = document.getElementById("tabhead<?=$gTabPaneNumber?>_"+tabnum);
 			pane = document.getElementById("tabpane<?=$gTabPaneNumber?>_"+tabnum);
+			if (!pane) return;
 			head.className = "activetab";
 			pane.style.display = "inline";
 		}
@@ -82,6 +84,7 @@ function GenerateTabsMultiRow ($cssclass,$tabs,$max_per_row,$selected=0,$corner=
 		for (i=0;i<<?=$anzahl_tabs?>;++i) {
 			head = document.getElementById("tabhead<?=$gTabPaneNumber?>_"+i);
 			pane = document.getElementById("tabpane<?=$gTabPaneNumber?>_"+i);
+			if (!pane) return;
 			if (head.className == "activemultitab") {
 				if (i == tabnum) nochange = true; // nothing to activate
 				if (!nochange) {
@@ -93,6 +96,7 @@ function GenerateTabsMultiRow ($cssclass,$tabs,$max_per_row,$selected=0,$corner=
 		if (!nochange) {
 			head = document.getElementById("tabhead<?=$gTabPaneNumber?>_"+tabnum);
 			pane = document.getElementById("tabpane<?=$gTabPaneNumber?>_"+tabnum);
+			if (!pane) return;
 			head.className = "activemultitab";
 			pane.style.display = "block";
 		}

@@ -54,6 +54,7 @@ else {
 <div id=login>
 		<span id=text>Name:</span><span id=input><INPUT TYPE="text" NAME="name"></span><br>
 		<span id=text>Password:</span><span id=input><INPUT TYPE="password" NAME="pass"></span><br>
+		<span id=gfxpackchecktext>Gfx-Pack:</span><span id=gfxpackcheck><input type="checkbox" name="gfxpack" value="1" checked></span><br>
 		<span id=button><INPUT TYPE="submit" VALUE="login"></span>
 		<?php if (0) {?><input type="hidden" name="mycliplog" value=""><?php }?>
 </div>

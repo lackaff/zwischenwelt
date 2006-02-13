@@ -571,7 +571,7 @@ class Spell_Strike extends Spell {
 			// send message to victim
 			if ($o->user) {
 				$topic = "Strike auf ($this->x,$this->y)";
-				$msg = "Ein Strike hat Ihre Gebäude bei ($this->x,$this->y) beschädigt.<br>\n";
+				$msg = "Ein Strike hat Ihr Gebäude bei ($this->x,$this->y) beschädigt.<br>\n";
 				$msg .= $spellreport;
 				$owneruser = sqlgetobject("SELECT `id`,`name` FROM `user` WHERE `id` = ".intval($this->owner));
 				if ($owneruser)

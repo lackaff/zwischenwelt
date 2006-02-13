@@ -3,6 +3,24 @@ require_once("lib.main.php");
 require_once("lib.army.php");
 require_once("lib.technology.php");
 
+
+// returns a twodimensional array with the spelltype-objects the user can cast, first-index : group, second-index : spelltype-id
+function GetPossibleSpells ($userid=0,$groupbytarget=false) {
+	global $gSpellType,$gTechnologyType,$gUser;
+	if ($userid == 0) $userid = $gUser->id;
+	$candospells = array();
+	foreach ($gSpellType as $spelltype) {
+		if (HasReq($spelltype->req_building,$spelltype->req_tech,$userid,0)) { // TODO : replace 0 by current spell-tech level ?
+			if ($groupbytarget) 
+					$group = $spelltype->target;
+			else	$group = $spelltype->primetech ? $gTechnologyType[$spelltype->primetech]->group : 0;
+			$candospells[$group][$spelltype->id] = $spelltype;
+		}
+	}
+	return $candospells;
+}
+
+
 // constructs a spell instance, optionally with db object $o
 function GetSpellInstance ($spelltype,$o=false) {
 	global $gSpellType;

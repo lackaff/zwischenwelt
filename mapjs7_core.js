@@ -135,8 +135,8 @@ function JSInsertItem (x,y,type,amount) {
 	res.amount = amount;
 	gItems[gItems.length] = res;
 }
-function JSBuildingUpdate (x,y,type,user,level,hp,construction,jsflags,unitstxt) {
-	if (!gBig && gBigMapWindow && !gBigMapWindow.closed) gBigMapWindow.JSBuildingUpdate(x,y,type,user,level,hp,construction,jsflags);
+function JSBuildingUpdate (x,y,type,user,level,hp,construction,jsflags,unitstxt,id) {
+	if (!gBig && gBigMapWindow && !gBigMapWindow.closed) gBigMapWindow.JSBuildingUpdate(x,y,type,user,level,hp,construction,jsflags,unitstxt,id);
 	if (y-gTop+1 < 0 || y-gTop+1 >= gCY+2 || x-gLeft+1 < 0 || x-gLeft+1 >= gCX+2) return;
 	var res = new Object();
 	res.x = x;
@@ -148,6 +148,7 @@ function JSBuildingUpdate (x,y,type,user,level,hp,construction,jsflags,unitstxt)
 	res.construction = construction;
 	res.jsflags = jsflags;
 	res.units = ParseTypeAmountList(unitstxt);
+	res.id = id;
 	gBuildingsCache[y-gTop+1][x-gLeft+1] = res;
 }
 
@@ -197,6 +198,7 @@ function jsParseBuildings () {
 		res.construction = arr[6];
 		res.jsflags = arr[7];	
 		res.units = ParseTypeAmountList(arr[8]);		
+		res.id = arr[9];		
 		gBuildingsCache[res.y-gTop+1][res.x-gLeft+1] = res;
 	}
 }
@@ -540,7 +542,7 @@ function CreateMap() {
 	gMapHTML += "	<div class=\"tabheader\">";
 	gMapHTML += "		<div class=\"tabcorner\">";
 	gMapHTML += "			<span>"+gMapModiHelp+"</span>";
-	gMapHTML += "<a href=\"javascript:void(alert('Map-Version="+kCoreJSMapVersion+",PathCode="+gPathDetected+"'))\">v</a>";
+	//gMapHTML += "<a href=\"javascript:void(alert('Map-Version="+kCoreJSMapVersion+",PathCode="+gPathDetected+"'))\">v</a>";
 	gMapHTML += "<a href=\"javascript:navrel(0,0,1)\"><img alt=\"reload\" title=\"reload\" border=0 src=\""+g("icon/reload.png")+"\"></a>";
 	if (!gBig)	gMapHTML += "<a href=\"javascript:OpenMap(1)\"><img alt=\"bigmap\" title=\"bigmap\" border=0 src=\""+g("icon/bigmap.png")+"\"></a>";
 	if (!gBig)	gMapHTML += "<a href=\"javascript:OpenMap(2)\"><img alt=\"minimap2\" title=\"minimap2\" border=0 src=\""+g("icon/minimap2.png")+"\"></a>";
@@ -791,6 +793,11 @@ function ShowMapTip(relx,rely) {
 				tiptext += "<br><span>"; 
 				for (i in building.units) if (gUnitType[i])
 					tiptext += "<img src=\""+g(gUnitType[i].gfx)+"\">"+TausenderTrenner(building.units[i]);
+				tiptext += "</span>";
+			}
+			if (gBuildingData[building.id]) {
+				tiptext += "<br><span>";
+				tiptext += gBuildingData[building.id];
 				tiptext += "</span>";
 			}
 			tiptext += "</td></tr>";

@@ -880,13 +880,13 @@ function obj2jsparams ($obj,$fields,$quote='"') {
 //todo: local path replacement
 //done: %L% %NWSE% path replacement
 function g($path,$nwse="ns",$level="0",$race="0",$moral="100"){
-	global $gUser;
+	global $gUser,$gSessionObj;
 	$moral = max(0,min(200,$moral));
 	//moral range from 0 - 4
 	$moral = round($moral/200*4);
 	if(is_numeric($nwse))$nwse = NWSECodeToStr($nwse);
 	if($race == 0) $race = $gUser?$gUser->race:1;
-	if($gUser && $gUser->usegfxpath && !empty($gUser->gfxpath)){
+	if($gUser && $gUser->usegfxpath && !empty($gUser->gfxpath) && (!$gSessionObj || $gSessionObj->usegfx)){
 		if($gUser->gfxpath{strlen($gUser->gfxpath)-1} != '/')$base = $gUser->gfxpath . "/";
 		else $base = $gUser->gfxpath;
 	} else $base = kGfxServerPath;

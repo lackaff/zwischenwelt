@@ -133,7 +133,7 @@ if (!isset($f_building) && !isset($f_army) && isset($f_do)) switch ($f_do) {
 			require_once("../lib.army.php");
 			$units = cUnit::Simple($f_unit,$f_anzahl);
 			$newarmy = cArmy::SpawnArmy($f_x,$f_y,$units,false,-1,$f_user,$f_quest,0,-1);
-			JSRefreshArmy($newarmy);
+			if ($newarmy) JSRefreshArmy($newarmy);
 		break;
 		case "adminzap":// admin command
 			if (!$gUser->admin)break;

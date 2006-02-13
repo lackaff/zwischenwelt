@@ -14,7 +14,8 @@ function ArmyThinkTimeShift ($armyid,$dur) {
 
 
 function InitArmyThink () {
-	global $gAllHellholes,$gAllArmys,$gAllArmyUnits,$gAllActions,$gAllPillages,$gAllSieges,$gAllFights,$gAllUsers;
+	global $gAllHellholes,$gAllArmys,$gAllArmyUnits,$gAllActions,$gAllPillages,$gAllSieges,$gAllFights,$gAllUsers,$gArmyShootings;
+	global $gContainerType2Number;
 	if (!isset($gAllUsers)) $gAllUsers = sqlgettable("SELECT * FROM `user` ORDER BY `id`","id");
 	$gAllHellholes = sqlgettable("SELECT * FROM `hellhole`","id"); // used for caching army positions in GetPosSpeed() -> update moved armys in this array !!
 	$gAllArmys = sqlgettable("SELECT * FROM `army`","id"); // used for caching army positions in GetPosSpeed() -> update moved armys in this array !!
@@ -23,6 +24,13 @@ function InitArmyThink () {
 	$gAllPillages = sqlgettable("SELECT `army` FROM `pillage` GROUP BY `army`","army");
 	$gAllSieges = sqlgettable("SELECT `army` FROM `siege` GROUP BY `army`","army");
 	
+
+	$gArmyShootings = false;
+	if (1) { // todo : replace by condition : only from cron (not every 30 secs, as in minicron)
+		$gArmyShootings = sqlgetgrouptable("SELECT * FROM `shooting` WHERE 
+			`attackertype` = ".$gContainerType2Number[kUnitContainer_Army],"attacker");
+	}
+
 	$fights_attacker = sqlgetonetable("SELECT `attacker` FROM `fight` GROUP BY `attacker`");
 	$fights_defender = sqlgetonetable("SELECT `defender` FROM `fight` GROUP BY `defender`");
 	$gAllFights = array_unique(array_merge($fights_attacker,$fights_defender)); // used in cron : pillage
@@ -40,21 +48,24 @@ InitArmyThink();
 // TODO : action harvest ??
 // TODO : action follow, just activates follow mode ??
 
+
 function ArmyThink ($army,$debug=false) {
 	if (kProfileArmyLoop) LoopProfiler("armyloop:startthink");
 	global $gAllHellholes,$gAllArmys,$gAllArmyUnits,$gAllActions,$gAllPillages,$gAllSieges,$gAllFights;
 	global $gTerrainType,$gRes,$gRes2ItemType,$gBuildingType,$gBodenSchatzBuildings;
 	if ($debug) echo "thinking army $army->name ($army->x,$army->y)<br>";
 	if (isset($gAllPillages[$army->id]))	{ if ($debug) echo "army is pillaging<br>"; return; }
-	if (isset($gAllSieges[$army->id]))	{ if ($debug) echo "army is siege<br>"; return; }
+	if (isset($gAllSieges[$army->id]))		{ if ($debug) echo "army is siege<br>"; return; }
 	if (in_array($army->id,$gAllFights))	{ if ($debug) echo "army is fighting<br>"; return; }
 
-	
 	if (!isset($army->units)) $army->units = cUnit::GetUnits($army->id);
 	$army->size = cUnit::GetUnitsSum($army->units);
 	$army->flags = intval($army->flags);
 	$wait_here = false;
 	$time = time();
+	
+	// shooting
+	if (cFight::ThinkShooting($army,kUnitContainer_Army,$debug)) return;
 	
 	// bodenschaetze
 	if ($army->type == kArmyType_Arbeiter) {
@@ -170,6 +181,8 @@ function ArmyThink ($army,$debug=false) {
 	}
 	
 	// AutoAttackRangeMonster
+	/*
+	TODO : check me, and convert to new shooting system
 	if (($army->flags & kArmyFlag_AutoAttackRangeMonster) && 
 		$army->idle >= kArmyAutoAttackRangeMonster_Timeout && 
 		cArmy::hasDistantAttack($army)) {
@@ -185,7 +198,7 @@ function ArmyThink ($army,$debug=false) {
 			}
 		} else echo "no AutoAttackRangeMonster, already have ARMY_ACTION_RANGEATTACK<br>";
 	}
-	
+	*/
 	
 	// look for nearby buildings
 	$nearbuildings = false;
@@ -438,38 +451,6 @@ function TryExecArmyAction ($army,$cmd,$param1,$param2,$param3,$actid,$debug=fal
 	$action_complete = false;
 	
 	switch($cmd) {
-		case ARMY_ACTION_RANGEATTACK:
-			// TODO cFight::StartRangedFight ???
-			$enemy = $gAllArmys[$param1];
-			if ($enemy) $enemy->units = $gAllArmyUnits[$enemy->id];
-			if (!$enemy || !hasDistantAttack($army)) { $action_complete = true; break; }
-			
-			if ($army->idle < GetDistantCooldown($army->units)) return false;
-			
-			$dx = abs($army->x-$enemy->x);
-			$dy = abs($army->y-$enemy->y);
-			if (!cArmy::inDistantRange($dx,$dy,$army)) return false;
-			
-			//reset idle, because army shoots
-			$idle = $army->idle;
-			$army->idle = 0;
-			sql("UPDATE `army` SET `idle`=0 WHERE `id`=".intval($army->id));
-		
-			//change damage depending on the path the bullet pased
-			$dmg = GetDistantDamage($army->units,$dx,$dy);
-			$mod = GetDistantMod($sx,$sy,$dx,$dy);
-			$dmg *= $mod;
-			$dmg *= rand(80,100)/100.0;
-			
-			$enemy->units = cUnit::GetUnitsAfterDamage($enemy->units,$dmg,$enemy->user);
-			$gAllArmyUnits[$enemy->id] = $enemy->units; // update cache
-			if (cUnit::GetUnitsSum($enemy->units) < 0.0) {
-				//enemy ist tod
-				DeleteArmy($enemy->id);
-				echo "shot and killed<br>";
-			} else cUnit::SetUnits($enemy->units,$enemy->id);
-			echo "RangedAttack: Fire! mod=$mod sum=$sum v($dx,$dy) with damage $dmg<br>";
-		break;
 		case ARMY_ACTION_ATTACK:
 			$enemy = $gAllArmys[$param1];
 			if ($enemy) $enemy->units = $gAllArmyUnits[$enemy->id];

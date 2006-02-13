@@ -35,7 +35,7 @@ if (isset($f_allupgrades_singletype)) foreach ($f_allupgrades_singletype as $onl
 			`construction` = 0 AND
 			`type` = ".intval($typeid));
 	}
-	$f_selbtype = $only_typeid;
+	//$f_selbtype = $only_typeid;
 }
 if (isset($f_allupgrades)) {
 	// plan[type][level][oldups] = level + planup
@@ -178,7 +178,13 @@ if (isset($f_listtype)) {
 	<?php
 } else {
 	$buildinggroups = sqlgettable("SELECT *,COUNT(*) as `c`,`level`+`upgrades` as `planlevel` FROM `building` WHERE `user` = ".$gUser->id." AND `construction` = 0 GROUP BY `type`,`level`,`upgrades` ORDER BY `type`,`level` DESC,`upgrades` DESC");
-	$buildinggroups2 = sqlgettable("SELECT *,COUNT(*) as `c`,MIN(`level`+`upgrades`) as `planlevel`,SUM(`upgrades`) as `upsum`,MAX(`level`) as `level_max`,MIN(`level`) as `level_min` FROM `building` WHERE `user` = ".$gUser->id." AND `construction` = 0 GROUP BY `type` ORDER BY `type`");
+	$buildinggroups2 = sqlgettable("SELECT *,
+		COUNT(*) as `c`,
+		MIN(`level`+`upgrades`) as `planlevel`,
+		MAX(`level`+`upgrades`) as `maxplanlevel`,
+		SUM(`upgrades`) as `upsum`,
+		MAX(`level`) as `level_max`,
+		MIN(`level`) as `level_min` FROM `building` WHERE `user` = ".$gUser->id." AND `construction` = 0 GROUP BY `type` ORDER BY `type`");
 	$btypes = array();
 	$btypes[] = 0; // summary for all buildings
 	foreach ($buildinggroups as $o) if (!in_array($o->type,$btypes)) $btypes[] = $o->type;
@@ -205,16 +211,16 @@ if (isset($f_listtype)) {
 				<?php if ($btype!=0) {?>
 					<th>nächstes Upgrade</th>
 				<?php } // endif?>
-				<th>geplant bis</th>
+				<th nowrap>geplant bis</th>
 			</tr>
 			<?php 
 			$arr = ($btype==0)?$buildinggroups2:$buildinggroups;
 			foreach ($arr as $o) if ($o->type == $btype || $btype == 0) {?>
 				<?php
 				if ($btype!=0) $o->level_max = $o->level;
-				$maxplan = max($maxplan,$o->level + $o->upgrades);
-				if ($minplan < 0) $minplan = $o->level + $o->upgrades;
-				$minplan = min($minplan,$o->level + $o->upgrades);
+				$maxplan = 		max($maxplan,	$o->planlevel);
+				if ($minplan < 0)	$minplan =	$o->planlevel;
+				$minplan = 		min($minplan,	$o->planlevel);
 				$nextlevel = $o->level + $o->upgrades + 1;
 				$upmod = cBuilding::calcUpgradeCostsMod($nextlevel); 
 				$time = cBuilding::calcUpgradeTime($o->type,$nextlevel);
@@ -248,6 +254,9 @@ if (isset($f_listtype)) {
 						<td align="right"><?=$o->upsum?></td>
 					<?php } // endif?>
 					<td align="right">
+						<?php if ($btype == 0) {?>
+						max:<?=$o->maxplanlevel?>
+						<?php } // endif?>
 						<input align="right" style="width:40px" type="text" id="planner_<?=$btype?>_<?=$countplanner++?>" name="plan[<?=$o->type?>][<?=$o->level?>][<?=$o->upgrades?>]" value="<?=$o->planlevel?>">
 						<?php if ($btype == 0) {?>
 						<input type="submit" name="allupgrades_singletype[<?=$o->type?>]" value="speichern">
@@ -274,7 +283,7 @@ if (isset($f_listtype)) {
 							<a href="javascript:planall('planner_<?=$btype?>_',<?=$countplanner?>,'plansetvalue_<?=$btype?>')">
 							<img border=0 src="<?=g("scroll/n.png")?>" alt="alle setzten" title="alle setzten"></a>
 							<input align="right"  type="text" id="plansetvalue_<?=$btype?>" name="plansetvalue_<?=$btype?>" value="<?=$minplan?>" style="width:40px">
-						<?php } else { // ?>
+						<?php } else if (0) { // ?>
 							max:<?=$maxplan?>
 							min:<?=$minplan?>
 						<?php } // endif?>
@@ -291,7 +300,7 @@ if (isset($f_listtype)) {
 		$mytabs[$btype] = array($header,rob_ob_end());
 	}
 	//foreach ($mytabs as $arr) echo $arr[1];
-	echo GenerateTabsMultiRow("buildingsummarytabs",$mytabs,14,$f_selbtype);
+	echo GenerateTabsMultiRow("buildingsummarytabs",$mytabs,15,$f_selbtype);
 }
 ?>
 Der Punkt "nächstes Upgrade" stellt die Kosten vom nächsten Upgrade dar, das kommt nach dem alle geplanten fertig sind.

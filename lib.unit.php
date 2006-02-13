@@ -23,6 +23,7 @@ class cUnit {
 	
 	// $container_type is one of kUnitContainer_Army,kUnitContainer_Transport,kUnitContainer_Building, ignore amount<0
 	function SetUnits ($units,$container_id,$container_type=kUnitContainer_Army) {
+		// $gAllArmyUnits[$enemy->id] = $enemy->units; // TODO : update cache ??
 		sql("DELETE FROM `unit` WHERE `$container_type` = ".intval($container_id));
 		$units = cUnit::GroupUnits($units);
 		foreach ($units as $o) if ($o->amount > 0) {
@@ -239,6 +240,16 @@ class cUnit {
 		return $dmg;
 	}
 	
+	// RANGED siege damage
+	function GetUnitsRangedSiegeDamage ($units) {
+		global $gUnitType;
+		$dmg = 0;
+		foreach ($units as $o) 
+			if ($o->amount > 0) 
+				$dmg += max(0,$o->amount * $gUnitType[$o->type]->f * $gUnitType[$o->type]->eff_siege);
+		return $dmg;
+	}
+	
 	// RANGED attack range
 	function GetUnitsMaxRange ($units) {
 		global $gUnitType;
@@ -279,9 +290,13 @@ class cUnit {
 	
 	// BUILDINGLIMIT
 	function GetMaxBuildingWeight ($buildingtypeid) {
-		if ($buildingtypeid == kBuilding_Garage) return 1000;
-		if ($buildingtypeid == kBuilding_MagicTower) return 2400;
-		return -1; // -1 means no limit
+		global $gBuildingType;
+		$limit = $gBuildingType[$buildingtypeid]->weightlimit;
+		if ($limit <= 0) return -1;
+		return $limit;
+		//if ($buildingtypeid == kBuilding_Garage) return 1000;
+		//if ($buildingtypeid == kBuilding_MagicTower) return 2400;
+		// -1 means no limit
 	}
 	
 	// used in cArmy::getArmySpeed()

@@ -7,37 +7,6 @@ require_once("../lib.spells.php");
 Lock();
 profile_page_start("summary.php");
 
-if (isset($f_bup)) {
-	$upgroups = sqlgettable("SELECT `building`,COUNT(`id`) as c , MAX(`time`) as mtime FROM `oldupgrade` GROUP BY `building`");
-	//vardump2($upgroups);
-	foreach ($upgroups as $o) {
-		sql("UPDATE `building` SET `upgrades` = ".intval($o->c)." , `upgradetime` = ".intval($o->mtime)." WHERE `id` = ".intval($o->building));
-		sql("DELETE FROM `oldupgrade` WHERE `building` = ".intval($o->building));
-	}
-}
-
-
-if(isset($f_upgrades)) {
-	foreach ($f_upgrades as $id => $up) {
-		$building = sqlgetobject("SELECT * FROM `building` WHERE `id` = ".intval($id));
-		if ($building && $building->user == $gUser->id)
-			cBuilding::SetBuildingUpgrades($id,$up);
-	}
-
-	// close the tab
-	unset($f_open);
-}
-
-if (isset($f_typeup_toall)) {
-	foreach ($f_typeup as $key => $val) {
-		sql("UPDATE `building` SET `upgrades` = GREATEST(IF(`upgradetime`=0,0,1),".intval($val)." - `level`) WHERE `construction` = 0 AND `user` = ".$gUser->id." AND `type` = ".intval($key));
-	}
-}
-if (isset($f_typeup_to)) {
-	foreach ($f_typeup_to as $key => $igno) { $val = $f_typeup[$key];
-		sql("UPDATE `building` SET `upgrades` = GREATEST(IF(`upgradetime`=0,0,1),".intval($val)." - `level`) WHERE `construction` = 0 AND `user` = ".$gUser->id." AND `type` = ".intval($key));
-	}
-}
 
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 transitional//EN"
@@ -82,40 +51,6 @@ if (isset($f_typeup_to)) {
 	$onme = sqlgettable("SELECT * FROM `spell` WHERE `target`=".$gUser->id." ORDER BY `type`");
 ?>
 
-	<?php if ($gUser->worker_runes > 0) {?>
-	<h4>Ressourcen Verbrauch durch Runen Produktion pro Stunde:</h4>
-	<?$pf = GetProductionFaktoren($gUser->id);
-	$rpfs = $pf['runes']/(2+getTechnologyLevel($gUser->id,kTech_EffRunen)*0.2);?>
-		<?=isset($gGlobal['lc_prod_runes'])?round($rpfs*$gUser->worker_runes*$gUser->pop/100*$gGlobal['lc_prod_runes']):0?> Holz / 
-		<?=isset($gGlobal['fc_prod_runes'])?round($rpfs*$gUser->worker_runes*$gUser->pop/100*$gGlobal['fc_prod_runes']):0?> Nahrung /
-		<?=isset($gGlobal['sc_prod_runes'])?round($rpfs*$gUser->worker_runes*$gUser->pop/100*$gGlobal['sc_prod_runes']):0?> Stein /
-		<?=isset($gGlobal['mc_prod_runes'])?round($rpfs*$gUser->worker_runes*$gUser->pop/100*$gGlobal['mc_prod_runes']):0?> Metall <br>
-	<?php } // endif?>
-			
-	<?php if ($gUser->worker_repair > 0) {?>
-	<h4>Ressourcen Verbrauch durch Reparieren von Gebäuden pro Stunde:</h4>
-	<?
-	$x = sqlgetobject("SELECT `user`.`id` as `id`, COUNT( * ) as `broken`,`user`.`pop` as `pop`,`user`.`worker_repair` as `worker_repair`
-FROM `user`, `building`, `buildingtype`
-WHERE 
-	`building`.`construction`=0 AND `buildingtype`.`id` = `building`.`type` AND `building`.`user` = `user`.`id` AND `user`.`worker_repair`>0 AND `user`.`id`=".($gUser->id)." AND 
-	`building`.`hp`<CEIL(`buildingtype`.`maxhp`+`buildingtype`.`maxhp`/100*1.5*`building`.`level`)
-GROUP BY `user`.`id`");
-
-	$worker = $x->pop * $x->worker_repair/100;
-	$broken = $x->broken;
-	if(empty($broken))$broken = 0;
-	$all = $worker*(60*60)/(24*60*60);
-	
-	if($broken > 0)$plus = $all / $broken;
-	else $plus = 0;
-	
-	$wood = $all * 100;
-	$stone = $all * 100;
-	?>
-	<?=$broken?> beschädigte Gebäude zu reparieren verbraucht <?=round($wood,2)?> Holz und <?=round($stone,2)?> Stein /h.<br>
-	Dabei werden bei allen beschädigten Gebäuden jeweils <?=round($plus,2)?> HP /h wiederhergestellt.<br>
-	<?php } // endif?>
 
 	<?php if (count($myspells) > 0 || count($onme) > 0) {?>	
 			<h4>Zauber</h4>

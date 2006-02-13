@@ -153,7 +153,9 @@ class cInfoHQ extends cInfoBuilding {
 		*/
 		RegisterInfoTab("Produktion",$this->PrintWorker());
 		RegisterInfoTab("Übersicht",$this->PrintOverview());
-		RegisterInfoTab("Diplomatie",$this->PrintDiplo());
+		
+		$diplohtml = trim($this->PrintDiplo());
+		if (!empty($diplohtml)) RegisterInfoTab("Diplomatie",$diplohtml);
 		// RegisterInfoTab("Einstellungen",Query("profile.php?sid=?"));
 	}
 	
@@ -214,19 +216,19 @@ class cInfoHQ extends cInfoBuilding {
 		<td>
 			<?php if ($concount == 0) {?>
 				<font color="red"><b>keine Pl&auml;ne mehr !</b></font>
+			<?php } else if ($concount == 1) {?>
+				<a href="<?=Query("bauplan.php?sid=?")?>"><font color="#FF4400"><b>letzter Bauplan !</b></font></a>
 			<?php } else if ($concount < 10) {?>
-				<font color="#FF4400"><b>nur noch <?=$concount?> Pl&auml;ne !</b></font>
+				<a href="<?=Query("bauplan.php?sid=?")?>"><font color="#FF4400"><b>nur noch <?=$concount?> Pl&auml;ne !</b></font></a>
 			<?php } else {?>
-				noch <?=$concount?> Pl&auml;ne
+				<a href="<?=Query("bauplan.php?sid=?")?>">noch <?=$concount?> Pl&auml;ne</a>
 			<?php }?>
 		</td>
 		</tr>
 		</table>
 		
-		<?php if (1) {?>
-			<!--building quick jump-->
-			<table border=0><tr><th>Schnellsprung</th></tr></table>
-			<?php 
+		<?php if (1) {
+			$first = true;
 			$quickbuildingtypes = array(kBuilding_Market,
 										kBuilding_Smith,
 										kBuilding_Garage,
@@ -243,6 +245,7 @@ class cInfoHQ extends cInfoBuilding {
 			foreach ($quickbuildingtypes as $typeid) {
 				$tquick = sqlgettable("SELECT * FROM `building` WHERE `construction`=0 AND `user` = ".$gUser->id." AND `type` = ".$typeid);	
 				$i=0;foreach($tquick as $o){
+					if ($first) { $first = false; ?> <table border=0><tr><th>Schnellsprung</th></tr></table> <?php }
 					++$i; 
 					if ($i>1) continue; // all only once
 					$lpic = ($o->level>=10)?"1":"0";
@@ -263,7 +266,10 @@ class cInfoHQ extends cInfoBuilding {
 	
 	// for noobs, you should build xx..
 	function PrintTips () {
-		global $gUser,$gBuildingType;
+		global $gUser,$gBuildingType,$gGlobal;
+		global $gFlaggedBuildingTypes;
+		$x = $this->x;
+		$y = $this->y;
 		
 		$debug_show_all_tips = false;
 		$minbtable = array();
@@ -274,38 +280,72 @@ class cInfoHQ extends cInfoBuilding {
 		$minbtable[] = array(kBuilding_Silo,2,", dort werden deine Rohstoffe gelagert");
 		$minbtable[] = array(kBuilding_House,4,", damit deine Bevölkerung ".$popicon." wachsen kann");
 		
+		
+		
 		$tip = array();
+		$allbuildings = sqlgetobject("SELECT 
+			MIN(`level`) as `minlevel` ,
+			MAX(`level`) as `maxlevel` ,
+			COUNT(*) as `count` 
+			FROM `building` WHERE `user` = ".$gUser->id." AND `construction` = 0");
+		
+		
+		if (($allbuildings->minlevel < 5 && $allbuildings->count < 20) || $allbuildings->maxlevel < 5) {
+			$tip[] = "Um neu anzufangen und den Startplatz selber zu wählen, einfach das ".GetBuildingTypeLink(kBuilding_HQ,$x,$y)." abreissen";
+		}
 		
 		if ($gUser->guild == kGuild_Weltbank || $debug_show_all_tips) {
-			$tip[] = "Du bist in deiner Anfangszeit in der Weltbank (Menupunkt \"Gilde\")";
-			$tip[] = "In der Weltbank kannst du dir Rohstoffe ausleihen";
-			$tip[] = "In der Weltbank kannst du dich mit anderen neuen Spielern unterhalten";
+			$tip[] = "Bis du ".kplaintrenner($gGlobal['wb_max_gp'])." Punkte erreicht hast, bist du in der Weltbank (Menupünkt \"Gilde\")";
+			$tip[] = "In der Weltbank kann man sich mit anderen neuen Spielern unterhalten";
+			$tip[] = "<b>In der Weltbank kann man sich Rohstoffe ausleihen, bedien dich und wachse !</b>";
+			$tip[] = "Erst wenn man ".kplaintrenner($gGlobal['wb_paybacklimit'])." Punkte erreicht hat, werden ".$gGlobal['wb_payback_perc']."% der Produktion abgezogen, bis die Weltbank-Schulden bezahlt sind";
+			$tip[] = "Schulden sieht man als negative GildenPunkte in der Mitgliederliste";
+			$tip[] = "Wenn deine Lager überlauffen, fliessen die Rohstoffe in die Weltbank, und werden als GildenPunkte angerechnet";
 		}
 		
 		foreach ($minbtable as $o) {
 			$cb = CountUserBuildingType($gUser->id,$o[0]);
 			if (!$debug_show_all_tips && $cb >= $o[1]) continue;
-			$tip[] = "Du solltest noch mind. ".($o[1]-$cb)." <img src=\"".GetBuildingPic($o[0])."\"> bauen ".$o[2]."<br>";
+			$tip[] = "Du solltest noch mind. ".($o[1]-$cb)." ".GetBuildingTypeLink($o[0],$x,$y)." bauen ".$o[2]."<br>";
 		}
 		
-		$minbtable[] = array(kBuilding_Baracks,1,", dort kannst du Soldaten ausbilden");
-		$cb = CountUserBuildingType($gUser->id,kBuilding_Wall);
-		if ($cb < 5 || $debug_show_all_tips) {
-			$pic = "<img src=\"".GetBuildingPic(kBuilding_Wall)."\">";
-			$tip[] = "Du solltest eine Stadtmauer ".$pic." bauen, um dich vor Angriffen zu schützen.";
+		if (CountUserBuildingType($gUser->id,kBuilding_Wall) < 5 || $debug_show_all_tips) {
+			$tip[] = "Du solltest eine ".GetBuildingTypeLink(kBuilding_Garage,$x,$y)." und ein paar ".GetBuildingTypeLink(kBuilding_Wall,$x,$y)." bauen, um dich vor Angriffen zu schützen.";
 		}
 		
-		$cb = CountUserBuildingType($gUser->id,kBuilding_Baracks);
-		if ($cb < 1 || $debug_show_all_tips) {
-			$pic = "<img src=\"".GetBuildingPic(kBuilding_Baracks)."\">";
-			$tip[] = "Du solltest ein paar ".$pic." bauen, damit du Soldaten ausbilden kannst";
+		if (CountUserBuildingType($gUser->id,kBuilding_Baracks) < 1 || 
+			CountUserBuildingType($gUser->id,kBuilding_Smith) < 1 || $debug_show_all_tips) {
+			$tip[] = "Du solltest eine ".GetBuildingTypeLink(kBuilding_Smith,$x,$y)." und ein paar ".GetBuildingTypeLink(kBuilding_Baracks,$x,$y)." bauen, damit du Soldaten ausbilden kannst";
 		}
 		
-		$cb = CountUserBuildingType($gUser->id,kBuilding_Path);
-		if ($cb < 5 || $debug_show_all_tips) {
-			$pic = "<img src=\"".GetBuildingPic(kBuilding_Path)."\">";
-			$pic2 = "<img src=\"".GetBuildingPic(kBuilding_Gate)."\">";
-			$tip[] = "Du solltest ein paar Wege ".$pic." und Tore ".$pic2." bauen, damit sich deine Truppen in deiner Siedlung besser bewegen können";
+		if (CountUserBuildingType($gUser->id,kBuilding_Path) < 5 || 
+			CountUserBuildingType($gUser->id,kBuilding_Gate) < 1 || $debug_show_all_tips) {
+			$tip[] = "Du solltest ein paar ".GetBuildingTypeLink(kBuilding_Path,$x,$y)." und 
+				".GetBuildingTypeLink(kBuilding_Gate,$x,$y)." bauen, damit sich deine Truppen gut bewegen können";
+		}
+			
+		if (($allbuildings->minlevel < 5 && $allbuildings->count < 20) || $allbuildings->maxlevel < 5) {
+			$tip[] = "vergiss nicht, deine Gebäude aufzustufen (upgraden)";
+			$tip[] = "eine neue Stufe bringt genausoviel wie ein neues Gebäude";
+			$tip[] = "je höher die Stufe, desto teurer das Upgraden";
+			$tip[] = "es können beliebig viele Gebäude gleichzeitig aufgesfuft werden";
+			$tip[] = "die Stufe von deinem Haupthaus bestimmt, wie die Gebäude aufgestuft werden können";
+			$tip[] = "in der <a href=\"".Query("summary_buildings.php?sid=?")."\">Gebäudeübersicht</a> kann man viele Upgrades auf einmal planen";
+		}
+		
+		if (1) {
+			$tip[] = "Im ".GetBuildingTypeLink(kBuilding_Silo,$x,$y)." kann man ".GetUnitTypeLink(kUnitType_Worker,$x,$y)." ausbilden";
+			$tip[] = GetUnitTypeLink(kUnitType_Worker,$x,$y)." und Soldaten können ".GetTerrainTypeLink(kTerrain_Forest,$x,$y)."(".cost2txt(array(kHarvestAmount,0,0,0,0)).") und 
+				".GetTerrainTypeLink(kTerrain_Rubble,$x,$y)."(".cost2txt(array(0,kHarvestAmount,0,0,0)).") ernten";
+			$arr = array();
+			foreach ($gFlaggedBuildingTypes[kBuildingTypeFlag_Bodenschatz] as $typeid) $arr[] = GetBuildingTypeLink($typeid,$x,$y);
+			$tip[] = GetUnitTypeLink(kUnitType_Worker,$x,$y)." können Bodenschätze (".implode(" ",$arr).") abbauen";
+			$tip[] = "Bodenschätze kann man mit der Suche unter der Karte finden, z.b. \"Kristall\"";
+			$tip[] = "rechts-obenhalb der Karte gibt es ein paar Knöpfe für unterschiedliche Weltkarten";
+			$tip[] = "Zeichen auf den Weltkarten : &nbsp; ".
+							"<img src=\"".kGfxServerPath."/minimap_sample_army.png\">:Armee/Monster &nbsp; ".
+							"<img src=\"".kGfxServerPath."/minimap_sample_portal.png\">:Portal &nbsp; ".
+							"<img src=\"".kGfxServerPath."/minimap_sample_bodenschatz.png\">:Bodenschatz &nbsp; ";
 		}
 		
 		if (count($tip) == 0) return;
@@ -366,7 +406,6 @@ class cInfoHQ extends cInfoBuilding {
 		global $gObject,$gUser,$gGlobal,$gAdjust;
 		rob_ob_start(); 
 		?>
-		<?=kplaintrenner(round($gUser->pop))?> Bewohner verbrauchen <?=kplaintrenner(round(calcFoodNeed($gUser->pop,60*60),1))?> Nahrung / Stunde
 		
 		<!--arbeiterverteilung-->
 		<form action="<?=Query("?sid=?&x=?&y=?")?>" method="post">
@@ -469,6 +508,59 @@ class cInfoHQ extends cInfoBuilding {
 		<input type="submit" value="verteilung speichern">
 		</form>
 		
+		<h4>Ressourcen Verbrauch durch Bewohner pro Stunde:</h4>
+		
+		<?=kplaintrenner(round($gUser->pop))?> Bewohner verbrauchen <?=kplaintrenner(round(calcFoodNeed($gUser->pop,60*60),1))?> Nahrung / Stunde
+		
+		<?php
+		$allarmies = sqlgettable("SELECT * FROM `army` WHERE `user` = ".$gUser->id);
+		$eatsum = 0;
+		$unitsum = 0;
+		foreach ($allarmies as $army) {
+			$units = cUnit::GetUnits($army->id);
+			$unitsum += cUnit::GetUnitsSum($units);
+			$eatsum += cUnit::GetUnitsEatSum($units);
+		}
+		?>
+		<?php if ($eatsum > 0) {?>
+		<h4>Ressourcen Verbrauch durch Truppen pro Stunde:</h4>
+		<?=kplaintrenner(round($unitsum))?> Einheiten verbrauchen <?=kplaintrenner(round($eatsum))?> Nahrung / Stunde
+		<?php } // endif?>
+		
+		<?php if ($gUser->worker_runes > 0) {?>
+		<h4>Ressourcen Verbrauch durch Runen Produktion pro Stunde:</h4>
+		<?$pf = GetProductionFaktoren($gUser->id);
+		$rpfs = $pf['runes']/(2+getTechnologyLevel($gUser->id,kTech_EffRunen)*0.2);?>
+			<?=isset($gGlobal['lc_prod_runes'])?round($rpfs*$gUser->worker_runes*$gUser->pop/100*$gGlobal['lc_prod_runes']):0?> Holz / 
+			<?=isset($gGlobal['fc_prod_runes'])?round($rpfs*$gUser->worker_runes*$gUser->pop/100*$gGlobal['fc_prod_runes']):0?> Nahrung /
+			<?=isset($gGlobal['sc_prod_runes'])?round($rpfs*$gUser->worker_runes*$gUser->pop/100*$gGlobal['sc_prod_runes']):0?> Stein /
+			<?=isset($gGlobal['mc_prod_runes'])?round($rpfs*$gUser->worker_runes*$gUser->pop/100*$gGlobal['mc_prod_runes']):0?> Metall <br>
+		<?php } // endif?>
+				
+		<?php if ($gUser->worker_repair > 0) {?>
+		<h4>Ressourcen Verbrauch durch Reparieren von Gebäuden pro Stunde:</h4>
+		<?
+		$x = sqlgetobject("SELECT `user`.`id` as `id`, COUNT( * ) as `broken`,`user`.`pop` as `pop`,`user`.`worker_repair` as `worker_repair`
+	FROM `user`, `building`, `buildingtype`
+	WHERE 
+		`building`.`construction`=0 AND `buildingtype`.`id` = `building`.`type` AND `building`.`user` = `user`.`id` AND `user`.`worker_repair`>0 AND `user`.`id`=".($gUser->id)." AND 
+		`building`.`hp`<CEIL(`buildingtype`.`maxhp`+`buildingtype`.`maxhp`/100*1.5*`building`.`level`)
+	GROUP BY `user`.`id`");
+
+		$worker = $x->pop * $x->worker_repair/100;
+		$broken = $x->broken;
+		if(empty($broken))$broken = 0;
+		$all = $worker*(60*60)/(24*60*60);
+		
+		if($broken > 0)$plus = $all / $broken;
+		else $plus = 0;
+		
+		$wood = $all * 100;
+		$stone = $all * 100;
+		?>
+		<?=$broken?> beschädigte Gebäude zu reparieren verbraucht <?=round($wood,2)?> Holz und <?=round($stone,2)?> Stein /h.<br>
+		Dabei werden bei allen beschädigten Gebäuden jeweils <?=round($plus,2)?> HP /h wiederhergestellt.<br>
+		<?php } // endif?>
 		
 		<?php
 		return rob_ob_end();
@@ -484,6 +576,9 @@ class cInfoHQ extends cInfoBuilding {
 		$friend_offers = sqlgettable("SELECT `user`.*,`user`.`general_pts`+`user`.`army_pts` as `pts` FROM `fof_user`,`user` 
 			WHERE `class` = ".kFOF_Friend." AND `other` = ".$gUser->id." AND `master` = `user`.id ORDER BY `pts` DESC");
 		$friendids = intarray(AF($friends,"id"));
+		
+		if (count($friends) == 0 && count($enemies) == 0 && count($friend_offers) == 0) return "";
+		
 
 		rob_ob_start();
 		?>

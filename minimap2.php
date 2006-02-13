@@ -4,6 +4,8 @@ require_once("lib.minimap.php");
 if (isset($f_mode) && $f_mode != "test") Lock();
 profile_page_start("minimap.php");
 
+// appended to graphic path, to disable caching of the graphics, as the filename itself doesn't change
+$gAntiCache = floor(time()/(24*3600));
 
 $tiles_h = 3;
 $tiles_v = 2;
@@ -170,7 +172,7 @@ ImgBorderStart("s1","jpg","#ffffee","",32,33);
 					($px+1)*kSegmentSize,
 					$filename,$mode,kSegmentSize);
 				?>
-				<td><input name="seg_<?=$px?>_<?=$py?>" type="image" src="<?=$filename?>"></td>
+				<td><input name="seg_<?=$px?>_<?=$py?>" type="image" src="<?=$filename."?anticache=".$gAntiCache?>"></td>
 				<?php
 			}
 			?>

@@ -20,7 +20,8 @@ $form = new cTableEditForm("?sid=?&id=$f_id","armeetyp $f_id editieren",
 			new cTableEditTextField("armytype","id",$f_id,"Limit-Gewicht","weightlimit"),
 			new cTableEditTextField("armytype","id",$f_id,"AddTechs(tech:+erhöhung)","addtechs"),
 			new cTableEditTextField("armytype","id",$f_id,"SubTechs(tech:+senkung)","subtechs"),
-			new cTableEditFlagField("armytype","id",$f_id,"SpielerFlags","ownerflags",$gArmyFlagNames)
+			new cTableEditFlagField("armytype","id",$f_id,"Flags, die der Spieler einstellen kann","ownerflags",$gArmyFlagNames),
+			//new cTableEditFlagField("armytype","id",$f_id,"TypeFlags","flags",$gArmyTypeFlagNames),
 		)),
 	))
 );

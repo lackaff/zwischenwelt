@@ -59,6 +59,7 @@ class cArmy {
 	}
 	
 	// also returns hellhole-pos if possible
+	// TODO : OBSOLETE : replace by cFight::GetContainerText
 	function GetArmyOwnerName ($army) {
 		if (!is_object($army)) $army = sqlgetobject("SELECT * FROM `army` WHERE `id` = ".intval($army));
 		if ($army->user) return sqlgetone("SELECT `name` FROM `user` WHERE `id`=".$army->user);
@@ -340,7 +341,8 @@ class cArmy {
 	function hasSiegeAttack($army)  { // obj or id
 		if (!is_object($army)) $army = sqlgetobject("SELECT `type` FROM `army` WHERE `id`=".intval($army));
 		if (!isset($army->units)) $army->units = cUnit::GetUnits($army->id);
-		return cUnit::GetUnitsSiegeAttack($army->units,$army->user) > 0;
+		$rangedsiegedmg = cUnit::GetUnitsRangedSiegeDamage($army->units);
+		return cUnit::GetUnitsSiegeAttack($army->units,$army->user) > 0 || $rangedsiegedmg; 
 	}
 	
 	function inMeleeRange($dx,$dy) {

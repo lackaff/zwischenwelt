@@ -14,14 +14,17 @@ function GetHellholeInstance ($o) {
 
 
 // $findbuilding=true : returns building if one is found -> check for   === true
-function Reachable ($x1,$y1,$x2,$y2,$movablemask,$findbuilding=false) {
+function Reachable ($x1,$y1,$x2,$y2,$movablemask,$findbuilding=false,$report_nonuser_buildings=false) {
 	$debugtxt = "Reachable($x1,$y1,$x2,$y2,$movablemask,$findbuilding=false)";
 	global $gTerrainType;
 	for (list($x,$y)=GetNextStep($x1,$y1,$x1,$y1,$x2,$y2);$x!=$x2||$y!=$y2;list($x,$y)=GetNextStep($x,$y,$x1,$y1,$x2,$y2)) {
 		if ($findbuilding) {
 			$building = sqlgetobject("SELECT * FROM `building` WHERE `x` = ".$x." AND `y` = ".$y." LIMIT 1");
 			global $gBuildingType;
-			if ($building && $building->user != 0 && $gBuildingType[$building->type]->speed == 0) return $building; // ignore ruins, streets, etc
+			if ($building && $gBuildingType[$building->type]->speed == 0) {
+				if ($building->user != 0) return $building;
+				if ($building->user == 0 && $report_nonuser_buildings) return $building;
+			}
 		}
 		$ter = cMap::StaticGetTerrainAtPos($x,$y);
 		if (!(intval($gTerrainType[$ter]->movable_flag) & intval($movablemask))) 
@@ -398,6 +401,90 @@ class Hellhole_2 extends Hellhole_0 {
 	}
 }
 
+
+
+//********************[ Hellhole_3 ]*************************************************************
+// ant-hole
+// uses first unittype (ant) for siege & pillage 
+// uses second unittype (ant-king) for spreading
+// ressources that are brought back are piled onto the ant-hole
+// when a certain ressource amount is reached, and ant-king is sent out to create a new ant-hole with the same type of building as this one
+//*********************************************************************************************
+
+class Hellhole_3 extends Hellhole_0 {
+	function Hellhole_3 () {
+		// $this->spawndelay = 3600; // should be about one hour
+		$this->search_building_rad = 200; // todo : unhardcode , choosing player buildings only within this range
+		$this->search_silo_rad = 25; // todo : unhardcode , max distance from found player building to silo
+		$this->out_of_base_rad = 5; // todo : unhardcode , ramme exits the base this many fields
+		$this->maxcount_think = 100; // todo : unhardcode? // stop attacking player after about 4 days
+		$this->maxcount_siege = 3; // todo : unhardcode? // stop if 3 sieges failed
+		$this->maxcount_raid = 5; // todo : unhardcode? // stop after 5 raid-attempts
+		$this->victim_minpts = 5000; // todo : unhardcode? // don't attack players below a certain limit
+	}
+	
+	function Think () {
+		global $gUnitType;
+		
+		$time = time();
+		$this->spawntime = $time + $this->spawndelay;
+		sql("UPDATE `hellhole` SET `spawntime` = ".$this->spawntime." WHERE `id` = ".$this->id." LIMIT 1");
+		
+		$this->SpawnMonster();
+		
+		/*
+		$data = ($this->ai_data && $this->ai_data != "") ? explode(",",$this->ai_data) : false;
+		if ($data && count($data) < kHellHole1_Data_Count) $data = false;
+		$building = $data ? sqlgetobject("SELECT * FROM `building` WHERE `x` = ".intval($data[0])." AND `y` = ".intval($data[1])) : false;
+		if (!$building || $building->type != kBuilding_Silo) {
+			$building = $this->SearchNewTarget();
+			if (!$building) return;
+			$data = array($building->x,$building->y,0,0,0,kHellHole1_Mode_Plan); // initialize data
+			$this->SaveData($data);
+		}
+		
+		$dx = $data[0] - $this->x;
+		$dy = $data[1] - $this->y;
+		// first exit own base using pathfinding
+		$exitbase_pos = array($this->x,$this->y);
+		if ($dx != 0) $exitbase_pos[0] += (($dx>0)?1:-1)*$this->out_of_base_rad;
+		if ($dy != 0) $exitbase_pos[1] += (($dy>0)?1:-1)*$this->out_of_base_rad;
+		// one step bevore the target, ramme clears path to this point and raiders go here to pillage
+		if (abs($dx) > abs($dy))
+				$epos = array($data[0]+(($dx>0)?-1:1),$data[1]);
+		else	$epos = array($data[0],$data[1]+(($dy>0)?-1:1));
+		// returnpoint for the raiders, one step in direction of target
+		if (abs($dx) > abs($dy))
+				$returnpos = array($this->x+(($dx>0)?1:-1),$this->y);
+		else	$returnpos = array($this->x,$this->y+(($dy>0)?1:-1));
+		
+		// check reachability, reset target if not reachable
+		if ($data[kHellHole1_Data_Mode] == kHellHole1_Mode_Plan) {
+			// check way to target, and way back
+			$movablemask = intval($gUnitType[$this->type]->movable_flag) & intval($gUnitType[$this->type2]->movable_flag);
+			if (!Reachable($exitbase_pos[0],$exitbase_pos[1],$epos[0],$epos[1],$movablemask,false) ||
+				!Reachable($epos[0],$epos[1],$exitbase_pos[0],$exitbase_pos[1],$movablemask,false)) 
+				{ $this->SaveData(); return; } // target unreachable
+			$data[kHellHole1_Data_Mode] = kHellHole1_Mode_Siege;
+			echo "target reachability verifyed<br>";
+		}
+		
+		*/
+		
+		/*
+		// increment think counter
+		if (++$data[kHellHole1_Data_ThinkCount] > $this->maxcount_think)
+			 { $this->SaveData(); return; }
+		else   $this->SaveData($data);
+		*/
+		
+		// list troups
+		$king = false;
+		$monsters = sqlgettable("SELECT * FROM `army` WHERE `hellhole` = ".$this->id." ORDER BY `id`");
+		foreach ($monsters as $o) if (cUnit::GetUnitsMaxType(cUnit::GetUnits($o->id)) == $this->type2) {$king = $o;break;}
+			
+	}
+}
 
 
 

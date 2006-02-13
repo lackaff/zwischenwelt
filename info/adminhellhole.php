@@ -6,7 +6,7 @@ require_once("../lib.army.php");
 require_once("../lib.map.php");
 require_once("../lib.tableedit.php");
 
-$ai_types = array(0=>"stupid creep-spot",1=>"raider-base(type2=siege)",2=>"wandering horde(type2=core/boss)");
+$ai_types = array(0=>"stupid creep-spot",1=>"raider-base(type2=siege)",2=>"wandering horde(type2=core/boss)",3=>"ant-hole(type2=antking)");
 
 AdminLock();
 

@@ -8,26 +8,53 @@ class cFight {
 
 	// $army must be object, replaces _ARMYNAME_ and _ARMYOWNERNAME_ in $why
 	function StopAllArmyFights ($army,$why) {
+		global $gNumber2ContainerType,$gContainerType2Number;
 		$armyownername = cArmy::GetArmyOwnerName($army);
 		$why = strtr($why,array("_ARMYNAME_"=>$army->name,"_ARMYOWNERNAME_"=>$armyownername));
 		$fights = sqlgettable("SELECT * FROM `fight` WHERE `attacker` = ".$army->id." OR `defender` = ".$army->id);
 		$pillages = sqlgettable("SELECT * FROM `pillage` WHERE `army`=".$army->id);
 		$sieges = sqlgettable("SELECT * FROM `siege` WHERE `army`=".$army->id);
+		$shootings = sqlgettable("SELECT * FROM `shooting` WHERE 
+			(`attacker`=".$army->id." AND `attackertype` = ".$gContainerType2Number[kUnitContainer_Army].") OR 
+			(`defender`=".$army->id." AND `defendertype` = ".$gContainerType2Number[kUnitContainer_Army].")");
 		foreach ($fights as $o) cFight::EndFight($o,$why);
 		foreach ($pillages as $o) cFight::EndPillage($o,$why);
 		foreach ($sieges as $o) cFight::EndSiege($o,$why);
+		foreach ($shootings as $o) cFight::EndShooting($o,$why);
 	}
 	
 	// $building must be object, replaces _BUILDINGTYPE_ , _x_ , _y_ , _BUILDINGOWNERNAME_ in $why
 	function StopAllBuildingFights ($building,$why) {
-		global $gBuildingType;
+		global $gContainerType2Number,$gNumber2ContainerType,$gUnitType,$gBuildingType,$gArmyType;
 		$buildingownername = $building->user ? sqlgetone("SELECT `name` FROM `user` WHERE `id` = ".$building->user) : "Server";
 		$why = strtr($why,array("_BUILDINGTYPE_"=>$gBuildingType[$building->type]->name,
 			"_x_"=>$building->x,"_y_"=>$building->y,"_BUILDINGOWNERNAME_"=>$buildingownername));
 		$pillages = sqlgettable("SELECT * FROM `pillage` WHERE `building`=".$building->id);
 		$sieges = sqlgettable("SELECT * FROM `siege` WHERE `building`=".$building->id);
+		$shootings = sqlgettable("SELECT * FROM `shooting` WHERE 
+			(`attacker`=".$building->id." AND `attackertype` = ".$gContainerType2Number[kUnitContainer_Building].") OR 
+			(`defender`=".$building->id." AND `defendertype` = ".$gContainerType2Number[kUnitContainer_Building].")");
 		foreach ($pillages as $o) cFight::EndPillage($o,$why);
 		foreach ($sieges as $o) cFight::EndSiege($o,$why);
+		foreach ($shootings as $o) cFight::EndShooting($o,$why);
+	}
+	
+	// get a textual representation of army/building, used for ShootingStep,SendFightReport
+	// todo : replace GetArmyOwnerName with me
+	function GetContainerText ($containerobj,$containertype=kUnitContainer_Army) {
+		global $gContainerType2Number,$gNumber2ContainerType,$gUnitType,$gBuildingType,$gArmyType;
+		if (is_numeric($containertype)) $containertype = $gNumber2ContainerType[$containertype];
+		if ($containerobj && !is_object($containerobj)) $containerobj = sqlgetobject("SELECT * FROM `".addslashes($containertype)."` WHERE `id` = ".intval($containerobj));
+		if (!$containerobj) return "unknown_unit_container";
+		if ($containertype == kUnitContainer_Army)		$text = $gArmyType[$containerobj->type]->name." ".$containerobj->name;
+		if ($containertype == kUnitContainer_Building)	$text = $gBuildingType[$containerobj->type]->name." Stufe ".$containerobj->level;
+		$text .= " bei ($containerobj->x,$containerobj->y)";
+		if ($containerobj->user) $text .= " von ".sqlgetone("SELECT `name` FROM `user` WHERE `id` = ".$containerobj->user);
+		if ($containertype == kUnitContainer_Army && $containerobj->hellhole) {
+			$hellhole = sqlgetobject("SELECT * FROM `hellhole` WHERE `id` = ".intval($containerobj->hellhole));
+			if ($hellhole) $text .= "  von (".$hellhole->x.",".$hellhole->y.")";
+		}
+		return $text;
 	}
 		
 		
@@ -35,23 +62,201 @@ class cFight {
 	// ##### #####    Shooting  ##### ##### ##### #####
 	// ##### ##### ##### ##### ##### ##### ##### #####
 	
-	function StartShooting ($attacker,$attackertype,$defender,$defendertype) {
+	// NOTE : attackertype,defendertype and ctype in this section refers to the "containertype", eg army or building, see kUnitContainer_Army and related constants
+	
+	// only performs type-check, not range check (damage-based)
+	// leave defenderobj = false and set to test if attackerobj can shoot at anything of ctype $defendertype (building or army)
+	function CanShoot ($attackerobj,$attackertype=kUnitContainer_Army,$defenderobj=false,$defendertype=kUnitContainer_Army) {
 		global $gContainerType2Number,$gNumber2ContainerType;
-		// todo : entry in db
-		$new = false;
-		$new->attacker = $attacker;
-		$new->attackertype = is_numeric($attackertype)?$attackertype:$gContainerType2Number[$attackertype];
-		$new->defender = $defender;
-		$new->defendertype = is_numeric($defendertype)?$defendertype:$gContainerType2Number[$defendertype];
-		$new->start = time();
-		$new->lastshot = 0;
-		sql("INSERT INTO `shooting` SET ".obj2sql($new));
-		$new->id = mysql_insert_id();
-		return $new;
+		$attackertype = is_numeric($attackertype)?$gNumber2ContainerType[$attackertype]:$attackertype;
+		$defendertype = is_numeric($defendertype)?$gNumber2ContainerType[$defendertype]:$defendertype;
+		
+		if (!$attackerobj) return false;
+		if ($defendertype == kUnitContainer_Army && $defenderobj && $defenderobj->type != kArmyType_Normal) return false;
+		return true;
 	}
 	
-	function StepShooting ($shooting,$attackerobj=false,$defenderobj=false,$dmg=0) {
-		global $gContainerType2Number,$gNumber2ContainerType,$gUnitType;
+	
+	// general shooter intelligence : look for potential targets, start shootings, choose one active shooting, and shoot
+	function ThinkShooting ($attackerobj,$attackertype,$debug=false) {
+		if (!$attackerobj) return false;
+		global $gContainerType2Number,$gNumber2ContainerType;
+		global $gBuildingType,$gArmyType;
+		global $gArmyShootings; // TODO : use this caching if available
+		$attackertype = is_numeric($attackertype)?$gNumber2ContainerType[$attackertype]:$attackertype;
+		
+		if (!isset($attackerobj->units)) $attackerobj->units = cUnit::GetUnits($attackerobj->id,$attackertype);
+		$r = cUnit::GetUnitsMaxRange($attackerobj->units);
+		if ($r <= 0) return false;
+		
+		$time = time();
+		$x = $attackerobj->x;
+		$y = $attackerobj->y;
+		$cooldown = cUnit::GetDistantCooldown($attackerobj->units);
+		$myshootings = false;
+		if ($attackertype == kUnitContainer_Army && isset($gArmyShootings)) { // only use shootingcache ($gArmyShootings) if it is set
+			$myshootings2 = ($gArmyShootings && isset($gArmyShootings[$attackerobj->id])) ? $gArmyShootings[$attackerobj->id] : array();
+			$myshootings = array(); // grouped by defendertype , firstindex=defendertype secondindex=defender
+			foreach ($myshootings2 as $o) {
+				if (!isset($myshootings[$o->defendertype])) $myshootings[$o->defendertype] = array();
+				$myshootings[$o->defendertype][$o->defender] = $o;
+			}
+		}
+		if (!$myshootings) {
+			$myshootings = sqlgetgrouptable("SELECT * FROM `shooting` WHERE 
+				`attacker` = ".$attackerobj->id." AND 
+				`attackertype` = ".$gContainerType2Number[$attackertype],"defendertype","defender");
+		}
+		
+		$lastshot = 0;
+		foreach ($myshootings as $ctype => $arr) foreach ($arr as $o) $lastshot = max($lastshot,$o->lastshot);
+		
+		if ($debug) echo "ThinkShooting : attacker=".$attackertype."[".$attackerobj->id."]($x,$y),cooldown=$cooldown,r=$r,lastshot=".date("d.m.Y H:i:s",$lastshot)."<br>";
+		
+		if ($lastshot > 0 && $time - $lastshot < $cooldown) return false; // not ready yet, still cooling down
+		if ($attackertype == kUnitContainer_Army && $attackerobj->idle < $cooldown) return false; // not ready yet, still cooling down
+		if ($attackertype == kUnitContainer_Army && kProfileArmyLoop) LoopProfiler("armyloop:shooting");
+		
+		// TODO : use hasDistantAttack ??? combine with CanShoot ??
+		
+		if ($attackertype == kUnitContainer_Building) {
+			$autosiege			= intval($attackerobj->flags) & kBuildingFlag_AutoShoot_Enemy;
+			$autoshoot_enemy	= intval($attackerobj->flags) & kBuildingFlag_AutoShoot_Enemy;
+			$autoshoot_stranger	= intval($attackerobj->flags) & kBuildingFlag_AutoShoot_Strangers;
+			$canshoot_armies	= intval($gBuildingType[$attackerobj->type]->flags) & kBuildingTypeFlag_CanShootArmy;
+			$canshoot_buildings	= intval($gBuildingType[$attackerobj->type]->flags) & kBuildingTypeFlag_CanShootBuilding;
+		} else if ($attackertype == kUnitContainer_Army) {
+			$autosiege 			= intval($attackerobj->flags) & kArmyFlag_AutoSiege;
+			$autoshoot_enemy	= intval($attackerobj->flags) & kArmyFlag_AutoShoot_Enemy;
+			$autoshoot_stranger	= intval($attackerobj->flags) & kArmyFlag_AutoShoot_Strangers;
+			$rangedsiegedmg = cUnit::GetUnitsRangedSiegeDamage($attackerobj->units);  // use only for armies
+			$canshoot_armies	= $attackerobj->type != kArmyType_Siege; // TODO : unhardcode
+			$canshoot_buildings	= $rangedsiegedmg > 0;
+		} else return false; // SHOULD NOT HAPPEN
+		
+		if (!$canshoot_armies && !$canshoot_buildings) return false;
+		
+		if ($debug) echo "ThinkShooting : rangedsiegedmg=$rangedsiegedmg,
+			autosiege=".($autosiege?1:0).",
+			autoshoot_enemy=".($autoshoot_enemy?1:0).",
+			autoshoot_stranger=".($autoshoot_stranger?1:0).",
+			canshootarmies=".($canshoot_armies?1:0).",
+			canshootbuildings=".($canshoot_buildings?1:0)."<br>";
+		
+		if ($autosiege || $autoshoot_enemy || $autoshoot_stranger) {
+			// search for new targets
+			$xylimit = "`x` >= ".($x-$r)." AND `x` <= ".($x+$r)." AND 
+						`y` >= ".($y-$r)." AND `y` <= ".($y+$r);
+			$nearstuff = array();
+			if ($canshoot_armies)		$nearstuff[kUnitContainer_Army]		= sqlgettable("SELECT * FROM `army` WHERE ".$xylimit);
+			if ($canshoot_buildings)	$nearstuff[kUnitContainer_Building]	= sqlgettable("SELECT * FROM `building` WHERE ".$xylimit);
+			foreach ($nearstuff as $ctype => $arr) foreach ($arr as $o) {
+				$ctypenum = $gContainerType2Number[$ctype];
+				if ($debug) echo "checking near : $ctype,".oposinfolink($o)."<br>";
+				if (isset($myshootings[$ctypenum]) && isset($myshootings[$ctypenum][$o->id])) {
+					if ($debug) echo "already added<br>";
+					continue; // already added
+				}
+				if (cUnit::GetDistantDamage($attackerobj->units,$o->x-$x,$o->y-$y) <= 0) {
+					if ($debug) echo "out of range<br>";
+					continue; // out of range
+				}
+				// now check fof
+				$fof = GetFOF($attackerobj->user,$o->user);
+				if ($debug) echo "checking near : $ctype,".oposinfolink($o)." in range, fof=$fof <br>";
+				if ($fof == kFOF_Friend) continue;
+				$attack = false;
+				if ($fof == kFOF_Enemy && $autosiege && $canshoot_buildings && $ctype == kUnitContainer_Building) $attack = true;
+				if ($fof == kFOF_Enemy && $autoshoot_enemy)		$attack = true;
+				if ($fof != kFOF_Enemy && $autoshoot_stranger)	$attack = true;
+				// start the attack (add to myshootings to consider it right away for next shot
+				if ($attack) {
+					if ($debug) echo "start shooting at $ctype,".oposinfolink($o)."<br>";
+					if (!isset($myshootings[$ctypenum])) $myshootings[$ctypenum] = array();
+					$newshooting = cFight::StartShooting($attackerobj->id,$attackertype,$o->id,$ctype,true,$attackerobj,$o);
+					if ($newshooting) $myshootings[$ctypenum][] = $newshooting;
+				}
+			}
+		}
+		
+		// now choose where to shoot next (go for most damage, to use different unit types effectively)
+		$found_maxdmg = 0;
+		$found_shooting = false;
+		$found_target = false;
+		foreach ($myshootings as $ctypenum => $arr) foreach ($arr as $o) {
+			$ctype = $gNumber2ContainerType[$ctypenum];
+			$target = sqlgetobject("SELECT * FROM `". $ctype."` WHERE `id` = ".$o->defender);
+			if (!$target) {
+				// dead
+				cFight::EndShooting($o,"Ziel verschwunden");
+				continue;
+			}
+			if ($attackertype == kUnitContainer_Building) {
+				$dmg = cUnit::GetDistantDamage($attackerobj->units,$target->x-$x,$target->y-$y);
+			} else if ($attackertype == kUnitContainer_Army) {
+				$dmg = ($ctype == kUnitContainer_Building) ? $rangedsiegedmg : cUnit::GetDistantDamage($attackerobj->units,$target->x-$x,$target->y-$y);
+				
+			} else return false; // SHOULD NOT HAPPEN
+			
+			//change damage depending on the path the bullet pased
+			//$dmg *= GetDistantMod($attackerobj->x,$attackerobj->y,$defenderobj->x,$defenderobj->y);
+			//$dmg *= rand(80,100)/100.0;
+			
+			if ($debug) echo "considering at shooting  $ctype,".oposinfolink($target)." : dmg=$dmg<br>";
+			if ($found_maxdmg < $dmg) {
+				$found_maxdmg = $dmg;
+				$found_shooting = $o;
+				$found_target = $target;
+			}
+		}
+		if ($found_shooting) {
+			if ($debug) echo "DECIDED to shoot at ".oposinfolink($found_target)." : dmg=$found_maxdmg<br>";
+			cFight::ShootingStep($found_shooting,$attackerobj,$found_target,$found_maxdmg);
+			
+			if ($attackertype == kUnitContainer_Army) {
+				// todo : getexp,frags,trainelites  ... ShootingStep returns array of killed units ?
+				sql("UPDATE `army` SET ".arr2sql(array("nextactiontime"=>($time+$cooldown),"idle"=>0))." WHERE `id` = ".intval($attackerobj->id));		
+			}
+			
+			return true;
+		}
+		return false;
+	}
+	
+	
+	
+	
+	
+	function StartShooting ($attacker,$attackertype,$defender,$defendertype,$autocancel=false,$attackerobj=false,$defenderobj=false) {
+		global $gContainerType2Number,$gNumber2ContainerType;
+		$shooting = false;
+		$shooting->attacker = $attacker;
+		$shooting->defender = $defender;
+		$shooting->attackertype = is_numeric($attackertype)?$attackertype:$gContainerType2Number[$attackertype];
+		$shooting->defendertype = is_numeric($defendertype)?$defendertype:$gContainerType2Number[$defendertype];
+		$attackertype = $gNumber2ContainerType[$shooting->attackertype];
+		$defendertype = $gNumber2ContainerType[$shooting->defendertype];
+		$shooting->start = time();
+		$shooting->lastshot = 0;
+		$shooting->autocancel = intval($autocancel);
+		
+		// hack : unshootable types
+		if (!$attackerobj) $attackerobj = sqlgetobject("SELECT * FROM `".addslashes($attackertype)."` WHERE `id` = ".intval($shooting->attacker));
+		if (!$defenderobj) $defenderobj = sqlgetobject("SELECT * FROM `".addslashes($defendertype)."` WHERE `id` = ".intval($shooting->defender));
+		if (!cFight::CanShoot($attackerobj,$attackertype,$defenderobj,$defendertype)) return false;
+		
+		// start fightlog
+		$fightlog = cFight::StartFightLog($attackerobj,$defenderobj,$attackertype,$defendertype);
+		
+		$shooting->fightlog = $fightlog->id;
+		sql("INSERT INTO `shooting` SET ".obj2sql($shooting));
+		$shooting->id = mysql_insert_id();
+		return $shooting;
+	}
+	
+	// fire one shot
+	function ShootingStep ($shooting,$attackerobj=false,$defenderobj=false,$dmg=0,$debug=true) {
+		global $gContainerType2Number,$gNumber2ContainerType,$gUnitType,$gBuildingType,$gArmyType;
 		if ($dmg <= 0) return; // todo : autocalc from units in attacker
 		if (!$shooting) return;
 		if (is_numeric($shooting->attackertype)) $shooting->attackertype = $gNumber2ContainerType[$shooting->attackertype];
@@ -59,50 +264,91 @@ class cFight {
 		if (!$attackerobj) $attackerobj = sqlgetobject("SELECT * FROM `".addslashes($shooting->attackertype)."` WHERE `id` = ".intval($shooting->attacker));
 		if (!$defenderobj) $defenderobj = sqlgetobject("SELECT * FROM `".addslashes($shooting->defendertype)."` WHERE `id` = ".intval($shooting->defender));
 		if (!$attackerobj || !$defenderobj) {
-			sql("DELETE FROM `shooting` WHERE `id` = ".intval($shooting->id));
+			cFight::EndShooting($o,"Ziel verschwunden");
 			return; // error
 		}
-		// peng..
+		
+		// who/what/where is attacker/defender ?
+		// todo : more comfortable message system (buildingID) (armyID) (userID) (x,y) -> map+infolink
+		
+		$attackernametext = cFight::GetContainerText($attackerobj,$shooting->attackertype);
+		$defendernametext = cFight::GetContainerText($defenderobj,$shooting->defendertype);
+		
+		// peng... determine time since last shot
 		$target_killed = false;
 		$now = time();
 		$age = $now - $shooting->lastshot; 
-		//echo "StepShooting(dmg=$dmg) age=$age<br>";
-		if ($age > kShootingAlarmTimeout) {
-			// send a new igm when fire is resumed after a longer pause
+		if ($debug) echo "ShootingStep $attackernametext at $defendernametext : dmg=$dmg,age=$age<br>\n";
+		if ($age > kShootingAlarmTimeout || $shooting->lastshot == 0) {
+			if ($debug) echo "kShootingAlarmTimeout<br>\n";
+			cFight::ActOfWar($attackerobj->user,$defenderobj->user,"Beschuss",$attackerobj->x,$attackerobj->y);
+			
+			$topic = "Beschuss auf $defendernametext";
+			$msg = $defendernametext." wird von ".$attackernametext." beschossen.<br>\n";
+			if ($defenderobj->user) sendMessage($defenderobj->user,0,$topic,$msg,kMsgTypeReport,FALSE);
+			
+			$userflags = isset($gAllUsers) ? $gAllUsers[$attackerobj->user]->flags : sqlgetone("SELECT `flags` FROM `user` WHERE `id` = ".intval($attackerobj->user));
+			$monsterberichte = !(intval($userflags) & kUserFlags_NoMonsterFightReport);
+			if ($attackerobj->user && ($defenderobj->user || $monsterberichte)) 
+				sendMessage($attackerobj->user,0,$topic,$msg,kMsgTypeReport,FALSE);
 		}
 		
 		// apply damage
-		$report = "";
+		// todo : capsule me as DamageArmy and DamageBuilding (in something like lib.damage.php, used from spells,fight,hunger...)
 		if ($shooting->defendertype == kUnitContainer_Army) {
-			$army = $defenderobj;
-			// todo : der ganze lock block dient nur dem armee-beschädigen, die teile kommen aus dem cron fight, KAPSEL MICH !
-			TablesLock();
-			$army->units = cUnit::GetUnits($army->id);
-			$army->vorher_units = $army->units;
-			$army->units = cUnit::GetUnitsAfterDamage($army->units,$dmg,$army->user);
-			$army->lost_units = cUnit::GetUnitsDiff($army->vorher_units,$army->units);
-			foreach ($army->lost_units as $o)
-				$report .= "<img src='".g($gUnitType[$o->type]->gfx)."'>".floor($o->amount)."<br>\n";
-			// TODO : terrainkills stimmt hier nicht so richtig, z.b. wenn kein terrain da ist, TODO : einheitliche damage funktion
-			sql("UPDATE `terrain` SET `kills`=`kills`+".round(abs(cUnit::GetUnitsSum($army->lost_units)))." WHERE `x`=".$army->x." AND `y`=".$army->y);
-			$army->size = cUnit::GetUnitsSum($army->units);
-			if ($army->size >= 1.0) 
-					cUnit::SetUnits($army->units,$army->id);
-			else {
-				cArmy::DeleteArmy($army,false,"Vom Kanonenturm erschossen"); // TODO :richtige meldung
-				$report .= "Die Armee wurde VERNICHTET !<br>\n";
-				$target_killed = true;
-			}
-			TablesUnlock();
+			$defenderobj = $defenderobj;
+			// TablesLock(); // no lock needed ???, we are within minicron
+			$defenderobj->units = cUnit::GetUnits($defenderobj->id);
+			$defenderobj->vorher_units = $defenderobj->units;
+			$defenderobj->units = cUnit::GetUnitsAfterDamage($defenderobj->units,$dmg,$defenderobj->user);
+			$defenderobj->lost_units = cUnit::GetUnitsDiff($defenderobj->vorher_units,$defenderobj->units);
+			if ($debug) foreach ($defenderobj->lost_units as $o)
+				echo "<img src='".g($gUnitType[$o->type]->gfx)."'>".floor($o->amount)."<br>\n";
+			$defenderobj->size = cUnit::GetUnitsSum($defenderobj->units);
+			cUnit::SetUnits($defenderobj->units,$defenderobj->id);
+			// $gAllArmyUnits[$enemy->id] = $enemy->units; // TODO : update cache ??
+			if ($defenderobj->size < 1.0) $target_killed = true;
+			// TablesUnlock();
 		}
-		echo $report;
+		if ($shooting->defendertype == kUnitContainer_Building) {
+			$defenderobj->hp = max(0,$defenderobj->hp-$dmg);
+			sql("UPDATE `building` SET `hp`=`hp`-".$dmg." WHERE `id`=".$defenderobj->id);
+			if ($defenderobj->hp <= 0) $target_killed = true;
+		}
 		
+		// army cannot move while shooting
+		if ($shooting->attackertype == kUnitContainer_Army)		
+			sql("UPDATE `army` SET `idle`=0 WHERE `id`=".$shooting->attacker);
+		
+		// register last shot
+		$shooting->lastshot = $now;
+		sql("UPDATE `shooting` SET ".arr2sql(array("lastshot"=>$shooting->lastshot))." WHERE `id` = ".intval($shooting->id));
+		
+		// target killed
 		if ($target_killed) {
-			sql("DELETE FROM `shooting` WHERE `id` = ".intval($shooting->id));
+			cFight::EndShooting($shooting,"Ziel wurde vernichtet",$attackerobj,$defenderobj);
+			if ($shooting->defendertype == kUnitContainer_Army) cArmy::DeleteArmy($defenderobj,false,"Vernichtet");
+			if ($shooting->defendertype == kUnitContainer_Building) cBuilding::removeBuilding($defenderobj,$defenderobj->user);
 		}
-		
-		// if ($army->size < 1) ... kill army&shooting... 
-		sql("UPDATE `shooting` SET ".arr2sql(array("lastshot"=>$now))." WHERE `id` = ".intval($shooting->id));
+	}
+	
+	function EndShooting ($shooting,$why=0,$attackerobj=false,$defenderobj=false) {
+		global $gContainerType2Number,$gNumber2ContainerType;
+		//echo "EndShooting : $why<br>\n";
+		if ($shooting->lastshot > 0) {
+			//echo "fightlog = $shooting->fightlog<br>\n";
+			$fightlog = sqlgetobject("SELECT * FROM `fightlog` WHERE `id` = ".intval($shooting->fightlog));
+			if ($fightlog) {
+				// send fight report
+				if (is_numeric($shooting->attackertype)) $shooting->attackertype = $gNumber2ContainerType[$shooting->attackertype];
+				if (is_numeric($shooting->defendertype)) $shooting->defendertype = $gNumber2ContainerType[$shooting->defendertype];
+				if (!$attackerobj) $attackerobj = sqlgetobject("SELECT * FROM `".addslashes($shooting->attackertype)."` WHERE `id` = ".intval($shooting->attacker));
+				if (!$defenderobj) $defenderobj = sqlgetobject("SELECT * FROM `".addslashes($shooting->defendertype)."` WHERE `id` = ".intval($shooting->defender));
+				//echo "sending fight report...<br>\n";
+				cFight::SendFightReport($fightlog,$attackerobj,$defenderobj,$why,true,$shooting->attackertype,$shooting->defendertype);
+			}
+		}
+		sql("DELETE FROM `shooting` WHERE `id` = ".$shooting->id);
 	}
 	
 	// ##### ##### ##### ##### ##### ##### ##### #####
@@ -388,9 +634,13 @@ class cFight {
 													(`attacker` = ".$enemy->id." AND `defender` = ".$army->id.") LIMIT 1")) 
 			{ if ($debug) echo "StartFight : already fighting<br>"; return false; }
 		
+		// start fightlog
+		$fightlog = cFight::StartFightLog($army,$enemy);
+		
 		// starting fight
 		if ($debug) echo "StartFight : starting fight<br>";
 		$fight = false;
+		$fight->fightlog = $fightlog->id;
 		$fight->start = time();
 		$fight->attacker = $army->id;
 		$fight->defender = $enemy->id;
@@ -406,18 +656,6 @@ class cFight {
 				sqlgetone("SELECT `guild` FROM `user` WHERE `id` = ".$enemy->user),
 				"Kampf","");
 		
-		// start fightlog
-		if (!isset($army->units)) $army->units = cUnit::GetUnits($army->id);
-		if (!isset($enemy->units)) $enemy->units = cUnit::GetUnits($enemy->id);
-		if (!isset($army->transport)) $army->transport = cUnit::GetUnits($army->id,kUnitContainer_Transport);
-		if (!isset($enemy->transport)) $enemy->transport = cUnit::GetUnits($enemy->id,kUnitContainer_Transport);
-		$fightlog = false;
-		$fightlog->fight = $fight->id;
-		$fightlog->startunits1 = cUnit::Units2Text($army->units);
-		$fightlog->startunits2 = cUnit::Units2Text($enemy->units);
-		$fightlog->starttransport1 = cUnit::Units2Text($army->transport);
-		$fightlog->starttransport2 = cUnit::Units2Text($enemy->transport);
-		sql("INSERT INTO `fightlog` SET ".obj2sql($fightlog));
 		
 		if ($army->user > 0) LogMe($army->user,NEWLOG_TOPIC_FIGHT,NEWLOG_FIGHT_START,$army->x,$army->y,0,$army->name,$enemy->name);
 		if ($enemy->user > 0) LogMe($enemy->user,NEWLOG_TOPIC_FIGHT,NEWLOG_FIGHT_START,$enemy->x,$enemy->y,0,$enemy->name,$army->name);
@@ -602,114 +840,176 @@ class cFight {
 	
 	function EndFight ($fight,$why) {
 		echo "EndFight : $why<br>";
-		$army1 = sqlgetobject("SELECT * FROM `army` WHERE `id` = ".$fight->attacker);
-		$army2 = sqlgetobject("SELECT * FROM `army` WHERE `id` = ".$fight->defender);
-		if ($army1->user) LogMe($army1->user,NEWLOG_TOPIC_FIGHT,NEWLOG_FIGHT_STOP,$army1->x,$army1->y,0,$why,"");
-		if ($army2->user) LogMe($army2->user,NEWLOG_TOPIC_FIGHT,NEWLOG_FIGHT_STOP,$army2->x,$army2->y,0,$why,"");
-		$to_uid_list = array($army1->user,$army2->user);
-		
-		if ($army1->user && (intval($army1->flags) & kArmyFlag_GuildCommand)){
-			$gc = getGuildCommander(sqlgetone("SELECT `guild` FROM `user` WHERE `id` = ".$army1->user));
-			foreach($gc as $c) {
-				if($c!=$army1->user) LogMe($c,NEWLOG_TOPIC_FIGHT,NEWLOG_FIGHT_STOP,$army1->x,$army1->y,0,$why,"");
-				$to_uid_list[] = $c;
-			}
+		if ($fight->fightlog == 0) { // temporary hack while changing database, the `fightlog`.`fight` field is not used anymore, can be dropped
+			$fight->fightlog = sqlgetone("SELECT `id` FROM `fightlog` WHERE `fight` = ".intval($fight->id)); // this line can savely be removed
 		}
-		if((intval($army2->flags) & kArmyFlag_GuildCommand)){
-			$gc = getGuildCommander(sqlgetone("SELECT `guild` FROM `user` WHERE `id` = ".$army2->user));
-			foreach($gc as $c) {
-				if($c!=$army1->user)LogMe($c,NEWLOG_TOPIC_FIGHT,NEWLOG_FIGHT_STOP,$army2->x,$army2->y,0,$why,"");
-				$to_uid_list[] = $c;
-			}
-		}
-		// todo : send fight-reports
-		cFight::SendFightReport($fight,$army1,$army2,$to_uid_list,$why);
+		cFight::SendFightReport($fight->fightlog,$fight->attacker,$fight->defender,$why);
 		sql("DELETE FROM `fight` WHERE `id` = ".$fight->id);
 	}
 	
-	// only called from EndFight
-	function SendFightReport ($fight,$army1,$army2,$to_uid_list,$why) {
+	// used for StartFight and StartShooting
+	function StartFightLog ($attacker,$defender,$attackertype=kUnitContainer_Army,$defendertype=kUnitContainer_Army) {
+		if (!is_object($attacker)) $attacker = sqlgetobject("SELECT * FROM `$attackertype` WHERE `id` = ".intval($attacker));
+		if (!is_object($defender)) $defender = sqlgetobject("SELECT * FROM `$defendertype` WHERE `id` = ".intval($defender));
+		if (!isset($attacker->units)) $attacker->units = cUnit::GetUnits($attacker->id,$attackertype);
+		if (!isset($defender->units)) $defender->units = cUnit::GetUnits($defender->id,$defendertype);
+		$attacker->transport = array();
+		$defender->transport = array();
+		if ($attackertype == kUnitContainer_Army && !isset($attacker->transport)) $attacker->transport = cUnit::GetUnits($attacker->id,kUnitContainer_Transport);
+		if ($defendertype == kUnitContainer_Army && !isset($defender->transport)) $defender->transport = cUnit::GetUnits($defender->id,kUnitContainer_Transport);
+		
+		$fightlog = false;
+		$fightlog->startunits1 = cUnit::Units2Text($attacker->units);
+		$fightlog->startunits2 = cUnit::Units2Text($defender->units);
+		$fightlog->starttransport1 = cUnit::Units2Text($attacker->transport);
+		$fightlog->starttransport2 = cUnit::Units2Text($defender->transport);
+		sql("INSERT INTO `fightlog` SET ".obj2sql($fightlog));
+		$fightlog->id = mysql_insert_id();
+		return $fightlog;
+	}
+		
+	// used for EndFight and EndShooting
+	function SendFightReport ($fightlog,$attacker,$defender,$why,$is_shooting=false,$attackertype=kUnitContainer_Army,$defendertype=kUnitContainer_Army) {
 		global $gUnitType,$gAllUsers,$gRes,$gItemType,$gRes2ItemType;
+		
+		// army1 == attacker, army2 == defender
+		if ($attacker && !is_object($attacker)) $attacker = sqlgetobject("SELECT * FROM `$attackertype` WHERE `id` = ".intval($attacker));
+		if ($defender && !is_object($defender)) $defender = sqlgetobject("SELECT * FROM `$defendertype` WHERE `id` = ".intval($defender));
+		
+		// send log messages and collect users to be informed
+		$to_uid_list = array();
+		if ($attacker && $attacker->user) $to_uid_list[] = $attacker->user;
+		if ($defender && $defender->user) $to_uid_list[] = $defender->user;
+		
+		// TODO : if ($is_shooting) not NEWLOG_FIGHT_STOP but NEWLOG_SHOOTING_STOP or something like that
+		if ($attacker && $attacker->user) LogMe($attacker->user,NEWLOG_TOPIC_FIGHT,NEWLOG_FIGHT_STOP,$attacker->x,$attacker->y,0,$why,"");
+		if ($defender && $defender->user) LogMe($defender->user,NEWLOG_TOPIC_FIGHT,NEWLOG_FIGHT_STOP,$defender->x,$defender->y,0,$why,"");
+		
+		if ($attacker && $attacker->user && (intval($attacker->flags) & kArmyFlag_GuildCommand)){
+			$gc = getGuildCommander(sqlgetone("SELECT `guild` FROM `user` WHERE `id` = ".$attacker->user));
+			foreach($gc as $c) {
+				if($c!=$attacker->user) LogMe($c,NEWLOG_TOPIC_FIGHT,NEWLOG_FIGHT_STOP,$attacker->x,$attacker->y,0,$why,"");
+				$to_uid_list[] = $c;
+			}
+		}
+		if ($defender && $defender->user && (intval($defender->flags) & kArmyFlag_GuildCommand)){
+			$gc = getGuildCommander(sqlgetone("SELECT `guild` FROM `user` WHERE `id` = ".$defender->user));
+			foreach($gc as $c) {
+				if($c!=$attacker->user)LogMe($c,NEWLOG_TOPIC_FIGHT,NEWLOG_FIGHT_STOP,$defender->x,$defender->y,0,$why,"");
+				$to_uid_list[] = $c;
+			}
+		}
 		$to_uid_list = array_unique($to_uid_list);
 		
 		// get infos
-		$fightlog = sqlgetobject("SELECT * FROM `fightlog` WHERE `fight` = ".$fight->id);
+		if ($fightlog && !is_object($fightlog)) $fightlog = sqlgetobject("SELECT * FROM `fightlog` WHERE `id` = ".intval($fightlog));
+		$attacker->starttransport = array();
+		$defender->starttransport = array();
+		$attacker->transport = array();
+		$defender->transport = array();
 		if ($fightlog) {
 			sql("DELETE FROM `fightlog` WHERE `id` = ".$fightlog->id);
 			// todo : admin logging !
-			$army1->startunits = cUnit::Text2Units($fightlog->startunits1);
-			$army2->startunits = cUnit::Text2Units($fightlog->startunits2);
-			$army1->starttransport = cUnit::Text2Units($fightlog->starttransport1);
-			$army2->starttransport = cUnit::Text2Units($fightlog->starttransport2);
+			if ($attacker) $attacker->startunits = cUnit::Text2Units($fightlog->startunits1);
+			if ($defender) $defender->startunits = cUnit::Text2Units($fightlog->startunits2);
+			if ($attacker && $attackertype == kUnitContainer_Army) $attacker->starttransport = cUnit::Text2Units($fightlog->starttransport1);
+			if ($defender && $defendertype == kUnitContainer_Army) $defender->starttransport = cUnit::Text2Units($fightlog->starttransport2);
 		} else {
-			$army1->startunits = cUnit::GetUnits($army1->id);
-			$army2->startunits = cUnit::GetUnits($army2->id);
-			$army1->starttransport = cUnit::GetUnits($army1->id,kUnitContainer_Transport);
-			$army2->starttransport = cUnit::GetUnits($army2->id,kUnitContainer_Transport);
+			if ($attacker) $attacker->startunits = cUnit::GetUnits($attacker->id,$attackertype);
+			if ($defender) $defender->startunits = cUnit::GetUnits($defender->id,$defendertype);
+			if ($attacker && $attackertype == kUnitContainer_Army) $attacker->starttransport = cUnit::GetUnits($attacker->id,kUnitContainer_Transport);
+			if ($defender && $defendertype == kUnitContainer_Army) $defender->starttransport = cUnit::GetUnits($defender->id,kUnitContainer_Transport);
 		}
-		$army1->units = cUnit::GetUnits($army1->id);
-		$army2->units = cUnit::GetUnits($army2->id);
-		$army1->transport = cUnit::GetUnits($army1->id,kUnitContainer_Transport);
-		$army2->transport = cUnit::GetUnits($army2->id,kUnitContainer_Transport);
-		$army1->size = cUnit::GetUnitsSum($army1->units);
-		$army2->size = cUnit::GetUnitsSum($army2->units);
-		$monster = ($army1->user == 0 || $army2->user == 0);
+		if ($attacker) $attacker->units = cUnit::GetUnits($attacker->id,$attackertype);
+		if ($defender) $defender->units = cUnit::GetUnits($defender->id,$defendertype);
+		if ($attacker && $attackertype == kUnitContainer_Army) $attacker->transport = cUnit::GetUnits($attacker->id,kUnitContainer_Transport);
+		if ($defender && $defendertype == kUnitContainer_Army) $defender->transport = cUnit::GetUnits($defender->id,kUnitContainer_Transport);
+		if ($attacker) $attacker->startsize = cUnit::GetUnitsSum($attacker->startunits);
+		if ($defender) $defender->startsize = cUnit::GetUnitsSum($defender->startunits);
+		if ($attacker) $attacker->size = cUnit::GetUnitsSum($attacker->units);
+		if ($defender) $defender->size = cUnit::GetUnitsSum($defender->units);
+		$monster = (($attacker && $attackertype == kUnitContainer_Army && $attacker->user == 0) ||
+					($defender && $defendertype == kUnitContainer_Army && $defender->user == 0));
 	
+		$attacker->destroyed = ($attackertype == kUnitContainer_Army) ? ($attacker->size < 1.0) : ($attacker->hp < 1.0);
+		$defender->destroyed = ($defendertype == kUnitContainer_Army) ? ($defender->size < 1.0) : ($defender->hp < 1.0);
+			
 		// start report
-		$topic = $monster?"Monster":"Kampfbericht";
-		$report = "Die Schlacht bei (".$army1->x.",".$army1->y.") ist beendet.<br>";
+		if ($is_shooting)
+				$topic = $monster?"MonsterBeschuss":"Beschuss";
+		else	$topic = $monster?"Monster":"Kampfbericht";
+		if ($is_shooting)
+				$report = "Der Beschuss auf (".$defender->x.",".$defender->y.") ist beendet.<br>";
+		else	$report = "Die Schlacht bei (".$attacker->x.",".$attacker->y.") ist beendet.<br>";
 		$report .= $why."<br>";
 		if ($monster) $report .= "Monsterkampfberichte können unter Einstellungen abgeschaltet werden.<br>";
 		$report .= "<br>";
 		
 		// report army state
-		$armies = array($army1,$army2);
-		foreach ($armies as $army) {
-			$ownername = cArmy::GetArmyOwnerName($army);
-			$report .= "<b>".$army->name." von ".$ownername."</b>".($army->size?"":" <font color='red'><b>(ausgelöscht)</b></font>")."<br>";
-			$losses = cUnit::GetUnitsDiff($army->startunits,$army->units,true);
-			$losses = array_merge($losses,cUnit::GetUnitsDiff($army->starttransport,$army->transport,true));
+		$arr = array(array($attacker,$attackertype),array($defender,$defendertype));
+		foreach ($arr as $pair) {
+			list($container,$containertype) = $pair;
+			if (!$container) continue;
+			$containernametext = cFight::GetContainerText($container,$containertype);
+			
+			$report .= "<b>".$containernametext."</b> ".($container->destroyed?"<font color='red'><b>(ausgelöscht)</b></font>":"")."<br>";
+			$losses = cUnit::GetUnitsDiff($container->startunits,$container->units,true);
+			$losses = array_merge($losses,cUnit::GetUnitsDiff($container->starttransport,$container->transport,true));
 			$losses = cUnit::GroupUnits($losses);
 		
 			// anfangszustand
-			rob_ob_start();
-			cText::UnitsList($army->startunits,$army->user,"",false);
-			if (cUnit::GetUnitsSum($army->starttransport) > 0) cText::UnitsList($army->starttransport,$army->user,"",false);
-			$report .= rob_ob_end();
+			if ($container->startsize > 0) {
+				rob_ob_start();
+				cText::UnitsList($container->startunits,$container->user,"",false);
+				if (cUnit::GetUnitsSum($container->starttransport) > 0) cText::UnitsList($container->starttransport,$container->user,"",false);
+				$report .= rob_ob_end();
+			}
 			
 			// verluste/neuzugänge
 			$report .= "<table border=1 cellspacing=0>";
 			$arr_loss = array();
 			$arr_gain = array();
-			foreach ($losses as $o) if (floor(abs($o->amount)) > 0) {
-				$txt = "<td align='right'>".floor(abs($o->amount))."</td><td><img src='".g($gUnitType[$o->type]->gfx)."'></td>";
-				if ($o->amount > 0) 
-						$arr_loss[] = $txt;
-				else	$arr_gain[] = $txt;
+			if (!$container->destroyed) {
+				foreach ($losses as $o) if (floor(abs($o->amount)) > 0) {
+					$txt = "<td align='right'>".floor(abs($o->amount))."</td><td><img src='".g($gUnitType[$o->type]->gfx)."'></td>";
+					if ($o->amount > 0) 
+							$arr_loss[] = $txt;
+					else	$arr_gain[] = $txt;
+				}
+				if (count($arr_loss) > 0) $report .= "<tr><th>Verluste</th>".implode(" ",$arr_loss)."</tr>";
+				if (count($arr_gain) > 0) $report .= "<tr><th>Neuzugänge</th>".implode(" ",$arr_gain)."</tr>";
+			} else {
+				$report .= "<font color='red'><b>ausgelöscht</b></font>";
 			}
-			if (count($arr_loss) > 0) $report .= "<tr><th>Verluste</th>".implode(" ",$arr_loss)."</tr>";
-			if (count($arr_gain) > 0) $report .= "<tr><th>Neuzugänge</th>".implode(" ",$arr_gain)."</tr>";
 			
 			// verlorene res, items
-			if ($army->size <= 0) {
+			if ($container->destroyed && $containertype == kUnitContainer_Army) {
 				$arr_items = array();
-				foreach ($gRes as $n=>$f) if ($army->{$f} > 0)
-					$arr_items[] = "<td align='right'>".$army->{$f}."</td><td><img src='".g($gItemType[$gRes2ItemType[$f]]->gfx)."'></td>";
-				$armyitems = sqlgettable("SELECT * FROM `item` WHERE `army` = ".$army->id);
-				foreach ($armyitems as $o) 
+				foreach ($gRes as $n=>$f) if ($container->{$f} > 0)
+					$arr_items[] = "<td align='right'>".$container->{$f}."</td><td><img src='".g($gItemType[$gRes2ItemType[$f]]->gfx)."'></td>";
+				$containeritems = sqlgettable("SELECT * FROM `item` WHERE `army` = ".$container->id);
+				foreach ($containeritems as $o) 
 					$arr_items[] = "<td align='right'>".$o->amount."</td><td><img src='".g($gItemType[$o->type]->gfx)."'></td>";
 				if (count($arr_items) > 0) $report .= "<tr><th>Beute</th>".implode(" ",$arr_items)."</tr>";
 			}
 			$report .= "</table>";
 			
 			// endzustand
-			if ($army->size > 0) {
-				rob_ob_start();
-				cText::UnitsList($army->units,$army->user,"",false);
-				if (cUnit::GetUnitsSum($army->transport) > 0) cText::UnitsList($army->transport,$army->user,"",false);
-				$report .= "Einheiten nach dem Kampf :".rob_ob_end();
+			if (!$container->destroyed) {
+				if (count($arr_loss) > 0 || count($arr_gain) > 0) {
+					rob_ob_start();
+					cText::UnitsList($container->units,$container->user,"",false);
+					if (cUnit::GetUnitsSum($container->transport) > 0) cText::UnitsList($container->transport,$container->user,"",false);
+					if ($is_shooting)
+							$report .= "Einheiten nach dem Beschuss :";
+					else	$report .= "Einheiten nach dem Kampf :";
+					$report .= rob_ob_end();
+				} else {
+					$report .= "Keine Verluste";
+				}
 			}
 			
+			$report .= "<br>";
 			$report .= "<br>";
 		}
 		
@@ -718,10 +1018,10 @@ class cFight {
 		// send report
 		foreach($to_uid_list as $uid) if ($uid) {
 			$niederlage = false;
-			if ($uid == $army1->user && $army1->size <= 0) { $niederlage = true; echo "army1 tot<br>";}
-			if ($uid == $army2->user && $army2->size <= 0) { $niederlage = true; echo "army2 tot<br>";}
-			if ($monster && $army1->user && $army1->size <= 0) { $niederlage = true; echo "army1 tot gc<br>";} // for gcs
-			if ($monster && $army2->user && $army2->size <= 0) { $niederlage = true; echo "army2 tot gc<br>";} // for gcs
+			if ($uid == $attacker->user && $attacker->destroyed) { $niederlage = true; echo "army1 tot<br>";}
+			if ($uid == $defender->user && $defender->destroyed) { $niederlage = true; echo "army2 tot<br>";}
+			if ($monster && $attacker->user && $attacker->destroyed) { $niederlage = true; echo "army1 tot gc<br>";} // for gcs
+			if ($monster && $defender->user && $defender->destroyed) { $niederlage = true; echo "army2 tot gc<br>";} // for gcs
 			if (!$niederlage && $monster) {
 				$userflags = isset($gAllUsers) ? $gAllUsers[$uid]->flags : sqlgetone("SELECT `flags` FROM `user` WHERE `id` = ".intval($uid));
 				if (intval($userflags) & kUserFlags_NoMonsterFightReport) continue;

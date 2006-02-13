@@ -5,6 +5,7 @@ require_once("../lib.map.php");
 require_once("../lib.construction.php");
 require_once("../lib.quest.php");
 require_once("../lib.trade.php");
+require_once("../lib.magic.php");
 require_once("../lib.transfer.php");
 require_once("class.infobase.php");
 require_once("class.infobuilding.php");
@@ -38,8 +39,10 @@ function RegisterInfoTab ($head,$content,$select_priority=false) {
 }
 
 function JSRefreshArmy ($army) {
+	if (!$army) return;
 	global $gJSCommands;
 	if (!is_object($army)) $army = sqlgetobject("SELECT * FROM `army` WHERE `id` = ".intval($army));
+	if (!$army) return;
 	$gJSCommands[] = "parent.map.JSArmyUpdate(".cArmy::GetJavaScriptArmyData($army).");";
 	$gJSCommands[] = "parent.map.JSActivateArmy(".$army->id.",\"".cArmy::GetJavaScriptWPs($army->id)."\");";
 }
@@ -107,19 +110,15 @@ if (!isset($f_building) && !isset($f_army) && isset($f_do)) {
 			if (isset($f_delenemy)) SetFOF($gUser->id,intval($f_other),kFOF_Neutral); 
 			if (isset($f_addenemy)) SetFOF($gUser->id,intval($f_other),kFOF_Enemy); 
 		break;
-		case "choose_cast":
-			$pastinclude="magic.php";
-		break;
 		case "quickmagic":
 		case "cast_spell":
 			if ($f_do == "quickmagic") {
-				// $f_tower = MagicAutoChooseTower($gUser->id); // TODO : implement me...
-				$f_tower = sqlgetone("SELECT `id` FROM `building` WHERE `user` = ".intval($gUser->id)." ORDER BY `mana` DESC");
+				$towers = MagicListSortedTowers($gUser->id,true);
+				$f_tower = $towers[0]->id;
 				// $spelltypeid = intval($f_spellid);
 				$spelltype = $gSpellType[intval($f_spellid)];
-				$f_count = array($spelltype->id=>1);
+				$f_count = array($spelltype->id => 1);
 			}
-			$pastinclude="magic.php";
 			//$gSpellType = sqlgettable("SELECT * FROM `spelltype`","id");
 			$result = 0;
 			$castspelltype = false;
@@ -171,7 +170,7 @@ if (!isset($f_building) && !isset($f_army) && isset($f_do)) {
 		break;
 		case "build":
 			function JSAddInfoMessage_BuildError($btype,$x,$y,$reason) {
-				JSAddInfoMessage(GetBuildingTypeLink($btype,$x,$y)." konnte bei ".pos2txt($x,$y)." nicht gebaut werden : ".$reason."<br>");
+				JSAddInfoMessage(GetBuildingTypeLink($btype,$x,$y)." konnte bei ".pos2txt($x,$y)." nicht geplant werden : ".$reason."<br>");
 			}
 			
 			foreach ($f_build as $typeid => $val) { // this array won't have more than one entry
@@ -893,15 +892,13 @@ if (!isset($f_blind)) if(sizeof($gItems)>0) {
 
 
 // magic button
-if (!isset($f_blind)) if (sqlgetone("SELECT COUNT(`id`) FROM `building` WHERE `type`=".$gGlobal['building_runes']." AND `user`=".$gUser->id." GROUP BY `type`")) {
+if (!isset($f_blind)) {
 	$head = "";
 	$head .= "<span class=\"info_magic_cast_button\">";
 	$head .= "<img alt=\"zaubern\" title=\"zaubern\" border=0 src=\"".g("tool_mana.png")."\">zaubern";
 	$head .= "</span>";
-	$content = "";
-	$content .= "<a href=\"".Query("?sid=?&x=?&y=?&do=choose_cast&button_cast=zaubern")."\">";
-	$content .= "(Einen Zauber auf ($f_x,$f_y) wirken...)</a>";
-	RegisterInfoTab($head,$content);
+	$content = GetMagicCastingBox($f_x,$f_y);
+	if ($content && !empty($content)) RegisterInfoTab($head,$content);
 }
 
 // anforderungen
@@ -968,7 +965,6 @@ if (isset($f_blind)) { // blind modus im dummy frame, fuer schnellere map-click-
 <div id="dynamicinfomessage"></div>
 <?php /* info message */ ?>
 <?php if($info_message!="") {?><div><?=$info_message?></div><hr><?}?>
-<?php if(isset($pastinclude) && is_file($pastinclude))include($pastinclude); ?>
 
 <?php
 if ($gInfoTabsSelected == -1) $gInfoTabsSelected = count($gInfoTabs)-1;

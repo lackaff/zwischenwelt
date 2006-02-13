@@ -45,7 +45,6 @@ function GenerateTypesPHP () {
 		"gTechnologyType"=>"technologytype",
 		"gTechnologyGroup"=>"technologygroup",
 		"gItemType"=>"itemtype",
-		"gSpellType"=>"spelltype",
 		"gRace"=>"race",
 		"gTerrainSubType"=>"terrainsubtype",
 		"gTerrainPatchType"=>"terrainpatchtype",
@@ -58,6 +57,9 @@ function GenerateTypesPHP () {
 	
 	$gUnitType = sqlgettable("SELECT * FROM `unittype` ORDER BY `orderval` ASC","id");
 	fwrite($fp,'$gUnitType = array('.array_out_numkey($gUnitType).");\n");
+	
+	$gSpellType = sqlgettable("SELECT * FROM `spelltype` ORDER BY `orderval` ASC","id");
+	fwrite($fp,'$gSpellType = array('.array_out_numkey($gSpellType).");\n");
 	
 	
 	$gTerrainPatchType = sqlgettable("SELECT * FROM `terrainpatchtype`","id");
