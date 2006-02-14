@@ -200,6 +200,9 @@ class cFight {
 				
 			} else return false; // SHOULD NOT HAPPEN
 			
+			// siege-modifier
+			if ($ctype == kUnitContainer_Building) $dmg = $dmg / 3600.0 * 60.0;
+			
 			//change damage depending on the path the bullet pased
 			//$dmg *= GetDistantMod($attackerobj->x,$attackerobj->y,$defenderobj->x,$defenderobj->y);
 			//$dmg *= rand(80,100)/100.0;
