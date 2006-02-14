@@ -7,6 +7,10 @@ class cInfoTaverne extends cInfoBuilding {
 		global $gObject;
 		?>
 		Taverne [<a href="http://zwischenwelt.org/irc/index.php?nick=<?=$gUser->name?>" target="_blank">betreten</a>]
+		host : zwischenwelt.org<br>
+		port : 7777<br>
+		channel : #taverne<br>
 		<?php
 	}
 }?>
+
