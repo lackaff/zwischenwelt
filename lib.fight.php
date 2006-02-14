@@ -574,6 +574,22 @@ class cFight {
 		$dmg = cUnit::GetUnitsSiegeAttack($units,$army->user) / 3600.0 * 60.0;
 		$building->hp -= $dmg;
 		
+		if (intval($army->flags) & kArmyFlag_SiegePillage) {
+			global $gBuildingType,$gRes2ItemType,$gRes;
+			$percent_of_level_0 = $dmg / $gBuildingType[$building->type]->maxhp;
+			if ($debug) echo "SiegePillage : ".$dmg." / ".$gBuildingType[$building->type]->maxhp." = ".$percent_of_level_0."<br>";
+			$myres = $gRes;
+			foreach ($myres as $n=>$f) {
+				$cost = $gBuildingType[$building->type]->{"cost_".$f} * $building->level;
+				// todo : multiply by building->level  ???
+				$get = ceil($percent_of_level_0 * $cost * kSiegePillageEfficiency);
+				if ($debug) echo "SiegePillage: $n : ".$cost." -> ".$get."<br>";
+				if ($get <= 0) continue;
+				cItem::SpawnArmyItem($army->id,$gRes2ItemType[$f],$get);
+			}
+		}
+		
+		
 		global $gBuildingType;
 		echo $army->name."(".$army->x.",".$army->y.") belagert ".$gBuildingType[$building->type]->name."(".$building->x."|".$building->y.") mit $dmg Schaden<br>";
 			

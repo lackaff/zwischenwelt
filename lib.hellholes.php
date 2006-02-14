@@ -415,13 +415,18 @@ class Hellhole_2 extends Hellhole_0 {
 class Hellhole_3 extends Hellhole_0 {
 	function Hellhole_3 () {
 		// $this->spawndelay = 3600; // should be about one hour, so the hellhole can abort siege-pillaging ants
-		$this->raid_rad = 100; // maximal-travel-radius for soldiers
+		$this->raid_rad = 40; // maximal-travel-radius for soldiers
 		$this->spread_rad = 40; // maximal travel-radius for king
 		$this->spread_mindist = 11; // minimum distance of new base to existing bases
 		$this->victim_minpts = 10000; // don't SPREAD near players below a certain limit
 	}
 	
+	// check if the location of a new base is ok
 	function CheckSpreadPoint ($x,$y) {
+		$terrain = cMap::StaticGetTerrainAtPos($x,$y);
+		$terrain_is_ok = intval($gTerrainType[$terrain]->movable_flag) & (kTerrain_Flag_Moveable_Land|kTerrain_Flag_Moveable_Wood);
+		if (!$terrain_is_ok) return false;
+		
 		$r = $this->spread_mindist;
 		$xylimit = "`x` >= ".($x-$r)." AND `x` <= ".($x+$r)." AND `y` >= ".($y-$r)." AND `y` <= ".($y+$r);
 		if (sqlgetone("SELECT 1 FROM `hellhole` WHERE `ai_type` = ".intval($this->ai_type)." AND ".$xylimit." LIMIT 1")) return false;
@@ -460,7 +465,7 @@ class Hellhole_3 extends Hellhole_0 {
 	}
 	
 	function Think () {
-		global $gUnitType,$gRes2ItemType;
+		global $gUnitType,$gRes2ItemType,$gRes,$gUser;
 		
 		// need to collect at least this many ressources before spreading
 		$this->spread_min_respoints = $gUnitType[$this->type]->last * $this->armysize * 10; // 10 runs
@@ -486,9 +491,100 @@ class Hellhole_3 extends Hellhole_0 {
 			
 		// list troups
 		$king = false;
+		$raider = false;
+		$potential_raiders = array();
 		$monsters = sqlgettable("SELECT * FROM `army` WHERE `hellhole` = ".$this->id);
-		foreach ($monsters as $k => $o) $monsters[$k]->units = cUnit::GetUnits($o->id);
-		foreach ($monsters as $o) if (cUnit::GetUnitsMaxType($o->units) == $this->type2) {$king = $o;break;}
+		foreach ($monsters as $k => $o) {	
+			$o->wpcount = intval(sqlgetone("SELECT COUNT(*) FROM `waypoint` WHERE `army` = ".$o->id));
+			$monsters[$k]->wpcount = $o->wpcount;
+			
+			$o->units = cUnit::GetUnits($o->id);
+			$monsters[$k]->units = $o->units;
+			
+			if (cUnit::GetUnitsMaxType($o->units) == $this->type2) {
+				$king = $o;
+			} else {
+				$potential_raiders[] = $o;
+				if ($o->wpcount > 0) $raider = $o;
+			}
+		}
+		
+		// raider-code
+		if ($raider) {
+			if (isset($gUser)) echo "raider aktiv ".opos2txt($raider)."<br>";
+			/*
+			if (intval($raider->flags) & kArmyFlag_AutoSiege) {
+				// moving out
+				echo "raider is moving out<br>";
+			} else {
+				// coming back
+				echo "raider is coming back<br>";
+			}*/
+		} else if (count($potential_raiders) > 0) {
+			// take ressources of potential raiders
+			foreach ($potential_raiders as $army) {
+				// put res onto bughole
+				$myres = $gRes;
+				foreach($myres as $n=>$f) {
+					$drop = $army->{$f};
+					if ($drop > 0) {
+						sql("UPDATE `army` SET `$f` = GREATEST(0,`$f` - $drop) WHERE `$f` >= $drop AND `id` = ".$army->id);
+						if (mysql_affected_rows() > 0) {
+							if (isset($gUser)) echo "ressource collected : $drop $n from ".opos2txt($army)."<br>";
+							cItem::SpawnItem($x,$y,$gRes2ItemType[$f],$drop);
+						}
+					}
+				}
+			}
+		
+			// send out new raider
+			$raider = $potential_raiders[array_rand($potential_raiders)];
+			if (isset($gUser)) echo "send out new raider ? ".opos2txt($raider)."<br>";
+			
+			// pick random location
+			$dist = rand ( $this->rad , $this->raid_rad );
+			$ang = 2.0 * M_PI * ((float)rand() / (float)getrandmax());
+			$tx = round($x + $dist * sin($ang));
+			$ty = round($y + $dist * cos($ang));
+			
+			// check if the location is ok and reachable
+			$position_ok = false;
+			//if ($this->CheckRaidPoint($tx,$ty)) {
+			if (1) {
+				$reachable = Reachable($raider->x,$raider->y,$tx,$ty,$gUnitType[$this->type]->movable_flag,true,true);
+				if ($reachable === true) {
+					$position_ok = true;
+				} else if ($reachable) {
+					// we hit a building on the way, consider to siege it instead...
+					$building = $reachable;
+					$points = sqlgetone("SELECT `general_pts` FROM `user` WHERE `id` = ".intval($building->user));
+					if ($points >= $this->victim_minpts) {
+						// target a position right next to the building
+						$dx = $building->x - $raider->x;
+						$dy = $building->y - $raider->y;
+						if (abs($dx) > abs($dy)) {
+							$tx = $building->x + (($dx>0)?-1:1);
+							$ty = $building->y;
+						} else {
+							$tx = $building->x;
+							$ty = $building->y + (($dy>0)?-1:1);
+						}
+						// check if new target pos can be reached
+						$reachable = Reachable($raider->x,$raider->y,$tx,$ty,$gUnitType[$this->type]->movable_flag,true,true);
+						if ($reachable === true) {
+							$position_ok = true;
+						}
+					}
+				}
+			}
+			
+			if ($position_ok) {
+				echo "FOR KING AND COUNTRY ! CHAAAAAAAARGE !!!!<br>";
+				// and send him on his way
+				cArmy::ArmySetWaypoint($raider,$tx,$ty);
+				cArmy::ArmySetWaypoint($raider,$raider->x,$raider->y);
+			}
+		}
 		
 		// king-code
 		$kingtick = true; // todo : only every x hours...
@@ -509,7 +605,7 @@ class Hellhole_3 extends Hellhole_0 {
 					// create a king
 					$kingflags = kArmyFlag_AutoAttack | kArmyFlag_Wander;
 					$king = cArmy::SpawnArmy($x,$y,cUnit::Simple($this->type2,$this->armysize2),
-										false,kArmyType_Normal,0,0,$this->id,true,$kingflags);
+										false,kArmyType_Normal,0,0,$this->id,false,$kingflags);
 					
 					if ($king) {
 						echo "Long live the AntKing !<br>";
@@ -524,19 +620,19 @@ class Hellhole_3 extends Hellhole_0 {
 			} else if ($king) {
 				if (intval($king->flags) & kArmyFlag_Wander) {
 					// the king is still around the base, try to send him away
-					echo "time to boldly go, where no AntKing has gone before...<br>";
+					echo "time to boldly go, where no ant has gone before...<br>";
 					
 					// pick random location
 					$dist = rand ( $this->spread_mindist , $this->spread_rad );
 					$ang = 2.0 * M_PI * ((float)rand() / (float)getrandmax());
 					$tx = round($x + $dist * sin($ang));
 					$ty = round($y + $dist * cos($ang));
-			
+					
 					// check if the location is ok and reachable
 					if ($this->CheckSpreadPoint($tx,$ty)) {
-						$reachable = Reachable($king->x,$king->y,$tx,$y,$gUnitType[$this->type2]->movable_flag,true,true);
+						$reachable = Reachable($king->x,$king->y,$tx,$ty,$gUnitType[$this->type2]->movable_flag,true,true);
 						if ($reachable === true) {
-							echo "and onward he went...<br>";
+							echo "and onward he went, on a journey of kings...<br>";
 							
 							// and send him on his way
 							cArmy::ArmySetWaypoint($king,$tx,$ty);

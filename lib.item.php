@@ -15,7 +15,8 @@ class cItem {
 	function GetUserTotalItemAmount ($itemtypeid,$userid) {
 		global $gItemType,$gRes,$gRes2ItemType;
 		$sum = 0;
-		foreach($gRes as $n=>$f) if ($gRes2ItemType[$f] == $itemtypeid) {
+		$myres = $gRes;
+		foreach($myres as $n=>$f) if ($gRes2ItemType[$f] == $itemtypeid) {
 			$sum += intval(sqlgetone("SELECT `$f` FROM `user` WHERE `id` = ".intval($userid)));
 			$sum += intval(sqlgetone("SELECT SUM(`$f`) FROM `army` WHERE `user` = ".intval($userid)));
 		}
@@ -40,7 +41,8 @@ class cItem {
 		if (is_object($armyid)) $armyid = $armyid->id;
 		if (is_object($itemtypeid)) $itemtypeid = $itemtypeid->id;
 		global $gRes2ItemType;
-		foreach ($gRes2ItemType as $res => $it) if ($itemtypeid == $it) 
+		$mygRes2ItemType = $gRes2ItemType;
+		foreach ($mygRes2ItemType as $res => $it) if ($itemtypeid == $it) 
 			return sqlgetone("SELECT `$res` FROM `army` WHERE `id` = ".intval($armyid));
 		return intval(sqlgetone("SELECT (`amount`) FROM `item` WHERE 
 			`army` = ".intval($armyid)." AND `type` = ".intval($itemtypeid)." LIMIT 1"));
@@ -50,7 +52,8 @@ class cItem {
 		if (is_object($armyid)) $armyid = $armyid->id;
 		if (is_object($itemtypeid)) $itemtypeid = $itemtypeid->id;
 		global $gRes2ItemType;
-		foreach ($gRes2ItemType as $res => $it) if ($itemtypeid == $it) {
+		$mygRes2ItemType = $gRes2ItemType;
+		foreach ($mygRes2ItemType as $res => $it) if ($itemtypeid == $it) {
 			sql("UPDATE `army` SET `$res` = `$res` - ".intval($payamount)." WHERE `$res` >= ".intval($payamount)." AND `id` = ".intval($armyid));
 			if (mysql_affected_rows() > 0) return true;
 		}
@@ -62,6 +65,7 @@ class cItem {
 		return $success;
 	}
 	
+	// WARNING ! DON'T CALL THIS FUNCTION WITHIN A "foreach ($gRes ..)" LOOP ! use "$myres = $gRes;" or sth like that !
 	function SpawnArmyItem	($army,$typeid,$amount=1.0,$quest=0,$param=0) { // creates an item and gives it to the army as reward
 		if ($amount < 1) return;
 		if (!is_object($army)) $army = sqlgetobject("SELECT * FROM `army` WHERE `id`=".intval($army));
@@ -307,7 +311,8 @@ class cItem {
 		global $gItemType,$gRes; 
 		if (intval($gItemType[$item->type]->flags) & kItemFlag_UseGivesCost) {
 			$oldmod = array();
-			foreach($gRes as $n=>$f) if ($gItemType[$item->type]->{"cost_".$f} > 0)
+			$myres = $gRes;
+			foreach($myres as $n=>$f) if ($gItemType[$item->type]->{"cost_".$f} > 0)
 				$oldmod[] = "`$f` = `$f` + ".($gItemType[$item->type]->{"cost_".$f} * $item->amount);
 			sql("UPDATE `army` SET ".implode(" , ",$oldmod)." WHERE `id` = ".$army->id." LIMIT 1");
 			sql("DELETE FROM `item` WHERE `id` = ".$item->id);

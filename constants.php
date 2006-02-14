@@ -398,6 +398,8 @@ $gRes = my_array_combine($gResNames,$gResFields);
 //list of things that can be done by people, worker adjustment
 $gAdjust = array_merge($gRes,array("Reparieren"=>"repair"));
 
+define("kSiegePillageEfficiency",2.0); // get a multitude of the damage as ressources, so ants don't have to wait that long...
+
 define("kResItemType_lumber","44");
 define("kResItemType_stone","45");
 define("kResItemType_food","46");
