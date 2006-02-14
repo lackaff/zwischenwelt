@@ -100,7 +100,8 @@ class cInfoArmy extends cInfoBase {
 					ArmyChangeGC($army,($army->flags & kArmyFlag_GuildCommand) != 0);
 			break;
 			case "armydropres":
-				foreach($gRes as $n=>$f) {
+				$myres = $gRes;
+				foreach($myres as $n=>$f) {
 					$drop = isset(${"f_".$f})?intval(${"f_".$f}):0;
 					$drop = max(0,min(floor($army->{$f}),$drop));
 					if ($drop > 0) {

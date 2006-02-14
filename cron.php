@@ -281,14 +281,11 @@ foreach($gAllUsers as $u) {
 			$w = $u->pop * $u->{"worker_".$resfield} / 100; // anzahl zugewiesene arbeiter
 			$s = $slots[$resfield]; // anzahl slots
 			$p = (min($w,$s) + max(($w - $s),0) * $gGlobal["prod_faktor_slotless"]) * ($gGlobal["prod_faktor"]) * $prod_factor; // produktion
-			switch($u->race){
-				default:
-					if ($resfield == "lumber" || $resfield == "stone") $p += 10; // grundprod holz+stein : 10/h // TODO : unhardcode
-				break;
-				case kRace_Gnome:
-					$p += 10; // grundprod : 10/h  // TODO : unhardcode
-				break;
-			}
+			
+			// Grundproduktion
+			if (isset($gGrundproduktion[$u->race]) && isset($gGrundproduktion[$u->race][$resfield]))
+				$p += $gGrundproduktion[$u->race][$resfield];
+				
 			$usersets .= ",`prod_$resfield`=$p";
 		}
 	}

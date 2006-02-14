@@ -4,7 +4,7 @@ require_once("../lib.main.php");
 
 //recalculates the user red produktion / h
 function recalcResProduction($u,$lock=true,$buildings=false) { // u = userobject or id , $buildings : precalced in cron
-	global $gGlobal,$gRes;
+	global $gGlobal,$gRes,$gGrundproduktion;
 
 	if ($lock)
 		sql("LOCK TABLES `phperror` WRITE, `user` WRITE,`terrain` READ, `sqlerror` WRITE,`building` READ,`technology` WRITE");
@@ -23,7 +23,11 @@ function recalcResProduction($u,$lock=true,$buildings=false) { // u = userobject
 		$w = $u->pop * $u->{"worker_".$resfield} / 100; // anzahl zugewiesene arbeiter
 		$s = $slots[$resfield]; // anzahl slots
 		$p = (min($w,$s) + max(($w - $s),0) * $gGlobal["prod_faktor_slotless"]) * ($gGlobal["prod_faktor"]) * $prod_factor; // produktion
-		if ($resfield == "lumber" || $resfield == "stone") $p += 10; // grundprod holz+stein : 10/h
+		
+		// Grundproduktion
+		if (isset($gGrundproduktion[$u->race]) && isset($gGrundproduktion[$u->race][$resfield]))
+				$p += $gGrundproduktion[$u->race][$resfield];
+		
 		$sets[] = "`prod_$resfield`=$p";
 	}
 	sql("UPDATE `user` SET ".implode(" , ",$sets)." WHERE `id`=".$u->id." LIMIT 1");
@@ -405,7 +409,7 @@ class cInfoHQ extends cInfoBuilding {
 	}
 	
 	function PrintWorker () {
-		global $gObject,$gUser,$gGlobal,$gAdjust;
+		global $gObject,$gUser,$gGlobal,$gAdjust,$gRes,$gGrundproduktion;
 		rob_ob_start(); 
 		?>
 		
@@ -455,7 +459,13 @@ class cInfoHQ extends cInfoBuilding {
 					var auslastung = (slots[f]>0)?Math.round(curval * totalworker / slots[f]):0;
 					var w = (totalworker * curval / 100.0);
 					var prod = (Math.min(w,slots[f]) + Math.max((w - slots[f]),0) * slotlessfaktor) * generalprodfakt * prodfaktoren[f];
-					if (f == "lumber" || f == "stone") prod += 10;
+					<?php 
+					if (isset($gGrundproduktion[$gUser->race])) {
+						foreach ($gRes as $n=>$f) if (isset($gGrundproduktion[$gUser->race][$f])) {
+							echo "if (f == \"".$f."\") prod += ".$gGrundproduktion[$gUser->race][$f].";\n";
+						}
+					}
+					?>
 					document.getElementById("auslastung_"+f).innerHTML = auslastung+"%";
 					document.getElementById("auslastung_"+f).style.color = (auslastung > 100)?"red":"green";
 					document.getElementById("produktion_"+f).innerHTML = Math.round(prod) + " / h";

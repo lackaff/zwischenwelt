@@ -406,6 +406,21 @@ define("kResItemType_food","46");
 define("kResItemType_metal","47");
 define("kResItemType_runes","48");
 
+$gGrundproduktion = array(
+	kRace_Mensch => array(
+		"lumber"=>100,
+		"stone"=>100,
+		"food"=>50,
+		),
+	kRace_Gnome => array(
+		"lumber"=>50,
+		"stone"=>50,
+		"food"=>50,
+		"metal"=>50,
+		"runes"=>50,
+		),
+	);
+
 $gRes2ItemType = array(	"lumber"=>	kResItemType_lumber,
 						"stone"=>	kResItemType_stone,
 						"food"=>	kResItemType_food,

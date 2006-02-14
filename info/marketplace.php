@@ -38,7 +38,8 @@ class cInfoMarket extends cInfoBuilding {
 		if ($gObject->type != kBuilding_Market) return;
 		switch ($f_do) {
 			case "do trade":
-				MarketplaceAcceptTrade($f_offerid);
+				foreach ($f_offers as $id) 
+					MarketplaceAcceptTrade($id);
 				Redirect(Query("?sid=?&x=?&y=?"));
 			break;
 			case "cancel trade":
@@ -130,45 +131,58 @@ class cInfoMarket extends cInfoBuilding {
 			</table>
 			</form>
 			<br>
-			<table border=0>
-				<tr><th colspan="7" align="left">fremde Angebote</th></tr>
-				<tr>
-					<th colspan=3></th>
-					<th colspan=3>Angebot</th>
-					<th colspan=3>Preis</th>
-					<th colspan=1>Händler</th>
-					<th colspan=1></th>
-					</tr>
-				<?php foreach($t_other as $x) {?>
-					<form method="post" action="<?=Query("?sid=?&x=?&y=?")?>">
-						<input type="hidden" name="building" value="marketplace">
-						<input type="hidden" name="id" value="<?=$gObject->id?>">
-						<input type="hidden" name="do" value="do trade">
-						<input type="hidden" name="offerid" value="<?=$x->id?>">
-						<tr>
-							<td>&nbsp;</td>
-							<td>[<?=round($x->fak,2)?>]</td>
-							<td>&nbsp;</td>
-							<td><img src="<?=g("res_".$gResTypeVars[$x->offer_res].".gif")?>"></td>
-							<td><?=$x->offer_count?></td>
-							<td>&nbsp;für</td>
-							<td><img src="<?=g("res_".$gResTypeVars[$x->price_res].".gif")?>"></td>
-							<td><?=$x->price_count?></td>
-							<td>von</td>
-							<td nowrap><?=$x->name?></td>
-							<td nowrap>
-								<?php $preisdiff = $x->price_count - $gUser->{$gResTypeVars[$x->price_res]};?>
-								<?php if ($preisdiff <= 0) {?>
-								<input type="submit" value="handeln">
-								<?php } else {?>
-								<font color="red"><b>zu teuer</b>, es fehlen <?=floor($preisdiff)?> <?=$gResTypeNames[$x->price_res]?></font>
-								<?php }?>
-							</td>
+			
+			
+			<form method="post" action="<?=Query("?sid=?&x=?&y=?")?>">
+				<input type="hidden" name="building" value="marketplace">
+				<input type="hidden" name="id" value="<?=$gObject->id?>">
+				<input type="hidden" name="do" value="do trade">
+				
+				<table border=0>
+					<tr><th colspan="7" align="left">fremde Angebote</th></tr>
+					<tr>
+						<th colspan=3></th>
+						<th colspan=3>Angebot</th>
+						<th colspan=3>Preis</th>
+						<th colspan=1>Händler</th>
+						<th colspan=1></th>
 						</tr>
-						<tr><td></td><td colspan=9><hr style="height:1px;margin:0px;padding:0px;"></td></tr>
-					</form>
-				<?php }?>
-			</table>
+					<?php foreach($t_other as $x) {?>
+							<?php $preisdiff = $x->price_count - $gUser->{$gResTypeVars[$x->price_res]};?>
+							<tr>
+								<td>
+									<?php if ($preisdiff <= 0) {?>
+									<input type="checkbox" name="offers[]" value="<?=$x->id?>">
+									<?php } else {?>
+									<?php }?>
+									</td>
+								<td>[<?=sprintf("%0.2f",$x->fak)?>]</td>
+								<td>&nbsp;</td>
+								<td><img src="<?=g("res_".$gResTypeVars[$x->offer_res].".gif")?>"></td>
+								<td><?=kplaintrenner($x->offer_count)?></td>
+								<td>&nbsp;für</td>
+								<td><img src="<?=g("res_".$gResTypeVars[$x->price_res].".gif")?>"></td>
+								<td><?=kplaintrenner($x->price_count)?></td>
+								<td>von</td>
+								<td nowrap>
+									<?php $ownerhq = sqlgetobject("SELECT * FROM `building` WHERE `type` = ".kBuilding_HQ." AND `user` = ".$x->user);?>
+									<a href="<?=query("?sid=?&x=".$ownerhq->x."&y=".$ownerhq->y)?>"><?=GetFOFtxt($gUser->id,$x->user,$x->name)?></a>
+								</td>
+								<td nowrap>
+									<?php if ($preisdiff <= 0) {?>
+									<?php } else {?>
+									<font color="red"><b>zu teuer</b>, es fehlen <?=floor($preisdiff)?> <?=$gResTypeNames[$x->price_res]?></font>
+									<?php }?>
+								</td>
+							</tr>
+							<tr><td colspan=10><hr style="height:1px;margin:0px;padding:0px;"></td></tr>
+					<?php }?>
+				</table>
+			<input type="submit" value="handeln">
+			</form>
+				
+				
+				
 			<br>
 			<table>
 				<tr><th colspan="5" align="left">eigene Angebote</th></tr>
@@ -180,9 +194,9 @@ class cInfoMarket extends cInfoBuilding {
 						<input type="hidden" name="offerid" value="<?=$x->id?>">
 						<tr>
 							<td>&nbsp;</td>
-							<td><?=$x->offer_count?> <?=$gResTypeNames[$x->offer_res]?> <img style="vertical-align:middle" src="<?=g("res_".$gResTypeVars[$x->offer_res].".gif")?>"></td>
+							<td><?=kplaintrenner($x->offer_count)?> <?=$gResTypeNames[$x->offer_res]?> <img style="vertical-align:middle" src="<?=g("res_".$gResTypeVars[$x->offer_res].".gif")?>"></td>
 							<td>für</td>
-							<td><?=$x->price_count?> <?=$gResTypeNames[$x->price_res]?> <img style="vertical-align:middle" src="<?=g("res_".$gResTypeVars[$x->price_res].".gif")?>"></td>
+							<td><?=kplaintrenner($x->price_count)?> <?=$gResTypeNames[$x->price_res]?> <img style="vertical-align:middle" src="<?=g("res_".$gResTypeVars[$x->price_res].".gif")?>"></td>
 							<td><input type="submit" value="zurücknehmen"></td>
 						</tr>
 						<tr><td></td><td colspan=6><hr style="height:1px;margin:0px;padding:0px;"></td></tr>
