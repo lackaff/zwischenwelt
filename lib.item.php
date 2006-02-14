@@ -6,29 +6,6 @@ require_once("lib.army.php");
 
 define("itemspawn_debugout",false);
 
-$gRes2ItemType = array(	"lumber"=>	kResItemType_lumber,
-							"stone"=>	kResItemType_stone,
-							"food"=>	kResItemType_food,
-							"metal"=>	kResItemType_metal,
-							"runes"=>	kResItemType_runes);
-$gItemType2Res = array_flip($gRes2ItemType);
-
-define("kItemFlag_NoPickup",		(1<<0)); // TODO : corpses/gibs
-define("kItemFlag_Invis",			(1<<1)); // TODO : implement me
-define("kItemFlag_GammelOnPickup",	(1<<2)); // TODO : test/use me
-define("kItemFlag_Ware",			(1<<3)); // warenuebersicht, kann von spio geklaut werden.
-//define("kItemFlag_XXX",			(1<<4)); // xxxx
-define("kItemFlag_UseOnPick",		(1<<5)); // call use function on pickup
-define("kItemFlag_UseGivesCost",	(1<<6)); // the cost times the amount is added to the army on use
-define("kItemFlag_AllSet",			(1<<8)-1); // (at least one above the others)-1
-
-$gItemFlagNames = array(kItemFlag_NoPickup=>		"NoPickup",
-						kItemFlag_Invis=>			"Invis", 
-						kItemFlag_GammelOnPickup=>	"GammelOnPickup",
-						kItemFlag_Ware=>			"Ware",
-						kItemFlag_UseOnPick=>		"UseOnPick",
-						kItemFlag_UseGivesCost=>	"UseGivesCost");
-
 
 // todo : cItem::ArmyPayItem -> link in army..
 

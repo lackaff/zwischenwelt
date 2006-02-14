@@ -65,30 +65,36 @@ class cInfoLager extends cInfoBuilding {
 		
 		$gc=getGuildCommander();
 		profile_page_start("lager.php");
+		
+		
 		$gArmies = cArmy::getMyArmies(false,$gUser);
+		$pillagearmies = array();
+		foreach($gArmies as $o) if(cArmy::hasPillageAttack($o->id)) $pillagearmies[] = $o;
+		
+		
 		rob_ob_start();
 		?>
 		
-		<?php if (count($gArmies) > 0) {?>
+		<?php if (count($pillagearmies) > 0) {?>
 			<?php /* ***** PILLAGE ***** */ ?>
 			<form method="post" action="<?=Query("?sid=?&x=?&y=?&do=lageraction&target=".$gObject->id)?>">
 			<?php $b = 1;foreach($gRes as $n=>$f){ echo'<INPUT TYPE="checkbox" NAME="restype[]" VALUE="'.$b.'" checked><img alt="'.$f.'" src="'.g("res_$f.gif").'">'; $b = $b << 1; } ?>
 			mit <SELECT NAME="army">
-			<?php foreach($gArmies as $o) if(cArmy::hasPillageAttack($o->id)) {?>
+			<?php foreach($pillagearmies as $o) {?>
 				<OPTION VALUE="<?=$o->id?>" <?=($o->id == $gUser->lastusedarmy)?"selected":""?>><?=$o->name?> (<?=$o->owner?>)</OPTION>
 			<?php }?>
 			</SELECT>
 			<input type="submit" name="pillage" value="plündern">
 			<input type="submit" name="deposit" value="einzahlen">
 			</form>
+		<?php }?>
 			
-			<?php /* ***** armyactions ***** */ ?>
-			<?php foreach ($gArmies as $o) if (sqlgetone("SELECT 1 FROM `armyaction` WHERE `cmd` = ".ARMY_ACTION_PILLAGE." AND `army` = ".$o->id." AND `param1` = ".$gObject->x." AND `param2` = ".$gObject->y)) {?>
-				<font color="red">soll mit <?=pos2txt($o->x,$o->y,$o->name)?> geplündert werden</font><br>
-			<?php }?>
-			<?php foreach ($gArmies as $o) if (sqlgetone("SELECT 1 FROM `armyaction` WHERE `cmd` = ".ARMY_ACTION_DEPOSIT." AND `army` = ".$o->id." AND `param1` = ".$gObject->x." AND `param2` = ".$gObject->y)) {?>
-				<font color="green">hier soll mit <?=pos2txt($o->x,$o->y,$o->name)?> eingezahlt werden</font><br>
-			<?php }?>
+		<?php /* ***** armyactions ***** */ ?>
+		<?php foreach ($gArmies as $o) if (sqlgetone("SELECT 1 FROM `armyaction` WHERE `cmd` = ".ARMY_ACTION_PILLAGE." AND `army` = ".$o->id." AND `param1` = ".$gObject->x." AND `param2` = ".$gObject->y)) {?>
+			<font color="red">soll mit <?=pos2txt($o->x,$o->y,$o->name)?> geplündert werden</font><br>
+		<?php }?>
+		<?php foreach ($gArmies as $o) if (sqlgetone("SELECT 1 FROM `armyaction` WHERE `cmd` = ".ARMY_ACTION_DEPOSIT." AND `army` = ".$o->id." AND `param1` = ".$gObject->x." AND `param2` = ".$gObject->y)) {?>
+			<font color="green">hier soll mit <?=pos2txt($o->x,$o->y,$o->name)?> eingezahlt werden</font><br>
 		<?php }?>
 		
 		<?php 
@@ -141,6 +147,7 @@ class cInfoLager extends cInfoBuilding {
 		<?php }?>
 		<?php profile_page_end(); 
 		
-		RegisterInfoTab("Waren",rob_ob_end(),10);
+		$content = trim(rob_ob_end());
+		if (!empty($content)) RegisterInfoTab("Waren",$content,10);
 	}
 }?>

@@ -147,6 +147,7 @@ function reactOnRequestGuild($user,$guild,$accept)
 //gets or puts (<0) something from the guild ressis
 function getFromGuild($user,$guild,$lumber,$stone,$food,$metal,$runes = 0)
 {
+	$debug = false;
 	global $gRes,$gSqlShowQueries;
 	//echo "getFromGuild($user,$guild,$lumber,$stone,$food,$metal,$runes)<br>";
 	sql("LOCK TABLES `phperror` WRITE,  `user` WRITE,`guild` WRITE,`newlog` WRITE,`sqlerror` WRITE, `guild_pref` WRITE");
@@ -167,12 +168,12 @@ function getFromGuild($user,$guild,$lumber,$stone,$food,$metal,$runes = 0)
 				$$f = -max(0,min(-intval($$f),$user->{$f},$guild->{"max_$f"}-$guild->{$f}));
 		}
 		
-		foreach($gRes as $n=>$f) echo $$f.","; echo "<br>";
+		if ($debug) {foreach($gRes as $n=>$f) echo $$f.","; echo "<br>";}
 		
 		$limit = getGPLimit($user->id);
 		if ($limit > 0) {
 			$cantake = max(0,$limit + $user->guildpoints);
-			echo "limit:$limit,cantake=$cantake,guildpoints=".$user->guildpoints."<br>";
+			if ($debug) echo "limit:$limit,cantake=$cantake,guildpoints=".$user->guildpoints."<br>";
 			foreach($gRes as $n=>$f) if($$f > 0) {
 				$$f = min($cantake,$$f);
 				$cantake -= $$f;

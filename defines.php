@@ -30,15 +30,6 @@ define("kTransCP","transcp.gif");
 
 define("kStats_dtime",60*60*12);
 
-$gResFields = array("lumber","stone","food","metal","runes");
-$gResNames = array("Holz","Stein","Nahrung","Metall","Runen");
-$gResTypeVars = Array(1 => "lumber",2 => "stone", 3 => "food", 4 => "metal", 5 => "runes");
-$gResTypeNames = Array(1 => "Holz",2 => "Stein", 3 => "Nahrung", 4 => "Metall", 5 => "Runen");
-
-//resource list
-$gRes = my_array_combine($gResNames,$gResFields);
-//list of things that can be done by people, worker adjustment
-$gAdjust = array_merge($gRes,array("Reparieren"=>"repair"));
 
 define("kProfileArmyLoop",true);
 define("kMapTileSize",25);

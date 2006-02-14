@@ -20,7 +20,6 @@ $form = new cTableEditForm("?sid=?&id=$f_id","Hellhole $f_id editieren",
 		new cTableEditRows(array(
 			new cTableEditTextField("hellhole","id",$f_id,"x","x"),
 			new cTableEditTextField("hellhole","id",$f_id,"y","y"),
-			new cTableEditTextField("hellhole","id",$f_id,"type","type"),
 			new cTableEditRadioField("hellhole","id",$f_id,"ai_type","ai_type",$ai_types),
 			new cTableEditTextField("hellhole","id",$f_id,"ai_data","ai_data"),
 			new cTableEditTextField("hellhole","id",$f_id,"lastupgrade","lastupgrade"),

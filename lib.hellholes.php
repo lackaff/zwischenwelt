@@ -68,7 +68,7 @@ class Hellhole_0 {
 	}
 	
 	// try to spawn a new monster
-	function SpawnMonster ($spawntype=-1) {
+	function SpawnMonster ($flags=false,$spawntype=-1) {
 		$monstercount = intval(sqlgetone("SELECT COUNT(*) FROM `army` WHERE `hellhole` = ".$this->id));
 		if ($this->type < 0) return false;
 		if ($monstercount >= $this->num) return false;
@@ -76,8 +76,9 @@ class Hellhole_0 {
 		global $gUnitType,$gRandomSpawnTypes;
 		if ($spawntype == -1) $spawntype = $this->type ? $this->type : $gRandomSpawnTypes[array_rand($gRandomSpawnTypes)];
 		$spawncount = $this->armysize + $this->level * $this->armysize/10;
+		if ($flags === false) $flags = kArmyFlag_Wander|kArmyFlag_RunToEnemy|kArmyFlag_AutoAttack;
 		$newmonster = cArmy::SpawnArmy($this->x,$this->y,cUnit::Simple($spawntype,$spawncount),
-			false,kArmyType_Normal,0,0,$this->id,true,kArmyFlag_Wander|kArmyFlag_RunToEnemy|kArmyFlag_AutoAttack);
+			false,kArmyType_Normal,0,0,$this->id,true,$flags);
 		if ($newmonster) echo "Spawned $spawncount ".$gUnitType[$spawntype]->name." at $newmonster->x,$newmonster->y <br>";
 		else echo "spawn of $spawncount ".$gUnitType[$spawntype]->name." failed<br>";
 		return $newmonster;
@@ -413,82 +414,145 @@ class Hellhole_2 extends Hellhole_0 {
 
 class Hellhole_3 extends Hellhole_0 {
 	function Hellhole_3 () {
-		// $this->spawndelay = 3600; // should be about one hour
-		$this->raid_rad = 100; // todo : unhardcode , choosing player buildings only within this range
-		$this->spread_rad = 100; // todo : unhardcode , max distance from found player building to silo
-		$this->spread_mindist = 20; // todo : unhardcode , ramme exits the base this many fields
-		$this->victim_minpts = 10000; // todo : unhardcode? // don't attack players below a certain limit
+		// $this->spawndelay = 3600; // should be about one hour, so the hellhole can abort siege-pillaging ants
+		$this->raid_rad = 100; // maximal-travel-radius for soldiers
+		$this->spread_rad = 40; // maximal travel-radius for king
+		$this->spread_mindist = 11; // minimum distance of new base to existing bases
+		$this->victim_minpts = 10000; // don't SPREAD near players below a certain limit
 	}
 	
 	function CheckSpreadPoint ($x,$y) {
-		$xylimit = "";
+		$r = $this->spread_mindist;
+		$xylimit = "`x` >= ".($x-$r)." AND `x` <= ".($x+$r)." AND `y` >= ".($y-$r)." AND `y` <= ".($y+$r);
 		if (sqlgetone("SELECT 1 FROM `hellhole` WHERE `ai_type` = ".intval($this->ai_type)." AND ".$xylimit." LIMIT 1")) return false;
-		$buildings = sqlgetonetable("SELECT `user` FROM `building` WHERE ".$xylimit." GROUP BY `user`");
-		foreach ($buildings as $o) 
-			if (sqlgetone("SELECT `general_pts` FROM `user` WHERE `id` = ".$o->user) < $this->victim_minpts) return false;
+		$users = sqlgetonetable("SELECT `user` FROM `building` WHERE ".$xylimit." GROUP BY `user`");
+		foreach ($users as $userid) 
+			if (sqlgetone("SELECT `general_pts` FROM `user` WHERE `id` = ".intval($userid)) < $this->victim_minpts) return false;
 		return true;
 	}
 	
+	function BuildNewHellhole ($king) {
+		global $gBuildingType;
+		if (!$king) return;
+		cArmy::DeleteArmy($king,true,"Ein neuer Ameisenbau wurde gegründet....");
+		
+		// DESIGN-PATTERN : PROTOTYPE =)
+		$oldbuilding = sqlgetobject("SELECT * FROM `building` WHERE `x` = ".intval($this->x)." AND `y` = ".intval($this->y));
+		if (!$oldbuilding) return;
+		
+		$newbuilding = $oldbuilding;
+		unset($newbuilding->id);
+		$newbuilding->x = $king->x;
+		$newbuilding->y = $king->y;
+		$newbuilding->hp = $gBuildingType[$newbuilding->type]->maxhp;
+		sql("INSERT INTO `building` SET ".obj2sql($newbuilding));
+		
+		$oldhellhole = sqlgetobject("SELECT * FROM `hellhole` WHERE `id` = ".intval($this->id));
+		if (!$oldhellhole) return;
+		
+		$newhellhole = $oldhellhole;
+		unset($newhellhole->id);
+		$newhellhole->x = $king->x;
+		$newhellhole->y = $king->y;
+		sql("INSERT INTO `hellhole` SET ".obj2sql($newhellhole));
+		
+		echo "Its a small step for an AntKing, but a great leap for Antinity !<br>";
+	}
+	
 	function Think () {
-		global $gUnitType;
+		global $gUnitType,$gRes2ItemType;
+		
+		// need to collect at least this many ressources before spreading
+		$this->spread_min_respoints = $gUnitType[$this->type]->last * $this->armysize * 10; // 10 runs
+		
+		$x = $this->x;
+		$y = $this->y;
 		
 		$time = time();
 		$this->spawntime = $time + $this->spawndelay;
 		sql("UPDATE `hellhole` SET `spawntime` = ".$this->spawntime." WHERE `id` = ".$this->id." LIMIT 1");
 		
-		$this->SpawnMonster();
-		
-		/*
-		$data = ($this->ai_data && $this->ai_data != "") ? explode(",",$this->ai_data) : false;
-		if ($data && count($data) < kHellHole1_Data_Count) $data = false;
-		$building = $data ? sqlgetobject("SELECT * FROM `building` WHERE `x` = ".intval($data[0])." AND `y` = ".intval($data[1])) : false;
-		if (!$building || $building->type != kBuilding_Silo) {
-			$building = $this->SearchNewTarget();
-			if (!$building) return;
-			$data = array($building->x,$building->y,0,0,0,kHellHole1_Mode_Plan); // initialize data
-			$this->SaveData($data);
-		}
-		
-		$dx = $data[0] - $this->x;
-		$dy = $data[1] - $this->y;
-		// first exit own base using pathfinding
-		$exitbase_pos = array($this->x,$this->y);
-		if ($dx != 0) $exitbase_pos[0] += (($dx>0)?1:-1)*$this->out_of_base_rad;
-		if ($dy != 0) $exitbase_pos[1] += (($dy>0)?1:-1)*$this->out_of_base_rad;
-		// one step bevore the target, ramme clears path to this point and raiders go here to pillage
-		if (abs($dx) > abs($dy))
-				$epos = array($data[0]+(($dx>0)?-1:1),$data[1]);
-		else	$epos = array($data[0],$data[1]+(($dy>0)?-1:1));
-		// returnpoint for the raiders, one step in direction of target
-		if (abs($dx) > abs($dy))
-				$returnpos = array($this->x+(($dx>0)?1:-1),$this->y);
-		else	$returnpos = array($this->x,$this->y+(($dy>0)?1:-1));
-		
-		// check reachability, reset target if not reachable
-		if ($data[kHellHole1_Data_Mode] == kHellHole1_Mode_Plan) {
-			// check way to target, and way back
-			$movablemask = intval($gUnitType[$this->type]->movable_flag) & intval($gUnitType[$this->type2]->movable_flag);
-			if (!Reachable($exitbase_pos[0],$exitbase_pos[1],$epos[0],$epos[1],$movablemask,false) ||
-				!Reachable($epos[0],$epos[1],$exitbase_pos[0],$exitbase_pos[1],$movablemask,false)) 
-				{ $this->SaveData(); return; } // target unreachable
-			$data[kHellHole1_Data_Mode] = kHellHole1_Mode_Siege;
-			echo "target reachability verifyed<br>";
-		}
-		
-		*/
-		
-		/*
-		// increment think counter
-		if (++$data[kHellHole1_Data_ThinkCount] > $this->maxcount_think)
-			 { $this->SaveData(); return; }
-		else   $this->SaveData($data);
-		*/
-		
+		$this->SpawnMonster(
+			kArmyFlag_Wander		|
+			kArmyFlag_RunToEnemy	|
+			kArmyFlag_AutoAttack	|
+			kArmyFlag_HarvestForest	| // they sure are hungry ...
+			kArmyFlag_HarvestRubble	|
+			kArmyFlag_HarvestField	|
+			kArmyFlag_AlwaysCollectItems| // finders keepers ;)
+			kArmyFlag_AutoSiege		| // deactivated for abort and return
+			kArmyFlag_SiegePillage
+			);
+			
 		// list troups
 		$king = false;
-		$monsters = sqlgettable("SELECT * FROM `army` WHERE `hellhole` = ".$this->id." ORDER BY `id`");
-		foreach ($monsters as $o) if (cUnit::GetUnitsMaxType(cUnit::GetUnits($o->id)) == $this->type2) {$king = $o;break;}
+		$monsters = sqlgettable("SELECT * FROM `army` WHERE `hellhole` = ".$this->id);
+		foreach ($monsters as $k => $o) $monsters[$k]->units = cUnit::GetUnits($o->id);
+		foreach ($monsters as $o) if (cUnit::GetUnitsMaxType($o->units) == $this->type2) {$king = $o;break;}
+		
+		// king-code
+		$kingtick = true; // todo : only every x hours...
+		if ($kingtick) {
+			if (!$king) {
+				if (count($gRes2ItemType) > 0)
+						$myresitems = sqlgettable("SELECT * FROM `item` WHERE `x` = ".intval($x)." AND `y` = ".intval($y)." AND `type` IN (".implode(",",$gRes2ItemType).")");
+				else	$myresitems = array();
+				shuffle($myresitems);
+				$myrespoints = 0;
+				foreach ($myresitems as $o) $myrespoints += $o->amount;
+				
+				echo "respoints : ".kplaintrenner($myrespoints)." / ".kplaintrenner($this->spread_min_respoints)."<br>";
+		
+				if ($myrespoints > $this->spread_min_respoints) {
+					echo "create a king<br>";
+						
+					// create a king
+					$kingflags = kArmyFlag_AutoAttack | kArmyFlag_Wander;
+					$king = cArmy::SpawnArmy($x,$y,cUnit::Simple($this->type2,$this->armysize2),
+										false,kArmyType_Normal,0,0,$this->id,true,$kingflags);
+					
+					if ($king) {
+						echo "Long live the AntKing !<br>";
+						// load him full of ressources
+						foreach ($myresitems as $o) 			
+							cItem::pickupItem($o,$king->id,-1,true);
+						// let him run around for a while, and try to send him every following kingtick
+					}
+				} else {
+					echo "Still hungry for more ressources...<br>";
+				}
+			} else if ($king) {
+				if (intval($king->flags) & kArmyFlag_Wander) {
+					// the king is still around the base, try to send him away
+					echo "time to boldly go, where no AntKing has gone before...<br>";
+					
+					// pick random location
+					$dist = rand ( $this->spread_mindist , $this->spread_rad );
+					$ang = 2.0 * M_PI * ((float)rand() / (float)getrandmax());
+					$tx = round($x + $dist * sin($ang));
+					$ty = round($y + $dist * cos($ang));
 			
+					// check if the location is ok and reachable
+					if ($this->CheckSpreadPoint($tx,$ty)) {
+						$reachable = Reachable($king->x,$king->y,$tx,$y,$gUnitType[$this->type2]->movable_flag,true,true);
+						if ($reachable === true) {
+							echo "and onward he went...<br>";
+							
+							// and send him on his way
+							cArmy::ArmySetWaypoint($king,$tx,$ty);
+							
+							// dont wander anymore, also used for checking if he is on his way
+							$king->flags = $king->flags & (~kArmyFlag_Wander);
+							sql("UPDATE `army` SET `flags` = ".intval($king->flags)." WHERE `id` = ".intval($king->id));
+						}
+					}
+				} else if (!sqlgetone("SELECT 1 FROM `waypoint` WHERE `army` = ".$king->id)) {
+					// the king has arrived ;)
+					echo "HOMERUN !!!<br>";
+					$this->BuildNewHellhole($king);
+				}
+			}
+		}
 	}
 }
 

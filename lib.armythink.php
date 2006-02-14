@@ -153,7 +153,7 @@ function ArmyThink ($army,$debug=false) {
 		}
 		
 		// worker : autogive :
-		if (count($near_armies) > 0 && $army->flags & kArmyFlag_AutoGive_Own|kArmyFlag_AutoGive_Guild|kArmyFlag_AutoGive_Friend) {
+		if (count($near_armies) > 0 && ($army->flags & (kArmyFlag_AutoGive_Own|kArmyFlag_AutoGive_Guild|kArmyFlag_AutoGive_Friend))) {
 			if (kProfileArmyLoop) LoopProfiler("armyloop:autogive");
 			if ($debug) echo "attempting autogive<br>";
 			foreach ($near_armies as $o) {

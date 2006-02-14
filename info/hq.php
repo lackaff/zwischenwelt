@@ -59,10 +59,12 @@ class cInfoHQ extends cInfoBuilding {
 				}
 			break;
 			case "hqdiplo":
-				if (isset($f_remove)) {
+				if (isset($f_remove_friend)) {
 					$f_sel_friend = intarray(isset($f_sel_friend)?$f_sel_friend:false);
-					$f_sel_enemy = intarray(isset($f_sel_enemy)?$f_sel_enemy:false);
 					foreach ($f_sel_friend as $uid)	SetFOF($gUser->id,intval($uid),kFOF_Neutral);
+				}
+				if (isset($f_remove_enemy)) {
+					$f_sel_enemy = intarray(isset($f_sel_enemy)?$f_sel_enemy:false);
 					foreach ($f_sel_enemy as $uid)	SetFOF($gUser->id,intval($uid),kFOF_Neutral);
 				}
 				if (isset($f_accept)) {
@@ -329,7 +331,7 @@ class cInfoHQ extends cInfoBuilding {
 			$tip[] = "eine neue Stufe bringt genausoviel wie ein neues Gebäude";
 			$tip[] = "je höher die Stufe, desto teurer das Upgraden";
 			$tip[] = "es können beliebig viele Gebäude gleichzeitig aufgesfuft werden";
-			$tip[] = "die Stufe von deinem Haupthaus bestimmt, wie die Gebäude aufgestuft werden können";
+			$tip[] = "die Stufe von deinem Haupthaus bestimmt, wie hoch die Gebäude aufgestuft werden können";
 			$tip[] = "in der <a href=\"".Query("summary_buildings.php?sid=?")."\">Gebäudeübersicht</a> kann man viele Upgrades auf einmal planen";
 		}
 		
@@ -583,103 +585,100 @@ class cInfoHQ extends cInfoBuilding {
 		rob_ob_start();
 		?>
 		
+		<form method="post" action="<?=Query("?sid=?&x=?&y=?")?>">
+		<input type="hidden" name="building" value="hq">
+		<input type="hidden" name="do" value="hqdiplo">
+		<input type="hidden" name="id" value="<?=$gObject->id?>">
+			
 		<table><tr>
 		
 		<?php $count = 0; foreach ($friend_offers as $o) if (!in_array($o->id,$friendids)) $count++; ?>
 		<?php if ($count > 0) {?>
 			<td valign="top">
-			<form method="post" action="<?=Query("?sid=?&x=?&y=?")?>">
-			<input type="hidden" name="building" value="hq">
-			<input type="hidden" name="do" value="hqdiplo">
-			<input type="hidden" name="id" value="<?=$gObject->id?>">
 				<table>
-				<tr><th>Freundschafts angebote</th></tr>
+				<tr><th>Freundschafts-angebote</th></tr>
 				<tr><td valign="top">
-					<?php if (count($friend_offers)) {?>
-						<?php /*Freunde*/ ?>
-						<table>
+					<table>
+					<tr>
+						<th><input type="checkbox" name="dummy" value="1" onChange="setallchecks('sel_friendoffer[]',this.checked)"></th>
+						<th>Name</th>
+						<th>Pos</th>
+						<th>Punkte</th>
+					</tr>
+					<?php foreach ($friend_offers as $o) if (!in_array($o->id,$friendids)) {?>
 						<tr>
-							<th><input type="checkbox" name="dummy" value="1" onChange="setallchecks('sel_friendoffer[]',this.checked)"></th>
-							<th>Name</th>
-							<th>Pos</th>
-							<th>Punkte</th>
+							<td><input type="checkbox" name="sel_friendoffer[]" value="<?=$o->id?>"></td>
+							<td><?=usermsglink($o)?></td>
+							<td><?=opos2txt(sqlgetobject("SELECT * FROM `building` WHERE `type` = ".kBuilding_HQ." AND `user` = ".$o->id))?></td>
+							<td align="right"><?=kplaintrenner($o->general_pts+$o->army_pts)?></td>
 						</tr>
-						<?php foreach ($friend_offers as $o) if (!in_array($o->id,$friendids)) {?>
-							<tr>
-								<td><input type="checkbox" name="sel_friendoffer[]" value="<?=$o->id?>"></td>
-								<td><?=usermsglink($o)?></td>
-								<td><?=opos2txt(sqlgetobject("SELECT * FROM `building` WHERE `type` = ".kBuilding_HQ." AND `user` = ".$o->id))?></td>
-								<td align="right"><?=$o->general_pts+$o->army_pts?></td>
-							</tr>
-						<?php } // endforeach?>
-						</table>
-					<?php } // endif nonempty?>
+					<?php } // endforeach?>
+					</table>
 				</td></tr>
 				</table>
 				<input type="submit" name="accept" value="annehmen">
 				<input type="submit" name="reject_friend" value="ablehnen">
-			</form>
 			</td>
 		<?php } // endif not all empty?>
 				
 				
-		<?php if (count($friends) == 0 && count($enemies) == 0) {?>
-		<?php } else { // endif not all empty?>
+		<?php if (count($friends) > 0) {?>
 			<td valign="top">
-			<form method="post" action="<?=Query("?sid=?&x=?&y=?")?>">
-			<input type="hidden" name="building" value="hq">
-			<input type="hidden" name="do" value="hqdiplo">
-			<input type="hidden" name="id" value="<?=$gObject->id?>">
 				<table>
-				<tr><th>Freunde</th><th><?=count($enemies)?"Feinde":""?></th></tr>
+				<tr><th>Freunde</th></tr>
 				<tr><td valign="top">
-					<?php if (count($friends)) {?>
-						<?php /*Freunde*/ ?>
-						<table>
+					<table>
+					<tr>
+						<th><input type="checkbox" name="dummy" value="1" onChange="setallchecks('sel_friend[]',this.checked)"></th>
+						<th>Name</th>
+						<th>Pos</th>
+						<th>Punkte</th>
+					</tr>
+					<?php foreach ($friends as $o) {?>
 						<tr>
-							<th><input type="checkbox" name="dummy" value="1" onChange="setallchecks('sel_friend[]',this.checked)"></th>
-							<th>Name</th>
-							<th>Pos</th>
-							<th>Punkte</th>
+							<td><input type="checkbox" name="sel_friend[]" value="<?=$o->id?>"></td>
+							<td><?=usermsglink($o)?><?=GetFOF($o->id,$gUser->id)==kFOF_Friend?"":"<font color='#0088FF'>(einseitig)</font>"?></td>
+							<td><?=opos2txt(sqlgetobject("SELECT * FROM `building` WHERE `type` = ".kBuilding_HQ." AND `user` = ".$o->id))?></td>
+							<td align="right"><?=kplaintrenner($o->general_pts+$o->army_pts)?></td>
 						</tr>
-						<?php foreach ($friends as $o) {?>
-							<tr>
-								<td><input type="checkbox" name="sel_friend[]" value="<?=$o->id?>"></td>
-								<td><?=usermsglink($o)?><?=GetFOF($o->id,$gUser->id)==kFOF_Friend?"":"<font color='#0088FF'>(einseitig)</font>"?></td>
-								<td><?=opos2txt(sqlgetobject("SELECT * FROM `building` WHERE `type` = ".kBuilding_HQ." AND `user` = ".$o->id))?></td>
-								<td align="right"><?=$o->general_pts+$o->army_pts?></td>
-							</tr>
-						<?php } // endforeach?>
-						</table>
-					<?php } // endif nonempty?>
-				</td><td valign="top">
-					<?php if (count($enemies)) {?>
-						<?php /*Feinde*/ ?>
-						<table>
-						<tr>
-							<th><input type="checkbox" name="dummy" value="1" onChange="setallchecks('sel_enemy[]',this.checked)"></th>
-							<th>Name</th>
-							<th>Pos</th>
-							<th>Punkte</th>
-						</tr>
-						<?php foreach ($enemies as $o) {?>
-							<tr>
-								<td><input type="checkbox" name="sel_enemy[]" value="<?=$o->id?>"></td>
-								<td><?=usermsglink($o)?></td>
-								<td><?=opos2txt(sqlgetobject("SELECT * FROM `building` WHERE `type` = ".kBuilding_HQ." AND `user` = ".$o->id))?></td>
-								<td align="right"><?=$o->general_pts+$o->army_pts?></td>
-							</tr>
-						<?php } // endforeach?>
-						</table>
-					<?php } // endif nonempty?>
+					<?php } // endforeach?>
+					</table>
 				</td></tr>
 				</table>
-				<input type="submit" name="remove" value="entfernen">
-			</form>
+				<input type="submit" name="remove_friend" value="entfernen">
 			</td>
-		<?php } // endif not all empty ?>
+		<?php }?>
+		
+		<?php if (count($enemies) > 0) {?>
+			<td valign="top">
+				<table>
+				<tr><th>Feinde</th></tr>
+				<tr><td valign="top">
+					<table>
+					<tr>
+						<th><input type="checkbox" name="dummy" value="1" onChange="setallchecks('sel_enemy[]',this.checked)"></th>
+						<th>Name</th>
+						<th>Pos</th>
+						<th>Punkte</th>
+					</tr>
+					<?php foreach ($enemies as $o) {?>
+						<tr>
+							<td><input type="checkbox" name="sel_enemy[]" value="<?=$o->id?>"></td>
+							<td><?=usermsglink($o)?></td>
+							<td><?=opos2txt(sqlgetobject("SELECT * FROM `building` WHERE `type` = ".kBuilding_HQ." AND `user` = ".$o->id))?></td>
+							<td align="right"><?=kplaintrenner($o->general_pts+$o->army_pts)?></td>
+						</tr>
+					<?php } // endforeach?>
+					</table>
+				</td></tr>
+				</table>
+				<input type="submit" name="remove_enemy" value="entfernen">
+			</td>
+		<?php }?>
 		
 		</tr></table>
+		</form>
+		
 		<?php
 		return rob_ob_end();
 	}

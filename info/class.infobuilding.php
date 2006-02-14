@@ -50,7 +50,8 @@ class cInfoBuilding extends cInfoBase {
 		if (cTransfer::has_armytransfer($this,false)) {
 			rob_ob_start();
 			cTransfer::display_armytransfer($this,false);
-			RegisterInfoTab("Truppen",rob_ob_end(),3);
+			$content = trim(rob_ob_end());
+			if (!empty($content)) RegisterInfoTab("Truppen",$content,3);
 			
 			// kampfsim link in jedem gebäude in dem man KAMPF-einheiten produzieren kann
 			$units = $this->producable_units();

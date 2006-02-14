@@ -246,6 +246,7 @@ define("kArmyFlag_AutoPillageOff",			(1<<25)); // systemflag
 define("kArmyFlag_HoldFire",				(1<<26)); // dont'shoot, so we can move
 define("kArmyFlag_AutoShoot_Enemy",			(1<<27));
 define("kArmyFlag_AutoShoot_Strangers",		(1<<28));
+define("kArmyFlag_SiegePillage",			(1<<29)); // army steals ressources while pillaging (used for ants)
 define("kArmyFlag_AllSet",					(1<<30)-1); // (at least one above the others)-1
 $gArmyFlagNames = array(
 	kArmyFlag_GuildCommand=>			"unter Gildenkommando",
@@ -277,6 +278,7 @@ $gArmyFlagNames = array(
 	kArmyFlag_AutoShoot_Enemy => 		"Automatisch auf Feinde schiessen",
 	kArmyFlag_AutoShoot_Strangers => 	"Automatisch auf Fremde schiessen",
 	kArmyFlag_HoldFire => 				"Feuer einstellen (während dem Schiessen ist man unbeweglich)",
+	kArmyFlag_SiegePillage => 			"Armee erbeutet beim belagern Baumaterial (Ameisen)",
 	);
 	
 	
@@ -370,6 +372,9 @@ $gUnitFlagName = array(
 	kUnitFlag_Undead=>"Untot",
 	);
 			
+			
+			
+			
 // items
 
 define("kItem_Portalstein_Blau",30);
@@ -382,11 +387,48 @@ define("kItem_Amboss",101);
 define("kItem_Stiefel",102);
 define("kItem_Spam",103);
 
+
+$gResFields = array("lumber","stone","food","metal","runes");
+$gResNames = array("Holz","Stein","Nahrung","Metall","Runen");
+$gResTypeVars = Array(1 => "lumber",2 => "stone", 3 => "food", 4 => "metal", 5 => "runes");
+$gResTypeNames = Array(1 => "Holz",2 => "Stein", 3 => "Nahrung", 4 => "Metall", 5 => "Runen");
+
+//resource list
+$gRes = my_array_combine($gResNames,$gResFields);
+//list of things that can be done by people, worker adjustment
+$gAdjust = array_merge($gRes,array("Reparieren"=>"repair"));
+
 define("kResItemType_lumber","44");
 define("kResItemType_stone","45");
 define("kResItemType_food","46");
 define("kResItemType_metal","47");
 define("kResItemType_runes","48");
+
+$gRes2ItemType = array(	"lumber"=>	kResItemType_lumber,
+						"stone"=>	kResItemType_stone,
+						"food"=>	kResItemType_food,
+						"metal"=>	kResItemType_metal,
+						"runes"=>	kResItemType_runes);
+$gItemType2Res = array_flip($gRes2ItemType);
+
+define("kItemFlag_NoPickup",		(1<<0)); // TODO : corpses/gibs
+define("kItemFlag_Invis",			(1<<1)); // TODO : implement me
+define("kItemFlag_GammelOnPickup",	(1<<2)); // TODO : test/use me
+define("kItemFlag_Ware",			(1<<3)); // warenuebersicht, kann von spio geklaut werden.
+//define("kItemFlag_XXX",			(1<<4)); // xxxx
+define("kItemFlag_UseOnPick",		(1<<5)); // call use function on pickup
+define("kItemFlag_UseGivesCost",	(1<<6)); // the cost times the amount is added to the army on use
+define("kItemFlag_AllSet",			(1<<8)-1); // (at least one above the others)-1
+
+$gItemFlagNames = array(kItemFlag_NoPickup=>		"NoPickup",
+						kItemFlag_Invis=>			"Invis", 
+						kItemFlag_GammelOnPickup=>	"GammelOnPickup",
+						kItemFlag_Ware=>			"Ware",
+						kItemFlag_UseOnPick=>		"UseOnPick",
+						kItemFlag_UseGivesCost=>	"UseGivesCost");
+
+
+
 
 // quests
 

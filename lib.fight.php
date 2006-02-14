@@ -179,6 +179,8 @@ class cFight {
 			}
 		}
 		
+		if ($attackertype == kUnitContainer_Army && (intval($attackerobj->flags) & kArmyFlag_HoldFire)) return false;
+		
 		// now choose where to shoot next (go for most damage, to use different unit types effectively)
 		$found_maxdmg = 0;
 		$found_shooting = false;
