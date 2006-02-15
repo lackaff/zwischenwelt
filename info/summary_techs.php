@@ -78,6 +78,7 @@ if (isset($f_techs)) {
 	$timetip = "Restzeit des derzeit lauffenden Upgrades";
 	$techgroups = array();
 	$btypes = array();
+	$btypes[] = 0;
 	// buildingtype,buildinglevel,group,name,descr,
 	// basecost_lumber,basecost_stone,basecost_food,basecost_metal,basecost_runes,basetime
 	// maxlevel,increment,req_tech,req_geb,gfx
@@ -89,15 +90,19 @@ if (isset($f_techs)) {
 	foreach ($btypes as $btype) {
 		$countplanner = 0;
 		if (!isset($f_selbtype)) $f_selbtype = $btype;
-		$cond = "`type` = ".intval($btype)." AND `user` = ".intval($gUser->id);
-		$highest_building = sqlgetobject("SELECT * FROM `building` WHERE ".$cond." ORDER BY `level` DESC LIMIT 1");
-		$x = $highest_building ? $highest_building->x : 0;
-		$y = $highest_building ? $highest_building->y : 0;
-		$bcount = sqlgetone("SELECT COUNT(*) FROM `building` WHERE ".$cond);
+		if ($btype != 0) {
+			$cond = "`type` = ".intval($btype)." AND `user` = ".intval($gUser->id);
+			$highest_building = sqlgetobject("SELECT * FROM `building` WHERE ".$cond." ORDER BY `level` DESC LIMIT 1");
+			$x = $highest_building ? $highest_building->x : 0;
+			$y = $highest_building ? $highest_building->y : 0;
+			$bcount = sqlgetone("SELECT COUNT(*) FROM `building` WHERE ".$cond);
+		}
 		rob_ob_start();
 		?>
-		<?=($bcount>0)?($bcount." Gebäude von diesem Typ"):"<font color='red'>Noch kein Gebäude von diesem Typ</font>"?><br>
-		<?=$highest_building?("Höchstes Gebäude von diesem Typ hat Stufe <b>".$highest_building->level."</b> bei ".oposinfolink($highest_building)):""?>
+		<?php if ($btype != 0) {?>
+			<?=($bcount>0)?($bcount." Gebäude von diesem Typ"):"<font color='red'>Noch kein Gebäude von diesem Typ</font>"?><br>
+			<?=$highest_building?("Höchstes Gebäude von diesem Typ hat Stufe <b>".$highest_building->level."</b> bei ".oposinfolink($highest_building)):""?>
+		<?php } // endif?>
 		<form method="post" action="<?=Query("?sid=?&selbtype=".$btype)?>">
 			<table border=1 cellspacing=0>
 			<tr>
@@ -109,10 +114,14 @@ if (isset($f_techs)) {
 				<th><img src="<?=g("sanduhrklein.gif")?>" alt="<?=$timetip?>" title="<?=$timetip?>"></th>
 				<th>geplant bis</th>
 			</tr>
-			<?php foreach ($techtypes as $o) if ($o->buildingtype == $btype) {?>
+			<?php foreach ($techtypes as $o) if ($o->buildingtype == $btype || $btype == 0) {?>
 				<?php
-				$detaillink = Query("info.php?sid=?&x=".$x."&y=".$y."&infotechtype=".$o->id);
 				$curlevel = GetTechnologyLevel($o->id);
+				$cond = "`type` = ".intval($o->buildingtype)." AND `user` = ".intval($gUser->id);
+				$highest_building = sqlgetobject("SELECT * FROM `building` WHERE ".$cond." ORDER BY `level` DESC LIMIT 1");
+				$x = $highest_building ? $highest_building->x : 0;
+				$y = $highest_building ? $highest_building->y : 0;
+				$detaillink = Query("info.php?sid=?&x=".$x."&y=".$y."&infotechtype=".$o->id);
 				$hasreq = $highest_building && $highest_building->level >= $o->buildinglevel && HasReq($o->req_geb,$o->req_tech,$gUser->id,$curlevel+1);
 				$tech = GetTechnologyObject($o->id);
 				$plannedbuilding = false;
@@ -182,7 +191,9 @@ if (isset($f_techs)) {
 			<input type="submit" name="techs" value="speichern">
 		</form>
 		<?php
-		$header = "<img src=\"".GetBuildingPic($btype,$gUser)."\">";
+		if ($btype == 0)
+				$header = "<img border=0 src=\"".g("tool_look.png")."\" alt=\"komplette Liste\" title=\"komplette Liste\">";
+		else	$header = "<img src=\"".GetBuildingPic($btype,$gUser)."\">";
 		$mytabs[$btype] = array($header,rob_ob_end());
 	}
 	
@@ -190,7 +201,8 @@ if (isset($f_techs)) {
 ?>
 
 <a href="<?=query("techgraphpart.php?sid=?")?>">[Technologiebaum durchsuchen]</a><br>
-<a target="_blank" href="../tmp/tech.png">[ganzen Technologiebaum anzeigen]</a>
+<a target="_blank" href="../tmp/tech.png">[ganzen Technologiebaum anzeigen]</a><br>
+Der Punkt "nächstes Upgrade" stellt die Kosten vom nächsten Upgrade dar, das kommt nach dem alle geplanten fertig sind.<br>
 
 </body>
 </html>
