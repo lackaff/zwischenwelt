@@ -142,7 +142,7 @@ Array
 
         )
 
-)
+)HasReq
 */
 
 function SetTechnologyUpgrades($typeid,$buildingid,$num) {
@@ -156,7 +156,7 @@ function SetTechnologyUpgrades($typeid,$buildingid,$num) {
 	if (!$building) return;
 
 	if (intval($building->level) < intval($techtype->buildinglevel)) return;
-	if (!HasReq($techtype->req_geb,$techtype->req_tech,$tech->level+1)) return;
+	if (!HasReq($techtype->req_geb,$techtype->req_tech,$building->user,$tech->level+1)) return;
 
 	// if ($tech->upgradetime && $tech->upgrades > 0 && $tech->upgradebuilding != $building->id) return;
 	
@@ -190,8 +190,8 @@ function GetTechnologyObject ($typeid,$userid=0) {
 
 // does a user fullfill some requirements ?
 // $req_tech,$req_geb are arrays, output from ParseReq, or the strings from technologytype
-// $techlevel is the level of the technology/building to check reqs for (ie. 15 if you have leel 14)
-function HasReq ($req_geb,$req_tech,$userid=0,$inclevel=0,$techlevel=255) {
+// $techlevel is the level of the technology/building to check reqs for (ie. 15 if you have level 14)
+function HasReq ($req_geb,$req_tech,$userid=0,$techlevel=255) {
 	global $gUser;
 	if ($userid == 0) $userid = $gUser->id;
 	$req_tech = (is_string($req_tech) && !empty($req_tech)) ? ParseReqForATechLevel($req_tech, $techlevel) : array();
@@ -199,15 +199,15 @@ function HasReq ($req_geb,$req_tech,$userid=0,$inclevel=0,$techlevel=255) {
 
 	// check technologies
 	if(sizeof($req_tech)>0)foreach ($req_tech as $type => $o)
-	if (($o->ismax == 0 && GetTechnologyLevel($type,$userid) < floor(abs($o->level) + $o->inc*$inclevel)) ||
-		($o->ismax != 0 && GetTechnologyLevel($type,$userid) > floor(abs($o->level) + $o->inc*$inclevel)) ){
+	if (($o->ismax == 0 && GetTechnologyLevel($type,$userid) < abs($o->level)) ||
+		($o->ismax != 0 && GetTechnologyLevel($type,$userid) > abs($o->level)) ){
 		return false;
 	}
 	
 	// check buildings
 	if(sizeof($req_geb)>0)foreach ($req_geb as $type => $o){
-		if (($o->ismax == 0 && GetMaxBuildingLevel($type,$userid) < floor(abs($o->level) + $o->inc*$inclevel)) ||
-			($o->ismax != 0 && GetMaxBuildingLevel($type,$userid) > floor(abs($o->level) + $o->inc*$inclevel)) ){
+		if (($o->ismax == 0 && GetMaxBuildingLevel($type,$userid) < abs($o->level)) ||
+			($o->ismax != 0 && GetMaxBuildingLevel($type,$userid) > abs($o->level)) ){
 			return false;
 		}
 	}

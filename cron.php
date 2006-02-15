@@ -717,19 +717,32 @@ sql("LOCK TABLES `user` WRITE,`technology` WRITE,`building` READ,`phperror` WRIT
 $technologies = sqlgettable("SELECT * FROM `technology` WHERE `upgrades` > 0 ORDER BY `level`");
 $time = time();
 foreach ($technologies as $o) {
-	if ($o->upgradetime > 0 && ($o->upgradetime < $time || kZWTestMode)) {
+	if ($o->upgradetime > 0 && ($o->upgradetime < $time || kZWTestMode) ){
 		// upgrade finished
-		sql("UPDATE `technology` SET
-			`level` = `level` + 1 ,
-			`upgrades` = `upgrades` - 1 ,
-			`upgradetime` = 0 WHERE `id` = ".$o->id." LIMIT 1");
+
+		//only complete the tech if requirenments meet
+		//echo "<br>\nHasReq(".($gTechnologyType[$o->type]->req_geb).",".($gTechnologyType[$o->type]->req_tech).",".($o->user).",".($o->level+1).")<br>\n";
+		if(HasReq($gTechnologyType[$o->type]->req_geb,$gTechnologyType[$o->type]->req_tech,$o->user,$o->level+1)){
+			sql("UPDATE `technology` SET
+				`level` = `level` + 1 ,
+				`upgrades` = `upgrades` - 1 ,
+				`upgradetime` = 0 WHERE `id` = ".$o->id." LIMIT 1");
+				
+			$gTechnologyLevelsOfAllUsers[$o->user][$o->type] = $o->level + 1;
 			
-		$text = $gTechnologyType[$o->type]->name." von user ".$o->user." ist nun Level ".($o->level+1);
-		echo $text."<br>\n";
-		
-		// TODO : neue log meldung machen !
-		LogMe($o->user,NEWLOG_TOPIC_BUILD,NEWLOG_UPGRADE_FINISHED,0,0,$o->level+1,$gBuildingType[$o->type]->name,"",false);
-		
+			$text = $gTechnologyType[$o->type]->name." von user ".$o->user." ist nun Level ".($o->level+1);
+			echo $text."<br>\n";
+			
+			// TODO : neue log meldung machen !
+			LogMe($o->user,NEWLOG_TOPIC_BUILD,NEWLOG_UPGRADE_FINISHED,0,0,$o->level+1,$gBuildingType[$o->type]->name,"",false);
+		} else {
+			sql("UPDATE `technology` SET
+				`upgrades` = 0 ,
+				`upgradetime` = 0 WHERE `id` = ".$o->id." LIMIT 1");
+				
+			$text = $gTechnologyType[$o->type]->name." von user ".$o->user." wurde abgebrochen, da die anforderungen nicht erfüllt wurden";
+			echo $text."<br>\n";
+		}
 	} else if ($o->upgradetime == 0) {
 		// test if upgrade can be started
 		

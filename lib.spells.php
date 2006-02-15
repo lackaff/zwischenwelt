@@ -10,7 +10,7 @@ function GetPossibleSpells ($userid=0,$groupbytarget=false) {
 	if ($userid == 0) $userid = $gUser->id;
 	$candospells = array();
 	foreach ($gSpellType as $spelltype) {
-		if (HasReq($spelltype->req_building,$spelltype->req_tech,$userid,0)) { // TODO : replace 0 by current spell-tech level ?
+		if (HasReq($spelltype->req_building,$spelltype->req_tech,$userid)) { // TODO : replace 0 by current spell-tech level ?
 			if ($groupbytarget) 
 					$group = $spelltype->target;
 			else	$group = $spelltype->primetech ? $gTechnologyType[$spelltype->primetech]->group : 0;
@@ -181,7 +181,7 @@ class Spell {
 			
 			// check tech
 			// todo : replace last 0 by current spell-tech level ?
-			if (!HasReq($spelltype->req_building,$spelltype->req_tech,$owner,0)) {
+			if (!HasReq($spelltype->req_building,$spelltype->req_tech,$owner)) {
 				echo "Technologie nicht erreicht<br>";
 				return false;
 			}
