@@ -19,7 +19,8 @@ $flaglist = array(
 	"LogFrame anzeigen?" => kUserFlags_ShowLogFrame,
 	"WikiHilfe ausblenden" => kUserFlags_DontShowWikiHelp,
 	"Monsterkampfberichte entfernen" => kUserFlags_NoMonsterFightReport,
-	"bei neuen Gebäuden automatisch Upgrades planen" => kUserFlags_AutomaticUpgradeBuildingTo
+	"bei neuen Gebäuden automatisch Upgrades planen" => kUserFlags_AutomaticUpgradeBuildingTo,
+	"NoobTips ausblenden" => kUserFlags_DontShowNoobTip
 );
 
 profile_page_start("profile.php");

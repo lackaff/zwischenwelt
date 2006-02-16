@@ -264,7 +264,7 @@ class cInfoHQ extends cInfoBuilding {
 		?>
 		
 		
-		<?php $this->PrintTips(); ?>
+		<?php if(($gUser->flags & kUserFlags_DontShowNoobTip)==0)$this->PrintTips(); ?>
 		
 		<?php
 		return rob_ob_end();

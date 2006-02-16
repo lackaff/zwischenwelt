@@ -137,6 +137,7 @@ define("kUserFlags_ShowLogFrame",8);
 define("kUserFlags_DontShowWikiHelp",16);
 define("kUserFlags_NoMonsterFightReport",32);
 define("kUserFlags_AutomaticUpgradeBuildingTo",64);
+define("kUserFlags_DontShowNoobTip",128);
 
 define("kDiplo_BreakFriendOnAttack","diplo_breakfriendonattack");
 
