@@ -195,7 +195,7 @@ function renderMinimap($top,$left,$bottom,$right,$filename,$mode="normal",$segme
 							$color = $color_nonplayer;
 						else {
 							$myuser = $gAllUsers[$x->user];
-							if (isset($f_mode) && $f_mode == "guild") {
+							if (isset($mode) && $mode == "guild") {
 								if ($myuser->guild > 0 && isset($gAllGuilds[$myuser->guild])) 
 										$color = $gAllGuilds[$myuser->guild]->imgcolor;
 								else	$color = $color_no_guild;
