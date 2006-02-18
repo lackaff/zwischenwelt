@@ -245,7 +245,7 @@ function ArmyThink ($army,$debug=false) {
 	// AutoDeposit
 	if (($army->flags & kArmyFlag_AutoDeposit) && !($army->flags & kArmyFlag_BuildingWait)) {
 		if (kProfileArmyLoop) LoopProfiler("armyloop:AutoDeposit");
-		if (count($nearbuildings) > 0 && $army->flags & kArmyFlag_AlwaysCollectItems) cItem::pickupall($army);
+		if (count($nearbuildings) > 0 && ($army->flags & kArmyFlag_AlwaysCollectItems)) cItem::pickupall($army);
 		foreach ($nearbuildings as $building) {
 			if ($building->construction > 0 || $building->type != kBuilding_Silo) continue;
 			if ($army->user != $building->user && GetFOF($army->user,$building->user) != kFOF_Friend) continue;
@@ -423,6 +423,8 @@ function ArmyThink ($army,$debug=false) {
 			if (kProfileArmyLoop) LoopProfiler("armyloop:moveok");
 			if ($debug) echo "army moves<br>";
 			//armee bewegt sich ,update $gAllArmys cache
+			$army->x = $pos[0];
+			$army->y = $pos[1];
 			$gAllArmys[$army->id]->x = $pos[0];
 			$gAllArmys[$army->id]->y = $pos[1];
 			$army->flags = $army->flags & (~kArmyFlag_AutoPillageOff); // don't pillage again and again, even if not moving

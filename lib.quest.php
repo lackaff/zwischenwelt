@@ -175,8 +175,11 @@ function QuestTrigger_ArmyMove(&$army,$x,$y) { // called very often, non-monster
 	$gQuestItems =& GetQuestItems();
 	
 	// kArmyFlag_AlwaysCollectItems main function
+	//echo "QuestTrigger_ArmyMove<br>";
 	if (intval($army->flags) & kArmyFlag_AlwaysCollectItems) {
-		$picked_items = sqlgettable("SELECT * FROM `item` WHERE `army` = 0 AND `x` = ".$army->x." AND `y` = ".$army->y);
+		//cItem::pickupall($army);
+		$picked_items = sqlgettable("SELECT * FROM `item` WHERE `army` = 0 AND `building` = 0 AND `x` = ".$army->x." AND `y` = ".$army->y);
+		//echo "QuestTrigger_ArmyMove : kArmyFlag_AlwaysCollectItems : ".count($picked_items)." items<br>";
 		foreach ($picked_items as $item) {
 			if (cItem::pickupItem($item,$army) && $item->quest > 0) {
 				$item->army = $army->id;
@@ -184,6 +187,7 @@ function QuestTrigger_ArmyMove(&$army,$x,$y) { // called very often, non-monster
 					$gQuestItems[$army->id] = array();
 				$gQuestItems[$army->id][] = $item;
 			}
+			$army = sqlgetobject("SELECT * FROM `army` WHERE `id`=".$army->id);
 		}
 	}
 	
