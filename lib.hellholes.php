@@ -423,16 +423,23 @@ class Hellhole_3 extends Hellhole_0 {
 	
 	// check if the location of a new base is ok
 	function CheckSpreadPoint ($x,$y) {
+		global $gTerrainType;
 		$terrain = cMap::StaticGetTerrainAtPos($x,$y);
 		$terrain_is_ok = intval($gTerrainType[$terrain]->movable_flag) & (kTerrain_Flag_Moveable_Land|kTerrain_Flag_Moveable_Wood);
-		if (!$terrain_is_ok) return false;
+		if (!$terrain_is_ok) { echo "terrain nicht ok<br>"; return false; }
 		
 		$r = $this->spread_mindist;
 		$xylimit = "`x` >= ".($x-$r)." AND `x` <= ".($x+$r)." AND `y` >= ".($y-$r)." AND `y` <= ".($y+$r);
-		if (sqlgetone("SELECT 1 FROM `hellhole` WHERE `ai_type` = ".intval($this->ai_type)." AND ".$xylimit." LIMIT 1")) return false;
+		if (sqlgetone("SELECT 1 FROM `hellhole` WHERE `ai_type` = ".intval($this->ai_type)." AND ".$xylimit." LIMIT 1")) {
+			echo "schon ein hellhole in der naehe<br>"; 
+			return false;
+		}
 		$users = sqlgetonetable("SELECT `user` FROM `building` WHERE ".$xylimit." GROUP BY `user`");
-		foreach ($users as $userid) 
-			if (sqlgetone("SELECT `general_pts` FROM `user` WHERE `id` = ".intval($userid)) < $this->victim_minpts) return false;
+		foreach ($users as $userid) if ($userid > 0)
+			if (sqlgetone("SELECT `general_pts` FROM `user` WHERE `id` = ".intval($userid)) < $this->victim_minpts) {
+				echo "schwacher spieler ($userid) in der naehe<br>"; 
+				return false;
+			}
 		return true;
 	}
 	
@@ -620,13 +627,14 @@ class Hellhole_3 extends Hellhole_0 {
 			} else if ($king) {
 				if (intval($king->flags) & kArmyFlag_Wander) {
 					// the king is still around the base, try to send him away
-					echo "time to boldly go, where no ant has gone before...<br>";
 					
 					// pick random location
 					$dist = rand ( $this->spread_mindist , $this->spread_rad );
 					$ang = 2.0 * M_PI * ((float)rand() / (float)getrandmax());
 					$tx = round($x + $dist * sin($ang));
 					$ty = round($y + $dist * cos($ang));
+					
+					echo "time to boldly go, where no ant has gone before...($tx,$ty) <br>";
 					
 					// check if the location is ok and reachable
 					if ($this->CheckSpreadPoint($tx,$ty)) {
@@ -640,7 +648,11 @@ class Hellhole_3 extends Hellhole_0 {
 							// dont wander anymore, also used for checking if he is on his way
 							$king->flags = $king->flags & (~kArmyFlag_Wander);
 							sql("UPDATE `army` SET `flags` = ".intval($king->flags)." WHERE `id` = ".intval($king->id));
+						} else {
+							echo "Reachable($king->x,$king->y,$tx,$ty,".$gUnitType[$this->type2]->movable_flag.") nicht ok<br>";
 						}
+					} else {
+						echo "CheckSpreadPoint($tx,$ty) nicht ok<br>";
 					}
 				} else if (!sqlgetone("SELECT 1 FROM `waypoint` WHERE `army` = ".$king->id)) {
 					// the king has arrived ;)
