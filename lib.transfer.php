@@ -179,6 +179,7 @@ class cTransfer {
 				<?php foreach ($unittypes as $typeid => $here) {?>
 					<td align=right><?=ktrenner(floor($here))?></td>
 				<?php }?>
+				<td><input type=checkbox name=transfer_remove_here value=1> alle hier löschen?</td>
 			</tr>
 			
 			</table>

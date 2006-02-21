@@ -103,6 +103,12 @@ if (!isset($f_building) && !isset($f_army) && isset($f_do)) {
 		break;
 		case "armytransfer":
 			cTransfer::TryArmyTransfer($f_transfer,$f_sourcebuilding,$f_sourcearmy,$f_armyname,$f_armyunits,$gUser);
+			//delete units in the building?
+			if(!empty($f_transfer_remove_here) && $f_transfer_remove_here == 1){
+				//only owner can remove units
+				$sourceBuilding = sqlgetobject("SELECT `id`,`user` FROM `building` WHERE `id`=".intval($f_sourcebuilding));
+				if(!empty($sourceBuilding) && $sourceBuilding->user == $gUser->id)cUnit::setUnits(array(),$sourceBuilding->id,kUnitContainer_Building);
+			}
 		break;
 		case "setfof": 
 			if (isset($f_delfriend)) SetFOF($gUser->id,intval($f_other),kFOF_Neutral); 
