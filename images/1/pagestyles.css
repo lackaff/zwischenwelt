@@ -83,6 +83,7 @@ body {
 	border:dotted #489F36 1px;
 	padding:8px;
 	margin:4px;
+	width:700px;
 }
 
 #links {
@@ -147,3 +148,8 @@ body {
 	height:10px;
 	border:0px;	
 }
+
+.changelog {}
+.changelog .entry {width:100%;margin-bottom:10px;}
+.changelog .entry .date {width:100%;float:right;font-weight:bold;}
+.changelog .entry .text {margin-left:25px;display:block;}

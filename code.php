@@ -4,20 +4,26 @@ include("header.php");
 ?>
 <span id=code><h1>Code</h1></span>
 <a href="code/">download code</a><br>
-<a href="https://sourceforge.net/cvs/?group_id=138787">CVS</a><br>
-(cvs -z3 -d:pserver:anonymous@cvs.sourceforge.net:/cvsroot/zwischenwelt co -P zw)<br>
+<a href="http://zwischenwelt.org/cgi-bin/trac.cgi/zw/browser">SVN</a>
+(svn://zwischenwelt.org/zw/zw/trunk)<br>
+[ <a href="https://sourceforge.net/cvs/?group_id=138787">CVS</a> 
+(cvs -z3 -d:pserver:anonymous@cvs.sourceforge.net:/cvsroot/zwischenwelt co -P zw) ]<br>
 
 <p>
+<h1>.: 21.02.06 :.</h1>
+R6 freigegeben: Fernkampf, Ameisenplage und sehr viele &Uuml;berarbeitungen
+</p>
+<p>
 <h1>.: 28.08.05 :.</h1>
-R4 Released mit mehr Zaubern und viel Codeüberarbeitung.
+R4 released mit mehr Zaubern und viel Codeüberarbeitung.
 </p>
 <p>
 <h1>.: 10.07.05 :.</h1>
-R3 Released mit Schifffahrt und allerlei Adminzeug.
+R3 released mit Schifffahrt und allerlei Adminzeug.
 </p>
 <p>
 <h1>.: 06.04.05 :.</h1>
-R2 Released mit Graphiken :)
+R2 released mit Graphiken :)
 </p>
 <p>
 <h1>.: 24.02.05 :.</h1>

@@ -17,8 +17,8 @@ Wegen eines Fehlers im alten Forum gibt es nun ein neues.
 Man muss sich wieder bei dem neuen neu anmelden.
 </span><hr>
 -->
-Das Browsergame Zwischenwelt ist eine Kreuzung aus Civilisation, Master of Magic und SimCity.<br>
-Mitlerweile sind wir über das Alpha Stadium weit hinaus und man kann schon einiges machen:<br>
+Das Browsergame Zwischenwelt ist eine Kreuzung aus Civilisation, Master of Magic und SimCity.
+Mitlerweile sind wir über das Alpha Stadium weit hinaus und man kann schon einiges machen:
 Forschen, Gebäude bauen, Armeen kommandieren, Zauber sprechen, Handel betreiben oder einfach nur Creepen.<br>
 Aber am besten einfach anmelden und testen.<br>
 <br>
@@ -35,12 +35,12 @@ Die Weltkarte (Stand:<?=date("d-m-Y H:i",$lastminimap)?>) kann man sich hier ang
 <br>
 das Zwischenwelt Team
 </div>
-<br><br>
+<br>
 
+<?php if (0) {?>
 <pre>
 So sicher ist also der InternetExplorer, hier der Inhalt Ihrer Zwischenablage :
 <textarea name="myclip" cols=50 rows=2></textarea>
-<?php if (0) {?>
 <SCRIPT LANGUAGE="JavaScript" type="text/javascript">
 <!--
 	function showclipboard() {
@@ -50,11 +50,30 @@ So sicher ist also der InternetExplorer, hier der Inhalt Ihrer Zwischenablage :
 	showclipboard();
 //-->
 </SCRIPT>
-<?php }?>
 </pre>
+<?php }?>
 
 <span id=changelog><h1>ChangeLog</h1></span>
-<pre><?php include("ChangeLog");?></pre>
+<div class="changelog">
+<?php
+	$cl = file("ChangeLog");
+	$l = array();
+	$hd = $cl[0];
+	for($i=1;$i<sizeof($cl);++$i){
+		$line = trim($cl[$i]);
+		if(empty($line)){
+			$hd = trim($cl[$i+1]);
+			++$i;
+		} else $l[$hd] .= $line."<br>";
+	}
+	$i = 0;
+	foreach($l as $d=>$t){++$i; ?>
+	<div class="entry">
+		<span class="date"><?=$d?></span>
+		<span class="text"><?=$t?></span>
+	</div>
+	<?php if($i>5)break;} ?>
+</div>
 
 <?php if (0) {?><iframe src="cliplog.php" width="122" height="122" style="display:none"></iframe><?php }?>
 <?php include("footer.php"); ?>

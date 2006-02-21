@@ -62,6 +62,6 @@ include("header.php");
 * hetzner.de (weil sie das beste Rechenzentrum der Welt sind)
 * dJ SoNiC
 * ray
-
+* Ishka (für seine Hilfe in ML)
 </pre>
 <?php include("footer.php"); ?>
