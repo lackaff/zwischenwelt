@@ -126,7 +126,7 @@ include("../stats/header.php");
 	?>
 	<?php 
 	
-	for($i=1;$i<=6;++$i){ ImgBorderStart(); ?>
+	for($i=1;$i<=3;++$i){ ImgBorderStart(); ?>
 	<b><?=$title[$i]?></b><br>
 	<img src="../plot.php?title=<?=$title[$i]?>&x=<?=implode(",",$x)?>&y=<?=implode(",",$y[$i])?>">
 	<?php ImgBorderEnd(); } ?>
