@@ -418,7 +418,7 @@ class Hellhole_3 extends Hellhole_0 {
 		$this->raid_rad = 40; // maximal-travel-radius for soldiers
 		$this->spread_rad = 40; // maximal travel-radius for king
 		$this->spread_mindist = 11; // minimum distance of new base to existing bases
-		$this->victim_minpts = 10000; // don't SPREAD near players below a certain limit
+		$this->victim_minpts = 30000; // don't SPREAD near players below a certain limit
 	}
 	
 	// check if the location of a new base is ok
