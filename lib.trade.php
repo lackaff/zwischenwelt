@@ -10,7 +10,7 @@ function MarketplaceAcceptTrade($offerid,$user=0){
 	else if(is_numeric($user))$user = sqlgetobject("SELECT * FROM `user` WHERE `id`=".intval($user));
 	else ;
 	
-	sql("LOCK TABLES `newlog` WRITE,`user` WRITE, 
+	sql("LOCK TABLES `newlog` WRITE,`user` WRITE,`global` WRITE, 
 		`sqlerror` WRITE, `marketplace` WRITE,`building` READ");
 	$offerid = intval($offerid);
 	$t = sqlgetobject("SELECT `marketplace`.*,`building`.`user` FROM `marketplace`,`building` WHERE `marketplace`.`building`=`building`.`id` AND `marketplace`.`id`=".$offerid);
@@ -27,7 +27,8 @@ function MarketplaceAcceptTrade($offerid,$user=0){
 			
 			LogMe($uu->id,NEWLOG_TOPIC_TRADE,NEWLOG_TRADE,$t->price_count,0,0,$u->name,$gResTypeNames[$gResTypeVarsFlipped[$res_price]]);
 			
-			sql("UPDATE `user` SET `$res_price`=`$res_price`+".$t->price_count." WHERE `id`=".$uu->id);	
+			sql("UPDATE `user` SET `$res_price`=`$res_price`+".$t->price_count." WHERE `id`=".$uu->id);
+			SetGlobal("stats_trade_sum",$gGlobal["stats_trade_sum"]+($t->price_count+$t->offer_count));
 			sql("DELETE FROM `marketplace` WHERE `id`=".$t->id);
 		}
 	}

@@ -94,9 +94,6 @@ include("../stats/header.php");
 	$title[5] = "Landschaft";
 	$title[6] = "Baupläne";
 
-	?>
-	<?php 
-	
 	for($i=1;$i<=6;++$i){ ImgBorderStart(); ?>
 	<b><?=$title[$i]?></b><br>
 	<img src="../plot.php?title=<?=$title[$i]?>&x=<?=implode(",",$x)?>&y=<?=implode(",",$y[$i])?>">
@@ -123,9 +120,6 @@ include("../stats/header.php");
 	$title[2] = "Aktiv in 24h";
 	$title[3] = "Aktiv in 3T";
 
-	?>
-	<?php 
-	
 	for($i=1;$i<=3;++$i){ ImgBorderStart(); ?>
 	<b><?=$title[$i]?></b><br>
 	<img src="../plot.php?title=<?=$title[$i]?>&x=<?=implode(",",$x)?>&y=<?=implode(",",$y[$i])?>">
@@ -154,13 +148,39 @@ include("../stats/header.php");
 	$title[3] = "Monster";
 	$title[4] = "Einheiten gesammt in k";
 
-	?>
-	<?php 
-	
 	for($i=1;$i<=4;++$i){ ImgBorderStart(); ?>
 	<b><?=$title[$i]?></b><br>
 	<img src="../plot.php?title=<?=$title[$i]?>&x=<?=implode(",",$x)?>&y=<?=implode(",",$y[$i])?>">
 	<?php ImgBorderEnd(); } ?>
+
+
+	<?php
+	$t = sqlgettable("SELECT * FROM `stats` WHERE `type`=".kStats_SysInfo_Trade." AND `time`+60*60*24*7*4>".time()." ORDER BY `time`");
+
+	$x = Array();
+	$y = Array();
+	$title = Array();
+	
+	foreach($t as $o)
+	{
+		//$x[] = $o->time /60 /60 /24;
+		$x[] = date("G\h_j.n.y",$o->time);
+		$y[1][] = $o->i1;
+		$y[2][] = $o->i2;
+		$y[3][] = $o->i3;
+		$y[4][] = $o->f1;
+	}
+
+	$title[1] = "Marktplatz: Angebote";
+	$title[2] = "Marktplatz: Rohstoffsumme der Angebote";
+	$title[3] = "Marktplatz: Rohstoffsumme der Preise";
+	$title[4] = "Marktplatz: Summe der gehandelten Waren";
+
+	for($i=1;$i<=4;++$i){ ImgBorderStart(); ?>
+	<b><?=$title[$i]?></b><br>
+	<img src="../plot.php?title=<?=$title[$i]?>&x=<?=implode(",",$x)?>&y=<?=implode(",",$y[$i])?>">
+	<?php ImgBorderEnd(); } ?>
+
 
 	</td>
 </tr>

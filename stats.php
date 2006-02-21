@@ -82,6 +82,8 @@ $o->type = kStats_SysInfo_Trade;
 $o->i1 = sqlgetone("SELECT COUNT(1) FROM `marketplace`");
 $o->i2 = sqlgetone("SELECT SUM(`offer_count`) FROM `marketplace`");
 $o->i3 = sqlgetone("SELECT SUM(`price_count`) FROM `marketplace`");
+$o->f1 = $gGlobal["stats_trade_sum"];
+SetGlobal("stats_trade_sum",0);
 sql("INSERT INTO `stats` SET ".obj2sql($o));
 
 //--------------------------------
