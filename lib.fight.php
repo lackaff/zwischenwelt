@@ -582,13 +582,28 @@ class cFight {
 			$percent_of_level_0 = $dmg / $gBuildingType[$building->type]->maxhp;
 			if ($debug) echo "SiegePillage : ".$dmg." / ".$gBuildingType[$building->type]->maxhp." = ".$percent_of_level_0."<br>";
 			$myres = $gRes;
+			$armyfull = false;
 			foreach ($myres as $n=>$f) {
 				$cost = $gBuildingType[$building->type]->{"cost_".$f} * $building->level;
 				// todo : multiply by building->level  ???
 				$get = ceil($percent_of_level_0 * $cost * kSiegePillageEfficiency);
 				if ($debug) echo "SiegePillage: $n : ".$cost." -> ".$get."<br>";
 				if ($get <= 0) continue;
-				cItem::SpawnArmyItem($army->id,$gRes2ItemType[$f],$get);
+				if (!cItem::SpawnArmyItem($army->id,$gRes2ItemType[$f],$get))  {
+					$armyfull = true;
+					echo "army full<br>";
+				} else {
+					echo "army NOT full<br>";
+				}
+			}
+			
+			echo "armyfull = ".($armyfull?1:0)."<br>";
+			
+			// army is full, stop pillage-siege
+			if ($armyfull && (intval($army->flags) & kArmyFlag_StopSiegeWhenFull)) {
+				echo "siegepillage : full : abort<br>";
+				cFight::EndSiege($siege,"Der Belagerer hat sich zurückgezogen.");
+				return;
 			}
 		}
 		

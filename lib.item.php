@@ -66,12 +66,14 @@ class cItem {
 	}
 	
 	// WARNING ! DON'T CALL THIS FUNCTION WITHIN A "foreach ($gRes ..)" LOOP ! use "$myres = $gRes;" or sth like that !
+	// returns if the item has been picked up completely (true) or if the army has been full, and could only get a part (false)
 	function SpawnArmyItem	($army,$typeid,$amount=1.0,$quest=0,$param=0) { // creates an item and gives it to the army as reward
 		if ($amount < 1) return;
 		if (!is_object($army)) $army = sqlgetobject("SELECT * FROM `army` WHERE `id`=".intval($army));
 		// echo "SpawnArmyItem($army->id,$typeid,$amount)<br>";
 		$item = cItem::SpawnItem($army->x,$army->y,$typeid,$amount,$quest,$param);
-		cItem::pickupItem($item,$army,$amount);
+		$armynotfull = cItem::pickupItem($item,$army,$amount);
+		return $armynotfull;
 	}
 	
 	function SpawnItem		($x,$y,$typeid,$amount=1.0,$quest=0,$param=0) {

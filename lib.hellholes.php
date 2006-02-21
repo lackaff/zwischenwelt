@@ -492,7 +492,8 @@ class Hellhole_3 extends Hellhole_0 {
 			kArmyFlag_HarvestRubble	|
 			kArmyFlag_HarvestField	|
 			kArmyFlag_AlwaysCollectItems| // finders keepers ;)
-			kArmyFlag_AutoSiege		| // deactivated for abort and return
+			kArmyFlag_AutoSiege			| // deactivated for abort and return
+			kArmyFlag_StopSiegeWhenFull	| // stop and return
 			kArmyFlag_SiegePillage
 			);
 			

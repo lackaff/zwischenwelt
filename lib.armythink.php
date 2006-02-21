@@ -218,7 +218,18 @@ function ArmyThink ($army,$debug=false) {
 	// AutoSiege
 	if ($army->flags & kArmyFlag_AutoSiege) {
 		if (kProfileArmyLoop) LoopProfiler("armyloop:AutoSiege");
-		foreach ($nearbuildings as $building) {
+		
+		$siege_ok = true;
+		
+		// siegepillage is not attempted, if army is full (ants)
+		if ((intval($army->flags) & kArmyFlag_StopSiegeWhenFull)) {
+			$maxlast = cUnit::GetUnitsSum($army->units,"last");
+			$curlast = cArmy::GetArmyTotalWeight($army);
+			// check if army is full
+			if ($curlast >= $maxlast) $siege_ok = false;
+		}
+			
+		if ($siege_ok) foreach ($nearbuildings as $building) {
 			if ($army->user == 0 && $building->user == 0) continue;
 			if ($army->user > 0 && GetFOF($army->user,$building->user) != kFOF_Enemy) continue;
 			if ($debug) echo "AutoSiege buildingid:$building->id<br>";
