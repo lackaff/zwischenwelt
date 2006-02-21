@@ -208,7 +208,7 @@ class cTransfer {
 			if ($id) sql("UPDATE `army` SET `name` = '".addslashes(cArmy::escapearmyname($newname))."' WHERE `id` = ".intval($id));
 			
 		// process armies
-		foreach ($unitarrs as $id => $desiredunits) {
+		if(count($unitarrs))foreach ($unitarrs as $id => $desiredunits) {
 			$targetarmy = $id ? sqlgetobject("SELECT * FROM `army` WHERE `id` = ".intval($id)) : false;
 			$error = cTransfer::CheckArmyTransfer($transfer,$sourcearmy,$sourcebuilding,$targetarmy,$user);
 			if ($error) { echo $error."<br>"; continue; }
