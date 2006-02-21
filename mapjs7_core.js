@@ -683,7 +683,7 @@ function GetCellHTML (relx,rely) {
 	if (gWPMap) for (i in gWPMap[relx][rely]) layers[layers.length] = gWPMap[relx][rely][i];
 	
 	var i,res = "";
-	if (backgroundcolor) res += "<div style=\"\">";
+	//if (backgroundcolor) res += "<div style=\"\">";
 	for (i in layers) {
 		// if (i == 0) alert(backgroundcolor);
 		var bg = (i==0 && backgroundcolor && backgroundcolor != "false")?("background-color:"+backgroundcolor+";"):"";
@@ -693,11 +693,11 @@ function GetCellHTML (relx,rely) {
 	//if (relx == gXMid && rely == gYMid) 
 	//		res += "<img src='gfx/crosshair.png' onMouseover=\"mapover("+relx+","+rely+")\">"; 
 	//else
-	res += "<img src=\""+g("1px.gif")+"\" width="+kJSForceIESpaceCX+" height="+kJSForceIESpaceCY+">";
+	res += "<img border=0 src=\""+g("1px.gif")+"\" width="+kJSForceIESpaceCX+" height="+kJSForceIESpaceCY+">";
 	res += celltext;
 	res += '</div></div>';
 	for (i in layers) res += '</div>';
-	if (backgroundcolor) res += '</div>';
+	//if (backgroundcolor) res += '</div>';
 	
 	//if (relx == 4 && rely == 5) alert(g3(gBuildingType[buildingtype].gfx,nwsecode,level));
 	// background-color:$b
