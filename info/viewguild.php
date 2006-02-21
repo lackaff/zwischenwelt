@@ -35,7 +35,7 @@ include("../menu.php");
   <?php ImgBorderStart("s1","jpg","#ffffee","",32,33); ?>
   <div align="center">
     <p><span style="font-family:serif;font-size:16px;"><?=$gGuild->name?></span></p>
-    <p><span style="font-family:serif;font-size:12px;font-style:italic;">Gr&uuml;nder: <?=sqlgetone("SELECT `name` FROM `user` WHERE `id`=".$gGuild->founder)?></span></p>
+    <p><span style="font-family:serif;font-size:12px;font-style:italic;">Gr&uuml;nder: <?=sqlgetone("SELECT `name` FROM `user` WHERE `id`=".intval($gGuild->founder))?></span></p>
   </div>
   <table align="center">
 	  <tr><th colspan=3>Mitglieder</th></tr>
