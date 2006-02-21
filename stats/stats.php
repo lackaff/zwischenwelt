@@ -169,14 +169,16 @@ include("../stats/header.php");
 		$y[2][] = $o->i2;
 		$y[3][] = $o->i3;
 		$y[4][] = $o->f1;
+		$y[5][] = $o->i2 / $o->i3;
 	}
 
 	$title[1] = "Marktplatz: Angebote";
 	$title[2] = "Marktplatz: Rohstoffsumme der Angebote";
 	$title[3] = "Marktplatz: Rohstoffsumme der Preise";
 	$title[4] = "Marktplatz: Summe der gehandelten Waren";
+	$title[5] = "Marktplatz: Angebot / Preis";
 
-	for($i=1;$i<=4;++$i){ ImgBorderStart(); ?>
+	for($i=1;$i<=5;++$i){ ImgBorderStart(); ?>
 	<b><?=$title[$i]?></b><br>
 	<img src="../plot.php?title=<?=$title[$i]?>&x=<?=implode(",",$x)?>&y=<?=implode(",",$y[$i])?>">
 	<?php ImgBorderEnd(); } ?>
