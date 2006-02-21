@@ -54,7 +54,7 @@ include("../menu.php");
 			?>
 			<tr><td style="background-color:<?=$u->color?>">&nbsp;</td>
 			<td align=center><a href="<?=query("msg.php?show=compose&to=".urlencode($owner->name)."&sid=?")?>"><img border=0 src="<?=g("icon/guild-send.png")?>"></a></td>
-			<td <?=$b?"founder":""?>><a href="<?=query("?sid=?&x=".$ownerhq->x."&y=".$ownerhq->y)?>"><?=$b?"<b>":""?><?=GetFOFtxt($gUser->id,$owner->id,$owner->name)?><?=$b?"</b>":""?></a></td>
+			<td <?=$b?"class='founder'":""?>><a href="<?=query("?sid=?&x=".$ownerhq->x."&y=".$ownerhq->y)?>"><?=$b?"<b>":""?><?=GetFOFtxt($gUser->id,$owner->id,$owner->name)?><?=$b?"</b>":""?></a></td>
 			<td align=center><?=opos2txt($u)?></td></tr>
 			<?php
 		}

@@ -604,14 +604,24 @@ function getSlotAddonFromSupportFields($b){ // id or object
 
 // returns username or "Server" if 0,  see also cArmy::GetArmyOwnerName()
 //if aslink = true <a..>NICK</a> will be returned
-function nick($id=0,$fallback="Server",$aslink=false){
+function nick($id=0,$fallback="Server",$aslink=false) {
+	global $gUser;
 	if($id==0)return $fallback;
-	$nick=sqlgetone("SELECT `name` FROM `user` WHERE 1 AND `id`=".intval($id)." LIMIT 1");
+	$owner = sqlgetobject("SELECT * FROM `user` WHERE 1 AND `id`=".intval($id)." LIMIT 1");
+	$nick = $owner->name;
 	if(empty($nick))return $fallback;
 	else if($aslink){
-		$ownerhq = sqlgetobject("SELECT `x`,`y` FROM `building` WHERE `type` = ".kBuilding_HQ." AND `user` = ".intval($id));
-		if(empty($ownerhq))return $nick;
-		else return "<a href=".query("?sid=?&x=".$ownerhq->x."&y=".$ownerhq->y).">$nick</a>";
+		$ownerhq = $owner->id ? sqlgetobject("SELECT `x`,`y` FROM `building` WHERE `type` = ".kBuilding_HQ." AND `user` = ".intval($owner->id)) : false;
+		rob_ob_start();
+		?>
+		<a href="<?=query("?sid=?&x=".($ownerhq?$ownerhq->x:0)."&y=".($ownerhq?$ownerhq->y:0))?>"><?=GetFOFtxt($gUser->id,$owner->id,$nick)?></a>
+		<?php if ($owner) {?>
+			<a href="<?=query("msg.php?show=compose&to=".urlencode($owner->name)."&sid=?")?>"><img border=0 src="<?=g("icon/guild-send.png")?>"></a>
+		<?php } // endif?>
+		<?=$ownerhq?opos2txt($ownerhq):""?>
+		<?php 
+		$text = rob_ob_end();
+		return $text;
 	}
 	else return $nick;
 }
