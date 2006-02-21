@@ -91,7 +91,11 @@ class cInfoArmy extends cInfoBase {
 				}
 				$army->flags = intval($army->flags);
 				$army->flags_vorher = $army->flags;
-				$army->flags &= (kArmyFlag_AllSet ^ intval($mask));
+				
+				//$army->flags &= (kArmyFlag_AllSet ^ intval($mask));
+				$army->flags |= intval($mask);
+				$army->flags ^= intval($mask);
+				
 				$army->flags |= intval($realsum);
 				sql("UPDATE `army` SET `flags` = ".$army->flags." WHERE `id` = ".$army->id);
 				// check for gc change

@@ -249,7 +249,6 @@ define("kArmyFlag_AutoShoot_Enemy",			(1<<27));
 define("kArmyFlag_AutoShoot_Strangers",		(1<<28));
 define("kArmyFlag_SiegePillage",			(1<<29)); // army steals ressources while pillaging (used for ants)
 define("kArmyFlag_StopSiegeWhenFull",		(1<<30));
-define("kArmyFlag_AllSet",					(1<<31)-1); // (at least one above the others)-1
 $gArmyFlagNames = array(
 	kArmyFlag_GuildCommand=>			"unter Gildenkommando",
 	kArmyFlag_SelfLock=>				"Armee nicht selbst steuern", // blockiert wegpunkt setzen
