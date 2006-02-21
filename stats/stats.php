@@ -46,20 +46,20 @@ include("../stats/header.php");
 		<tr><td align="left" nowrap>Aktive in 7T</td><td><?=sqlgetone("SELECT COUNT(`id`) FROM `user` WHERE admin=0 AND `lastlogin`>".($t-60*60*24*7));?></td></tr>
 		<tr><td align="left" nowrap>Armeen</td><td><?=sqlgetone("SELECT COUNT(*) FROM `army`");?></td></tr>
 		<tr><td align="left" nowrap>Hellholes</td><td><?=sqlgetone("SELECT COUNT(`id`) FROM `hellhole`");?></td></tr>
-		<tr><td align="left" nowrap>Gebäude</td><td><?=$maxb=sqlgetone("SELECT COUNT(b.`id`) FROM `building` b,`user` u WHERE b.`user`=u.`id` AND u.`admin`=0");?></td></tr>
+		<tr><td align="left" nowrap>Gebäude</td><td><?=kplaintrenner($maxb=sqlgetone("SELECT COUNT(b.`id`) FROM `building` b,`user` u WHERE b.`user`=u.`id` AND u.`admin`=0"));?></td></tr>
 		<tr><td align="left" nowrap>Zauber</td><td><?=$maxb=sqlgetone("SELECT COUNT(`id`) FROM `spell`");?></td></tr>
 		<tr><td align="left" nowrap>Gilden</td><td><?=$maxb=sqlgetone("SELECT COUNT(`id`) FROM `guild`");?></td></tr>
-		<tr><td align="left" nowrap>maximale Bevölkerung</td><td><?=sqlgetone("SELECT MAX(`pop`) FROM `user` WHERE `admin`=0");?></td></tr>
+		<tr><td align="left" nowrap>maximale Bevölkerung</td><td><?=kplaintrenner(round(sqlgetone("SELECT MAX(`pop`) FROM `user` WHERE `admin`=0")));?></td></tr>
 		<tr><td align="left" nowrap>horizontale Weltgrösse</td>
 			<td><?=sqlgetone("SELECT MIN(`x`) FROM `building`")?> bis 
 				<?=sqlgetone("SELECT MAX(`x`) FROM `building`")?></td></tr>
 		<tr><td align="left" nowrap>vertikale Weltgrösse</td>
 			<td><?=sqlgetone("SELECT MIN(`y`) FROM `building`")?> bis 
 				<?=sqlgetone("SELECT MAX(`y`) FROM `building`")?></td></tr>
-		<tr><td align="left" nowrap>cron dTime</td><td><?=$gGlobal["crontime"]?></td></tr>
+		<tr><td align="left" nowrap>cron dTime</td><td><?=sprintf("%0.3f",$gGlobal["crontime"])?></td></tr>
 		<?php foreach ($gUnitType as $unittype) {?>
-		<tr><td align="left" nowrap><img class="picframe" align="middle" src="<?=g($unittype->gfx)?>"> <?=$unittype->name?></td><td>
-			<?=intval(sqlgetone("SELECT sum( u.amount ) FROM unit u WHERE u.type=".$unittype->id));?></td></tr>
+		<tr><td align="left" nowrap><img class="picframe" align="middle" src="<?=g($unittype->gfx)?>"> <?=$unittype->name?></td><td align="right">
+			<?=kplaintrenner(intval(sqlgetone("SELECT sum( u.amount ) FROM unit u WHERE u.type=".$unittype->id)));?></td></tr>
 		<?php }?>
 	</table>
 

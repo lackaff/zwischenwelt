@@ -7,13 +7,8 @@ require_once("lib.spells.php");
 
 
 /*
-
-
-				$f_tower = sqlgetone("SELECT `id` FROM `building` WHERE `user` = ".intval($gUser->id)." ORDER BY `mana` DESC");
-
-
+$f_tower = sqlgetone("SELECT `id` FROM `building` WHERE `user` = ".intval($gUser->id)." ORDER BY `mana` DESC");
 //print_r($candospells);
-
 */
 
 function MagicListSortedTowers ($userid=0,$firstonly=false) {

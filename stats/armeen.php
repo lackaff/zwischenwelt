@@ -33,7 +33,7 @@ ImgBorderStart();
 	<?php
 		$t = sqlgettable("SELECT * FROM `army` WHERE `frags` > 0 ORDER BY `frags` DESC");
 		foreach($t as $u)
-			echo "<tr><td>".$u->name."</td><td>".sqlgetone("SELECT `name` FROM `user` WHERE `id`=".$u->user)."</td><td>".floor($u->frags)."</td></tr>";
+			echo "<tr><td>".$u->name."</td><td>".sqlgetone("SELECT `name` FROM `user` WHERE `id`=".$u->user)."</td><td align=\"right\">".kplaintrenner(floor($u->frags))."</td></tr>";
 	?>
 </table>
 

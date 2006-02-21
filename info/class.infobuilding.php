@@ -495,7 +495,7 @@ class cInfoBuilding extends cInfoBase {
 						<?php $owner = sqlgetobject("SELECT `name`,`moral` FROM `user` WHERE `id` = ".$gObject->user);?>
 						<?php $ownerhq = sqlgetobject("SELECT * FROM `building` WHERE `type` = ".kBuilding_HQ." AND `user` = ".$gObject->user);?>
 						von <a href="<?=query("?sid=?&x=".$ownerhq->x."&y=".$ownerhq->y)?>"><?=GetFOFtxt($gUser->id,$gObject->user,$owner->name)?></a>
-						<a href="<?=query("msg.php?show=compose&to=".($owner->name)."&sid=?")?>"><img border=0 src="<?=g("icon/guild-send.png")?>"></a> 
+						<a href="<?=query("msg.php?show=compose&to=".urlencode($owner->name)."&sid=?")?>"><img border=0 src="<?=g("icon/guild-send.png")?>"></a> 
 						<?=Moral2HtmlIcon($owner->moral)?>
 						<?php if($gUser->admin){ ?>
 							<a href="<?=query("adminuser.php?id=$gObject->user&sid=?")?>"><img alt="user" title="user" src="<?=g("icon/admin.png")?>" border=0></a>

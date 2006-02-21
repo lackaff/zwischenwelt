@@ -7,7 +7,7 @@ profile_page_start("viewguild.php");
 
 $gGuild = sqlgetobject("SELECT * FROM `guild` WHERE `id`=".intval($f_id));
 if($gGuild){
-	$members = sqlgettable("SELECT `id`,`name`,`color`,`guildpoints` FROM `user` WHERE `guild`=".$gGuild->id." ORDER BY `name` ASC");
+	$members = sqlgettable("SELECT * FROM `user` WHERE `guild`=".$gGuild->id." ORDER BY `name` ASC");
 	$gcs=getGuildCommander($gGuild->id);
 } else {
 	$members = Array();
@@ -38,10 +38,25 @@ include("../menu.php");
     <p><span style="font-family:serif;font-size:12px;font-style:italic;">Gr&uuml;nder: <?=sqlgetone("SELECT `name` FROM `user` WHERE `id`=".$gGuild->founder)?></span></p>
   </div>
   <table align="center">
-	  <tr><th></th><th>Mitglieder</th></tr>
+	  <tr><th colspan=3>Mitglieder</th></tr>
 		<?php
-		foreach($members as $u){
-			echo '<tr><td style="background-color:'.$u->color.'">&nbsp;</td><td><a style="font-family:verdana;" href="'.query("msg.php?sid=?&show=compose&to=".urlencode($u->name)).'">'.$u->name.'</a></span></td></tr>';
+		foreach($members as $u) {
+			$owner = $u;
+			$ownerhq = sqlgetobject("SELECT * FROM `building` WHERE `type` = ".kBuilding_HQ." AND `user` = ".$u->id);
+			if ($ownerhq) {
+				$u->x = $ownerhq->x;
+				$u->y = $ownerhq->y;
+			} else {
+				$u->x = 0;
+				$u->y = 0;
+			}
+			$b = $owner->id == $gGuild->founder;
+			?>
+			<tr><td style="background-color:<?=$u->color?>">&nbsp;</td>
+			<td align=center><a href="<?=query("msg.php?show=compose&to=".urlencode($owner->name)."&sid=?")?>"><img border=0 src="<?=g("icon/guild-send.png")?>"></a></td>
+			<td <?=$b?"founder":""?>><a href="<?=query("?sid=?&x=".$ownerhq->x."&y=".$ownerhq->y)?>"><?=$b?"<b>":""?><?=GetFOFtxt($gUser->id,$owner->id,$owner->name)?><?=$b?"</b>":""?></a></td>
+			<td align=center><?=opos2txt($u)?></td></tr>
+			<?php
 		}
 		?>
 		</table>

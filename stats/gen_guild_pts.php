@@ -49,7 +49,7 @@ echo "<tr><th>Rang</th><th>Name</th><th>Punkte</th><th>&nbsp;</th><th>Spieler</t
 $n=1;
 
 foreach($pts as $p){
-	if($p->guild>0)echo "<tr><td align=right>".$n++."</td><td><a href='".query("../info/viewguild.php?id=".$p->guild."&sid=?")."'>".$gGuilds[$p->guild]->name."</a></td><td align=right>".$p->pts."</td><td>&nbsp;</td><td align=center>".$p->anzahl."</td><td></td><td align=right>".round($p->pts/$p->anzahl)."</td></tr>";
+	if($p->guild>0)echo "<tr><td align=right>".$n++."</td><td><a href='".query("../info/viewguild.php?id=".$p->guild."&sid=?")."'>".$gGuilds[$p->guild]->name."</a></td><td align=right>".kplaintrenner($p->pts)."</td><td>&nbsp;</td><td align=right>".$p->anzahl."</td><td></td><td align=right>".kplaintrenner(round($p->pts/$p->anzahl))."</td></tr>";
 }
 
 echo "</table>";

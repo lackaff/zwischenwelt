@@ -115,11 +115,14 @@ class cInfoHQ extends cInfoBuilding {
 		<?php if ($gObject->user != $gUser->id) {?>
 			<?php 
 			$profil = sqlgetone("SELECT `profil` FROM `userprofil` WHERE `id`=".$gObject->user);
-			$ownername = sqlgetone("SELECT `name` FROM `user` WHERE `id`=".intval($gObject->user));
+			$owneruser = sqlgetobject("SELECT * FROM `user` WHERE `id`=".intval($gObject->user));
+			$ownername = $owneruser->name;
 			?>
 			<?php ImgBorderStart("s2","jpg","#ffffee","bg-s2",32,33); ?>
 			<p align="center"><a href="<?=query("msg.php?sid=?&show=compose&to=".urlencode($ownername))?>"><span style="font-family:serif;font-size:18px;font-style:italic;"><?=$ownername?></span></a></p>
-			<p align="center"><span style="font-family:serif;font-size:11px;">von<br><?=sqlgetone("SELECT g.`name` FROM `guild` g,`user` u WHERE g.id=u.guild AND u.id=".$gObject->user)?></span></p>
+			<p align="center"><span style="font-family:serif;font-size:11px;">von<br>
+			<a href="<?=Query("viewguild.php?sid=?&id=".$owneruser->guild)?>"><?=sqlgetone("SELECT `name` FROM `guild` WHERE `id` = ".intval($owneruser->guild))?></a>
+			</span></p>
 			<?php 
 			$registered = sqlgetone("SELECT `registered` FROM `user` u WHERE u.id=".$gObject->user);
 			if($registered > 0){ ?>

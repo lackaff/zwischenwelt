@@ -61,7 +61,7 @@ ImgBorderStart();
 				<td align=center><?php if($u->guild > 0){ ?>
 			<a href='<?=query("../info/viewguild.php?id=".$u->guild."&sid=?")?>'><?=$gGuilds[$u->guild]->name?></a>
 		<?php } ?></td>
-				<td align=right><?=ceil($u->pop)?></td>
+				<td align=right><?=kplaintrenner(ceil($u->pop))?></td>
 			</tr>
 			<?php
 			}
