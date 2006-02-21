@@ -571,7 +571,7 @@ if (!isset($f_blind)) {
 }
 	
 	
-$planpic = "<img class=\"info_planpic\" src=\"".g("constructionplan.png")."\">"; 
+$planpic = "<img border=0 class=\"info_planpic\" src=\"".g("constructionplan.png")."\">"; 
 	
 
 /* construction info */
@@ -658,7 +658,7 @@ if (!isset($f_blind)) {
 		<?php PrintBuildTimeHelp($f_x,$f_y); ?>
 		<FORM METHOD=POST ACTION="<?=Query("?sid=?&x=?&y=?")?>">
 		<INPUT TYPE="hidden" NAME="do" VALUE="build">
-		<table border=1 cellspacing=0 rules="all">
+		<table border=1 cellspacing=0 cellpadding=0>
 		<tr>
 			<th><?=$planpic?></th>
 			<th></th>
