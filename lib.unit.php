@@ -231,7 +231,7 @@ class cUnit {
 	// RANGED damage
 	function GetDistantDamage ($units,$dx,$dy) {
 		global $gUnitType;
-		$r = sqrt($dx*$dx+$dy*$dy);
+		$r = floor(sqrt($dx*$dx+$dy*$dy));
 		$dmg = 0;
 		foreach ($units as $o) {
 			if ($gUnitType[$o->type]->r >= $r && $gUnitType[$o->type]->f > 0)
