@@ -47,7 +47,7 @@ else {
 	<div id=team><a href="team.php">Team</a></div>
 	<div id=code><a href="code.php">Code</a></div>
 	<div id=passwortvergessen><a href="pwvergessen.php">Passwort vergessen</a></div>
-	<div id=forum><a href="http://zwischenwelt.org/forum/fudforum/">Forum</a></div>
+	<div id=forum><a href="http://zwischenwelt.org/forum/">Forum</a></div>
 	<div id=impressum><a href="impressum.php">Impressum</a></div>
 </div>
 <FORM name="login" METHOD=POST ACTION="<?=BASEURL?>login.php">
