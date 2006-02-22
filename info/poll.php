@@ -6,7 +6,9 @@ function DrawPollBar($votes,$totalvotes,$width=100,$height=10,$color="green"){
   return "<div style='display:block;height:".$height."px;width:".$x."px;background-color:$color'></div>";
 }
 
-if(isset($f_poll_ok)){
+if(isset($f_poll_ok) && 
+	is_numeric($f_poll) && $f_poll>0 && 
+	is_numeric($f_number) && $f_number>0){
   $vote = null;
   $vote->poll = $f_poll;
   $vote->number = $f_number;
