@@ -10,8 +10,12 @@ include("header.php");
 (cvs -z3 -d:pserver:anonymous@cvs.sourceforge.net:/cvsroot/zwischenwelt co -P zw) ]<br>
 
 <p>
+<h1>.: 23.02.06 :.</h1>
+R6 bugfix : die "db.sql" war kaputt, bitte diese hier verwenden : <a href="sql/db.sql">db.sql</a>
+</p>
+<p>
 <h1>.: 21.02.06 :.</h1>
-R6 freigegeben: Fernkampf, Ameisenplage und sehr viele &Uuml;berarbeitungen
+R6 freigegeben: Fernkampf, Ameisenplage und sehr viele &Uuml;berarbeitungen<br>
 </p>
 <p>
 <h1>.: 28.08.05 :.</h1>
