@@ -3,11 +3,9 @@
 -- http://www.phpmyadmin.net
 -- 
 -- Host: localhost
--- Generation Time: Feb 22, 2006 at 02:24 AM
+-- Generation Time: Feb 23, 2006 at 05:44 PM
 -- Server version: 5.0.18
 -- PHP Version: 4.4.2-1
-
-SET FOREIGN_KEY_CHECKS=0;
 -- 
 -- Database: `newzw`
 -- 
@@ -18,17 +16,17 @@ SET FOREIGN_KEY_CHECKS=0;
 -- Table structure for table `action`
 -- 
 
-CREATE TABLE IF NOT EXISTS `action` (
-  `id` int(10) unsigned NOT NULL,
-  `building` int(10) unsigned NOT NULL default '0',
-  `cmd` int(10) unsigned NOT NULL default '0',
-  `param1` int(10) unsigned NOT NULL default '0',
-  `param2` int(10) unsigned NOT NULL default '0',
-  `starttime` int(10) unsigned NOT NULL default '0',
-  PRIMARY KEY  (`id`),
-  KEY `building` (`building`),
-  KEY `cmd` (`cmd`)
-) TYPE=MyISAM AUTO_INCREMENT=1 ;
+CREATE TABLE "action" (
+  "id" int(10) unsigned NOT NULL auto_increment,
+  "building" int(10) unsigned NOT NULL default '0',
+  "cmd" int(10) unsigned NOT NULL default '0',
+  "param1" int(10) unsigned NOT NULL default '0',
+  "param2" int(10) unsigned NOT NULL default '0',
+  "starttime" int(10) unsigned NOT NULL default '0',
+  PRIMARY KEY  ("id"),
+  KEY "building" ("building"),
+  KEY "cmd" ("cmd")
+) AUTO_INCREMENT=1 ;
 
 -- 
 -- Dumping data for table `action`
@@ -41,35 +39,35 @@ CREATE TABLE IF NOT EXISTS `action` (
 -- Table structure for table `army`
 -- 
 
-CREATE TABLE IF NOT EXISTS `army` (
-  `id` int(10) unsigned NOT NULL,
-  `name` char(64) NOT NULL default '',
-  `user` int(11) NOT NULL default '0',
-  `flags` int(10) unsigned NOT NULL default '0',
-  `x` int(11) NOT NULL default '0',
-  `y` int(11) NOT NULL default '0',
-  `nextactiontime` int(10) unsigned NOT NULL default '0',
-  `frags` double NOT NULL default '0',
-  `lumber` int(15) NOT NULL default '0',
-  `stone` int(15) NOT NULL default '0',
-  `food` int(15) NOT NULL default '0',
-  `metal` int(15) NOT NULL default '0',
-  `runes` int(15) NOT NULL default '0',
-  `type` tinyint(3) unsigned NOT NULL default '0',
-  `idle` int(10) unsigned NOT NULL default '0',
-  `quest` int(10) unsigned NOT NULL default '0',
-  `hellhole` int(10) unsigned NOT NULL default '0',
-  `follow` int(10) unsigned NOT NULL default '0',
-  `counttolimit` tinyint(3) unsigned NOT NULL default '1',
-  `useditem` int(10) unsigned NOT NULL default '0',
-  PRIMARY KEY  (`id`),
-  UNIQUE KEY `pos` (`x`,`y`),
-  KEY `user` (`user`),
-  KEY `type` (`type`),
-  KEY `counttolimit` (`counttolimit`),
-  KEY `useditem` (`useditem`),
-  KEY `y` (`y`)
-) TYPE=MyISAM AUTO_INCREMENT=1 ;
+CREATE TABLE "army" (
+  "id" int(10) unsigned NOT NULL auto_increment,
+  "name" char(64) NOT NULL default '',
+  "user" int(11) NOT NULL default '0',
+  "flags" int(10) unsigned NOT NULL default '0',
+  "x" int(11) NOT NULL default '0',
+  "y" int(11) NOT NULL default '0',
+  "nextactiontime" int(10) unsigned NOT NULL default '0',
+  "frags" double NOT NULL default '0',
+  "lumber" int(15) NOT NULL default '0',
+  "stone" int(15) NOT NULL default '0',
+  "food" int(15) NOT NULL default '0',
+  "metal" int(15) NOT NULL default '0',
+  "runes" int(15) NOT NULL default '0',
+  "type" tinyint(3) unsigned NOT NULL default '0',
+  "idle" int(10) unsigned NOT NULL default '0',
+  "quest" int(10) unsigned NOT NULL default '0',
+  "hellhole" int(10) unsigned NOT NULL default '0',
+  "follow" int(10) unsigned NOT NULL default '0',
+  "counttolimit" tinyint(3) unsigned NOT NULL default '1',
+  "useditem" int(10) unsigned NOT NULL default '0',
+  PRIMARY KEY  ("id"),
+  UNIQUE KEY "pos" ("x","y"),
+  KEY "user" ("user"),
+  KEY "type" ("type"),
+  KEY "counttolimit" ("counttolimit"),
+  KEY "useditem" ("useditem"),
+  KEY "y" ("y")
+) AUTO_INCREMENT=1 ;
 
 -- 
 -- Dumping data for table `army`
@@ -82,20 +80,20 @@ CREATE TABLE IF NOT EXISTS `army` (
 -- Table structure for table `armyaction`
 -- 
 
-CREATE TABLE IF NOT EXISTS `armyaction` (
-  `id` int(10) unsigned NOT NULL,
-  `army` int(10) unsigned NOT NULL default '0',
-  `starttime` int(10) unsigned NOT NULL default '0',
-  `cmd` int(11) NOT NULL default '0',
-  `param1` int(11) NOT NULL default '0',
-  `param2` int(11) NOT NULL default '0',
-  `param3` int(11) NOT NULL default '0',
-  `orderval` int(10) unsigned NOT NULL default '0',
-  PRIMARY KEY  (`id`),
-  KEY `army` (`army`),
-  KEY `cmd` (`cmd`),
-  KEY `starttime` (`starttime`)
-) TYPE=MyISAM AUTO_INCREMENT=1 ;
+CREATE TABLE "armyaction" (
+  "id" int(10) unsigned NOT NULL auto_increment,
+  "army" int(10) unsigned NOT NULL default '0',
+  "starttime" int(10) unsigned NOT NULL default '0',
+  "cmd" int(11) NOT NULL default '0',
+  "param1" int(11) NOT NULL default '0',
+  "param2" int(11) NOT NULL default '0',
+  "param3" int(11) NOT NULL default '0',
+  "orderval" int(10) unsigned NOT NULL default '0',
+  PRIMARY KEY  ("id"),
+  KEY "army" ("army"),
+  KEY "cmd" ("cmd"),
+  KEY "starttime" ("starttime")
+) AUTO_INCREMENT=1 ;
 
 -- 
 -- Dumping data for table `armyaction`
@@ -108,19 +106,19 @@ CREATE TABLE IF NOT EXISTS `armyaction` (
 -- Table structure for table `armytransfer`
 -- 
 
-CREATE TABLE IF NOT EXISTS `armytransfer` (
-  `id` int(10) unsigned NOT NULL,
-  `name` varchar(255) NOT NULL default '',
-  `sourcebuildingtype` int(10) unsigned NOT NULL default '0',
-  `sourcearmytype` int(10) unsigned NOT NULL default '0',
-  `sourcetransport` int(10) unsigned NOT NULL default '0',
-  `targetarmytype` int(10) unsigned NOT NULL default '0',
-  `transportarmytype` int(10) unsigned NOT NULL default '0',
-  `unitsbuildingtype` int(10) unsigned NOT NULL default '0',
-  `idlemod` int(10) unsigned NOT NULL default '0',
-  `transportertype` int(10) unsigned NOT NULL default '0',
-  PRIMARY KEY  (`id`)
-) TYPE=MyISAM AUTO_INCREMENT=22 ;
+CREATE TABLE "armytransfer" (
+  "id" int(10) unsigned NOT NULL auto_increment,
+  "name" varchar(255) NOT NULL default '',
+  "sourcebuildingtype" int(10) unsigned NOT NULL default '0',
+  "sourcearmytype" int(10) unsigned NOT NULL default '0',
+  "sourcetransport" int(10) unsigned NOT NULL default '0',
+  "targetarmytype" int(10) unsigned NOT NULL default '0',
+  "transportarmytype" int(10) unsigned NOT NULL default '0',
+  "unitsbuildingtype" int(10) unsigned NOT NULL default '0',
+  "idlemod" int(10) unsigned NOT NULL default '0',
+  "transportertype" int(10) unsigned NOT NULL default '0',
+  PRIMARY KEY  ("id")
+) AUTO_INCREMENT=22 ;
 
 -- 
 -- Dumping data for table `armytransfer`
@@ -154,24 +152,24 @@ INSERT INTO `armytransfer` VALUES (21, 'Austausch(Besatzung)', 0, 3, 1, 3, 6, 0,
 -- Table structure for table `armytype`
 -- 
 
-CREATE TABLE IF NOT EXISTS `armytype` (
-  `id` int(10) unsigned NOT NULL,
-  `name` varchar(255) NOT NULL default '',
-  `limit` int(10) NOT NULL default '0',
-  `ownerflags` int(10) unsigned NOT NULL default '0',
-  `addtechs` varchar(255) NOT NULL default '',
-  `subtechs` varchar(255) NOT NULL default '',
-  `weightlimit` int(10) NOT NULL default '0',
-  PRIMARY KEY  (`id`)
-) TYPE=MyISAM AUTO_INCREMENT=8 ;
+CREATE TABLE "armytype" (
+  "id" int(10) unsigned NOT NULL auto_increment,
+  "name" varchar(255) NOT NULL default '',
+  "limit" int(10) NOT NULL default '0',
+  "ownerflags" int(10) unsigned NOT NULL default '0',
+  "addtechs" varchar(255) NOT NULL default '',
+  "subtechs" varchar(255) NOT NULL default '',
+  "weightlimit" int(10) NOT NULL default '0',
+  PRIMARY KEY  ("id")
+) AUTO_INCREMENT=8 ;
 
 -- 
 -- Dumping data for table `armytype`
 -- 
 
-INSERT INTO `armytype` VALUES (1, 'Maschine', 1, 328931, '', '', 1500);
+INSERT INTO `armytype` VALUES (1, 'Maschine', 1, 470090979, '', '', 1500);
 INSERT INTO `armytype` VALUES (3, 'Flotte', 4, 593631, '', '', 5000000);
-INSERT INTO `armytype` VALUES (4, 'Armee', 4, 1670367, '', '', 5000000);
+INSERT INTO `armytype` VALUES (4, 'Armee', 4, 471432415, '', '', 5000000);
 INSERT INTO `armytype` VALUES (5, 'Karawane', 4, 591051, '', '', 1000000);
 INSERT INTO `armytype` VALUES (6, 'Arbeiter', 10, 29979851, '', '', 100000);
 INSERT INTO `armytype` VALUES (7, 'Magier', 0, 0, '', '', 0);
@@ -182,27 +180,27 @@ INSERT INTO `armytype` VALUES (7, 'Magier', 0, 0, '', '', 0);
 -- Table structure for table `bug`
 -- 
 
-CREATE TABLE IF NOT EXISTS `bug` (
-  `id` int(10) unsigned NOT NULL,
-  `finder` int(10) unsigned NOT NULL default '0',
-  `creator` int(10) unsigned NOT NULL default '0',
-  `created` int(10) unsigned NOT NULL default '0',
-  `closed` int(10) unsigned NOT NULL default '0',
-  `name` varchar(128) NOT NULL default '',
-  `text` text NOT NULL,
-  `desc` text NOT NULL,
-  `topic` tinyint(4) NOT NULL default '0',
-  `assigned_user` int(10) unsigned NOT NULL default '0',
-  `prio` tinyint(3) unsigned NOT NULL default '0',
-  `status` tinyint(3) unsigned NOT NULL default '0',
-  `x` int(11) NOT NULL default '0',
-  `y` int(11) NOT NULL default '0',
-  `img` varchar(128) NOT NULL default '',
-  PRIMARY KEY  (`id`),
-  KEY `finder` (`finder`,`creator`,`created`,`topic`,`assigned_user`,`prio`),
-  KEY `status` (`status`),
-  KEY `closed` (`closed`)
-) TYPE=MyISAM AUTO_INCREMENT=1 ;
+CREATE TABLE "bug" (
+  "id" int(10) unsigned NOT NULL auto_increment,
+  "finder" int(10) unsigned NOT NULL default '0',
+  "creator" int(10) unsigned NOT NULL default '0',
+  "created" int(10) unsigned NOT NULL default '0',
+  "closed" int(10) unsigned NOT NULL default '0',
+  "name" varchar(128) NOT NULL default '',
+  "text" text NOT NULL,
+  "desc" text NOT NULL,
+  "topic" tinyint(4) NOT NULL default '0',
+  "assigned_user" int(10) unsigned NOT NULL default '0',
+  "prio" tinyint(3) unsigned NOT NULL default '0',
+  "status" tinyint(3) unsigned NOT NULL default '0',
+  "x" int(11) NOT NULL default '0',
+  "y" int(11) NOT NULL default '0',
+  "img" varchar(128) NOT NULL default '',
+  PRIMARY KEY  ("id"),
+  KEY "finder" ("finder","creator","created","topic","assigned_user","prio"),
+  KEY "status" ("status"),
+  KEY "closed" ("closed")
+) AUTO_INCREMENT=1 ;
 
 -- 
 -- Dumping data for table `bug`
@@ -215,31 +213,31 @@ CREATE TABLE IF NOT EXISTS `bug` (
 -- Table structure for table `building`
 -- 
 
-CREATE TABLE IF NOT EXISTS `building` (
-  `id` int(10) unsigned NOT NULL,
-  `x` int(11) NOT NULL default '0',
-  `y` int(11) NOT NULL default '0',
-  `user` int(10) unsigned NOT NULL default '0',
-  `type` tinyint(4) unsigned NOT NULL default '0',
-  `flags` int(10) unsigned NOT NULL default '0',
-  `level` tinyint(4) unsigned NOT NULL default '0',
-  `upgrades` tinyint(4) unsigned NOT NULL default '0',
-  `upgradetime` int(10) unsigned NOT NULL default '0',
-  `hp` float NOT NULL default '0',
-  `mana` float NOT NULL default '0',
-  `construction` int(10) unsigned NOT NULL default '0',
-  `param` char(4) NOT NULL default '',
-  `nwse` tinyint(3) unsigned NOT NULL default '0',
-  `supportslots` tinyint(3) unsigned NOT NULL default '0',
-  PRIMARY KEY  (`id`),
-  UNIQUE KEY `pos` (`x`,`y`),
-  KEY `user` (`user`),
-  KEY `type` (`type`),
-  KEY `construction` (`construction`),
-  KEY `flags` (`flags`),
-  KEY `hp` (`hp`),
-  KEY `y` (`y`)
-) TYPE=MyISAM AUTO_INCREMENT=436131 ;
+CREATE TABLE "building" (
+  "id" int(10) unsigned NOT NULL auto_increment,
+  "x" int(11) NOT NULL default '0',
+  "y" int(11) NOT NULL default '0',
+  "user" int(10) unsigned NOT NULL default '0',
+  "type" tinyint(4) unsigned NOT NULL default '0',
+  "flags" int(10) unsigned NOT NULL default '0',
+  "level" tinyint(4) unsigned NOT NULL default '0',
+  "upgrades" tinyint(4) unsigned NOT NULL default '0',
+  "upgradetime" int(10) unsigned NOT NULL default '0',
+  "hp" float NOT NULL default '0',
+  "mana" float NOT NULL default '0',
+  "construction" int(10) unsigned NOT NULL default '0',
+  "param" char(4) NOT NULL default '',
+  "nwse" tinyint(3) unsigned NOT NULL default '0',
+  "supportslots" tinyint(3) unsigned NOT NULL default '0',
+  PRIMARY KEY  ("id"),
+  UNIQUE KEY "pos" ("x","y"),
+  KEY "user" ("user"),
+  KEY "type" ("type"),
+  KEY "construction" ("construction"),
+  KEY "flags" ("flags"),
+  KEY "hp" ("hp"),
+  KEY "y" ("y")
+) AUTO_INCREMENT=436131 ;
 
 -- 
 -- Dumping data for table `building`
@@ -501,15 +499,15 @@ INSERT INTO `building` VALUES (261109, -6, -10, 249, 64, 0, 10, 0, 0, 58, 0, 0, 
 -- Table structure for table `buildinglevel`
 -- 
 
-CREATE TABLE IF NOT EXISTS `buildinglevel` (
-  `id` int(10) unsigned NOT NULL,
-  `building` int(10) unsigned NOT NULL default '0',
-  `user` int(10) unsigned NOT NULL default '0',
-  `type` int(10) unsigned NOT NULL default '0',
-  `subtype` int(10) unsigned NOT NULL default '0',
-  `level` int(10) unsigned NOT NULL default '0',
-  PRIMARY KEY  (`id`)
-) TYPE=MyISAM AUTO_INCREMENT=1 ;
+CREATE TABLE "buildinglevel" (
+  "id" int(10) unsigned NOT NULL auto_increment,
+  "building" int(10) unsigned NOT NULL default '0',
+  "user" int(10) unsigned NOT NULL default '0',
+  "type" int(10) unsigned NOT NULL default '0',
+  "subtype" int(10) unsigned NOT NULL default '0',
+  "level" int(10) unsigned NOT NULL default '0',
+  PRIMARY KEY  ("id")
+) AUTO_INCREMENT=1 ;
 
 -- 
 -- Dumping data for table `buildinglevel`
@@ -522,11 +520,11 @@ CREATE TABLE IF NOT EXISTS `buildinglevel` (
 -- Table structure for table `buildingname`
 -- 
 
-CREATE TABLE IF NOT EXISTS `buildingname` (
-  `id` int(10) unsigned NOT NULL default '0',
-  `name` varchar(128) NOT NULL default '',
-  PRIMARY KEY  (`id`)
-) TYPE=MyISAM;
+CREATE TABLE "buildingname" (
+  "id" int(10) unsigned NOT NULL default '0',
+  "name" varchar(128) NOT NULL default '',
+  PRIMARY KEY  ("id")
+);
 
 -- 
 -- Dumping data for table `buildingname`
@@ -539,14 +537,14 @@ CREATE TABLE IF NOT EXISTS `buildingname` (
 -- Table structure for table `buildingparam`
 -- 
 
-CREATE TABLE IF NOT EXISTS `buildingparam` (
-  `id` int(10) unsigned NOT NULL,
-  `building` int(10) unsigned NOT NULL default '0',
-  `name` varchar(32) NOT NULL default '0',
-  `value` text NOT NULL,
-  PRIMARY KEY  (`id`),
-  KEY `building` (`building`)
-) TYPE=MyISAM AUTO_INCREMENT=1 ;
+CREATE TABLE "buildingparam" (
+  "id" int(10) unsigned NOT NULL auto_increment,
+  "building" int(10) unsigned NOT NULL default '0',
+  "name" varchar(32) NOT NULL default '0',
+  "value" text NOT NULL,
+  PRIMARY KEY  ("id"),
+  KEY "building" ("building")
+) AUTO_INCREMENT=1 ;
 
 -- 
 -- Dumping data for table `buildingparam`
@@ -559,67 +557,67 @@ CREATE TABLE IF NOT EXISTS `buildingparam` (
 -- Table structure for table `buildingtype`
 -- 
 
-CREATE TABLE IF NOT EXISTS `buildingtype` (
-  `id` int(11) NOT NULL,
-  `name` varchar(128) NOT NULL default '',
-  `descr` text NOT NULL,
-  `cost_lumber` int(10) unsigned NOT NULL default '0',
-  `cost_stone` int(10) unsigned NOT NULL default '0',
-  `cost_food` int(10) unsigned NOT NULL default '0',
-  `cost_metal` int(10) unsigned NOT NULL default '0',
-  `cost_runes` int(10) unsigned NOT NULL default '0',
-  `req_geb` varchar(128) NOT NULL default '',
-  `req_tech` varchar(128) NOT NULL default '',
-  `buildtime` int(10) unsigned NOT NULL default '0',
-  `maxhp` int(11) NOT NULL default '0',
-  `basemana` int(11) NOT NULL default '0',
-  `script` varchar(64) NOT NULL default '',
-  `color` varchar(8) NOT NULL default '',
-  `letter` varchar(8) NOT NULL default '',
-  `lettercolor` varchar(8) NOT NULL default '',
-  `speed` int(11) NOT NULL default '0',
-  `gfx` varchar(128) NOT NULL default '',
-  `special` int(10) unsigned NOT NULL default '0',
-  `flags` int(10) unsigned NOT NULL default '0',
-  `weightlimit` int(10) unsigned NOT NULL default '0',
-  `cssclass` varchar(64) NOT NULL default '',
-  `orderval` tinyint(4) NOT NULL default '0',
-  `ruinbtype` int(10) unsigned NOT NULL default '0',
-  `race` tinyint(3) unsigned NOT NULL default '1',
-  `terrain_needed` tinyint(3) unsigned NOT NULL default '0',
-  `mod_a` float NOT NULL default '1',
-  `mod_v` float NOT NULL default '1',
-  `mod_f` float NOT NULL default '1',
-  `connectto_terrain` varchar(255) NOT NULL default '',
-  `connectto_building` varchar(255) NOT NULL default '',
-  `neednear_building` varchar(255) NOT NULL default '',
-  `require_building` varchar(255) NOT NULL default '',
-  `exclude_building` varchar(255) NOT NULL default '',
-  `border` tinyint(3) unsigned NOT NULL default '1',
-  `movable_flag` int(10) unsigned NOT NULL default '0',
-  `movable_override_terrain` tinyint(3) unsigned NOT NULL default '1',
-  `convert_into_terrain` int(10) unsigned NOT NULL default '0',
-  PRIMARY KEY  (`id`),
-  KEY `race` (`race`),
-  KEY `maxhp` (`maxhp`),
-  KEY `movable_flag` (`movable_flag`)
-) TYPE=MyISAM AUTO_INCREMENT=75 ;
+CREATE TABLE "buildingtype" (
+  "id" int(11) NOT NULL auto_increment,
+  "name" varchar(128) NOT NULL default '',
+  "descr" text NOT NULL,
+  "cost_lumber" int(10) unsigned NOT NULL default '0',
+  "cost_stone" int(10) unsigned NOT NULL default '0',
+  "cost_food" int(10) unsigned NOT NULL default '0',
+  "cost_metal" int(10) unsigned NOT NULL default '0',
+  "cost_runes" int(10) unsigned NOT NULL default '0',
+  "req_geb" varchar(128) NOT NULL default '',
+  "req_tech" varchar(128) NOT NULL default '',
+  "buildtime" int(10) unsigned NOT NULL default '0',
+  "maxhp" int(11) NOT NULL default '0',
+  "basemana" int(11) NOT NULL default '0',
+  "script" varchar(64) NOT NULL default '',
+  "color" varchar(8) NOT NULL default '',
+  "letter" varchar(8) NOT NULL default '',
+  "lettercolor" varchar(8) NOT NULL default '',
+  "speed" int(11) NOT NULL default '0',
+  "gfx" varchar(128) NOT NULL default '',
+  "special" int(10) unsigned NOT NULL default '0',
+  "flags" int(10) unsigned NOT NULL default '0',
+  "weightlimit" int(10) unsigned NOT NULL default '0',
+  "cssclass" varchar(64) NOT NULL default '',
+  "orderval" tinyint(4) NOT NULL default '0',
+  "ruinbtype" int(10) unsigned NOT NULL default '0',
+  "race" tinyint(3) unsigned NOT NULL default '1',
+  "terrain_needed" tinyint(3) unsigned NOT NULL default '0',
+  "mod_a" float NOT NULL default '1',
+  "mod_v" float NOT NULL default '1',
+  "mod_f" float NOT NULL default '1',
+  "connectto_terrain" varchar(255) NOT NULL default '',
+  "connectto_building" varchar(255) NOT NULL default '',
+  "neednear_building" varchar(255) NOT NULL default '',
+  "require_building" varchar(255) NOT NULL default '',
+  "exclude_building" varchar(255) NOT NULL default '',
+  "border" tinyint(3) unsigned NOT NULL default '1',
+  "movable_flag" int(10) unsigned NOT NULL default '0',
+  "movable_override_terrain" tinyint(3) unsigned NOT NULL default '1',
+  "convert_into_terrain" int(10) unsigned NOT NULL default '0',
+  PRIMARY KEY  ("id"),
+  KEY "race" ("race"),
+  KEY "maxhp" ("maxhp"),
+  KEY "movable_flag" ("movable_flag")
+) AUTO_INCREMENT=75 ;
 
 -- 
 -- Dumping data for table `buildingtype`
 -- 
 
 INSERT INTO `buildingtype` VALUES (1, 'Haupthaus', '+12 Bev&ouml;lkerungsmaximum + 12 je Stufe<br> +10 Slots je Rohstoff Produktion + 10 je Stufe<br> +250 Lagerkapazit&auml;t je Rohstoff + 250 je Stufe<p> \r\nDas maximale Level andere Geb&auml;ude ist anfangs 3.<br> mit jedem Haupthaus-Level sind 3 weitere upgrades m&ouml;glich.<br> Wenn das Haupthaus zerst&ouml;rt oder abgerissen wird,<br> werden auch alle Geb&auml;ude, Armeen und Forschungen zerst&ouml;rt.', 800, 800, 800, 800, 0, '', '', 36, 5000, 0, 'hq', '#FFFF00', 'H', 'black', 0, 'gebaeude-r%R%/hq-%L%.png', 0, 0, 0, 'hq', 1, 42, 0, 0, 1, 1, 1, '', '', '', '', '', 1, 0, 1, 0);
-INSERT INTO `buildingtype` VALUES (2, 'Magieturm', 'hier kann man Zauber erforschen, Runen produzieren und Zauberer ausbilden<p>\r\n\r\nProduktion:<br>\r\n* Turmzauberer<br>\r\n* Runen<p>\r\n\r\nForschung:<br>\r\n* Effiziente Runenproduktion<p>\r\n\r\nZauber:<br>\r\n* Spieler Defensiv<br>\r\n* Spieler Offensiv<br>\r\n* Area Defensiv<br>\r\n* Area Offensiv<br>\r\n* Armee Defensiv<br>\r\n* Armee Offensiv<br>\r\n* Armeezauberer', 5000, 5000, 5000, 5000, 0, '1:5', '', 69120, 480, 10, 'magic_tower', '#8888FF', 'T', 'yellow', 0, 'gebaeude-r%R%/magitower-%L%.png', 0, 0, 0, 'magitower', 20, 27, 1, 0, 1, 1, 1, '', '', '', '', '', 1, 0, 1, 0);
+INSERT INTO `buildingtype` VALUES (2, 'Magieturm', 'hier kann man Zauber erforschen, Runen produzieren und Zauberer ausbilden<p>\r\n\r\nProduktion:<br>\r\n* Turmzauberer<br>\r\n* Runen<p>\r\n\r\nForschung:<br>\r\n* Effiziente Runenproduktion<p>\r\n\r\nZauber:<br>\r\n* Spieler Defensiv<br>\r\n* Spieler Offensiv<br>\r\n* Area Defensiv<br>\r\n* Area Offensiv<br>\r\n* Armee Defensiv<br>\r\n* Armee Offensiv<br>\r\n* Armeezauberer', 5000, 5000, 5000, 5000, 0, '1:5', '', 69120, 480, 10, 'magic_tower', '#8888FF', 'T', 'yellow', 0, 'gebaeude-r%R%/magitower-%L%.png', 0, 0, 2400, 'magitower', 20, 27, 1, 0, 1, 1, 1, '', '', '', '', '', 1, 0, 1, 0);
 INSERT INTO `buildingtype` VALUES (3, 'Weg', 'auch der längste Weg beginnt mit dem ersten Schritt,\r\n<br>hier läuft die Armee schneller.', 5, 5, 0, 0, 0, '1:0', '', 2880, 5, 0, 'way', '#949454', '#', 'black', 60, 'path/path-%NWSE%-%L%.png', 0, 0, 0, 'path_%NWSE%', 11, 0, 0, 0, 1, 1, 1, '', '', '', '', '', 0, 7, 1, 0);
 INSERT INTO `buildingtype` VALUES (4, 'BROID - Obelisk', 'Blue Ray Of Instant Death - besser nicht in die n&auml;he kommen =), kann Felder niederbrennen', 9999999, 9999999, 9999999, 9999999, 0, '', '', 69120, 999999999, 0, 'broid', 'black', 'i', 'white', 0, 'gebaeude-r%R%/broid-%L%.png', 1, 0, 0, 'broid', 0, 39, 1, 0, 1, 1, 1, '', '', '', '', '', 1, 0, 1, 0);
-INSERT INTO `buildingtype` VALUES (5, 'Wall', 'eine fette dicke Mauer, versperrt Armeen den Weg.', 5, 10, 0, 0, 0, '11:0,1:0', '', 5760, 120, 0, 'wall', 'gray', 'W', 'black', 0, 'wall/wall-%NWSE%-%L%.png', 0, 0, 0, 'wall_%NWSE%', 12, 0, 0, 0, 1, 1, 1, '', '', '', '', '', 0, 0, 1, 0);
+INSERT INTO `buildingtype` VALUES (5, 'Wall', 'eine fette dicke Mauer, versperrt Armeen den Weg.', 5, 10, 0, 0, 0, '11:0,1:0', '', 5760, 120, 0, 'wall', 'gray', 'W', 'black', 0, 'wall/wall-%NWSE%-%L%.png', 0, 0, 0, 'wall_%NWSE%', 12, 0, 0, 0, 1, 1, 1, '', '73', '', '', '', 0, 0, 1, 0);
 INSERT INTO `buildingtype` VALUES (6, 'Haus', 'Ein schönes Wohnhaus, damit die Bevölkerung\r\n<br>nicht beim Haupthaus kampieren muss.\r\n<p>+10 Bevölkerungsmaximum + 10 je Stufe', 100, 100, 0, 0, 0, '1:0', '', 11520, 100, 0, 'house', 'red', 'm', 'yellow', 0, 'gebaeude-r%R%/house-%L%.png', 0, 0, 0, 'house', 2, 41, 0, 0, 1, 1, 1, '', '', '', '', '', 1, 0, 1, 0);
 INSERT INTO `buildingtype` VALUES (7, 'Lager', 'das Rohstofflager, je weiter Baustellen vom Lager entfernt\r\n<br>sind, desto länger brauchen sie zum bauen\r\n<p>+250 Lagerkapazität je Rohstoff + 250 je Stufe', 50, 50, 0, 0, 0, '1:0', '', 14400, 200, 0, 'lager', '#FFFF96', 'L', 'black', 0, 'gebaeude-r%R%/lager-%L%.png', 0, 0, 0, 'lager', 3, 26, 0, 0, 1, 1, 1, '', '', '', '', '', 1, 0, 1, 0);
 INSERT INTO `buildingtype` VALUES (8, 'Kaserne', 'hier kann man folgende Einheiten produzieren<p>\r\n\r\nProduktion:<br>\r\n* Miliz<br>\r\n* Kämpfer<br>\r\n* SchwertKrieger<br>\r\n* LanzenTräger<br>\r\n* Berserker<br>\r\n* Ritter', 80, 50, 0, 50, 0, '12:0,1:0', '', 34560, 150, 0, 'kaserne', '#FF80FF', 't', 'white', 0, 'gebaeude-r%R%/barracks-%L%.png', 0, 0, 0, 'barracks', 10, 38, 1, 0, 1, 1, 1, '', '', '', '', '', 1, 0, 1, 0);
 INSERT INTO `buildingtype` VALUES (9, 'Bauernhof', 'kikerikiiiii! gack-gack-gack-gack.. grunz-grunz <p>\r\n+10 Slots für Nahrungs-Produktion + 10 je Stufe<br>\r\n+2 extra für angrenzende Getreidefelder<p>\r\n\r\nForschung:<br>\r\n* Sense', 20, 15, 0, 0, 0, '1:0', '', 8640, 100, 0, 'farm', '#ffcc44', 'F', 'black', 0, 'gebaeude-r%R%/farm-%L%.png', 0, 0, 0, 'farm', 6, 35, 0, 0, 1, 1, 1, '', '', '', '', '', 1, 0, 1, 0);
 INSERT INTO `buildingtype` VALUES (10, 'Entwickleranstalt', 'Hier sind all die flei&szlig;igen Entwickler dieses tollen Spiels, wenn Sie nicht gerade ganz flei&szlig;ig weiter daran baun :). Vielleicht sollte man sie auch einfach hier drin lassen *G*, aber machen kann man hiermit trotzdem nix.', 5000, 5000, 5000, 5000, 0, '', '', 69120, 100, 0, 'hospital', 'blue', 'h', 'yellow', 0, 'gebaeude-r%R%/hospital-%L%.png', 1, 0, 0, 'hospital', 16, 37, 1, 0, 1, 1, 1, '', '', '', '', '', 1, 0, 1, 0);
-INSERT INTO `buildingtype` VALUES (11, 'Werkstatt', 'lustige spielzeuge hehehe...<br>\r\nHier werden die mächtigen Rammböcke gefertigt,<br>\r\ndie Mauern und Gebäude dem Erdboden gleichmachen.<p>\r\n\r\nProduktion:<br>\r\n* Rammen<p>\r\n\r\nForschung:<br>\r\n* Architektur', 100, 50, 0, 150, 0, '1:2', '', 34560, 200, 0, 'werkstatt', '#CC8800', 'W', 'black', 0, 'gebaeude-r%R%/werkstatt-%L%.png', 0, 0, 0, 'werkstatt', 8, 34, 0, 0, 1, 1, 1, '', '', '', '', '', 1, 0, 1, 0);
+INSERT INTO `buildingtype` VALUES (11, 'Werkstatt', 'lustige spielzeuge hehehe...<br>\r\nHier werden die mächtigen Rammböcke gefertigt,<br>\r\ndie Mauern und Gebäude dem Erdboden gleichmachen.<p>\r\n\r\nProduktion:<br>\r\n* Rammen<p>\r\n\r\nForschung:<br>\r\n* Architektur', 100, 50, 0, 150, 0, '1:2', '', 34560, 200, 0, 'werkstatt', '#CC8800', 'W', 'black', 0, 'gebaeude-r%R%/werkstatt-%L%.png', 0, 0, 1000, 'werkstatt', 8, 34, 0, 0, 1, 1, 1, '', '', '', '', '', 1, 0, 1, 0);
 INSERT INTO `buildingtype` VALUES (12, 'Schmiede', 'hier werden Klingen geschmiedet, Pfeilspitzen gegossen und R&uuml;stungen gefertigt.<p>\r\n\r\nForschung:<br>\r\n* Kettenrüstung<br>\r\n* gehärtete Klingen<br>\r\n* Plattenpanzer<br>\r\n* Lederrüstung', 50, 100, 0, 300, 0, '1:3', '', 34560, 100, 0, 'schmiede', '#444444', 'S', 'white', 0, 'gebaeude-r%R%/schmiede-%L%.png', 0, 0, 0, 'schmiede', 9, 31, 1, 0, 1, 1, 1, '', '', '', '', '', 1, 0, 1, 0);
 INSERT INTO `buildingtype` VALUES (13, 'Holzf&auml;ller', 'hier wird fleissig das Hackebeil geschwungen<p>\r\n+10 Slots für Holz Produktion + 10 je Stufe<br>\r\n+2 extra für jeden angrenzenden Wald<p>\r\n\r\nForschung:<br>\r\n* Axt', 20, 15, 0, 0, 0, '1:0', '', 8640, 100, 0, 'farm', '#ffcc44', 'H', 'black', 0, 'gebaeude-r%R%/holzfaeller-%L%.png', 0, 0, 0, 'holzfaeller', 4, 40, 0, 0, 1, 1, 1, '', '', '', '', '', 1, 0, 1, 0);
 INSERT INTO `buildingtype` VALUES (14, 'Steinmetz', 'Hau Druff, Hau Druff, Hau Druff, AUA MEIN DAUMEN!<p>\r\n+10 Slots für Stein Produktion + 10 je Stufe<br>\r\n+2 extra für jeden angrenzenden Berg<p>\r\n\r\nForschung:<br>\r\n* Hammer', 20, 15, 0, 0, 0, '1:0', '', 8640, 100, 0, 'steinmetz', '#ffcc44', 'S', 'black', 0, 'gebaeude-r%R%/steinmetz-%L%.png', 0, 0, 0, 'steinmetz', 5, 32, 0, 0, 1, 1, 1, '', '', '', '', '', 1, 0, 1, 0);
@@ -681,7 +679,7 @@ INSERT INTO `buildingtype` VALUES (69, 'Kralle', 'edit me', 0, 0, 0, 0, 0, '', '
 INSERT INTO `buildingtype` VALUES (70, 'Kralle', 'edit me', 0, 0, 0, 0, 0, '', '', 0, 9999, 0, '', '', '', '', 0, 'gebaeude/kralle_s.png', 1, 0, 0, '', 0, 0, 0, 0, 1, 1, 1, '', '', '', '', '', 1, 0, 1, 0);
 INSERT INTO `buildingtype` VALUES (71, 'Kralle', 'edit me', 0, 0, 0, 0, 0, '', '', 0, 9999, 0, '', '', '', '', 0, 'gebaeude/kralle_n.png', 1, 0, 0, '', 0, 0, 0, 0, 1, 1, 1, '', '', '', '', '', 1, 0, 1, 0);
 INSERT INTO `buildingtype` VALUES (72, 'Kornfeld', '', 50, 0, 250, 0, 0, '9>10', '', 3600, 5, 0, '', 'yellow', '#', 'black', 60, 'landschaft/cornfield.png', 0, 0, 0, '', 50, 0, 0, 0, 1, 1, 1, '', '', '', '', '', 0, 7, 0, 8);
-INSERT INTO `buildingtype` VALUES (73, 'Verteidigungsturm', 'turm', 0, 1000, 0, 500, 0, '11>10', '', 86400, 120, 0, '', '', '', '', 0, 'gebaeude/turm/tower-%NWSE%-%L%.png', 0, 240, 0, '', 0, 0, 0, 0, 1, 1, 1, '', '73,5,17', '', '', '', 0, 0, 0, 0);
+INSERT INTO `buildingtype` VALUES (73, 'Verteidigungsturm', 'turm', 0, 1000, 0, 500, 0, '11>10', '', 86400, 120, 0, '', '', '', '', 0, 'gebaeude/turm/tower-%NWSE%-%L%.png', 0, 240, 1500, '', 0, 0, 0, 0, 1, 1, 1, '', '73,5,17', '', '', '', 0, 0, 0, 0);
 INSERT INTO `buildingtype` VALUES (74, 'Ameisen-Hügel', '', 1000, 1000, 0, 0, 0, '', '', 3600, 100, 0, '', '', '', '', 0, 'landschaft/bughole.gif', 1, 0, 0, '', 0, 0, 0, 0, 1, 1, 1, '', '', '', '', '', 0, 0, 1, 0);
 
 -- --------------------------------------------------------
@@ -690,13 +688,13 @@ INSERT INTO `buildingtype` VALUES (74, 'Ameisen-Hügel', '', 1000, 1000, 0, 0, 0
 -- Table structure for table `casinohighscore`
 -- 
 
-CREATE TABLE IF NOT EXISTS `casinohighscore` (
-  `user` int(10) unsigned NOT NULL default '0',
-  `game` int(10) unsigned NOT NULL default '0',
-  `score` int(11) NOT NULL default '0',
-  `timesplayed` int(10) unsigned NOT NULL default '0',
-  UNIQUE KEY `user` (`user`,`game`)
-) TYPE=MyISAM;
+CREATE TABLE "casinohighscore" (
+  "user" int(10) unsigned NOT NULL default '0',
+  "game" int(10) unsigned NOT NULL default '0',
+  "score" int(11) NOT NULL default '0',
+  "timesplayed" int(10) unsigned NOT NULL default '0',
+  UNIQUE KEY "user" ("user","game")
+);
 
 -- 
 -- Dumping data for table `casinohighscore`
@@ -709,13 +707,13 @@ CREATE TABLE IF NOT EXISTS `casinohighscore` (
 -- Table structure for table `cliplog`
 -- 
 
-CREATE TABLE IF NOT EXISTS `cliplog` (
-  `id` int(10) unsigned NOT NULL,
-  `user` tinytext NOT NULL,
-  `time` int(11) NOT NULL default '0',
-  `clip` text NOT NULL,
-  PRIMARY KEY  (`id`)
-) TYPE=MyISAM AUTO_INCREMENT=1 ;
+CREATE TABLE "cliplog" (
+  "id" int(10) unsigned NOT NULL auto_increment,
+  "user" tinytext NOT NULL,
+  "time" int(11) NOT NULL default '0',
+  "clip" text NOT NULL,
+  PRIMARY KEY  ("id")
+) AUTO_INCREMENT=1 ;
 
 -- 
 -- Dumping data for table `cliplog`
@@ -728,20 +726,20 @@ CREATE TABLE IF NOT EXISTS `cliplog` (
 -- Table structure for table `construction`
 -- 
 
-CREATE TABLE IF NOT EXISTS `construction` (
-  `id` int(10) unsigned NOT NULL,
-  `user` int(10) unsigned NOT NULL default '0',
-  `x` int(10) NOT NULL default '0',
-  `y` int(10) NOT NULL default '0',
-  `type` int(10) unsigned NOT NULL default '0',
-  `priority` int(10) unsigned NOT NULL default '0',
-  `param` char(4) NOT NULL default '',
-  PRIMARY KEY  (`id`),
-  KEY `x` (`x`),
-  KEY `y` (`y`),
-  KEY `user` (`user`),
-  KEY `type` (`type`)
-) TYPE=MyISAM AUTO_INCREMENT=1 ;
+CREATE TABLE "construction" (
+  "id" int(10) unsigned NOT NULL auto_increment,
+  "user" int(10) unsigned NOT NULL default '0',
+  "x" int(10) NOT NULL default '0',
+  "y" int(10) NOT NULL default '0',
+  "type" int(10) unsigned NOT NULL default '0',
+  "priority" int(10) unsigned NOT NULL default '0',
+  "param" char(4) NOT NULL default '',
+  PRIMARY KEY  ("id"),
+  KEY "x" ("x"),
+  KEY "y" ("y"),
+  KEY "user" ("user"),
+  KEY "type" ("type")
+) AUTO_INCREMENT=1 ;
 
 -- 
 -- Dumping data for table `construction`
@@ -754,15 +752,15 @@ CREATE TABLE IF NOT EXISTS `construction` (
 -- Table structure for table `fight`
 -- 
 
-CREATE TABLE IF NOT EXISTS `fight` (
-  `id` int(10) unsigned NOT NULL,
-  `attacker` int(10) unsigned NOT NULL default '0',
-  `defender` int(10) unsigned NOT NULL default '0',
-  `start` int(10) unsigned NOT NULL default '0',
-  `fightlog` int(10) unsigned NOT NULL,
-  PRIMARY KEY  (`id`),
-  UNIQUE KEY `attacker` (`attacker`,`defender`)
-) TYPE=MyISAM AUTO_INCREMENT=1 ;
+CREATE TABLE "fight" (
+  "id" int(10) unsigned NOT NULL auto_increment,
+  "attacker" int(10) unsigned NOT NULL default '0',
+  "defender" int(10) unsigned NOT NULL default '0',
+  "start" int(10) unsigned NOT NULL default '0',
+  "fightlog" int(10) unsigned NOT NULL,
+  PRIMARY KEY  ("id"),
+  UNIQUE KEY "attacker" ("attacker","defender")
+) AUTO_INCREMENT=1 ;
 
 -- 
 -- Dumping data for table `fight`
@@ -775,15 +773,15 @@ CREATE TABLE IF NOT EXISTS `fight` (
 -- Table structure for table `fightlog`
 -- 
 
-CREATE TABLE IF NOT EXISTS `fightlog` (
-  `id` int(10) unsigned NOT NULL,
-  `fight` int(10) unsigned NOT NULL default '0',
-  `startunits1` text NOT NULL,
-  `startunits2` text NOT NULL,
-  `starttransport1` text NOT NULL,
-  `starttransport2` text NOT NULL,
-  PRIMARY KEY  (`id`)
-) TYPE=MyISAM AUTO_INCREMENT=1 ;
+CREATE TABLE "fightlog" (
+  "id" int(10) unsigned NOT NULL auto_increment,
+  "fight" int(10) unsigned NOT NULL default '0',
+  "startunits1" text NOT NULL,
+  "startunits2" text NOT NULL,
+  "starttransport1" text NOT NULL,
+  "starttransport2" text NOT NULL,
+  PRIMARY KEY  ("id")
+) AUTO_INCREMENT=1 ;
 
 -- 
 -- Dumping data for table `fightlog`
@@ -796,15 +794,15 @@ CREATE TABLE IF NOT EXISTS `fightlog` (
 -- Table structure for table `fof_guild`
 -- 
 
-CREATE TABLE IF NOT EXISTS `fof_guild` (
-  `id` int(10) unsigned NOT NULL,
-  `master` int(10) unsigned NOT NULL default '0',
-  `other` int(10) unsigned NOT NULL default '0',
-  `class` tinyint(3) unsigned NOT NULL default '0',
-  `time` int(10) unsigned NOT NULL default '0',
-  `flags` int(10) unsigned NOT NULL default '0',
-  PRIMARY KEY  (`id`)
-) TYPE=MyISAM AUTO_INCREMENT=1 ;
+CREATE TABLE "fof_guild" (
+  "id" int(10) unsigned NOT NULL auto_increment,
+  "master" int(10) unsigned NOT NULL default '0',
+  "other" int(10) unsigned NOT NULL default '0',
+  "class" tinyint(3) unsigned NOT NULL default '0',
+  "time" int(10) unsigned NOT NULL default '0',
+  "flags" int(10) unsigned NOT NULL default '0',
+  PRIMARY KEY  ("id")
+) AUTO_INCREMENT=1 ;
 
 -- 
 -- Dumping data for table `fof_guild`
@@ -817,15 +815,15 @@ CREATE TABLE IF NOT EXISTS `fof_guild` (
 -- Table structure for table `fof_user`
 -- 
 
-CREATE TABLE IF NOT EXISTS `fof_user` (
-  `id` int(10) unsigned NOT NULL,
-  `master` int(10) unsigned NOT NULL default '0',
-  `other` int(10) unsigned NOT NULL default '0',
-  `class` tinyint(3) unsigned NOT NULL default '0',
-  `time` int(10) unsigned NOT NULL default '0',
-  `flags` int(10) unsigned NOT NULL default '0',
-  PRIMARY KEY  (`id`)
-) TYPE=MyISAM AUTO_INCREMENT=1 ;
+CREATE TABLE "fof_user" (
+  "id" int(10) unsigned NOT NULL auto_increment,
+  "master" int(10) unsigned NOT NULL default '0',
+  "other" int(10) unsigned NOT NULL default '0',
+  "class" tinyint(3) unsigned NOT NULL default '0',
+  "time" int(10) unsigned NOT NULL default '0',
+  "flags" int(10) unsigned NOT NULL default '0',
+  PRIMARY KEY  ("id")
+) AUTO_INCREMENT=1 ;
 
 -- 
 -- Dumping data for table `fof_user`
@@ -838,13 +836,13 @@ CREATE TABLE IF NOT EXISTS `fof_user` (
 -- Table structure for table `global`
 -- 
 
-CREATE TABLE IF NOT EXISTS `global` (
-  `id` int(10) unsigned NOT NULL,
-  `name` varchar(255) NOT NULL default '',
-  `value` varchar(255) NOT NULL default '',
-  PRIMARY KEY  (`id`),
-  UNIQUE KEY `name` (`name`)
-) TYPE=MyISAM AUTO_INCREMENT=76 ;
+CREATE TABLE "global" (
+  "id" int(10) unsigned NOT NULL auto_increment,
+  "name" varchar(255) NOT NULL default '',
+  "value" varchar(255) NOT NULL default '',
+  PRIMARY KEY  ("id"),
+  UNIQUE KEY "name" ("name")
+) AUTO_INCREMENT=76 ;
 
 -- 
 -- Dumping data for table `global`
@@ -925,30 +923,30 @@ INSERT INTO `global` VALUES (75, 'typecache_version_adder', '37');
 -- Table structure for table `guild`
 -- 
 
-CREATE TABLE IF NOT EXISTS `guild` (
-  `id` int(10) unsigned NOT NULL,
-  `founder` int(10) unsigned NOT NULL default '0',
-  `name` varchar(255) NOT NULL default '',
-  `color` varchar(32) NOT NULL default 'blue',
-  `time` int(10) unsigned NOT NULL default '0',
-  `lumber` int(11) NOT NULL default '0',
-  `stone` int(11) NOT NULL default '0',
-  `food` int(11) NOT NULL default '0',
-  `metal` int(11) NOT NULL default '0',
-  `runes` int(11) NOT NULL default '0',
-  `max_lumber` int(10) unsigned NOT NULL default '0',
-  `max_stone` int(10) unsigned NOT NULL default '0',
-  `max_food` int(10) unsigned NOT NULL default '0',
-  `max_metal` int(10) unsigned NOT NULL default '0',
-  `max_runes` int(10) unsigned NOT NULL default '0',
-  `profile` text NOT NULL,
-  `gfx` varchar(128) NOT NULL default '',
-  `internprofile` text NOT NULL,
-  `message` text NOT NULL,
-  `stdstatus` int(10) unsigned NOT NULL default '0',
-  `forumurl` varchar(128) NOT NULL default '',
-  PRIMARY KEY  (`id`)
-) TYPE=MyISAM AUTO_INCREMENT=79 ;
+CREATE TABLE "guild" (
+  "id" int(10) unsigned NOT NULL auto_increment,
+  "founder" int(10) unsigned NOT NULL default '0',
+  "name" varchar(255) NOT NULL default '',
+  "color" varchar(32) NOT NULL default 'blue',
+  "time" int(10) unsigned NOT NULL default '0',
+  "lumber" int(11) NOT NULL default '0',
+  "stone" int(11) NOT NULL default '0',
+  "food" int(11) NOT NULL default '0',
+  "metal" int(11) NOT NULL default '0',
+  "runes" int(11) NOT NULL default '0',
+  "max_lumber" int(10) unsigned NOT NULL default '0',
+  "max_stone" int(10) unsigned NOT NULL default '0',
+  "max_food" int(10) unsigned NOT NULL default '0',
+  "max_metal" int(10) unsigned NOT NULL default '0',
+  "max_runes" int(10) unsigned NOT NULL default '0',
+  "profile" text NOT NULL,
+  "gfx" varchar(128) NOT NULL default '',
+  "internprofile" text NOT NULL,
+  "message" text NOT NULL,
+  "stdstatus" int(10) unsigned NOT NULL default '0',
+  "forumurl" varchar(128) NOT NULL default '',
+  PRIMARY KEY  ("id")
+) AUTO_INCREMENT=79 ;
 
 -- 
 -- Dumping data for table `guild`
@@ -962,16 +960,16 @@ INSERT INTO `guild` VALUES (8, 249, 'Weltbank', 'blue', 1108292994, 93058, 82741
 -- Table structure for table `guild_forum`
 -- 
 
-CREATE TABLE IF NOT EXISTS `guild_forum` (
-  `id` int(10) unsigned NOT NULL,
-  `user` int(10) unsigned NOT NULL default '0',
-  `guild` int(10) unsigned NOT NULL default '0',
-  `date` int(10) unsigned NOT NULL default '0',
-  `head` varchar(128) NOT NULL default '',
-  `content` text NOT NULL,
-  PRIMARY KEY  (`id`),
-  KEY `user` (`user`,`guild`)
-) TYPE=MyISAM AUTO_INCREMENT=1 ;
+CREATE TABLE "guild_forum" (
+  "id" int(10) unsigned NOT NULL auto_increment,
+  "user" int(10) unsigned NOT NULL default '0',
+  "guild" int(10) unsigned NOT NULL default '0',
+  "date" int(10) unsigned NOT NULL default '0',
+  "head" varchar(128) NOT NULL default '',
+  "content" text NOT NULL,
+  PRIMARY KEY  ("id"),
+  KEY "user" ("user","guild")
+) AUTO_INCREMENT=1 ;
 
 -- 
 -- Dumping data for table `guild_forum`
@@ -984,18 +982,18 @@ CREATE TABLE IF NOT EXISTS `guild_forum` (
 -- Table structure for table `guild_forum_comment`
 -- 
 
-CREATE TABLE IF NOT EXISTS `guild_forum_comment` (
-  `id` int(10) unsigned NOT NULL,
-  `article` int(10) unsigned NOT NULL default '0',
-  `ref` int(10) unsigned NOT NULL default '0',
-  `user` int(10) unsigned NOT NULL default '0',
-  `date` int(10) unsigned NOT NULL default '0',
-  `head` varchar(128) NOT NULL default '',
-  `comment` text NOT NULL,
-  `guild` int(10) unsigned NOT NULL default '0',
-  PRIMARY KEY  (`id`),
-  KEY `article` (`article`,`ref`,`user`,`guild`)
-) TYPE=MyISAM AUTO_INCREMENT=1 ;
+CREATE TABLE "guild_forum_comment" (
+  "id" int(10) unsigned NOT NULL auto_increment,
+  "article" int(10) unsigned NOT NULL default '0',
+  "ref" int(10) unsigned NOT NULL default '0',
+  "user" int(10) unsigned NOT NULL default '0',
+  "date" int(10) unsigned NOT NULL default '0',
+  "head" varchar(128) NOT NULL default '',
+  "comment" text NOT NULL,
+  "guild" int(10) unsigned NOT NULL default '0',
+  PRIMARY KEY  ("id"),
+  KEY "article" ("article","ref","user","guild")
+) AUTO_INCREMENT=1 ;
 
 -- 
 -- Dumping data for table `guild_forum_comment`
@@ -1008,15 +1006,15 @@ CREATE TABLE IF NOT EXISTS `guild_forum_comment` (
 -- Table structure for table `guild_forum_read`
 -- 
 
-CREATE TABLE IF NOT EXISTS `guild_forum_read` (
-  `user` int(11) unsigned NOT NULL default '0',
-  `id` int(10) unsigned NOT NULL,
-  `type` tinyint(4) NOT NULL default '0',
-  `ref` int(10) unsigned NOT NULL default '0',
-  PRIMARY KEY  (`id`),
-  KEY `type` (`type`),
-  KEY `user` (`user`)
-) TYPE=MyISAM AUTO_INCREMENT=1 ;
+CREATE TABLE "guild_forum_read" (
+  "user" int(11) unsigned NOT NULL default '0',
+  "id" int(10) unsigned NOT NULL auto_increment,
+  "type" tinyint(4) NOT NULL default '0',
+  "ref" int(10) unsigned NOT NULL default '0',
+  PRIMARY KEY  ("id"),
+  KEY "type" ("type"),
+  KEY "user" ("user")
+) AUTO_INCREMENT=1 ;
 
 -- 
 -- Dumping data for table `guild_forum_read`
@@ -1029,15 +1027,15 @@ CREATE TABLE IF NOT EXISTS `guild_forum_read` (
 -- Table structure for table `guild_msg`
 -- 
 
-CREATE TABLE IF NOT EXISTS `guild_msg` (
-  `id` int(10) unsigned NOT NULL,
-  `guild` int(10) unsigned NOT NULL default '0',
-  `user` int(10) unsigned NOT NULL default '0',
-  `time` int(10) unsigned NOT NULL default '0',
-  `text` text NOT NULL,
-  PRIMARY KEY  (`id`),
-  KEY `guild` (`guild`,`user`,`time`)
-) TYPE=MyISAM AUTO_INCREMENT=1 ;
+CREATE TABLE "guild_msg" (
+  "id" int(10) unsigned NOT NULL auto_increment,
+  "guild" int(10) unsigned NOT NULL default '0',
+  "user" int(10) unsigned NOT NULL default '0',
+  "time" int(10) unsigned NOT NULL default '0',
+  "text" text NOT NULL,
+  PRIMARY KEY  ("id"),
+  KEY "guild" ("guild","user","time")
+) AUTO_INCREMENT=1 ;
 
 -- 
 -- Dumping data for table `guild_msg`
@@ -1050,14 +1048,14 @@ CREATE TABLE IF NOT EXISTS `guild_msg` (
 -- Table structure for table `guild_pref`
 -- 
 
-CREATE TABLE IF NOT EXISTS `guild_pref` (
-  `id` int(10) unsigned NOT NULL,
-  `guild` int(10) unsigned NOT NULL default '0',
-  `var` varchar(128) NOT NULL default '',
-  `value` varchar(128) NOT NULL default '',
-  PRIMARY KEY  (`id`),
-  UNIQUE KEY `guild` (`guild`,`var`)
-) TYPE=MyISAM AUTO_INCREMENT=1 ;
+CREATE TABLE "guild_pref" (
+  "id" int(10) unsigned NOT NULL auto_increment,
+  "guild" int(10) unsigned NOT NULL default '0',
+  "var" varchar(128) NOT NULL default '',
+  "value" varchar(128) NOT NULL default '',
+  PRIMARY KEY  ("id"),
+  UNIQUE KEY "guild" ("guild","var")
+) AUTO_INCREMENT=1 ;
 
 -- 
 -- Dumping data for table `guild_pref`
@@ -1070,16 +1068,16 @@ CREATE TABLE IF NOT EXISTS `guild_pref` (
 -- Table structure for table `guild_request`
 -- 
 
-CREATE TABLE IF NOT EXISTS `guild_request` (
-  `id` int(10) unsigned NOT NULL,
-  `user` int(10) unsigned NOT NULL default '0',
-  `guild` int(10) unsigned NOT NULL default '0',
-  `time` int(10) unsigned NOT NULL default '0',
-  `comment` text NOT NULL,
-  PRIMARY KEY  (`id`),
-  KEY `user` (`user`),
-  KEY `guild` (`guild`)
-) TYPE=MyISAM AUTO_INCREMENT=1 ;
+CREATE TABLE "guild_request" (
+  "id" int(10) unsigned NOT NULL auto_increment,
+  "user" int(10) unsigned NOT NULL default '0',
+  "guild" int(10) unsigned NOT NULL default '0',
+  "time" int(10) unsigned NOT NULL default '0',
+  "comment" text NOT NULL,
+  PRIMARY KEY  ("id"),
+  KEY "user" ("user"),
+  KEY "guild" ("guild")
+) AUTO_INCREMENT=1 ;
 
 -- 
 -- Dumping data for table `guild_request`
@@ -1092,14 +1090,14 @@ CREATE TABLE IF NOT EXISTS `guild_request` (
 -- Table structure for table `guild_right`
 -- 
 
-CREATE TABLE IF NOT EXISTS `guild_right` (
-  `id` int(10) unsigned NOT NULL,
-  `right` int(10) unsigned NOT NULL default '0',
-  `desc` varchar(128) NOT NULL default '',
-  `gfx` varchar(128) NOT NULL default '',
-  PRIMARY KEY  (`id`),
-  UNIQUE KEY `right` (`right`)
-) TYPE=MyISAM AUTO_INCREMENT=1 ;
+CREATE TABLE "guild_right" (
+  "id" int(10) unsigned NOT NULL auto_increment,
+  "right" int(10) unsigned NOT NULL default '0',
+  "desc" varchar(128) NOT NULL default '',
+  "gfx" varchar(128) NOT NULL default '',
+  PRIMARY KEY  ("id"),
+  UNIQUE KEY "right" ("right")
+) AUTO_INCREMENT=1 ;
 
 -- 
 -- Dumping data for table `guild_right`
@@ -1112,24 +1110,24 @@ CREATE TABLE IF NOT EXISTS `guild_right` (
 -- Table structure for table `guildlog`
 -- 
 
-CREATE TABLE IF NOT EXISTS `guildlog` (
-  `id` int(10) unsigned NOT NULL,
-  `time` int(10) unsigned NOT NULL default '0',
-  `x` int(11) NOT NULL default '0',
-  `y` int(11) NOT NULL default '0',
-  `user1` int(10) unsigned NOT NULL default '0',
-  `user2` int(10) unsigned NOT NULL default '0',
-  `guild1` int(10) unsigned NOT NULL default '0',
-  `guild2` int(10) unsigned NOT NULL default '0',
-  `trigger` varchar(64) NOT NULL default '',
-  `what` varchar(255) NOT NULL default '',
-  `count` int(10) unsigned NOT NULL default '1',
-  PRIMARY KEY  (`id`),
-  KEY `time` (`time`),
-  KEY `id1` (`user1`),
-  KEY `id2` (`user2`),
-  KEY `count` (`count`)
-) TYPE=MyISAM AUTO_INCREMENT=1 ;
+CREATE TABLE "guildlog" (
+  "id" int(10) unsigned NOT NULL auto_increment,
+  "time" int(10) unsigned NOT NULL default '0',
+  "x" int(11) NOT NULL default '0',
+  "y" int(11) NOT NULL default '0',
+  "user1" int(10) unsigned NOT NULL default '0',
+  "user2" int(10) unsigned NOT NULL default '0',
+  "guild1" int(10) unsigned NOT NULL default '0',
+  "guild2" int(10) unsigned NOT NULL default '0',
+  "trigger" varchar(64) NOT NULL default '',
+  "what" varchar(255) NOT NULL default '',
+  "count" int(10) unsigned NOT NULL default '1',
+  PRIMARY KEY  ("id"),
+  KEY "time" ("time"),
+  KEY "id1" ("user1"),
+  KEY "id2" ("user2"),
+  KEY "count" ("count")
+) AUTO_INCREMENT=1 ;
 
 -- 
 -- Dumping data for table `guildlog`
@@ -1142,29 +1140,29 @@ CREATE TABLE IF NOT EXISTS `guildlog` (
 -- Table structure for table `hellhole`
 -- 
 
-CREATE TABLE IF NOT EXISTS `hellhole` (
-  `id` int(10) unsigned NOT NULL,
-  `x` int(11) NOT NULL default '0',
-  `y` int(11) NOT NULL default '0',
-  `type` int(10) unsigned NOT NULL default '0',
-  `type2` int(10) unsigned NOT NULL default '0',
-  `ai_type` int(10) unsigned NOT NULL default '0',
-  `ai_data` varchar(255) NOT NULL default '',
-  `lastupgrade` int(11) NOT NULL default '0',
-  `level` tinyint(4) NOT NULL default '0',
-  `maxlevel` int(10) unsigned NOT NULL default '99',
-  `armysize` int(10) unsigned NOT NULL default '0',
-  `armysize2` int(10) unsigned NOT NULL default '1',
-  `num` int(10) unsigned NOT NULL default '0',
-  `spawndelay` int(10) unsigned NOT NULL default '0',
-  `spawntime` int(10) unsigned NOT NULL default '0',
-  `totalspawns` int(10) unsigned NOT NULL default '0',
-  `radius` int(10) NOT NULL default '0',
-  PRIMARY KEY  (`id`),
-  KEY `type` (`type`),
-  KEY `x` (`x`),
-  KEY `y` (`y`)
-) TYPE=MyISAM AUTO_INCREMENT=1 ;
+CREATE TABLE "hellhole" (
+  "id" int(10) unsigned NOT NULL auto_increment,
+  "x" int(11) NOT NULL default '0',
+  "y" int(11) NOT NULL default '0',
+  "type" int(10) unsigned NOT NULL default '0',
+  "type2" int(10) unsigned NOT NULL default '0',
+  "ai_type" int(10) unsigned NOT NULL default '0',
+  "ai_data" varchar(255) NOT NULL default '',
+  "lastupgrade" int(11) NOT NULL default '0',
+  "level" tinyint(4) NOT NULL default '0',
+  "maxlevel" int(10) unsigned NOT NULL default '99',
+  "armysize" int(10) unsigned NOT NULL default '0',
+  "armysize2" int(10) unsigned NOT NULL default '1',
+  "num" int(10) unsigned NOT NULL default '0',
+  "spawndelay" int(10) unsigned NOT NULL default '0',
+  "spawntime" int(10) unsigned NOT NULL default '0',
+  "totalspawns" int(10) unsigned NOT NULL default '0',
+  "radius" int(10) NOT NULL default '0',
+  PRIMARY KEY  ("id"),
+  KEY "type" ("type"),
+  KEY "x" ("x"),
+  KEY "y" ("y")
+) AUTO_INCREMENT=1 ;
 
 -- 
 -- Dumping data for table `hellhole`
@@ -1177,23 +1175,23 @@ CREATE TABLE IF NOT EXISTS `hellhole` (
 -- Table structure for table `item`
 -- 
 
-CREATE TABLE IF NOT EXISTS `item` (
-  `id` int(10) unsigned NOT NULL,
-  `type` int(10) unsigned NOT NULL default '0',
-  `army` int(10) unsigned NOT NULL default '0',
-  `x` int(11) NOT NULL default '0',
-  `y` int(11) NOT NULL default '0',
-  `quest` int(10) unsigned NOT NULL default '0',
-  `building` int(10) unsigned NOT NULL default '0',
-  `spell` int(10) unsigned NOT NULL default '0',
-  `user` int(10) unsigned NOT NULL default '0',
-  `amount` int(10) unsigned NOT NULL default '1',
-  `param` int(10) unsigned NOT NULL default '0',
-  PRIMARY KEY  (`id`),
-  KEY `army` (`army`),
-  KEY `pos` (`x`,`y`),
-  KEY `y` (`y`)
-) TYPE=MyISAM AUTO_INCREMENT=1 ;
+CREATE TABLE "item" (
+  "id" int(10) unsigned NOT NULL auto_increment,
+  "type" int(10) unsigned NOT NULL default '0',
+  "army" int(10) unsigned NOT NULL default '0',
+  "x" int(11) NOT NULL default '0',
+  "y" int(11) NOT NULL default '0',
+  "quest" int(10) unsigned NOT NULL default '0',
+  "building" int(10) unsigned NOT NULL default '0',
+  "spell" int(10) unsigned NOT NULL default '0',
+  "user" int(10) unsigned NOT NULL default '0',
+  "amount" int(10) unsigned NOT NULL default '1',
+  "param" int(10) unsigned NOT NULL default '0',
+  PRIMARY KEY  ("id"),
+  KEY "army" ("army"),
+  KEY "pos" ("x","y"),
+  KEY "y" ("y")
+) AUTO_INCREMENT=1 ;
 
 -- 
 -- Dumping data for table `item`
@@ -1206,18 +1204,18 @@ CREATE TABLE IF NOT EXISTS `item` (
 -- Table structure for table `itemtrade`
 -- 
 
-CREATE TABLE IF NOT EXISTS `itemtrade` (
-  `id` int(10) unsigned NOT NULL,
-  `user` int(10) unsigned NOT NULL default '0',
-  `building` int(10) unsigned NOT NULL default '0',
-  `flags` int(10) unsigned NOT NULL default '0',
-  `amount` int(15) NOT NULL default '0',
-  `offer` varchar(255) NOT NULL default '',
-  `price` varchar(255) NOT NULL default '',
-  `starttime` int(10) unsigned NOT NULL default '0',
-  PRIMARY KEY  (`id`),
-  KEY `building` (`building`)
-) TYPE=MyISAM AUTO_INCREMENT=1 ;
+CREATE TABLE "itemtrade" (
+  "id" int(10) unsigned NOT NULL auto_increment,
+  "user" int(10) unsigned NOT NULL default '0',
+  "building" int(10) unsigned NOT NULL default '0',
+  "flags" int(10) unsigned NOT NULL default '0',
+  "amount" int(15) NOT NULL default '0',
+  "offer" varchar(255) NOT NULL default '',
+  "price" varchar(255) NOT NULL default '',
+  "starttime" int(10) unsigned NOT NULL default '0',
+  PRIMARY KEY  ("id"),
+  KEY "building" ("building")
+) AUTO_INCREMENT=1 ;
 
 -- 
 -- Dumping data for table `itemtrade`
@@ -1230,25 +1228,25 @@ CREATE TABLE IF NOT EXISTS `itemtrade` (
 -- Table structure for table `itemtype`
 -- 
 
-CREATE TABLE IF NOT EXISTS `itemtype` (
-  `id` int(10) unsigned NOT NULL,
-  `name` varchar(64) NOT NULL default '',
-  `gfx` varchar(128) NOT NULL default '',
-  `descr` text NOT NULL,
-  `flags` int(10) unsigned NOT NULL default '0',
-  `weight` float NOT NULL default '0',
-  `maxamount` float NOT NULL default '0',
-  `gammeltype` int(10) unsigned NOT NULL default '0',
-  `gammeltime` int(10) unsigned NOT NULL default '0',
-  `buildings` varchar(255) NOT NULL default '',
-  `cost_lumber` int(11) NOT NULL default '0',
-  `cost_stone` int(11) NOT NULL default '0',
-  `cost_food` int(11) NOT NULL default '0',
-  `cost_metal` int(11) NOT NULL default '0',
-  `cost_runes` int(11) NOT NULL default '0',
-  `value` float NOT NULL default '0',
-  PRIMARY KEY  (`id`)
-) TYPE=MyISAM AUTO_INCREMENT=104 ;
+CREATE TABLE "itemtype" (
+  "id" int(10) unsigned NOT NULL auto_increment,
+  "name" varchar(64) NOT NULL default '',
+  "gfx" varchar(128) NOT NULL default '',
+  "descr" text NOT NULL,
+  "flags" int(10) unsigned NOT NULL default '0',
+  "weight" float NOT NULL default '0',
+  "maxamount" float NOT NULL default '0',
+  "gammeltype" int(10) unsigned NOT NULL default '0',
+  "gammeltime" int(10) unsigned NOT NULL default '0',
+  "buildings" varchar(255) NOT NULL default '',
+  "cost_lumber" int(11) NOT NULL default '0',
+  "cost_stone" int(11) NOT NULL default '0',
+  "cost_food" int(11) NOT NULL default '0',
+  "cost_metal" int(11) NOT NULL default '0',
+  "cost_runes" int(11) NOT NULL default '0',
+  "value" float NOT NULL default '0',
+  PRIMARY KEY  ("id")
+) AUTO_INCREMENT=104 ;
 
 -- 
 -- Dumping data for table `itemtype`
@@ -1334,17 +1332,17 @@ INSERT INTO `itemtype` VALUES (103, 'Spam', 'item/spam.png', 'reduziert de Nahru
 -- Table structure for table `log`
 -- 
 
-CREATE TABLE IF NOT EXISTS `log` (
-  `id` int(10) unsigned NOT NULL,
-  `time` int(10) unsigned NOT NULL default '0',
-  `user` int(10) unsigned NOT NULL default '0',
-  `text` text NOT NULL,
-  `url` varchar(255) default NULL,
-  `frame` varchar(64) default NULL,
-  `type` tinyint(4) NOT NULL default '0',
-  PRIMARY KEY  (`id`),
-  KEY `user` (`user`)
-) TYPE=MyISAM AUTO_INCREMENT=1 ;
+CREATE TABLE "log" (
+  "id" int(10) unsigned NOT NULL auto_increment,
+  "time" int(10) unsigned NOT NULL default '0',
+  "user" int(10) unsigned NOT NULL default '0',
+  "text" text NOT NULL,
+  "url" varchar(255) default NULL,
+  "frame" varchar(64) default NULL,
+  "type" tinyint(4) NOT NULL default '0',
+  PRIMARY KEY  ("id"),
+  KEY "user" ("user")
+) AUTO_INCREMENT=1 ;
 
 -- 
 -- Dumping data for table `log`
@@ -1357,14 +1355,14 @@ CREATE TABLE IF NOT EXISTS `log` (
 -- Table structure for table `map`
 -- 
 
-CREATE TABLE IF NOT EXISTS `map` (
-  `x` int(11) NOT NULL default '0',
-  `y` int(11) NOT NULL default '0',
-  `id` int(11) unsigned NOT NULL,
-  PRIMARY KEY  (`id`),
-  KEY `x` (`x`),
-  KEY `y` (`y`)
-) TYPE=MyISAM AUTO_INCREMENT=1 ;
+CREATE TABLE "map" (
+  "x" int(11) NOT NULL default '0',
+  "y" int(11) NOT NULL default '0',
+  "id" int(11) unsigned NOT NULL auto_increment,
+  PRIMARY KEY  ("id"),
+  KEY "x" ("x"),
+  KEY "y" ("y")
+) AUTO_INCREMENT=1 ;
 
 -- 
 -- Dumping data for table `map`
@@ -1377,14 +1375,14 @@ CREATE TABLE IF NOT EXISTS `map` (
 -- Table structure for table `mapmark`
 -- 
 
-CREATE TABLE IF NOT EXISTS `mapmark` (
-  `id` int(10) unsigned NOT NULL,
-  `user` int(10) unsigned NOT NULL default '0',
-  `x` int(11) NOT NULL default '0',
-  `y` int(11) NOT NULL default '0',
-  `name` varchar(64) NOT NULL default '',
-  PRIMARY KEY  (`id`)
-) TYPE=MyISAM AUTO_INCREMENT=1 ;
+CREATE TABLE "mapmark" (
+  "id" int(10) unsigned NOT NULL auto_increment,
+  "user" int(10) unsigned NOT NULL default '0',
+  "x" int(11) NOT NULL default '0',
+  "y" int(11) NOT NULL default '0',
+  "name" varchar(64) NOT NULL default '',
+  PRIMARY KEY  ("id")
+) AUTO_INCREMENT=1 ;
 
 -- 
 -- Dumping data for table `mapmark`
@@ -1397,18 +1395,18 @@ CREATE TABLE IF NOT EXISTS `mapmark` (
 -- Table structure for table `maptemplate`
 -- 
 
-CREATE TABLE IF NOT EXISTS `maptemplate` (
-  `id` int(10) unsigned NOT NULL,
-  `cx` int(10) unsigned NOT NULL default '0',
-  `cy` int(10) unsigned NOT NULL default '0',
-  `name` varchar(128) NOT NULL default '',
-  `terrain` text NOT NULL,
-  `building` text NOT NULL,
-  `army` text NOT NULL,
-  `item` text NOT NULL,
-  `hellhole` text NOT NULL,
-  PRIMARY KEY  (`id`)
-) TYPE=MyISAM AUTO_INCREMENT=18 ;
+CREATE TABLE "maptemplate" (
+  "id" int(10) unsigned NOT NULL auto_increment,
+  "cx" int(10) unsigned NOT NULL default '0',
+  "cy" int(10) unsigned NOT NULL default '0',
+  "name" varchar(128) NOT NULL default '',
+  "terrain" text NOT NULL,
+  "building" text NOT NULL,
+  "army" text NOT NULL,
+  "item" text NOT NULL,
+  "hellhole" text NOT NULL,
+  PRIMARY KEY  ("id")
+) AUTO_INCREMENT=18 ;
 
 -- 
 -- Dumping data for table `maptemplate`
@@ -1425,18 +1423,18 @@ INSERT INTO `maptemplate` VALUES (17, 1, 1, 'AmeisenHügel', '0|0|10', '0|0|74|1
 -- Table structure for table `marketplace`
 -- 
 
-CREATE TABLE IF NOT EXISTS `marketplace` (
-  `id` int(10) unsigned NOT NULL,
-  `building` int(10) unsigned NOT NULL default '0',
-  `offer_res` tinyint(3) unsigned NOT NULL default '0',
-  `offer_count` int(10) unsigned NOT NULL default '0',
-  `price_res` tinyint(3) unsigned NOT NULL default '0',
-  `price_count` int(10) unsigned NOT NULL default '0',
-  `starttime` int(10) unsigned NOT NULL default '0',
-  PRIMARY KEY  (`id`),
-  KEY `building` (`building`),
-  KEY `offer_res` (`offer_res`)
-) TYPE=MyISAM AUTO_INCREMENT=1 ;
+CREATE TABLE "marketplace" (
+  "id" int(10) unsigned NOT NULL auto_increment,
+  "building" int(10) unsigned NOT NULL default '0',
+  "offer_res" tinyint(3) unsigned NOT NULL default '0',
+  "offer_count" int(10) unsigned NOT NULL default '0',
+  "price_res" tinyint(3) unsigned NOT NULL default '0',
+  "price_count" int(10) unsigned NOT NULL default '0',
+  "starttime" int(10) unsigned NOT NULL default '0',
+  PRIMARY KEY  ("id"),
+  KEY "building" ("building"),
+  KEY "offer_res" ("offer_res")
+) AUTO_INCREMENT=1 ;
 
 -- 
 -- Dumping data for table `marketplace`
@@ -1449,24 +1447,24 @@ CREATE TABLE IF NOT EXISTS `marketplace` (
 -- Table structure for table `message`
 -- 
 
-CREATE TABLE IF NOT EXISTS `message` (
-  `id` int(10) unsigned NOT NULL,
-  `folder` int(10) unsigned NOT NULL default '0',
-  `from` int(10) unsigned NOT NULL default '0',
-  `to` int(10) unsigned NOT NULL default '0',
-  `subject` varchar(255) NOT NULL default '',
-  `text` text NOT NULL,
-  `date` int(11) NOT NULL default '1',
-  `status` tinyint(3) NOT NULL default '1',
-  `type` tinyint(3) unsigned NOT NULL default '0',
-  `html` tinyint(3) unsigned NOT NULL default '0',
-  PRIMARY KEY  (`id`),
-  KEY `from` (`from`),
-  KEY `to` (`to`),
-  KEY `status` (`status`),
-  KEY `type` (`type`),
-  KEY `folder` (`folder`)
-) TYPE=MyISAM AUTO_INCREMENT=1 ;
+CREATE TABLE "message" (
+  "id" int(10) unsigned NOT NULL auto_increment,
+  "folder" int(10) unsigned NOT NULL default '0',
+  "from" int(10) unsigned NOT NULL default '0',
+  "to" int(10) unsigned NOT NULL default '0',
+  "subject" varchar(255) NOT NULL default '',
+  "text" text NOT NULL,
+  "date" int(11) NOT NULL default '1',
+  "status" tinyint(3) NOT NULL default '1',
+  "type" tinyint(3) unsigned NOT NULL default '0',
+  "html" tinyint(3) unsigned NOT NULL default '0',
+  PRIMARY KEY  ("id"),
+  KEY "from" ("from"),
+  KEY "to" ("to"),
+  KEY "status" ("status"),
+  KEY "type" ("type"),
+  KEY "folder" ("folder")
+) AUTO_INCREMENT=1 ;
 
 -- 
 -- Dumping data for table `message`
@@ -1479,15 +1477,15 @@ CREATE TABLE IF NOT EXISTS `message` (
 -- Table structure for table `message_folder`
 -- 
 
-CREATE TABLE IF NOT EXISTS `message_folder` (
-  `id` int(10) unsigned NOT NULL,
-  `type` tinyint(4) NOT NULL default '0',
-  `user` int(10) unsigned NOT NULL default '0',
-  `parent` int(11) NOT NULL default '0',
-  `name` varchar(128) NOT NULL default '',
-  PRIMARY KEY  (`id`),
-  KEY `user` (`user`,`parent`)
-) TYPE=MyISAM AUTO_INCREMENT=1 ;
+CREATE TABLE "message_folder" (
+  "id" int(10) unsigned NOT NULL auto_increment,
+  "type" tinyint(4) NOT NULL default '0',
+  "user" int(10) unsigned NOT NULL default '0',
+  "parent" int(11) NOT NULL default '0',
+  "name" varchar(128) NOT NULL default '',
+  PRIMARY KEY  ("id"),
+  KEY "user" ("user","parent")
+) AUTO_INCREMENT=1 ;
 
 -- 
 -- Dumping data for table `message_folder`
@@ -1500,25 +1498,25 @@ CREATE TABLE IF NOT EXISTS `message_folder` (
 -- Table structure for table `newlog`
 -- 
 
-CREATE TABLE IF NOT EXISTS `newlog` (
-  `id` int(10) unsigned NOT NULL,
-  `type` int(10) unsigned NOT NULL default '0',
-  `topic` int(10) unsigned NOT NULL default '0',
-  `user` int(10) unsigned NOT NULL default '0',
-  `time` int(10) unsigned NOT NULL default '0',
-  `i1` int(11) NOT NULL default '0',
-  `i2` int(11) NOT NULL default '0',
-  `i3` int(11) NOT NULL default '0',
-  `s1` varchar(128) NOT NULL default '',
-  `s2` varchar(128) NOT NULL default '',
-  `count` int(10) unsigned NOT NULL default '1',
-  PRIMARY KEY  (`id`),
-  KEY `type` (`type`),
-  KEY `topic` (`topic`),
-  KEY `user` (`user`),
-  KEY `count` (`count`),
-  KEY `time` (`time`)
-) TYPE=MyISAM AUTO_INCREMENT=1 ;
+CREATE TABLE "newlog" (
+  "id" int(10) unsigned NOT NULL auto_increment,
+  "type" int(10) unsigned NOT NULL default '0',
+  "topic" int(10) unsigned NOT NULL default '0',
+  "user" int(10) unsigned NOT NULL default '0',
+  "time" int(10) unsigned NOT NULL default '0',
+  "i1" int(11) NOT NULL default '0',
+  "i2" int(11) NOT NULL default '0',
+  "i3" int(11) NOT NULL default '0',
+  "s1" varchar(128) NOT NULL default '',
+  "s2" varchar(128) NOT NULL default '',
+  "count" int(10) unsigned NOT NULL default '1',
+  PRIMARY KEY  ("id"),
+  KEY "type" ("type"),
+  KEY "topic" ("topic"),
+  KEY "user" ("user"),
+  KEY "count" ("count"),
+  KEY "time" ("time")
+) AUTO_INCREMENT=1 ;
 
 -- 
 -- Dumping data for table `newlog`
@@ -1531,17 +1529,17 @@ CREATE TABLE IF NOT EXISTS `newlog` (
 -- Table structure for table `pending`
 -- 
 
-CREATE TABLE IF NOT EXISTS `pending` (
-  `name` varchar(64) NOT NULL default '',
-  `mail` varchar(128) NOT NULL default '',
-  `time` int(10) unsigned NOT NULL default '0',
-  `key` varchar(255) NOT NULL default '',
-  `pass` varchar(255) NOT NULL default '',
-  `from` varchar(255) NOT NULL default '',
-  `text` text NOT NULL,
-  `ip` varchar(16) NOT NULL default '',
-  UNIQUE KEY `name` (`name`,`mail`)
-) TYPE=MyISAM;
+CREATE TABLE "pending" (
+  "name" varchar(64) NOT NULL default '',
+  "mail" varchar(128) NOT NULL default '',
+  "time" int(10) unsigned NOT NULL default '0',
+  "key" varchar(255) NOT NULL default '',
+  "pass" varchar(255) NOT NULL default '',
+  "from" varchar(255) NOT NULL default '',
+  "text" text NOT NULL,
+  "ip" varchar(16) NOT NULL default '',
+  UNIQUE KEY "name" ("name","mail")
+);
 
 -- 
 -- Dumping data for table `pending`
@@ -1554,20 +1552,20 @@ CREATE TABLE IF NOT EXISTS `pending` (
 -- Table structure for table `phperror`
 -- 
 
-CREATE TABLE IF NOT EXISTS `phperror` (
-  `id` int(10) unsigned NOT NULL,
-  `datetime` varchar(255) NOT NULL default '',
-  `errornum` int(10) unsigned NOT NULL default '0',
-  `errortype` varchar(255) NOT NULL default '',
-  `errormsg` varchar(255) NOT NULL default '',
-  `scriptname` varchar(255) NOT NULL default '',
-  `scriptlinenum` int(10) unsigned NOT NULL default '0',
-  `code` text NOT NULL,
-  PRIMARY KEY  (`id`),
-  KEY `errormsg` (`errormsg`),
-  KEY `scriptname` (`scriptname`),
-  KEY `scriptlinenum` (`scriptlinenum`)
-) TYPE=MyISAM AUTO_INCREMENT=1 ;
+CREATE TABLE "phperror" (
+  "id" int(10) unsigned NOT NULL auto_increment,
+  "datetime" varchar(255) NOT NULL default '',
+  "errornum" int(10) unsigned NOT NULL default '0',
+  "errortype" varchar(255) NOT NULL default '',
+  "errormsg" varchar(255) NOT NULL default '',
+  "scriptname" varchar(255) NOT NULL default '',
+  "scriptlinenum" int(10) unsigned NOT NULL default '0',
+  "code" text NOT NULL,
+  PRIMARY KEY  ("id"),
+  KEY "errormsg" ("errormsg"),
+  KEY "scriptname" ("scriptname"),
+  KEY "scriptlinenum" ("scriptlinenum")
+) AUTO_INCREMENT=1 ;
 
 -- 
 -- Dumping data for table `phperror`
@@ -1580,22 +1578,22 @@ CREATE TABLE IF NOT EXISTS `phperror` (
 -- Table structure for table `pillage`
 -- 
 
-CREATE TABLE IF NOT EXISTS `pillage` (
-  `id` int(10) unsigned NOT NULL,
-  `army` int(10) unsigned NOT NULL default '0',
-  `building` int(10) unsigned NOT NULL default '0',
-  `start` int(10) unsigned NOT NULL default '0',
-  `type` tinyint(4) NOT NULL default '-1',
-  `lumber` float NOT NULL default '0',
-  `stone` float NOT NULL default '0',
-  `food` float NOT NULL default '0',
-  `metal` float NOT NULL default '0',
-  `runes` float NOT NULL default '0',
-  PRIMARY KEY  (`id`),
-  KEY `army` (`army`),
-  KEY `type` (`type`),
-  KEY `building` (`building`)
-) TYPE=MyISAM AUTO_INCREMENT=1 ;
+CREATE TABLE "pillage" (
+  "id" int(10) unsigned NOT NULL auto_increment,
+  "army" int(10) unsigned NOT NULL default '0',
+  "building" int(10) unsigned NOT NULL default '0',
+  "start" int(10) unsigned NOT NULL default '0',
+  "type" tinyint(4) NOT NULL default '-1',
+  "lumber" float NOT NULL default '0',
+  "stone" float NOT NULL default '0',
+  "food" float NOT NULL default '0',
+  "metal" float NOT NULL default '0',
+  "runes" float NOT NULL default '0',
+  PRIMARY KEY  ("id"),
+  KEY "army" ("army"),
+  KEY "type" ("type"),
+  KEY "building" ("building")
+) AUTO_INCREMENT=1 ;
 
 -- 
 -- Dumping data for table `pillage`
@@ -1608,13 +1606,13 @@ CREATE TABLE IF NOT EXISTS `pillage` (
 -- Table structure for table `poll`
 -- 
 
-CREATE TABLE IF NOT EXISTS `poll` (
-  `id` int(10) unsigned NOT NULL,
-  `name` varchar(255) NOT NULL,
-  `created` int(10) unsigned NOT NULL default '0',
-  PRIMARY KEY  (`id`),
-  KEY `created` (`created`)
-) TYPE=MyISAM AUTO_INCREMENT=1 ;
+CREATE TABLE "poll" (
+  "id" int(10) unsigned NOT NULL auto_increment,
+  "name" varchar(255) NOT NULL,
+  "created" int(10) unsigned NOT NULL default '0',
+  PRIMARY KEY  ("id"),
+  KEY "created" ("created")
+) AUTO_INCREMENT=1 ;
 
 -- 
 -- Dumping data for table `poll`
@@ -1627,13 +1625,13 @@ CREATE TABLE IF NOT EXISTS `poll` (
 -- Table structure for table `poll_answer`
 -- 
 
-CREATE TABLE IF NOT EXISTS `poll_answer` (
-  `poll` int(10) unsigned NOT NULL,
-  `number` int(10) unsigned NOT NULL,
-  `user` int(10) unsigned NOT NULL,
-  `time` int(10) unsigned NOT NULL default '0',
-  PRIMARY KEY  (`poll`,`number`,`user`)
-) TYPE=MyISAM;
+CREATE TABLE "poll_answer" (
+  "poll" int(10) unsigned NOT NULL,
+  "number" int(10) unsigned NOT NULL,
+  "user" int(10) unsigned NOT NULL,
+  "time" int(10) unsigned NOT NULL default '0',
+  PRIMARY KEY  ("poll","number","user")
+);
 
 -- 
 -- Dumping data for table `poll_answer`
@@ -1646,12 +1644,12 @@ CREATE TABLE IF NOT EXISTS `poll_answer` (
 -- Table structure for table `poll_choice`
 -- 
 
-CREATE TABLE IF NOT EXISTS `poll_choice` (
-  `number` int(10) unsigned NOT NULL default '1',
-  `poll` int(10) unsigned NOT NULL,
-  `text` varchar(255) NOT NULL,
-  PRIMARY KEY  (`number`,`poll`)
-) TYPE=MyISAM;
+CREATE TABLE "poll_choice" (
+  "number" int(10) unsigned NOT NULL default '1',
+  "poll" int(10) unsigned NOT NULL,
+  "text" varchar(255) collate latin1_general_ci NOT NULL,
+  PRIMARY KEY  ("number","poll")
+);
 
 -- 
 -- Dumping data for table `poll_choice`
@@ -1664,17 +1662,17 @@ CREATE TABLE IF NOT EXISTS `poll_choice` (
 -- Table structure for table `profile`
 -- 
 
-CREATE TABLE IF NOT EXISTS `profile` (
-  `page` varchar(64) NOT NULL default '',
-  `time` float NOT NULL default '0',
-  `max` float NOT NULL default '0',
-  `sql` int(10) unsigned NOT NULL default '0',
-  `sqlmax` int(10) unsigned NOT NULL default '0',
-  `hits` int(10) unsigned NOT NULL default '0',
-  `mem` int(10) unsigned NOT NULL default '0',
-  `memmax` int(10) unsigned NOT NULL default '0',
-  PRIMARY KEY  (`page`)
-) TYPE=MyISAM;
+CREATE TABLE "profile" (
+  "page" varchar(64) NOT NULL default '',
+  "time" float NOT NULL default '0',
+  "max" float NOT NULL default '0',
+  "sql" int(10) unsigned NOT NULL default '0',
+  "sqlmax" int(10) unsigned NOT NULL default '0',
+  "hits" int(10) unsigned NOT NULL default '0',
+  "mem" int(10) unsigned NOT NULL default '0',
+  "memmax" int(10) unsigned NOT NULL default '0',
+  PRIMARY KEY  ("page")
+);
 
 -- 
 -- Dumping data for table `profile`
@@ -1687,28 +1685,28 @@ CREATE TABLE IF NOT EXISTS `profile` (
 -- Table structure for table `quest`
 -- 
 
-CREATE TABLE IF NOT EXISTS `quest` (
-  `id` int(10) unsigned NOT NULL,
-  `running` tinyint(3) unsigned NOT NULL default '0',
-  `start` int(10) unsigned NOT NULL default '0',
-  `dur` int(10) unsigned NOT NULL default '0',
-  `repeat` int(10) unsigned NOT NULL default '0',
-  `type` tinyint(3) unsigned NOT NULL default '0',
-  `x` int(11) NOT NULL default '0',
-  `y` int(11) NOT NULL default '0',
-  `lumber` int(10) unsigned NOT NULL default '0',
-  `stone` int(10) unsigned NOT NULL default '0',
-  `food` int(10) unsigned NOT NULL default '0',
-  `metal` int(10) unsigned NOT NULL default '0',
-  `runes` int(10) unsigned NOT NULL default '0',
-  `rewarditemtype` int(10) unsigned NOT NULL default '0',
-  `rewarditemamount` float NOT NULL default '1',
-  `flags` int(10) unsigned NOT NULL default '0',
-  `params` varchar(255) NOT NULL default '',
-  `name` varchar(255) NOT NULL default '',
-  `descr` text NOT NULL,
-  PRIMARY KEY  (`id`)
-) TYPE=MyISAM AUTO_INCREMENT=10 ;
+CREATE TABLE "quest" (
+  "id" int(10) unsigned NOT NULL auto_increment,
+  "running" tinyint(3) unsigned NOT NULL default '0',
+  "start" int(10) unsigned NOT NULL default '0',
+  "dur" int(10) unsigned NOT NULL default '0',
+  "repeat" int(10) unsigned NOT NULL default '0',
+  "type" tinyint(3) unsigned NOT NULL default '0',
+  "x" int(11) NOT NULL default '0',
+  "y" int(11) NOT NULL default '0',
+  "lumber" int(10) unsigned NOT NULL default '0',
+  "stone" int(10) unsigned NOT NULL default '0',
+  "food" int(10) unsigned NOT NULL default '0',
+  "metal" int(10) unsigned NOT NULL default '0',
+  "runes" int(10) unsigned NOT NULL default '0',
+  "rewarditemtype" int(10) unsigned NOT NULL default '0',
+  "rewarditemamount" float NOT NULL default '1',
+  "flags" int(10) unsigned NOT NULL default '0',
+  "params" varchar(255) NOT NULL default '',
+  "name" varchar(255) NOT NULL default '',
+  "descr" text NOT NULL,
+  PRIMARY KEY  ("id")
+) AUTO_INCREMENT=10 ;
 
 -- 
 -- Dumping data for table `quest`
@@ -1728,13 +1726,13 @@ INSERT INTO `quest` VALUES (9, 1, 1140566460, 3600, 3600, 3, -25, 227, 0, 0, 0, 
 -- Table structure for table `race`
 -- 
 
-CREATE TABLE IF NOT EXISTS `race` (
-  `id` int(10) unsigned NOT NULL,
-  `name` varchar(32) NOT NULL default '',
-  `desc` text NOT NULL,
-  `gfx` varchar(128) NOT NULL default '',
-  PRIMARY KEY  (`id`)
-) TYPE=MyISAM AUTO_INCREMENT=3 ;
+CREATE TABLE "race" (
+  "id" int(10) unsigned NOT NULL auto_increment,
+  "name" varchar(32) NOT NULL default '',
+  "desc" text NOT NULL,
+  "gfx" varchar(128) NOT NULL default '',
+  PRIMARY KEY  ("id")
+) AUTO_INCREMENT=3 ;
 
 -- 
 -- Dumping data for table `race`
@@ -1749,16 +1747,16 @@ INSERT INTO `race` VALUES (2, 'Gnome', 'wer will fleissige Handwerker sehen, der
 -- Table structure for table `session`
 -- 
 
-CREATE TABLE IF NOT EXISTS `session` (
-  `id` int(10) unsigned NOT NULL,
-  `sid` varchar(128) NOT NULL default '',
-  `ip` varchar(16) NOT NULL default '',
-  `userid` int(10) unsigned NOT NULL default '0',
-  `lastuse` int(12) unsigned NOT NULL default '0',
-  `agent` varchar(128) NOT NULL default '',
-  `usegfx` tinyint(3) unsigned NOT NULL default '0',
-  PRIMARY KEY  (`id`)
-) TYPE=MyISAM AUTO_INCREMENT=1 ;
+CREATE TABLE "session" (
+  "id" int(10) unsigned NOT NULL auto_increment,
+  "sid" varchar(128) NOT NULL default '',
+  "ip" varchar(16) NOT NULL default '',
+  "userid" int(10) unsigned NOT NULL default '0',
+  "lastuse" int(12) unsigned NOT NULL default '0',
+  "agent" varchar(128) NOT NULL default '',
+  "usegfx" tinyint(3) unsigned NOT NULL default '0',
+  PRIMARY KEY  ("id")
+) AUTO_INCREMENT=1 ;
 
 -- 
 -- Dumping data for table `session`
@@ -1771,18 +1769,18 @@ CREATE TABLE IF NOT EXISTS `session` (
 -- Table structure for table `shooting`
 -- 
 
-CREATE TABLE IF NOT EXISTS `shooting` (
-  `id` int(10) unsigned NOT NULL,
-  `attacker` int(10) unsigned NOT NULL default '0',
-  `attackertype` int(10) unsigned NOT NULL default '0',
-  `defender` int(10) unsigned NOT NULL default '0',
-  `defendertype` int(10) unsigned NOT NULL default '0',
-  `start` int(10) unsigned NOT NULL default '0',
-  `lastshot` int(10) unsigned NOT NULL default '0',
-  `fightlog` int(10) unsigned NOT NULL default '0',
-  `autocancel` tinyint(3) unsigned NOT NULL default '0',
-  PRIMARY KEY  (`id`)
-) TYPE=MyISAM AUTO_INCREMENT=1 ;
+CREATE TABLE "shooting" (
+  "id" int(10) unsigned NOT NULL auto_increment,
+  "attacker" int(10) unsigned NOT NULL default '0',
+  "attackertype" int(10) unsigned NOT NULL default '0',
+  "defender" int(10) unsigned NOT NULL default '0',
+  "defendertype" int(10) unsigned NOT NULL default '0',
+  "start" int(10) unsigned NOT NULL default '0',
+  "lastshot" int(10) unsigned NOT NULL default '0',
+  "fightlog" int(10) unsigned NOT NULL default '0',
+  "autocancel" tinyint(3) unsigned NOT NULL default '0',
+  PRIMARY KEY  ("id")
+) AUTO_INCREMENT=1 ;
 
 -- 
 -- Dumping data for table `shooting`
@@ -1795,15 +1793,15 @@ CREATE TABLE IF NOT EXISTS `shooting` (
 -- Table structure for table `siege`
 -- 
 
-CREATE TABLE IF NOT EXISTS `siege` (
-  `id` int(10) unsigned NOT NULL,
-  `army` int(10) unsigned NOT NULL default '0',
-  `building` int(10) unsigned NOT NULL default '0',
-  `start` int(10) unsigned NOT NULL default '0',
-  PRIMARY KEY  (`id`),
-  KEY `army` (`army`),
-  KEY `building` (`building`)
-) TYPE=MyISAM AUTO_INCREMENT=1 ;
+CREATE TABLE "siege" (
+  "id" int(10) unsigned NOT NULL auto_increment,
+  "army" int(10) unsigned NOT NULL default '0',
+  "building" int(10) unsigned NOT NULL default '0',
+  "start" int(10) unsigned NOT NULL default '0',
+  PRIMARY KEY  ("id"),
+  KEY "army" ("army"),
+  KEY "building" ("building")
+) AUTO_INCREMENT=1 ;
 
 -- 
 -- Dumping data for table `siege`
@@ -1816,24 +1814,24 @@ CREATE TABLE IF NOT EXISTS `siege` (
 -- Table structure for table `spell`
 -- 
 
-CREATE TABLE IF NOT EXISTS `spell` (
-  `id` int(10) unsigned NOT NULL,
-  `x` int(11) NOT NULL default '0',
-  `y` int(11) NOT NULL default '0',
-  `radius` int(10) unsigned NOT NULL default '0',
-  `target` int(10) unsigned NOT NULL default '0',
-  `targettype` int(10) unsigned NOT NULL default '0',
-  `type` int(10) unsigned NOT NULL default '0',
-  `owner` int(10) unsigned NOT NULL default '0',
-  `lasts` int(10) unsigned NOT NULL default '0',
-  `mod` float NOT NULL default '0',
-  PRIMARY KEY  (`id`),
-  KEY `target` (`target`),
-  KEY `owner` (`owner`),
-  KEY `x` (`x`),
-  KEY `y` (`y`),
-  KEY `type` (`type`)
-) TYPE=MyISAM AUTO_INCREMENT=1 ;
+CREATE TABLE "spell" (
+  "id" int(10) unsigned NOT NULL auto_increment,
+  "x" int(11) NOT NULL default '0',
+  "y" int(11) NOT NULL default '0',
+  "radius" int(10) unsigned NOT NULL default '0',
+  "target" int(10) unsigned NOT NULL default '0',
+  "targettype" int(10) unsigned NOT NULL default '0',
+  "type" int(10) unsigned NOT NULL default '0',
+  "owner" int(10) unsigned NOT NULL default '0',
+  "lasts" int(10) unsigned NOT NULL default '0',
+  "mod" float NOT NULL default '0',
+  PRIMARY KEY  ("id"),
+  KEY "target" ("target"),
+  KEY "owner" ("owner"),
+  KEY "x" ("x"),
+  KEY "y" ("y"),
+  KEY "type" ("type")
+) AUTO_INCREMENT=1 ;
 
 -- 
 -- Dumping data for table `spell`
@@ -1846,30 +1844,30 @@ CREATE TABLE IF NOT EXISTS `spell` (
 -- Table structure for table `spelltype`
 -- 
 
-CREATE TABLE IF NOT EXISTS `spelltype` (
-  `id` int(10) unsigned NOT NULL,
-  `target` tinyint(3) unsigned NOT NULL default '0',
-  `name` varchar(60) NOT NULL default '',
-  `baserange` int(11) NOT NULL default '0',
-  `basetime` int(11) NOT NULL default '0',
-  `baseeffect` float NOT NULL default '0',
-  `basemod` float NOT NULL default '0',
-  `desc` text NOT NULL,
-  `primetech` int(10) unsigned NOT NULL default '0',
-  `cost_lumber` int(10) unsigned NOT NULL default '0',
-  `cost_food` int(10) unsigned NOT NULL default '0',
-  `cost_metal` int(10) unsigned NOT NULL default '0',
-  `cost_stone` int(10) unsigned NOT NULL default '0',
-  `cost_runes` int(10) unsigned NOT NULL default '0',
-  `cost_mana` int(10) unsigned NOT NULL default '0',
-  `req_tech` varchar(128) NOT NULL default '',
-  `req_building` varchar(128) NOT NULL default '',
-  `gfx` varchar(90) NOT NULL default '',
-  `orderval` tinyint(4) NOT NULL default '0',
-  PRIMARY KEY  (`id`),
-  KEY `name` (`name`),
-  KEY `target` (`target`)
-) TYPE=MyISAM AUTO_INCREMENT=22 ;
+CREATE TABLE "spelltype" (
+  "id" int(10) unsigned NOT NULL auto_increment,
+  "target" tinyint(3) unsigned NOT NULL default '0',
+  "name" varchar(60) NOT NULL default '',
+  "baserange" int(11) NOT NULL default '0',
+  "basetime" int(11) NOT NULL default '0',
+  "baseeffect" float NOT NULL default '0',
+  "basemod" float NOT NULL default '0',
+  "desc" text NOT NULL,
+  "primetech" int(10) unsigned NOT NULL default '0',
+  "cost_lumber" int(10) unsigned NOT NULL default '0',
+  "cost_food" int(10) unsigned NOT NULL default '0',
+  "cost_metal" int(10) unsigned NOT NULL default '0',
+  "cost_stone" int(10) unsigned NOT NULL default '0',
+  "cost_runes" int(10) unsigned NOT NULL default '0',
+  "cost_mana" int(10) unsigned NOT NULL default '0',
+  "req_tech" varchar(128) NOT NULL default '',
+  "req_building" varchar(128) NOT NULL default '',
+  "gfx" varchar(90) NOT NULL default '',
+  "orderval" tinyint(4) NOT NULL default '0',
+  PRIMARY KEY  ("id"),
+  KEY "name" ("name"),
+  KEY "target" ("target")
+) AUTO_INCREMENT=22 ;
 
 -- 
 -- Dumping data for table `spelltype`
@@ -1902,12 +1900,12 @@ INSERT INTO `spelltype` VALUES (21, 3, 'Brandrodung', 0, 0, 0, 0, '', 73, 0, 0, 
 -- Table structure for table `sqlbookmark`
 -- 
 
-CREATE TABLE IF NOT EXISTS `sqlbookmark` (
-  `id` int(10) unsigned NOT NULL,
-  `name` varchar(128) NOT NULL default '',
-  `sql` text NOT NULL,
-  PRIMARY KEY  (`id`)
-) TYPE=MyISAM AUTO_INCREMENT=24 ;
+CREATE TABLE "sqlbookmark" (
+  "id" int(10) unsigned NOT NULL auto_increment,
+  "name" varchar(128) NOT NULL default '',
+  "sql" text NOT NULL,
+  PRIMARY KEY  ("id")
+) AUTO_INCREMENT=24 ;
 
 -- 
 -- Dumping data for table `sqlbookmark`
@@ -1934,17 +1932,17 @@ INSERT INTO `sqlbookmark` VALUES (23, 'WP-Boom-Detector', 'SELECT *,COUNT(*) as 
 -- Table structure for table `sqlerror`
 -- 
 
-CREATE TABLE IF NOT EXISTS `sqlerror` (
-  `id` int(10) unsigned NOT NULL,
-  `time` int(10) unsigned NOT NULL default '0',
-  `self` varchar(64) NOT NULL default '',
-  `query` varchar(255) NOT NULL default '',
-  `sqlquery` varchar(255) NOT NULL default '',
-  `error` varchar(255) NOT NULL default '',
-  `stacktrace` text NOT NULL,
-  PRIMARY KEY  (`id`),
-  KEY `time` (`time`)
-) TYPE=MyISAM AUTO_INCREMENT=1 ;
+CREATE TABLE "sqlerror" (
+  "id" int(10) unsigned NOT NULL auto_increment,
+  "time" int(10) unsigned NOT NULL default '0',
+  "self" varchar(64) NOT NULL default '',
+  "query" varchar(255) NOT NULL default '',
+  "sqlquery" varchar(255) NOT NULL default '',
+  "error" varchar(255) NOT NULL default '',
+  "stacktrace" text NOT NULL,
+  PRIMARY KEY  ("id"),
+  KEY "time" ("time")
+) AUTO_INCREMENT=1 ;
 
 -- 
 -- Dumping data for table `sqlerror`
@@ -1957,22 +1955,22 @@ CREATE TABLE IF NOT EXISTS `sqlerror` (
 -- Table structure for table `stats`
 -- 
 
-CREATE TABLE IF NOT EXISTS `stats` (
-  `id` int(10) unsigned NOT NULL,
-  `user` int(10) unsigned NOT NULL default '0',
-  `type` int(10) unsigned NOT NULL default '0',
-  `time` int(10) unsigned NOT NULL default '0',
-  `i1` int(11) NOT NULL default '0',
-  `i2` int(11) NOT NULL default '0',
-  `i3` int(11) NOT NULL default '0',
-  `f1` float NOT NULL default '0',
-  `f2` float NOT NULL default '0',
-  `f3` float NOT NULL default '0',
-  PRIMARY KEY  (`id`),
-  KEY `user` (`user`),
-  KEY `type` (`type`),
-  KEY `time` (`time`)
-) TYPE=MyISAM AUTO_INCREMENT=1 ;
+CREATE TABLE "stats" (
+  "id" int(10) unsigned NOT NULL auto_increment,
+  "user" int(10) unsigned NOT NULL default '0',
+  "type" int(10) unsigned NOT NULL default '0',
+  "time" int(10) unsigned NOT NULL default '0',
+  "i1" int(11) NOT NULL default '0',
+  "i2" int(11) NOT NULL default '0',
+  "i3" int(11) NOT NULL default '0',
+  "f1" float NOT NULL default '0',
+  "f2" float NOT NULL default '0',
+  "f3" float NOT NULL default '0',
+  PRIMARY KEY  ("id"),
+  KEY "user" ("user"),
+  KEY "type" ("type"),
+  KEY "time" ("time")
+) AUTO_INCREMENT=1 ;
 
 -- 
 -- Dumping data for table `stats`
@@ -1985,23 +1983,23 @@ CREATE TABLE IF NOT EXISTS `stats` (
 -- Table structure for table `technology`
 -- 
 
-CREATE TABLE IF NOT EXISTS `technology` (
-  `id` int(10) unsigned NOT NULL,
-  `type` int(10) unsigned NOT NULL default '0',
-  `user` int(10) unsigned NOT NULL default '0',
-  `current_level` tinyint(3) NOT NULL default '0',
-  `level` tinyint(3) unsigned NOT NULL default '0',
-  `upgrades` tinyint(3) unsigned NOT NULL default '0',
-  `upgradetime` int(10) unsigned NOT NULL default '0',
-  `upgradebuilding` int(10) unsigned NOT NULL default '0',
-  `status` tinyint(3) NOT NULL default '0',
-  `statuschange` int(11) NOT NULL default '0',
-  PRIMARY KEY  (`id`),
-  KEY `type` (`type`),
-  KEY `user` (`user`),
-  KEY `upgradebuilding` (`upgradebuilding`),
-  KEY `status` (`status`)
-) TYPE=MyISAM AUTO_INCREMENT=1 ;
+CREATE TABLE "technology" (
+  "id" int(10) unsigned NOT NULL auto_increment,
+  "type" int(10) unsigned NOT NULL default '0',
+  "user" int(10) unsigned NOT NULL default '0',
+  "current_level" tinyint(3) NOT NULL default '0',
+  "level" tinyint(3) unsigned NOT NULL default '0',
+  "upgrades" tinyint(3) unsigned NOT NULL default '0',
+  "upgradetime" int(10) unsigned NOT NULL default '0',
+  "upgradebuilding" int(10) unsigned NOT NULL default '0',
+  "status" tinyint(3) NOT NULL default '0',
+  "statuschange" int(11) NOT NULL default '0',
+  PRIMARY KEY  ("id"),
+  KEY "type" ("type"),
+  KEY "user" ("user"),
+  KEY "upgradebuilding" ("upgradebuilding"),
+  KEY "status" ("status")
+) AUTO_INCREMENT=1 ;
 
 -- 
 -- Dumping data for table `technology`
@@ -2014,15 +2012,15 @@ CREATE TABLE IF NOT EXISTS `technology` (
 -- Table structure for table `technologygroup`
 -- 
 
-CREATE TABLE IF NOT EXISTS `technologygroup` (
-  `id` int(10) unsigned NOT NULL,
-  `buildingtype` int(10) unsigned NOT NULL default '0',
-  `group` int(10) unsigned NOT NULL default '0',
-  `name` varchar(255) NOT NULL default '',
-  `descr` text NOT NULL,
-  `gfx` varchar(128) NOT NULL default '',
-  PRIMARY KEY  (`id`)
-) TYPE=MyISAM AUTO_INCREMENT=21 ;
+CREATE TABLE "technologygroup" (
+  "id" int(10) unsigned NOT NULL auto_increment,
+  "buildingtype" int(10) unsigned NOT NULL default '0',
+  "group" int(10) unsigned NOT NULL default '0',
+  "name" varchar(255) NOT NULL default '',
+  "descr" text NOT NULL,
+  "gfx" varchar(128) NOT NULL default '',
+  PRIMARY KEY  ("id")
+) AUTO_INCREMENT=21 ;
 
 -- 
 -- Dumping data for table `technologygroup`
@@ -2049,26 +2047,26 @@ INSERT INTO `technologygroup` VALUES (20, 2, 0, 'Synthese', '', 'res_mana.gif');
 -- Table structure for table `technologytype`
 -- 
 
-CREATE TABLE IF NOT EXISTS `technologytype` (
-  `id` int(10) unsigned NOT NULL,
-  `buildingtype` int(10) unsigned NOT NULL default '0',
-  `buildinglevel` int(10) unsigned NOT NULL default '0',
-  `group` int(10) unsigned NOT NULL default '0',
-  `name` varchar(255) NOT NULL default '',
-  `descr` text NOT NULL,
-  `basecost_lumber` int(10) unsigned NOT NULL default '0',
-  `basecost_stone` int(10) unsigned NOT NULL default '0',
-  `basecost_food` int(10) unsigned NOT NULL default '0',
-  `basecost_metal` int(10) unsigned NOT NULL default '0',
-  `basecost_runes` int(10) unsigned NOT NULL default '0',
-  `basetime` int(10) unsigned NOT NULL default '0',
-  `maxlevel` int(10) unsigned NOT NULL default '10',
-  `increment` float NOT NULL default '0',
-  `req_tech` varchar(255) NOT NULL default '',
-  `req_geb` varchar(255) NOT NULL default '',
-  `gfx` varchar(128) NOT NULL default '',
-  PRIMARY KEY  (`id`)
-) TYPE=MyISAM AUTO_INCREMENT=75 ;
+CREATE TABLE "technologytype" (
+  "id" int(10) unsigned NOT NULL auto_increment,
+  "buildingtype" int(10) unsigned NOT NULL default '0',
+  "buildinglevel" int(10) unsigned NOT NULL default '0',
+  "group" int(10) unsigned NOT NULL default '0',
+  "name" varchar(255) NOT NULL default '',
+  "descr" text NOT NULL,
+  "basecost_lumber" int(10) unsigned NOT NULL default '0',
+  "basecost_stone" int(10) unsigned NOT NULL default '0',
+  "basecost_food" int(10) unsigned NOT NULL default '0',
+  "basecost_metal" int(10) unsigned NOT NULL default '0',
+  "basecost_runes" int(10) unsigned NOT NULL default '0',
+  "basetime" int(10) unsigned NOT NULL default '0',
+  "maxlevel" int(10) unsigned NOT NULL default '10',
+  "increment" float NOT NULL default '0',
+  "req_tech" varchar(255) NOT NULL default '',
+  "req_geb" varchar(255) NOT NULL default '',
+  "gfx" varchar(128) NOT NULL default '',
+  PRIMARY KEY  ("id")
+) AUTO_INCREMENT=75 ;
 
 -- 
 -- Dumping data for table `technologytype`
@@ -2123,21 +2121,21 @@ INSERT INTO `technologytype` VALUES (74, 12, 20, 0, 'Bogen', '', 5000, 500, 500,
 -- Table structure for table `terrain`
 -- 
 
-CREATE TABLE IF NOT EXISTS `terrain` (
-  `id` int(10) unsigned NOT NULL,
-  `x` int(11) NOT NULL default '0',
-  `y` int(11) NOT NULL default '0',
-  `type` int(10) unsigned NOT NULL default '0',
-  `param` char(4) NOT NULL default '',
-  `nwse` tinyint(3) unsigned NOT NULL default '0',
-  `kills` int(10) unsigned NOT NULL default '0',
-  `steps` int(10) unsigned NOT NULL default '0',
-  `creator` int(10) unsigned NOT NULL default '0',
-  PRIMARY KEY  (`id`),
-  UNIQUE KEY `pos` (`x`,`y`),
-  KEY `type` (`type`),
-  KEY `y` (`y`)
-) TYPE=MyISAM AUTO_INCREMENT=1 ;
+CREATE TABLE "terrain" (
+  "id" int(10) unsigned NOT NULL auto_increment,
+  "x" int(11) NOT NULL default '0',
+  "y" int(11) NOT NULL default '0',
+  "type" int(10) unsigned NOT NULL default '0',
+  "param" char(4) NOT NULL default '',
+  "nwse" tinyint(3) unsigned NOT NULL default '0',
+  "kills" int(10) unsigned NOT NULL default '0',
+  "steps" int(10) unsigned NOT NULL default '0',
+  "creator" int(10) unsigned NOT NULL default '0',
+  PRIMARY KEY  ("id"),
+  UNIQUE KEY "pos" ("x","y"),
+  KEY "type" ("type"),
+  KEY "y" ("y")
+) AUTO_INCREMENT=1 ;
 
 -- 
 -- Dumping data for table `terrain`
@@ -2150,17 +2148,17 @@ CREATE TABLE IF NOT EXISTS `terrain` (
 -- Table structure for table `terrainpatchtype`
 -- 
 
-CREATE TABLE IF NOT EXISTS `terrainpatchtype` (
-  `id` int(10) unsigned NOT NULL,
-  `gfx` varchar(128) NOT NULL default '',
-  `here` int(10) unsigned NOT NULL default '0',
-  `up` int(10) unsigned NOT NULL default '0',
-  `down` int(10) unsigned NOT NULL default '0',
-  `left` int(10) unsigned NOT NULL default '0',
-  `right` int(10) unsigned NOT NULL default '0',
-  PRIMARY KEY  (`id`),
-  KEY `here` (`here`,`up`,`down`,`left`,`right`)
-) TYPE=MyISAM AUTO_INCREMENT=36 ;
+CREATE TABLE "terrainpatchtype" (
+  "id" int(10) unsigned NOT NULL auto_increment,
+  "gfx" varchar(128) NOT NULL default '',
+  "here" int(10) unsigned NOT NULL default '0',
+  "up" int(10) unsigned NOT NULL default '0',
+  "down" int(10) unsigned NOT NULL default '0',
+  "left" int(10) unsigned NOT NULL default '0',
+  "right" int(10) unsigned NOT NULL default '0',
+  PRIMARY KEY  ("id"),
+  KEY "here" ("here","up","down","left","right")
+) AUTO_INCREMENT=36 ;
 
 -- 
 -- Dumping data for table `terrainpatchtype`
@@ -2208,13 +2206,13 @@ INSERT INTO `terrainpatchtype` VALUES (35, 'river/river-see-e.png', 2, 0, 0, 6, 
 -- Table structure for table `terrainsegment4`
 -- 
 
-CREATE TABLE IF NOT EXISTS `terrainsegment4` (
-  `x` int(11) NOT NULL default '0',
-  `y` int(11) NOT NULL default '0',
-  `type` int(10) unsigned NOT NULL default '1',
-  PRIMARY KEY  (`x`,`y`),
-  KEY `y` (`y`)
-) TYPE=MyISAM;
+CREATE TABLE "terrainsegment4" (
+  "x" int(11) NOT NULL default '0',
+  "y" int(11) NOT NULL default '0',
+  "type" int(10) unsigned NOT NULL default '1',
+  PRIMARY KEY  ("x","y"),
+  KEY "y" ("y")
+);
 
 -- 
 -- Dumping data for table `terrainsegment4`
@@ -2227,13 +2225,13 @@ CREATE TABLE IF NOT EXISTS `terrainsegment4` (
 -- Table structure for table `terrainsegment64`
 -- 
 
-CREATE TABLE IF NOT EXISTS `terrainsegment64` (
-  `x` int(11) NOT NULL default '0',
-  `y` int(11) NOT NULL default '0',
-  `type` int(10) unsigned NOT NULL default '1',
-  PRIMARY KEY  (`x`,`y`),
-  KEY `y` (`y`)
-) TYPE=MyISAM;
+CREATE TABLE "terrainsegment64" (
+  "x" int(11) NOT NULL default '0',
+  "y" int(11) NOT NULL default '0',
+  "type" int(10) unsigned NOT NULL default '1',
+  PRIMARY KEY  ("x","y"),
+  KEY "y" ("y")
+);
 
 -- 
 -- Dumping data for table `terrainsegment64`
@@ -2246,14 +2244,14 @@ CREATE TABLE IF NOT EXISTS `terrainsegment64` (
 -- Table structure for table `terrainsubtype`
 -- 
 
-CREATE TABLE IF NOT EXISTS `terrainsubtype` (
-  `id` int(10) unsigned NOT NULL,
-  `terraintype` int(10) unsigned NOT NULL default '0',
-  `terrainconnecttype` int(10) unsigned NOT NULL default '0',
-  `gfx` varchar(255) NOT NULL default '',
-  PRIMARY KEY  (`id`),
-  KEY `terraintype` (`terraintype`,`terrainconnecttype`)
-) TYPE=MyISAM AUTO_INCREMENT=1 ;
+CREATE TABLE "terrainsubtype" (
+  "id" int(10) unsigned NOT NULL auto_increment,
+  "terraintype" int(10) unsigned NOT NULL default '0',
+  "terrainconnecttype" int(10) unsigned NOT NULL default '0',
+  "gfx" varchar(255) NOT NULL default '',
+  PRIMARY KEY  ("id"),
+  KEY "terraintype" ("terraintype","terrainconnecttype")
+) AUTO_INCREMENT=1 ;
 
 -- 
 -- Dumping data for table `terrainsubtype`
@@ -2266,24 +2264,24 @@ CREATE TABLE IF NOT EXISTS `terrainsubtype` (
 -- Table structure for table `terraintype`
 -- 
 
-CREATE TABLE IF NOT EXISTS `terraintype` (
-  `id` int(11) NOT NULL,
-  `name` varchar(128) NOT NULL default '',
-  `descr` text NOT NULL,
-  `speed` int(11) NOT NULL default '0',
-  `buildable` tinyint(4) NOT NULL default '0',
-  `color` varchar(8) NOT NULL default '',
-  `gfx` varchar(128) NOT NULL default '',
-  `cssclass` varchar(64) NOT NULL default '',
-  `mod_a` float NOT NULL default '1',
-  `mod_v` float NOT NULL default '1',
-  `mod_f` float NOT NULL default '1',
-  `movable_flag` int(10) unsigned NOT NULL default '0',
-  `connectto_terrain` varchar(255) NOT NULL default '',
-  `connectto_building` varchar(255) NOT NULL default '',
-  PRIMARY KEY  (`id`),
-  KEY `movable_flag` (`movable_flag`)
-) TYPE=MyISAM AUTO_INCREMENT=26 ;
+CREATE TABLE "terraintype" (
+  "id" int(11) NOT NULL auto_increment,
+  "name" varchar(128) NOT NULL default '',
+  "descr" text NOT NULL,
+  "speed" int(11) NOT NULL default '0',
+  "buildable" tinyint(4) NOT NULL default '0',
+  "color" varchar(8) NOT NULL default '',
+  "gfx" varchar(128) NOT NULL default '',
+  "cssclass" varchar(64) NOT NULL default '',
+  "mod_a" float NOT NULL default '1',
+  "mod_v" float NOT NULL default '1',
+  "mod_f" float NOT NULL default '1',
+  "movable_flag" int(10) unsigned NOT NULL default '0',
+  "connectto_terrain" varchar(255) NOT NULL default '',
+  "connectto_building" varchar(255) NOT NULL default '',
+  PRIMARY KEY  ("id"),
+  KEY "movable_flag" ("movable_flag")
+) AUTO_INCREMENT=26 ;
 
 -- 
 -- Dumping data for table `terraintype`
@@ -2320,28 +2318,28 @@ INSERT INTO `terraintype` VALUES (25, 'Taiga', '', 160, 0, '#498237', 'landschaf
 -- Table structure for table `ticket`
 -- 
 
-CREATE TABLE IF NOT EXISTS `ticket` (
-  `id` int(10) unsigned NOT NULL,
-  `user` int(10) unsigned NOT NULL default '0',
-  `assigned_user` int(10) unsigned NOT NULL default '0',
-  `assigned_bug` int(10) unsigned NOT NULL default '0',
-  `subject` varchar(255) NOT NULL default '',
-  `body` text NOT NULL,
-  `created` int(10) unsigned NOT NULL default '0',
-  `topic` tinyint(3) unsigned NOT NULL default '0',
-  `prio` tinyint(3) unsigned NOT NULL default '0',
-  `flags` int(10) unsigned NOT NULL default '0',
-  `x` int(11) NOT NULL default '0',
-  `y` int(11) NOT NULL default '0',
-  `img` varchar(128) NOT NULL default '0',
-  `eventtime` int(10) unsigned NOT NULL default '0',
-  PRIMARY KEY  (`id`),
-  KEY `user` (`user`,`assigned_user`,`created`,`topic`,`prio`),
-  KEY `flags` (`flags`),
-  KEY `x` (`x`,`y`),
-  KEY `eventtime` (`eventtime`),
-  KEY `assigned_bug` (`assigned_bug`)
-) TYPE=MyISAM AUTO_INCREMENT=1 ;
+CREATE TABLE "ticket" (
+  "id" int(10) unsigned NOT NULL auto_increment,
+  "user" int(10) unsigned NOT NULL default '0',
+  "assigned_user" int(10) unsigned NOT NULL default '0',
+  "assigned_bug" int(10) unsigned NOT NULL default '0',
+  "subject" varchar(255) NOT NULL default '',
+  "body" text NOT NULL,
+  "created" int(10) unsigned NOT NULL default '0',
+  "topic" tinyint(3) unsigned NOT NULL default '0',
+  "prio" tinyint(3) unsigned NOT NULL default '0',
+  "flags" int(10) unsigned NOT NULL default '0',
+  "x" int(11) NOT NULL default '0',
+  "y" int(11) NOT NULL default '0',
+  "img" varchar(128) NOT NULL default '0',
+  "eventtime" int(10) unsigned NOT NULL default '0',
+  PRIMARY KEY  ("id"),
+  KEY "user" ("user","assigned_user","created","topic","prio"),
+  KEY "flags" ("flags"),
+  KEY "x" ("x","y"),
+  KEY "eventtime" ("eventtime"),
+  KEY "assigned_bug" ("assigned_bug")
+) AUTO_INCREMENT=1 ;
 
 -- 
 -- Dumping data for table `ticket`
@@ -2354,15 +2352,15 @@ CREATE TABLE IF NOT EXISTS `ticket` (
 -- Table structure for table `ticket_reply`
 -- 
 
-CREATE TABLE IF NOT EXISTS `ticket_reply` (
-  `id` int(10) unsigned NOT NULL,
-  `ticket` int(10) unsigned NOT NULL default '0',
-  `user` int(10) unsigned NOT NULL default '0',
-  `created` int(10) unsigned NOT NULL default '0',
-  `body` text NOT NULL,
-  PRIMARY KEY  (`id`),
-  KEY `ticket` (`ticket`,`user`,`created`)
-) TYPE=MyISAM AUTO_INCREMENT=1 ;
+CREATE TABLE "ticket_reply" (
+  "id" int(10) unsigned NOT NULL auto_increment,
+  "ticket" int(10) unsigned NOT NULL default '0',
+  "user" int(10) unsigned NOT NULL default '0',
+  "created" int(10) unsigned NOT NULL default '0',
+  "body" text NOT NULL,
+  PRIMARY KEY  ("id"),
+  KEY "ticket" ("ticket","user","created")
+) AUTO_INCREMENT=1 ;
 
 -- 
 -- Dumping data for table `ticket_reply`
@@ -2375,16 +2373,16 @@ CREATE TABLE IF NOT EXISTS `ticket_reply` (
 -- Table structure for table `title`
 -- 
 
-CREATE TABLE IF NOT EXISTS `title` (
-  `id` int(10) unsigned NOT NULL,
-  `user` int(10) unsigned NOT NULL default '0',
-  `title` varchar(255) NOT NULL default '',
-  `image` varchar(255) NOT NULL default '',
-  `time` int(10) unsigned NOT NULL default '0',
-  `text` text NOT NULL,
-  PRIMARY KEY  (`id`),
-  KEY `user` (`user`)
-) TYPE=MyISAM AUTO_INCREMENT=6 ;
+CREATE TABLE "title" (
+  "id" int(10) unsigned NOT NULL auto_increment,
+  "user" int(10) unsigned NOT NULL default '0',
+  "title" varchar(255) NOT NULL default '',
+  "image" varchar(255) NOT NULL default '',
+  "time" int(10) unsigned NOT NULL default '0',
+  "text" text NOT NULL,
+  PRIMARY KEY  ("id"),
+  KEY "user" ("user")
+) AUTO_INCREMENT=6 ;
 
 -- 
 -- Dumping data for table `title`
@@ -2401,20 +2399,20 @@ INSERT INTO `title` VALUES (5, 76, 'Bannermacher', 'title/title-banner.png', 112
 -- Table structure for table `triggerlog`
 -- 
 
-CREATE TABLE IF NOT EXISTS `triggerlog` (
-  `id` int(10) unsigned NOT NULL,
-  `time` int(10) unsigned NOT NULL default '0',
-  `x` int(11) NOT NULL default '0',
-  `y` int(11) NOT NULL default '0',
-  `id1` int(10) unsigned NOT NULL default '0',
-  `id2` int(10) unsigned NOT NULL default '0',
-  `trigger` varchar(64) NOT NULL default '',
-  `what` varchar(255) NOT NULL default '',
-  PRIMARY KEY  (`id`),
-  KEY `time` (`time`),
-  KEY `id1` (`id1`),
-  KEY `id2` (`id2`)
-) TYPE=MyISAM AUTO_INCREMENT=1 ;
+CREATE TABLE "triggerlog" (
+  "id" int(10) unsigned NOT NULL auto_increment,
+  "time" int(10) unsigned NOT NULL default '0',
+  "x" int(11) NOT NULL default '0',
+  "y" int(11) NOT NULL default '0',
+  "id1" int(10) unsigned NOT NULL default '0',
+  "id2" int(10) unsigned NOT NULL default '0',
+  "trigger" varchar(64) NOT NULL default '',
+  "what" varchar(255) NOT NULL default '',
+  PRIMARY KEY  ("id"),
+  KEY "time" ("time"),
+  KEY "id1" ("id1"),
+  KEY "id2" ("id2")
+) AUTO_INCREMENT=1 ;
 
 -- 
 -- Dumping data for table `triggerlog`
@@ -2427,22 +2425,22 @@ CREATE TABLE IF NOT EXISTS `triggerlog` (
 -- Table structure for table `unit`
 -- 
 
-CREATE TABLE IF NOT EXISTS `unit` (
-  `id` int(10) unsigned NOT NULL,
-  `army` int(10) unsigned NOT NULL default '0',
-  `building` int(10) unsigned NOT NULL default '0',
-  `transport` int(10) unsigned NOT NULL default '0',
-  `user` int(10) unsigned NOT NULL default '0',
-  `type` int(10) unsigned NOT NULL default '0',
-  `amount` double NOT NULL default '0',
-  `spell` int(10) unsigned NOT NULL default '0',
-  PRIMARY KEY  (`id`),
-  KEY `army` (`army`),
-  KEY `building` (`building`),
-  KEY `type` (`type`),
-  KEY `amount` (`amount`),
-  KEY `transport` (`transport`)
-) TYPE=MyISAM AUTO_INCREMENT=1 ;
+CREATE TABLE "unit" (
+  "id" int(10) unsigned NOT NULL auto_increment,
+  "army" int(10) unsigned NOT NULL default '0',
+  "building" int(10) unsigned NOT NULL default '0',
+  "transport" int(10) unsigned NOT NULL default '0',
+  "user" int(10) unsigned NOT NULL default '0',
+  "type" int(10) unsigned NOT NULL default '0',
+  "amount" double NOT NULL default '0',
+  "spell" int(10) unsigned NOT NULL default '0',
+  PRIMARY KEY  ("id"),
+  KEY "army" ("army"),
+  KEY "building" ("building"),
+  KEY "type" ("type"),
+  KEY "amount" ("amount"),
+  KEY "transport" ("transport")
+) AUTO_INCREMENT=1 ;
 
 -- 
 -- Dumping data for table `unit`
@@ -2455,46 +2453,46 @@ CREATE TABLE IF NOT EXISTS `unit` (
 -- Table structure for table `unittype`
 -- 
 
-CREATE TABLE IF NOT EXISTS `unittype` (
-  `id` int(10) unsigned NOT NULL,
-  `name` varchar(128) NOT NULL default '',
-  `descr` text NOT NULL,
-  `orderval` int(10) unsigned NOT NULL default '0',
-  `a` int(10) unsigned NOT NULL default '0',
-  `v` int(10) unsigned NOT NULL default '0',
-  `f` int(10) unsigned NOT NULL default '0',
-  `r` int(10) unsigned NOT NULL default '0',
-  `cooldown` int(10) unsigned NOT NULL default '0',
-  `speed` float NOT NULL default '1',
-  `pillage` int(10) unsigned NOT NULL default '0',
-  `weight` float NOT NULL default '0',
-  `cost_lumber` int(10) unsigned NOT NULL default '0',
-  `cost_stone` int(10) unsigned NOT NULL default '0',
-  `cost_food` int(10) unsigned NOT NULL default '0',
-  `cost_metal` int(10) unsigned NOT NULL default '0',
-  `cost_runes` int(10) unsigned NOT NULL default '0',
-  `last` int(10) unsigned NOT NULL default '0',
-  `buildtime` int(10) unsigned NOT NULL default '0',
-  `gfx` varchar(64) NOT NULL default '',
-  `buildingtype` int(10) unsigned NOT NULL default '0',
-  `armytype` int(10) unsigned NOT NULL default '0',
-  `flags` int(10) unsigned NOT NULL default '0',
-  `treasure` tinytext NOT NULL,
-  `req_tech_a` varchar(128) NOT NULL default '',
-  `req_tech_v` varchar(128) NOT NULL default '',
-  `req_geb` varchar(128) NOT NULL default '',
-  `movable_flag` int(10) unsigned NOT NULL default '0',
-  `eff_sail` float unsigned NOT NULL default '0',
-  `eff_fightondeck` float unsigned NOT NULL default '0',
-  `eff_capture` float unsigned NOT NULL default '0',
-  `eff_siege` float NOT NULL default '0',
-  `elite` int(10) unsigned NOT NULL default '0',
-  PRIMARY KEY  (`id`),
-  KEY `f` (`f`,`r`),
-  KEY `cooldown` (`cooldown`),
-  KEY `movable_flag` (`movable_flag`),
-  KEY `elite` (`elite`)
-) TYPE=MyISAM AUTO_INCREMENT=58 ;
+CREATE TABLE "unittype" (
+  "id" int(10) unsigned NOT NULL auto_increment,
+  "name" varchar(128) NOT NULL default '',
+  "descr" text NOT NULL,
+  "orderval" int(10) unsigned NOT NULL default '0',
+  "a" int(10) unsigned NOT NULL default '0',
+  "v" int(10) unsigned NOT NULL default '0',
+  "f" int(10) unsigned NOT NULL default '0',
+  "r" int(10) unsigned NOT NULL default '0',
+  "cooldown" int(10) unsigned NOT NULL default '0',
+  "speed" float NOT NULL default '1',
+  "pillage" int(10) unsigned NOT NULL default '0',
+  "weight" float NOT NULL default '0',
+  "cost_lumber" int(10) unsigned NOT NULL default '0',
+  "cost_stone" int(10) unsigned NOT NULL default '0',
+  "cost_food" int(10) unsigned NOT NULL default '0',
+  "cost_metal" int(10) unsigned NOT NULL default '0',
+  "cost_runes" int(10) unsigned NOT NULL default '0',
+  "last" int(10) unsigned NOT NULL default '0',
+  "buildtime" int(10) unsigned NOT NULL default '0',
+  "gfx" varchar(64) NOT NULL default '',
+  "buildingtype" int(10) unsigned NOT NULL default '0',
+  "armytype" int(10) unsigned NOT NULL default '0',
+  "flags" int(10) unsigned NOT NULL default '0',
+  "treasure" tinytext NOT NULL,
+  "req_tech_a" varchar(128) NOT NULL default '',
+  "req_tech_v" varchar(128) NOT NULL default '',
+  "req_geb" varchar(128) NOT NULL default '',
+  "movable_flag" int(10) unsigned NOT NULL default '0',
+  "eff_sail" float unsigned NOT NULL default '0',
+  "eff_fightondeck" float unsigned NOT NULL default '0',
+  "eff_capture" float unsigned NOT NULL default '0',
+  "eff_siege" float NOT NULL default '0',
+  "elite" int(10) unsigned NOT NULL default '0',
+  PRIMARY KEY  ("id"),
+  KEY "f" ("f","r"),
+  KEY "cooldown" ("cooldown"),
+  KEY "movable_flag" ("movable_flag"),
+  KEY "elite" ("elite")
+) AUTO_INCREMENT=58 ;
 
 -- 
 -- Dumping data for table `unittype`
@@ -2558,63 +2556,63 @@ INSERT INTO `unittype` VALUES (57, 'Katapult', '', 0, 0, 0, 30, 7, 60, 60, 0, 10
 -- Table structure for table `user`
 -- 
 
-CREATE TABLE IF NOT EXISTS `user` (
-  `id` int(10) unsigned NOT NULL,
-  `name` varchar(64) NOT NULL default '',
-  `pass` varchar(255) NOT NULL default '',
-  `mail` varchar(128) NOT NULL default '',
-  `homepage` varchar(128) NOT NULL default '',
-  `admin` tinyint(3) unsigned NOT NULL default '0',
-  `logins` int(10) unsigned NOT NULL default '0',
-  `lastlogin` int(10) unsigned NOT NULL default '0',
-  `iplock` tinyint(3) unsigned NOT NULL default '1',
-  `gfxpath` varchar(128) NOT NULL default '',
-  `usegfxpath` tinyint(3) unsigned NOT NULL default '0',
-  `guild` int(10) unsigned NOT NULL default '0',
-  `guildstatus` int(10) unsigned NOT NULL default '1',
-  `pop` double unsigned NOT NULL default '10',
-  `maxpop` int(15) unsigned NOT NULL default '10',
-  `lumber` double NOT NULL default '1500',
-  `stone` double NOT NULL default '1500',
-  `food` double NOT NULL default '800',
-  `metal` double NOT NULL default '800',
-  `runes` double NOT NULL default '0',
-  `max_lumber` int(15) unsigned NOT NULL default '1500',
-  `max_stone` int(15) unsigned NOT NULL default '1500',
-  `max_food` int(15) unsigned NOT NULL default '800',
-  `max_metal` int(15) unsigned NOT NULL default '800',
-  `max_runes` int(15) unsigned NOT NULL default '0',
-  `worker_lumber` float unsigned NOT NULL default '25',
-  `worker_stone` float unsigned NOT NULL default '25',
-  `worker_food` float unsigned NOT NULL default '25',
-  `worker_metal` float unsigned NOT NULL default '25',
-  `worker_runes` float unsigned NOT NULL default '0',
-  `worker_repair` float unsigned NOT NULL default '0',
-  `prod_runes` float NOT NULL default '0',
-  `prod_lumber` float NOT NULL default '2.5',
-  `prod_stone` float NOT NULL default '2.5',
-  `prod_food` float NOT NULL default '2.5',
-  `prod_metal` float NOT NULL default '2.5',
-  `color` varchar(8) NOT NULL default '#00ff00',
-  `mapmode` tinyint(3) unsigned NOT NULL default '1',
-  `lastusedarmy` int(10) unsigned NOT NULL default '0',
-  `guildpoints` int(8) NOT NULL default '0',
-  `general_pts` int(11) NOT NULL default '0',
-  `army_pts` int(11) NOT NULL default '0',
-  `registered` int(10) unsigned NOT NULL default '0',
-  `msgmode` tinyint(3) unsigned NOT NULL default '0',
-  `flatview` tinyint(4) NOT NULL default '0',
-  `race` tinyint(3) unsigned NOT NULL default '1',
-  `flags` int(10) unsigned NOT NULL default '0',
-  `moral` int(10) unsigned NOT NULL default '100',
-  PRIMARY KEY  (`id`),
-  KEY `guild` (`guild`),
-  KEY `pop` (`pop`),
-  KEY `general_pts` (`general_pts`,`army_pts`),
-  KEY `army_pts` (`army_pts`),
-  KEY `guildstatus` (`guildstatus`),
-  KEY `race` (`race`)
-) TYPE=MyISAM AUTO_INCREMENT=2063 ;
+CREATE TABLE "user" (
+  "id" int(10) unsigned NOT NULL auto_increment,
+  "name" varchar(64) NOT NULL default '',
+  "pass" varchar(255) NOT NULL default '',
+  "mail" varchar(128) NOT NULL default '',
+  "homepage" varchar(128) NOT NULL default '',
+  "admin" tinyint(3) unsigned NOT NULL default '0',
+  "logins" int(10) unsigned NOT NULL default '0',
+  "lastlogin" int(10) unsigned NOT NULL default '0',
+  "iplock" tinyint(3) unsigned NOT NULL default '1',
+  "gfxpath" varchar(128) NOT NULL default '',
+  "usegfxpath" tinyint(3) unsigned NOT NULL default '0',
+  "guild" int(10) unsigned NOT NULL default '0',
+  "guildstatus" int(10) unsigned NOT NULL default '1',
+  "pop" double unsigned NOT NULL default '10',
+  "maxpop" int(15) unsigned NOT NULL default '10',
+  "lumber" double NOT NULL default '1500',
+  "stone" double NOT NULL default '1500',
+  "food" double NOT NULL default '800',
+  "metal" double NOT NULL default '800',
+  "runes" double NOT NULL default '0',
+  "max_lumber" int(15) unsigned NOT NULL default '1500',
+  "max_stone" int(15) unsigned NOT NULL default '1500',
+  "max_food" int(15) unsigned NOT NULL default '800',
+  "max_metal" int(15) unsigned NOT NULL default '800',
+  "max_runes" int(15) unsigned NOT NULL default '0',
+  "worker_lumber" float unsigned NOT NULL default '25',
+  "worker_stone" float unsigned NOT NULL default '25',
+  "worker_food" float unsigned NOT NULL default '25',
+  "worker_metal" float unsigned NOT NULL default '25',
+  "worker_runes" float unsigned NOT NULL default '0',
+  "worker_repair" float unsigned NOT NULL default '0',
+  "prod_runes" float NOT NULL default '0',
+  "prod_lumber" float NOT NULL default '2.5',
+  "prod_stone" float NOT NULL default '2.5',
+  "prod_food" float NOT NULL default '2.5',
+  "prod_metal" float NOT NULL default '2.5',
+  "color" varchar(8) NOT NULL default '#00ff00',
+  "mapmode" tinyint(3) unsigned NOT NULL default '1',
+  "lastusedarmy" int(10) unsigned NOT NULL default '0',
+  "guildpoints" int(8) NOT NULL default '0',
+  "general_pts" int(11) NOT NULL default '0',
+  "army_pts" int(11) NOT NULL default '0',
+  "registered" int(10) unsigned NOT NULL default '0',
+  "msgmode" tinyint(3) unsigned NOT NULL default '0',
+  "flatview" tinyint(4) NOT NULL default '0',
+  "race" tinyint(3) unsigned NOT NULL default '1',
+  "flags" int(10) unsigned NOT NULL default '0',
+  "moral" int(10) unsigned NOT NULL default '100',
+  PRIMARY KEY  ("id"),
+  KEY "guild" ("guild"),
+  KEY "pop" ("pop"),
+  KEY "general_pts" ("general_pts","army_pts"),
+  KEY "army_pts" ("army_pts"),
+  KEY "guildstatus" ("guildstatus"),
+  KEY "race" ("race")
+) AUTO_INCREMENT=2063 ;
 
 -- 
 -- Dumping data for table `user`
@@ -2628,11 +2626,11 @@ INSERT INTO `user` VALUES (249, 'Admin', '43e9a4ab75570f5b', 'elara@gmx.de', '',
 -- Table structure for table `userprofil`
 -- 
 
-CREATE TABLE IF NOT EXISTS `userprofil` (
-  `id` int(10) unsigned NOT NULL default '0',
-  `profil` text NOT NULL,
-  PRIMARY KEY  (`id`)
-) TYPE=MyISAM;
+CREATE TABLE "userprofil" (
+  "id" int(10) unsigned NOT NULL default '0',
+  "profil" text NOT NULL,
+  PRIMARY KEY  ("id")
+);
 
 -- 
 -- Dumping data for table `userprofil`
@@ -2645,11 +2643,11 @@ CREATE TABLE IF NOT EXISTS `userprofil` (
 -- Table structure for table `userrecord`
 -- 
 
-CREATE TABLE IF NOT EXISTS `userrecord` (
-  `userid` int(10) unsigned NOT NULL default '0',
-  `text` text NOT NULL,
-  UNIQUE KEY `userid` (`userid`)
-) TYPE=MyISAM;
+CREATE TABLE "userrecord" (
+  "userid" int(10) unsigned NOT NULL default '0',
+  "text" text NOT NULL,
+  UNIQUE KEY "userid" ("userid")
+);
 
 -- 
 -- Dumping data for table `userrecord`
@@ -2662,12 +2660,12 @@ CREATE TABLE IF NOT EXISTS `userrecord` (
 -- Table structure for table `uservalue`
 -- 
 
-CREATE TABLE IF NOT EXISTS `uservalue` (
-  `user` int(10) unsigned NOT NULL default '0',
-  `name` varchar(32) NOT NULL default '',
-  `value` text NOT NULL,
-  PRIMARY KEY  (`user`,`name`)
-) TYPE=MyISAM;
+CREATE TABLE "uservalue" (
+  "user" int(10) unsigned NOT NULL default '0',
+  "name" varchar(32) NOT NULL default '',
+  "value" text NOT NULL,
+  PRIMARY KEY  ("user","name")
+);
 
 -- 
 -- Dumping data for table `uservalue`
@@ -2680,17 +2678,17 @@ CREATE TABLE IF NOT EXISTS `uservalue` (
 -- Table structure for table `waypoint`
 -- 
 
-CREATE TABLE IF NOT EXISTS `waypoint` (
-  `id` int(10) unsigned NOT NULL,
-  `army` int(10) unsigned NOT NULL default '0',
-  `priority` int(10) unsigned NOT NULL default '0',
-  `x` int(11) NOT NULL default '0',
-  `y` int(11) NOT NULL default '0',
-  PRIMARY KEY  (`id`),
-  KEY `army` (`army`),
-  KEY `x` (`x`),
-  KEY `y` (`y`)
-) TYPE=MyISAM AUTO_INCREMENT=1 ;
+CREATE TABLE "waypoint" (
+  "id" int(10) unsigned NOT NULL auto_increment,
+  "army" int(10) unsigned NOT NULL default '0',
+  "priority" int(10) unsigned NOT NULL default '0',
+  "x" int(11) NOT NULL default '0',
+  "y" int(11) NOT NULL default '0',
+  PRIMARY KEY  ("id"),
+  KEY "army" ("army"),
+  KEY "x" ("x"),
+  KEY "y" ("y")
+) AUTO_INCREMENT=1 ;
 
 -- 
 -- Dumping data for table `waypoint`
@@ -2703,16 +2701,14 @@ CREATE TABLE IF NOT EXISTS `waypoint` (
 -- Table structure for table `weather`
 -- 
 
-CREATE TABLE IF NOT EXISTS `weather` (
-  `time` int(10) unsigned NOT NULL default '0',
-  `weather` tinyint(3) unsigned NOT NULL default '0',
-  PRIMARY KEY  (`time`),
-  KEY `weather` (`weather`)
-) TYPE=MyISAM;
+CREATE TABLE "weather" (
+  "time" int(10) unsigned NOT NULL default '0',
+  "weather" tinyint(3) unsigned NOT NULL default '0',
+  PRIMARY KEY  ("time"),
+  KEY "weather" ("weather")
+);
 
 -- 
 -- Dumping data for table `weather`
 -- 
 
-
-SET FOREIGN_KEY_CHECKS=1;
