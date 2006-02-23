@@ -22,7 +22,7 @@ postings in english are wellcome).
  and change the basic settings like db access or gfx path
 -create a directory "tmp" in the BASEPATH of the game where the
  webserver can write files (chmod 777 tmp)
--set admin user password with this query: UPDATE USER SET pass=PASSWORD("your-admin-password")
+-set admin user password with this query: UPDATE `user` SET `pass`=PASSWORD("your-admin-password")
 -login with username Admin and your password an start creating the game
 -adjust pwvergessen.php and anmelden.php (ie. mail)
 -open your webbrowser and register an account (php needs to send a mail) for creating a normal
