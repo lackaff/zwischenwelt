@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 -- 
 -- Host: localhost
--- Generation Time: Feb 23, 2006 at 05:44 PM
+-- Generation Time: Feb 23, 2006 at 06:04 PM
 -- Server version: 5.0.18
 -- PHP Version: 4.4.2-1
 -- 
@@ -16,17 +16,17 @@
 -- Table structure for table `action`
 -- 
 
-CREATE TABLE "action" (
-  "id" int(10) unsigned NOT NULL auto_increment,
-  "building" int(10) unsigned NOT NULL default '0',
-  "cmd" int(10) unsigned NOT NULL default '0',
-  "param1" int(10) unsigned NOT NULL default '0',
-  "param2" int(10) unsigned NOT NULL default '0',
-  "starttime" int(10) unsigned NOT NULL default '0',
-  PRIMARY KEY  ("id"),
-  KEY "building" ("building"),
-  KEY "cmd" ("cmd")
-) AUTO_INCREMENT=1 ;
+CREATE TABLE `action` (
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `building` int(10) unsigned NOT NULL default '0',
+  `cmd` int(10) unsigned NOT NULL default '0',
+  `param1` int(10) unsigned NOT NULL default '0',
+  `param2` int(10) unsigned NOT NULL default '0',
+  `starttime` int(10) unsigned NOT NULL default '0',
+  PRIMARY KEY  (`id`),
+  KEY `building` (`building`),
+  KEY `cmd` (`cmd`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 -- 
 -- Dumping data for table `action`
@@ -39,35 +39,35 @@ CREATE TABLE "action" (
 -- Table structure for table `army`
 -- 
 
-CREATE TABLE "army" (
-  "id" int(10) unsigned NOT NULL auto_increment,
-  "name" char(64) NOT NULL default '',
-  "user" int(11) NOT NULL default '0',
-  "flags" int(10) unsigned NOT NULL default '0',
-  "x" int(11) NOT NULL default '0',
-  "y" int(11) NOT NULL default '0',
-  "nextactiontime" int(10) unsigned NOT NULL default '0',
-  "frags" double NOT NULL default '0',
-  "lumber" int(15) NOT NULL default '0',
-  "stone" int(15) NOT NULL default '0',
-  "food" int(15) NOT NULL default '0',
-  "metal" int(15) NOT NULL default '0',
-  "runes" int(15) NOT NULL default '0',
-  "type" tinyint(3) unsigned NOT NULL default '0',
-  "idle" int(10) unsigned NOT NULL default '0',
-  "quest" int(10) unsigned NOT NULL default '0',
-  "hellhole" int(10) unsigned NOT NULL default '0',
-  "follow" int(10) unsigned NOT NULL default '0',
-  "counttolimit" tinyint(3) unsigned NOT NULL default '1',
-  "useditem" int(10) unsigned NOT NULL default '0',
-  PRIMARY KEY  ("id"),
-  UNIQUE KEY "pos" ("x","y"),
-  KEY "user" ("user"),
-  KEY "type" ("type"),
-  KEY "counttolimit" ("counttolimit"),
-  KEY "useditem" ("useditem"),
-  KEY "y" ("y")
-) AUTO_INCREMENT=1 ;
+CREATE TABLE `army` (
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `name` char(64) NOT NULL default '',
+  `user` int(11) NOT NULL default '0',
+  `flags` int(10) unsigned NOT NULL default '0',
+  `x` int(11) NOT NULL default '0',
+  `y` int(11) NOT NULL default '0',
+  `nextactiontime` int(10) unsigned NOT NULL default '0',
+  `frags` double NOT NULL default '0',
+  `lumber` int(15) NOT NULL default '0',
+  `stone` int(15) NOT NULL default '0',
+  `food` int(15) NOT NULL default '0',
+  `metal` int(15) NOT NULL default '0',
+  `runes` int(15) NOT NULL default '0',
+  `type` tinyint(3) unsigned NOT NULL default '0',
+  `idle` int(10) unsigned NOT NULL default '0',
+  `quest` int(10) unsigned NOT NULL default '0',
+  `hellhole` int(10) unsigned NOT NULL default '0',
+  `follow` int(10) unsigned NOT NULL default '0',
+  `counttolimit` tinyint(3) unsigned NOT NULL default '1',
+  `useditem` int(10) unsigned NOT NULL default '0',
+  PRIMARY KEY  (`id`),
+  UNIQUE KEY `pos` (`x`,`y`),
+  KEY `user` (`user`),
+  KEY `type` (`type`),
+  KEY `counttolimit` (`counttolimit`),
+  KEY `useditem` (`useditem`),
+  KEY `y` (`y`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 -- 
 -- Dumping data for table `army`
@@ -80,20 +80,20 @@ CREATE TABLE "army" (
 -- Table structure for table `armyaction`
 -- 
 
-CREATE TABLE "armyaction" (
-  "id" int(10) unsigned NOT NULL auto_increment,
-  "army" int(10) unsigned NOT NULL default '0',
-  "starttime" int(10) unsigned NOT NULL default '0',
-  "cmd" int(11) NOT NULL default '0',
-  "param1" int(11) NOT NULL default '0',
-  "param2" int(11) NOT NULL default '0',
-  "param3" int(11) NOT NULL default '0',
-  "orderval" int(10) unsigned NOT NULL default '0',
-  PRIMARY KEY  ("id"),
-  KEY "army" ("army"),
-  KEY "cmd" ("cmd"),
-  KEY "starttime" ("starttime")
-) AUTO_INCREMENT=1 ;
+CREATE TABLE `armyaction` (
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `army` int(10) unsigned NOT NULL default '0',
+  `starttime` int(10) unsigned NOT NULL default '0',
+  `cmd` int(11) NOT NULL default '0',
+  `param1` int(11) NOT NULL default '0',
+  `param2` int(11) NOT NULL default '0',
+  `param3` int(11) NOT NULL default '0',
+  `orderval` int(10) unsigned NOT NULL default '0',
+  PRIMARY KEY  (`id`),
+  KEY `army` (`army`),
+  KEY `cmd` (`cmd`),
+  KEY `starttime` (`starttime`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 -- 
 -- Dumping data for table `armyaction`
@@ -106,19 +106,19 @@ CREATE TABLE "armyaction" (
 -- Table structure for table `armytransfer`
 -- 
 
-CREATE TABLE "armytransfer" (
-  "id" int(10) unsigned NOT NULL auto_increment,
-  "name" varchar(255) NOT NULL default '',
-  "sourcebuildingtype" int(10) unsigned NOT NULL default '0',
-  "sourcearmytype" int(10) unsigned NOT NULL default '0',
-  "sourcetransport" int(10) unsigned NOT NULL default '0',
-  "targetarmytype" int(10) unsigned NOT NULL default '0',
-  "transportarmytype" int(10) unsigned NOT NULL default '0',
-  "unitsbuildingtype" int(10) unsigned NOT NULL default '0',
-  "idlemod" int(10) unsigned NOT NULL default '0',
-  "transportertype" int(10) unsigned NOT NULL default '0',
-  PRIMARY KEY  ("id")
-) AUTO_INCREMENT=22 ;
+CREATE TABLE `armytransfer` (
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `name` varchar(255) NOT NULL default '',
+  `sourcebuildingtype` int(10) unsigned NOT NULL default '0',
+  `sourcearmytype` int(10) unsigned NOT NULL default '0',
+  `sourcetransport` int(10) unsigned NOT NULL default '0',
+  `targetarmytype` int(10) unsigned NOT NULL default '0',
+  `transportarmytype` int(10) unsigned NOT NULL default '0',
+  `unitsbuildingtype` int(10) unsigned NOT NULL default '0',
+  `idlemod` int(10) unsigned NOT NULL default '0',
+  `transportertype` int(10) unsigned NOT NULL default '0',
+  PRIMARY KEY  (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=22 ;
 
 -- 
 -- Dumping data for table `armytransfer`
@@ -152,16 +152,16 @@ INSERT INTO `armytransfer` VALUES (21, 'Austausch(Besatzung)', 0, 3, 1, 3, 6, 0,
 -- Table structure for table `armytype`
 -- 
 
-CREATE TABLE "armytype" (
-  "id" int(10) unsigned NOT NULL auto_increment,
-  "name" varchar(255) NOT NULL default '',
-  "limit" int(10) NOT NULL default '0',
-  "ownerflags" int(10) unsigned NOT NULL default '0',
-  "addtechs" varchar(255) NOT NULL default '',
-  "subtechs" varchar(255) NOT NULL default '',
-  "weightlimit" int(10) NOT NULL default '0',
-  PRIMARY KEY  ("id")
-) AUTO_INCREMENT=8 ;
+CREATE TABLE `armytype` (
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `name` varchar(255) NOT NULL default '',
+  `limit` int(10) NOT NULL default '0',
+  `ownerflags` int(10) unsigned NOT NULL default '0',
+  `addtechs` varchar(255) NOT NULL default '',
+  `subtechs` varchar(255) NOT NULL default '',
+  `weightlimit` int(10) NOT NULL default '0',
+  PRIMARY KEY  (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=8 ;
 
 -- 
 -- Dumping data for table `armytype`
@@ -180,27 +180,27 @@ INSERT INTO `armytype` VALUES (7, 'Magier', 0, 0, '', '', 0);
 -- Table structure for table `bug`
 -- 
 
-CREATE TABLE "bug" (
-  "id" int(10) unsigned NOT NULL auto_increment,
-  "finder" int(10) unsigned NOT NULL default '0',
-  "creator" int(10) unsigned NOT NULL default '0',
-  "created" int(10) unsigned NOT NULL default '0',
-  "closed" int(10) unsigned NOT NULL default '0',
-  "name" varchar(128) NOT NULL default '',
-  "text" text NOT NULL,
-  "desc" text NOT NULL,
-  "topic" tinyint(4) NOT NULL default '0',
-  "assigned_user" int(10) unsigned NOT NULL default '0',
-  "prio" tinyint(3) unsigned NOT NULL default '0',
-  "status" tinyint(3) unsigned NOT NULL default '0',
-  "x" int(11) NOT NULL default '0',
-  "y" int(11) NOT NULL default '0',
-  "img" varchar(128) NOT NULL default '',
-  PRIMARY KEY  ("id"),
-  KEY "finder" ("finder","creator","created","topic","assigned_user","prio"),
-  KEY "status" ("status"),
-  KEY "closed" ("closed")
-) AUTO_INCREMENT=1 ;
+CREATE TABLE `bug` (
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `finder` int(10) unsigned NOT NULL default '0',
+  `creator` int(10) unsigned NOT NULL default '0',
+  `created` int(10) unsigned NOT NULL default '0',
+  `closed` int(10) unsigned NOT NULL default '0',
+  `name` varchar(128) NOT NULL default '',
+  `text` text NOT NULL,
+  `desc` text NOT NULL,
+  `topic` tinyint(4) NOT NULL default '0',
+  `assigned_user` int(10) unsigned NOT NULL default '0',
+  `prio` tinyint(3) unsigned NOT NULL default '0',
+  `status` tinyint(3) unsigned NOT NULL default '0',
+  `x` int(11) NOT NULL default '0',
+  `y` int(11) NOT NULL default '0',
+  `img` varchar(128) NOT NULL default '',
+  PRIMARY KEY  (`id`),
+  KEY `finder` (`finder`,`creator`,`created`,`topic`,`assigned_user`,`prio`),
+  KEY `status` (`status`),
+  KEY `closed` (`closed`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 -- 
 -- Dumping data for table `bug`
@@ -213,31 +213,31 @@ CREATE TABLE "bug" (
 -- Table structure for table `building`
 -- 
 
-CREATE TABLE "building" (
-  "id" int(10) unsigned NOT NULL auto_increment,
-  "x" int(11) NOT NULL default '0',
-  "y" int(11) NOT NULL default '0',
-  "user" int(10) unsigned NOT NULL default '0',
-  "type" tinyint(4) unsigned NOT NULL default '0',
-  "flags" int(10) unsigned NOT NULL default '0',
-  "level" tinyint(4) unsigned NOT NULL default '0',
-  "upgrades" tinyint(4) unsigned NOT NULL default '0',
-  "upgradetime" int(10) unsigned NOT NULL default '0',
-  "hp" float NOT NULL default '0',
-  "mana" float NOT NULL default '0',
-  "construction" int(10) unsigned NOT NULL default '0',
-  "param" char(4) NOT NULL default '',
-  "nwse" tinyint(3) unsigned NOT NULL default '0',
-  "supportslots" tinyint(3) unsigned NOT NULL default '0',
-  PRIMARY KEY  ("id"),
-  UNIQUE KEY "pos" ("x","y"),
-  KEY "user" ("user"),
-  KEY "type" ("type"),
-  KEY "construction" ("construction"),
-  KEY "flags" ("flags"),
-  KEY "hp" ("hp"),
-  KEY "y" ("y")
-) AUTO_INCREMENT=436131 ;
+CREATE TABLE `building` (
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `x` int(11) NOT NULL default '0',
+  `y` int(11) NOT NULL default '0',
+  `user` int(10) unsigned NOT NULL default '0',
+  `type` tinyint(4) unsigned NOT NULL default '0',
+  `flags` int(10) unsigned NOT NULL default '0',
+  `level` tinyint(4) unsigned NOT NULL default '0',
+  `upgrades` tinyint(4) unsigned NOT NULL default '0',
+  `upgradetime` int(10) unsigned NOT NULL default '0',
+  `hp` float NOT NULL default '0',
+  `mana` float NOT NULL default '0',
+  `construction` int(10) unsigned NOT NULL default '0',
+  `param` char(4) NOT NULL default '',
+  `nwse` tinyint(3) unsigned NOT NULL default '0',
+  `supportslots` tinyint(3) unsigned NOT NULL default '0',
+  PRIMARY KEY  (`id`),
+  UNIQUE KEY `pos` (`x`,`y`),
+  KEY `user` (`user`),
+  KEY `type` (`type`),
+  KEY `construction` (`construction`),
+  KEY `flags` (`flags`),
+  KEY `hp` (`hp`),
+  KEY `y` (`y`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=436131 ;
 
 -- 
 -- Dumping data for table `building`
@@ -499,15 +499,15 @@ INSERT INTO `building` VALUES (261109, -6, -10, 249, 64, 0, 10, 0, 0, 58, 0, 0, 
 -- Table structure for table `buildinglevel`
 -- 
 
-CREATE TABLE "buildinglevel" (
-  "id" int(10) unsigned NOT NULL auto_increment,
-  "building" int(10) unsigned NOT NULL default '0',
-  "user" int(10) unsigned NOT NULL default '0',
-  "type" int(10) unsigned NOT NULL default '0',
-  "subtype" int(10) unsigned NOT NULL default '0',
-  "level" int(10) unsigned NOT NULL default '0',
-  PRIMARY KEY  ("id")
-) AUTO_INCREMENT=1 ;
+CREATE TABLE `buildinglevel` (
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `building` int(10) unsigned NOT NULL default '0',
+  `user` int(10) unsigned NOT NULL default '0',
+  `type` int(10) unsigned NOT NULL default '0',
+  `subtype` int(10) unsigned NOT NULL default '0',
+  `level` int(10) unsigned NOT NULL default '0',
+  PRIMARY KEY  (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 -- 
 -- Dumping data for table `buildinglevel`
@@ -520,11 +520,11 @@ CREATE TABLE "buildinglevel" (
 -- Table structure for table `buildingname`
 -- 
 
-CREATE TABLE "buildingname" (
-  "id" int(10) unsigned NOT NULL default '0',
-  "name" varchar(128) NOT NULL default '',
-  PRIMARY KEY  ("id")
-);
+CREATE TABLE `buildingname` (
+  `id` int(10) unsigned NOT NULL default '0',
+  `name` varchar(128) NOT NULL default '',
+  PRIMARY KEY  (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 -- 
 -- Dumping data for table `buildingname`
@@ -537,14 +537,14 @@ CREATE TABLE "buildingname" (
 -- Table structure for table `buildingparam`
 -- 
 
-CREATE TABLE "buildingparam" (
-  "id" int(10) unsigned NOT NULL auto_increment,
-  "building" int(10) unsigned NOT NULL default '0',
-  "name" varchar(32) NOT NULL default '0',
-  "value" text NOT NULL,
-  PRIMARY KEY  ("id"),
-  KEY "building" ("building")
-) AUTO_INCREMENT=1 ;
+CREATE TABLE `buildingparam` (
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `building` int(10) unsigned NOT NULL default '0',
+  `name` varchar(32) NOT NULL default '0',
+  `value` text NOT NULL,
+  PRIMARY KEY  (`id`),
+  KEY `building` (`building`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 -- 
 -- Dumping data for table `buildingparam`
@@ -557,51 +557,51 @@ CREATE TABLE "buildingparam" (
 -- Table structure for table `buildingtype`
 -- 
 
-CREATE TABLE "buildingtype" (
-  "id" int(11) NOT NULL auto_increment,
-  "name" varchar(128) NOT NULL default '',
-  "descr" text NOT NULL,
-  "cost_lumber" int(10) unsigned NOT NULL default '0',
-  "cost_stone" int(10) unsigned NOT NULL default '0',
-  "cost_food" int(10) unsigned NOT NULL default '0',
-  "cost_metal" int(10) unsigned NOT NULL default '0',
-  "cost_runes" int(10) unsigned NOT NULL default '0',
-  "req_geb" varchar(128) NOT NULL default '',
-  "req_tech" varchar(128) NOT NULL default '',
-  "buildtime" int(10) unsigned NOT NULL default '0',
-  "maxhp" int(11) NOT NULL default '0',
-  "basemana" int(11) NOT NULL default '0',
-  "script" varchar(64) NOT NULL default '',
-  "color" varchar(8) NOT NULL default '',
-  "letter" varchar(8) NOT NULL default '',
-  "lettercolor" varchar(8) NOT NULL default '',
-  "speed" int(11) NOT NULL default '0',
-  "gfx" varchar(128) NOT NULL default '',
-  "special" int(10) unsigned NOT NULL default '0',
-  "flags" int(10) unsigned NOT NULL default '0',
-  "weightlimit" int(10) unsigned NOT NULL default '0',
-  "cssclass" varchar(64) NOT NULL default '',
-  "orderval" tinyint(4) NOT NULL default '0',
-  "ruinbtype" int(10) unsigned NOT NULL default '0',
-  "race" tinyint(3) unsigned NOT NULL default '1',
-  "terrain_needed" tinyint(3) unsigned NOT NULL default '0',
-  "mod_a" float NOT NULL default '1',
-  "mod_v" float NOT NULL default '1',
-  "mod_f" float NOT NULL default '1',
-  "connectto_terrain" varchar(255) NOT NULL default '',
-  "connectto_building" varchar(255) NOT NULL default '',
-  "neednear_building" varchar(255) NOT NULL default '',
-  "require_building" varchar(255) NOT NULL default '',
-  "exclude_building" varchar(255) NOT NULL default '',
-  "border" tinyint(3) unsigned NOT NULL default '1',
-  "movable_flag" int(10) unsigned NOT NULL default '0',
-  "movable_override_terrain" tinyint(3) unsigned NOT NULL default '1',
-  "convert_into_terrain" int(10) unsigned NOT NULL default '0',
-  PRIMARY KEY  ("id"),
-  KEY "race" ("race"),
-  KEY "maxhp" ("maxhp"),
-  KEY "movable_flag" ("movable_flag")
-) AUTO_INCREMENT=75 ;
+CREATE TABLE `buildingtype` (
+  `id` int(11) NOT NULL auto_increment,
+  `name` varchar(128) NOT NULL default '',
+  `descr` text NOT NULL,
+  `cost_lumber` int(10) unsigned NOT NULL default '0',
+  `cost_stone` int(10) unsigned NOT NULL default '0',
+  `cost_food` int(10) unsigned NOT NULL default '0',
+  `cost_metal` int(10) unsigned NOT NULL default '0',
+  `cost_runes` int(10) unsigned NOT NULL default '0',
+  `req_geb` varchar(128) NOT NULL default '',
+  `req_tech` varchar(128) NOT NULL default '',
+  `buildtime` int(10) unsigned NOT NULL default '0',
+  `maxhp` int(11) NOT NULL default '0',
+  `basemana` int(11) NOT NULL default '0',
+  `script` varchar(64) NOT NULL default '',
+  `color` varchar(8) NOT NULL default '',
+  `letter` varchar(8) NOT NULL default '',
+  `lettercolor` varchar(8) NOT NULL default '',
+  `speed` int(11) NOT NULL default '0',
+  `gfx` varchar(128) NOT NULL default '',
+  `special` int(10) unsigned NOT NULL default '0',
+  `flags` int(10) unsigned NOT NULL default '0',
+  `weightlimit` int(10) unsigned NOT NULL default '0',
+  `cssclass` varchar(64) NOT NULL default '',
+  `orderval` tinyint(4) NOT NULL default '0',
+  `ruinbtype` int(10) unsigned NOT NULL default '0',
+  `race` tinyint(3) unsigned NOT NULL default '1',
+  `terrain_needed` tinyint(3) unsigned NOT NULL default '0',
+  `mod_a` float NOT NULL default '1',
+  `mod_v` float NOT NULL default '1',
+  `mod_f` float NOT NULL default '1',
+  `connectto_terrain` varchar(255) NOT NULL default '',
+  `connectto_building` varchar(255) NOT NULL default '',
+  `neednear_building` varchar(255) NOT NULL default '',
+  `require_building` varchar(255) NOT NULL default '',
+  `exclude_building` varchar(255) NOT NULL default '',
+  `border` tinyint(3) unsigned NOT NULL default '1',
+  `movable_flag` int(10) unsigned NOT NULL default '0',
+  `movable_override_terrain` tinyint(3) unsigned NOT NULL default '1',
+  `convert_into_terrain` int(10) unsigned NOT NULL default '0',
+  PRIMARY KEY  (`id`),
+  KEY `race` (`race`),
+  KEY `maxhp` (`maxhp`),
+  KEY `movable_flag` (`movable_flag`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=75 ;
 
 -- 
 -- Dumping data for table `buildingtype`
@@ -688,13 +688,13 @@ INSERT INTO `buildingtype` VALUES (74, 'Ameisen-Hügel', '', 1000, 1000, 0, 0, 0
 -- Table structure for table `casinohighscore`
 -- 
 
-CREATE TABLE "casinohighscore" (
-  "user" int(10) unsigned NOT NULL default '0',
-  "game" int(10) unsigned NOT NULL default '0',
-  "score" int(11) NOT NULL default '0',
-  "timesplayed" int(10) unsigned NOT NULL default '0',
-  UNIQUE KEY "user" ("user","game")
-);
+CREATE TABLE `casinohighscore` (
+  `user` int(10) unsigned NOT NULL default '0',
+  `game` int(10) unsigned NOT NULL default '0',
+  `score` int(11) NOT NULL default '0',
+  `timesplayed` int(10) unsigned NOT NULL default '0',
+  UNIQUE KEY `user` (`user`,`game`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 -- 
 -- Dumping data for table `casinohighscore`
@@ -707,13 +707,13 @@ CREATE TABLE "casinohighscore" (
 -- Table structure for table `cliplog`
 -- 
 
-CREATE TABLE "cliplog" (
-  "id" int(10) unsigned NOT NULL auto_increment,
-  "user" tinytext NOT NULL,
-  "time" int(11) NOT NULL default '0',
-  "clip" text NOT NULL,
-  PRIMARY KEY  ("id")
-) AUTO_INCREMENT=1 ;
+CREATE TABLE `cliplog` (
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `user` tinytext NOT NULL,
+  `time` int(11) NOT NULL default '0',
+  `clip` text NOT NULL,
+  PRIMARY KEY  (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 -- 
 -- Dumping data for table `cliplog`
@@ -726,20 +726,20 @@ CREATE TABLE "cliplog" (
 -- Table structure for table `construction`
 -- 
 
-CREATE TABLE "construction" (
-  "id" int(10) unsigned NOT NULL auto_increment,
-  "user" int(10) unsigned NOT NULL default '0',
-  "x" int(10) NOT NULL default '0',
-  "y" int(10) NOT NULL default '0',
-  "type" int(10) unsigned NOT NULL default '0',
-  "priority" int(10) unsigned NOT NULL default '0',
-  "param" char(4) NOT NULL default '',
-  PRIMARY KEY  ("id"),
-  KEY "x" ("x"),
-  KEY "y" ("y"),
-  KEY "user" ("user"),
-  KEY "type" ("type")
-) AUTO_INCREMENT=1 ;
+CREATE TABLE `construction` (
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `user` int(10) unsigned NOT NULL default '0',
+  `x` int(10) NOT NULL default '0',
+  `y` int(10) NOT NULL default '0',
+  `type` int(10) unsigned NOT NULL default '0',
+  `priority` int(10) unsigned NOT NULL default '0',
+  `param` char(4) NOT NULL default '',
+  PRIMARY KEY  (`id`),
+  KEY `x` (`x`),
+  KEY `y` (`y`),
+  KEY `user` (`user`),
+  KEY `type` (`type`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 -- 
 -- Dumping data for table `construction`
@@ -752,15 +752,15 @@ CREATE TABLE "construction" (
 -- Table structure for table `fight`
 -- 
 
-CREATE TABLE "fight" (
-  "id" int(10) unsigned NOT NULL auto_increment,
-  "attacker" int(10) unsigned NOT NULL default '0',
-  "defender" int(10) unsigned NOT NULL default '0',
-  "start" int(10) unsigned NOT NULL default '0',
-  "fightlog" int(10) unsigned NOT NULL,
-  PRIMARY KEY  ("id"),
-  UNIQUE KEY "attacker" ("attacker","defender")
-) AUTO_INCREMENT=1 ;
+CREATE TABLE `fight` (
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `attacker` int(10) unsigned NOT NULL default '0',
+  `defender` int(10) unsigned NOT NULL default '0',
+  `start` int(10) unsigned NOT NULL default '0',
+  `fightlog` int(10) unsigned NOT NULL,
+  PRIMARY KEY  (`id`),
+  UNIQUE KEY `attacker` (`attacker`,`defender`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 -- 
 -- Dumping data for table `fight`
@@ -773,15 +773,15 @@ CREATE TABLE "fight" (
 -- Table structure for table `fightlog`
 -- 
 
-CREATE TABLE "fightlog" (
-  "id" int(10) unsigned NOT NULL auto_increment,
-  "fight" int(10) unsigned NOT NULL default '0',
-  "startunits1" text NOT NULL,
-  "startunits2" text NOT NULL,
-  "starttransport1" text NOT NULL,
-  "starttransport2" text NOT NULL,
-  PRIMARY KEY  ("id")
-) AUTO_INCREMENT=1 ;
+CREATE TABLE `fightlog` (
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `fight` int(10) unsigned NOT NULL default '0',
+  `startunits1` text NOT NULL,
+  `startunits2` text NOT NULL,
+  `starttransport1` text NOT NULL,
+  `starttransport2` text NOT NULL,
+  PRIMARY KEY  (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 -- 
 -- Dumping data for table `fightlog`
@@ -794,15 +794,15 @@ CREATE TABLE "fightlog" (
 -- Table structure for table `fof_guild`
 -- 
 
-CREATE TABLE "fof_guild" (
-  "id" int(10) unsigned NOT NULL auto_increment,
-  "master" int(10) unsigned NOT NULL default '0',
-  "other" int(10) unsigned NOT NULL default '0',
-  "class" tinyint(3) unsigned NOT NULL default '0',
-  "time" int(10) unsigned NOT NULL default '0',
-  "flags" int(10) unsigned NOT NULL default '0',
-  PRIMARY KEY  ("id")
-) AUTO_INCREMENT=1 ;
+CREATE TABLE `fof_guild` (
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `master` int(10) unsigned NOT NULL default '0',
+  `other` int(10) unsigned NOT NULL default '0',
+  `class` tinyint(3) unsigned NOT NULL default '0',
+  `time` int(10) unsigned NOT NULL default '0',
+  `flags` int(10) unsigned NOT NULL default '0',
+  PRIMARY KEY  (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 -- 
 -- Dumping data for table `fof_guild`
@@ -815,15 +815,15 @@ CREATE TABLE "fof_guild" (
 -- Table structure for table `fof_user`
 -- 
 
-CREATE TABLE "fof_user" (
-  "id" int(10) unsigned NOT NULL auto_increment,
-  "master" int(10) unsigned NOT NULL default '0',
-  "other" int(10) unsigned NOT NULL default '0',
-  "class" tinyint(3) unsigned NOT NULL default '0',
-  "time" int(10) unsigned NOT NULL default '0',
-  "flags" int(10) unsigned NOT NULL default '0',
-  PRIMARY KEY  ("id")
-) AUTO_INCREMENT=1 ;
+CREATE TABLE `fof_user` (
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `master` int(10) unsigned NOT NULL default '0',
+  `other` int(10) unsigned NOT NULL default '0',
+  `class` tinyint(3) unsigned NOT NULL default '0',
+  `time` int(10) unsigned NOT NULL default '0',
+  `flags` int(10) unsigned NOT NULL default '0',
+  PRIMARY KEY  (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 -- 
 -- Dumping data for table `fof_user`
@@ -836,13 +836,13 @@ CREATE TABLE "fof_user" (
 -- Table structure for table `global`
 -- 
 
-CREATE TABLE "global" (
-  "id" int(10) unsigned NOT NULL auto_increment,
-  "name" varchar(255) NOT NULL default '',
-  "value" varchar(255) NOT NULL default '',
-  PRIMARY KEY  ("id"),
-  UNIQUE KEY "name" ("name")
-) AUTO_INCREMENT=76 ;
+CREATE TABLE `global` (
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `name` varchar(255) NOT NULL default '',
+  `value` varchar(255) NOT NULL default '',
+  PRIMARY KEY  (`id`),
+  UNIQUE KEY `name` (`name`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=76 ;
 
 -- 
 -- Dumping data for table `global`
@@ -923,30 +923,30 @@ INSERT INTO `global` VALUES (75, 'typecache_version_adder', '37');
 -- Table structure for table `guild`
 -- 
 
-CREATE TABLE "guild" (
-  "id" int(10) unsigned NOT NULL auto_increment,
-  "founder" int(10) unsigned NOT NULL default '0',
-  "name" varchar(255) NOT NULL default '',
-  "color" varchar(32) NOT NULL default 'blue',
-  "time" int(10) unsigned NOT NULL default '0',
-  "lumber" int(11) NOT NULL default '0',
-  "stone" int(11) NOT NULL default '0',
-  "food" int(11) NOT NULL default '0',
-  "metal" int(11) NOT NULL default '0',
-  "runes" int(11) NOT NULL default '0',
-  "max_lumber" int(10) unsigned NOT NULL default '0',
-  "max_stone" int(10) unsigned NOT NULL default '0',
-  "max_food" int(10) unsigned NOT NULL default '0',
-  "max_metal" int(10) unsigned NOT NULL default '0',
-  "max_runes" int(10) unsigned NOT NULL default '0',
-  "profile" text NOT NULL,
-  "gfx" varchar(128) NOT NULL default '',
-  "internprofile" text NOT NULL,
-  "message" text NOT NULL,
-  "stdstatus" int(10) unsigned NOT NULL default '0',
-  "forumurl" varchar(128) NOT NULL default '',
-  PRIMARY KEY  ("id")
-) AUTO_INCREMENT=79 ;
+CREATE TABLE `guild` (
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `founder` int(10) unsigned NOT NULL default '0',
+  `name` varchar(255) NOT NULL default '',
+  `color` varchar(32) NOT NULL default 'blue',
+  `time` int(10) unsigned NOT NULL default '0',
+  `lumber` int(11) NOT NULL default '0',
+  `stone` int(11) NOT NULL default '0',
+  `food` int(11) NOT NULL default '0',
+  `metal` int(11) NOT NULL default '0',
+  `runes` int(11) NOT NULL default '0',
+  `max_lumber` int(10) unsigned NOT NULL default '0',
+  `max_stone` int(10) unsigned NOT NULL default '0',
+  `max_food` int(10) unsigned NOT NULL default '0',
+  `max_metal` int(10) unsigned NOT NULL default '0',
+  `max_runes` int(10) unsigned NOT NULL default '0',
+  `profile` text NOT NULL,
+  `gfx` varchar(128) NOT NULL default '',
+  `internprofile` text NOT NULL,
+  `message` text NOT NULL,
+  `stdstatus` int(10) unsigned NOT NULL default '0',
+  `forumurl` varchar(128) NOT NULL default '',
+  PRIMARY KEY  (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=79 ;
 
 -- 
 -- Dumping data for table `guild`
@@ -960,16 +960,16 @@ INSERT INTO `guild` VALUES (8, 249, 'Weltbank', 'blue', 1108292994, 93058, 82741
 -- Table structure for table `guild_forum`
 -- 
 
-CREATE TABLE "guild_forum" (
-  "id" int(10) unsigned NOT NULL auto_increment,
-  "user" int(10) unsigned NOT NULL default '0',
-  "guild" int(10) unsigned NOT NULL default '0',
-  "date" int(10) unsigned NOT NULL default '0',
-  "head" varchar(128) NOT NULL default '',
-  "content" text NOT NULL,
-  PRIMARY KEY  ("id"),
-  KEY "user" ("user","guild")
-) AUTO_INCREMENT=1 ;
+CREATE TABLE `guild_forum` (
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `user` int(10) unsigned NOT NULL default '0',
+  `guild` int(10) unsigned NOT NULL default '0',
+  `date` int(10) unsigned NOT NULL default '0',
+  `head` varchar(128) NOT NULL default '',
+  `content` text NOT NULL,
+  PRIMARY KEY  (`id`),
+  KEY `user` (`user`,`guild`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 -- 
 -- Dumping data for table `guild_forum`
@@ -982,18 +982,18 @@ CREATE TABLE "guild_forum" (
 -- Table structure for table `guild_forum_comment`
 -- 
 
-CREATE TABLE "guild_forum_comment" (
-  "id" int(10) unsigned NOT NULL auto_increment,
-  "article" int(10) unsigned NOT NULL default '0',
-  "ref" int(10) unsigned NOT NULL default '0',
-  "user" int(10) unsigned NOT NULL default '0',
-  "date" int(10) unsigned NOT NULL default '0',
-  "head" varchar(128) NOT NULL default '',
-  "comment" text NOT NULL,
-  "guild" int(10) unsigned NOT NULL default '0',
-  PRIMARY KEY  ("id"),
-  KEY "article" ("article","ref","user","guild")
-) AUTO_INCREMENT=1 ;
+CREATE TABLE `guild_forum_comment` (
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `article` int(10) unsigned NOT NULL default '0',
+  `ref` int(10) unsigned NOT NULL default '0',
+  `user` int(10) unsigned NOT NULL default '0',
+  `date` int(10) unsigned NOT NULL default '0',
+  `head` varchar(128) NOT NULL default '',
+  `comment` text NOT NULL,
+  `guild` int(10) unsigned NOT NULL default '0',
+  PRIMARY KEY  (`id`),
+  KEY `article` (`article`,`ref`,`user`,`guild`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 -- 
 -- Dumping data for table `guild_forum_comment`
@@ -1006,15 +1006,15 @@ CREATE TABLE "guild_forum_comment" (
 -- Table structure for table `guild_forum_read`
 -- 
 
-CREATE TABLE "guild_forum_read" (
-  "user" int(11) unsigned NOT NULL default '0',
-  "id" int(10) unsigned NOT NULL auto_increment,
-  "type" tinyint(4) NOT NULL default '0',
-  "ref" int(10) unsigned NOT NULL default '0',
-  PRIMARY KEY  ("id"),
-  KEY "type" ("type"),
-  KEY "user" ("user")
-) AUTO_INCREMENT=1 ;
+CREATE TABLE `guild_forum_read` (
+  `user` int(11) unsigned NOT NULL default '0',
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `type` tinyint(4) NOT NULL default '0',
+  `ref` int(10) unsigned NOT NULL default '0',
+  PRIMARY KEY  (`id`),
+  KEY `type` (`type`),
+  KEY `user` (`user`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 -- 
 -- Dumping data for table `guild_forum_read`
@@ -1027,15 +1027,15 @@ CREATE TABLE "guild_forum_read" (
 -- Table structure for table `guild_msg`
 -- 
 
-CREATE TABLE "guild_msg" (
-  "id" int(10) unsigned NOT NULL auto_increment,
-  "guild" int(10) unsigned NOT NULL default '0',
-  "user" int(10) unsigned NOT NULL default '0',
-  "time" int(10) unsigned NOT NULL default '0',
-  "text" text NOT NULL,
-  PRIMARY KEY  ("id"),
-  KEY "guild" ("guild","user","time")
-) AUTO_INCREMENT=1 ;
+CREATE TABLE `guild_msg` (
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `guild` int(10) unsigned NOT NULL default '0',
+  `user` int(10) unsigned NOT NULL default '0',
+  `time` int(10) unsigned NOT NULL default '0',
+  `text` text NOT NULL,
+  PRIMARY KEY  (`id`),
+  KEY `guild` (`guild`,`user`,`time`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 -- 
 -- Dumping data for table `guild_msg`
@@ -1048,14 +1048,14 @@ CREATE TABLE "guild_msg" (
 -- Table structure for table `guild_pref`
 -- 
 
-CREATE TABLE "guild_pref" (
-  "id" int(10) unsigned NOT NULL auto_increment,
-  "guild" int(10) unsigned NOT NULL default '0',
-  "var" varchar(128) NOT NULL default '',
-  "value" varchar(128) NOT NULL default '',
-  PRIMARY KEY  ("id"),
-  UNIQUE KEY "guild" ("guild","var")
-) AUTO_INCREMENT=1 ;
+CREATE TABLE `guild_pref` (
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `guild` int(10) unsigned NOT NULL default '0',
+  `var` varchar(128) NOT NULL default '',
+  `value` varchar(128) NOT NULL default '',
+  PRIMARY KEY  (`id`),
+  UNIQUE KEY `guild` (`guild`,`var`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 -- 
 -- Dumping data for table `guild_pref`
@@ -1068,16 +1068,16 @@ CREATE TABLE "guild_pref" (
 -- Table structure for table `guild_request`
 -- 
 
-CREATE TABLE "guild_request" (
-  "id" int(10) unsigned NOT NULL auto_increment,
-  "user" int(10) unsigned NOT NULL default '0',
-  "guild" int(10) unsigned NOT NULL default '0',
-  "time" int(10) unsigned NOT NULL default '0',
-  "comment" text NOT NULL,
-  PRIMARY KEY  ("id"),
-  KEY "user" ("user"),
-  KEY "guild" ("guild")
-) AUTO_INCREMENT=1 ;
+CREATE TABLE `guild_request` (
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `user` int(10) unsigned NOT NULL default '0',
+  `guild` int(10) unsigned NOT NULL default '0',
+  `time` int(10) unsigned NOT NULL default '0',
+  `comment` text NOT NULL,
+  PRIMARY KEY  (`id`),
+  KEY `user` (`user`),
+  KEY `guild` (`guild`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 -- 
 -- Dumping data for table `guild_request`
@@ -1090,14 +1090,14 @@ CREATE TABLE "guild_request" (
 -- Table structure for table `guild_right`
 -- 
 
-CREATE TABLE "guild_right" (
-  "id" int(10) unsigned NOT NULL auto_increment,
-  "right" int(10) unsigned NOT NULL default '0',
-  "desc" varchar(128) NOT NULL default '',
-  "gfx" varchar(128) NOT NULL default '',
-  PRIMARY KEY  ("id"),
-  UNIQUE KEY "right" ("right")
-) AUTO_INCREMENT=1 ;
+CREATE TABLE `guild_right` (
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `right` int(10) unsigned NOT NULL default '0',
+  `desc` varchar(128) NOT NULL default '',
+  `gfx` varchar(128) NOT NULL default '',
+  PRIMARY KEY  (`id`),
+  UNIQUE KEY `right` (`right`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 -- 
 -- Dumping data for table `guild_right`
@@ -1110,24 +1110,24 @@ CREATE TABLE "guild_right" (
 -- Table structure for table `guildlog`
 -- 
 
-CREATE TABLE "guildlog" (
-  "id" int(10) unsigned NOT NULL auto_increment,
-  "time" int(10) unsigned NOT NULL default '0',
-  "x" int(11) NOT NULL default '0',
-  "y" int(11) NOT NULL default '0',
-  "user1" int(10) unsigned NOT NULL default '0',
-  "user2" int(10) unsigned NOT NULL default '0',
-  "guild1" int(10) unsigned NOT NULL default '0',
-  "guild2" int(10) unsigned NOT NULL default '0',
-  "trigger" varchar(64) NOT NULL default '',
-  "what" varchar(255) NOT NULL default '',
-  "count" int(10) unsigned NOT NULL default '1',
-  PRIMARY KEY  ("id"),
-  KEY "time" ("time"),
-  KEY "id1" ("user1"),
-  KEY "id2" ("user2"),
-  KEY "count" ("count")
-) AUTO_INCREMENT=1 ;
+CREATE TABLE `guildlog` (
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `time` int(10) unsigned NOT NULL default '0',
+  `x` int(11) NOT NULL default '0',
+  `y` int(11) NOT NULL default '0',
+  `user1` int(10) unsigned NOT NULL default '0',
+  `user2` int(10) unsigned NOT NULL default '0',
+  `guild1` int(10) unsigned NOT NULL default '0',
+  `guild2` int(10) unsigned NOT NULL default '0',
+  `trigger` varchar(64) NOT NULL default '',
+  `what` varchar(255) NOT NULL default '',
+  `count` int(10) unsigned NOT NULL default '1',
+  PRIMARY KEY  (`id`),
+  KEY `time` (`time`),
+  KEY `id1` (`user1`),
+  KEY `id2` (`user2`),
+  KEY `count` (`count`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 -- 
 -- Dumping data for table `guildlog`
@@ -1140,29 +1140,29 @@ CREATE TABLE "guildlog" (
 -- Table structure for table `hellhole`
 -- 
 
-CREATE TABLE "hellhole" (
-  "id" int(10) unsigned NOT NULL auto_increment,
-  "x" int(11) NOT NULL default '0',
-  "y" int(11) NOT NULL default '0',
-  "type" int(10) unsigned NOT NULL default '0',
-  "type2" int(10) unsigned NOT NULL default '0',
-  "ai_type" int(10) unsigned NOT NULL default '0',
-  "ai_data" varchar(255) NOT NULL default '',
-  "lastupgrade" int(11) NOT NULL default '0',
-  "level" tinyint(4) NOT NULL default '0',
-  "maxlevel" int(10) unsigned NOT NULL default '99',
-  "armysize" int(10) unsigned NOT NULL default '0',
-  "armysize2" int(10) unsigned NOT NULL default '1',
-  "num" int(10) unsigned NOT NULL default '0',
-  "spawndelay" int(10) unsigned NOT NULL default '0',
-  "spawntime" int(10) unsigned NOT NULL default '0',
-  "totalspawns" int(10) unsigned NOT NULL default '0',
-  "radius" int(10) NOT NULL default '0',
-  PRIMARY KEY  ("id"),
-  KEY "type" ("type"),
-  KEY "x" ("x"),
-  KEY "y" ("y")
-) AUTO_INCREMENT=1 ;
+CREATE TABLE `hellhole` (
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `x` int(11) NOT NULL default '0',
+  `y` int(11) NOT NULL default '0',
+  `type` int(10) unsigned NOT NULL default '0',
+  `type2` int(10) unsigned NOT NULL default '0',
+  `ai_type` int(10) unsigned NOT NULL default '0',
+  `ai_data` varchar(255) NOT NULL default '',
+  `lastupgrade` int(11) NOT NULL default '0',
+  `level` tinyint(4) NOT NULL default '0',
+  `maxlevel` int(10) unsigned NOT NULL default '99',
+  `armysize` int(10) unsigned NOT NULL default '0',
+  `armysize2` int(10) unsigned NOT NULL default '1',
+  `num` int(10) unsigned NOT NULL default '0',
+  `spawndelay` int(10) unsigned NOT NULL default '0',
+  `spawntime` int(10) unsigned NOT NULL default '0',
+  `totalspawns` int(10) unsigned NOT NULL default '0',
+  `radius` int(10) NOT NULL default '0',
+  PRIMARY KEY  (`id`),
+  KEY `type` (`type`),
+  KEY `x` (`x`),
+  KEY `y` (`y`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 -- 
 -- Dumping data for table `hellhole`
@@ -1175,23 +1175,23 @@ CREATE TABLE "hellhole" (
 -- Table structure for table `item`
 -- 
 
-CREATE TABLE "item" (
-  "id" int(10) unsigned NOT NULL auto_increment,
-  "type" int(10) unsigned NOT NULL default '0',
-  "army" int(10) unsigned NOT NULL default '0',
-  "x" int(11) NOT NULL default '0',
-  "y" int(11) NOT NULL default '0',
-  "quest" int(10) unsigned NOT NULL default '0',
-  "building" int(10) unsigned NOT NULL default '0',
-  "spell" int(10) unsigned NOT NULL default '0',
-  "user" int(10) unsigned NOT NULL default '0',
-  "amount" int(10) unsigned NOT NULL default '1',
-  "param" int(10) unsigned NOT NULL default '0',
-  PRIMARY KEY  ("id"),
-  KEY "army" ("army"),
-  KEY "pos" ("x","y"),
-  KEY "y" ("y")
-) AUTO_INCREMENT=1 ;
+CREATE TABLE `item` (
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `type` int(10) unsigned NOT NULL default '0',
+  `army` int(10) unsigned NOT NULL default '0',
+  `x` int(11) NOT NULL default '0',
+  `y` int(11) NOT NULL default '0',
+  `quest` int(10) unsigned NOT NULL default '0',
+  `building` int(10) unsigned NOT NULL default '0',
+  `spell` int(10) unsigned NOT NULL default '0',
+  `user` int(10) unsigned NOT NULL default '0',
+  `amount` int(10) unsigned NOT NULL default '1',
+  `param` int(10) unsigned NOT NULL default '0',
+  PRIMARY KEY  (`id`),
+  KEY `army` (`army`),
+  KEY `pos` (`x`,`y`),
+  KEY `y` (`y`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 -- 
 -- Dumping data for table `item`
@@ -1204,18 +1204,18 @@ CREATE TABLE "item" (
 -- Table structure for table `itemtrade`
 -- 
 
-CREATE TABLE "itemtrade" (
-  "id" int(10) unsigned NOT NULL auto_increment,
-  "user" int(10) unsigned NOT NULL default '0',
-  "building" int(10) unsigned NOT NULL default '0',
-  "flags" int(10) unsigned NOT NULL default '0',
-  "amount" int(15) NOT NULL default '0',
-  "offer" varchar(255) NOT NULL default '',
-  "price" varchar(255) NOT NULL default '',
-  "starttime" int(10) unsigned NOT NULL default '0',
-  PRIMARY KEY  ("id"),
-  KEY "building" ("building")
-) AUTO_INCREMENT=1 ;
+CREATE TABLE `itemtrade` (
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `user` int(10) unsigned NOT NULL default '0',
+  `building` int(10) unsigned NOT NULL default '0',
+  `flags` int(10) unsigned NOT NULL default '0',
+  `amount` int(15) NOT NULL default '0',
+  `offer` varchar(255) NOT NULL default '',
+  `price` varchar(255) NOT NULL default '',
+  `starttime` int(10) unsigned NOT NULL default '0',
+  PRIMARY KEY  (`id`),
+  KEY `building` (`building`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 -- 
 -- Dumping data for table `itemtrade`
@@ -1228,25 +1228,25 @@ CREATE TABLE "itemtrade" (
 -- Table structure for table `itemtype`
 -- 
 
-CREATE TABLE "itemtype" (
-  "id" int(10) unsigned NOT NULL auto_increment,
-  "name" varchar(64) NOT NULL default '',
-  "gfx" varchar(128) NOT NULL default '',
-  "descr" text NOT NULL,
-  "flags" int(10) unsigned NOT NULL default '0',
-  "weight" float NOT NULL default '0',
-  "maxamount" float NOT NULL default '0',
-  "gammeltype" int(10) unsigned NOT NULL default '0',
-  "gammeltime" int(10) unsigned NOT NULL default '0',
-  "buildings" varchar(255) NOT NULL default '',
-  "cost_lumber" int(11) NOT NULL default '0',
-  "cost_stone" int(11) NOT NULL default '0',
-  "cost_food" int(11) NOT NULL default '0',
-  "cost_metal" int(11) NOT NULL default '0',
-  "cost_runes" int(11) NOT NULL default '0',
-  "value" float NOT NULL default '0',
-  PRIMARY KEY  ("id")
-) AUTO_INCREMENT=104 ;
+CREATE TABLE `itemtype` (
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `name` varchar(64) NOT NULL default '',
+  `gfx` varchar(128) NOT NULL default '',
+  `descr` text NOT NULL,
+  `flags` int(10) unsigned NOT NULL default '0',
+  `weight` float NOT NULL default '0',
+  `maxamount` float NOT NULL default '0',
+  `gammeltype` int(10) unsigned NOT NULL default '0',
+  `gammeltime` int(10) unsigned NOT NULL default '0',
+  `buildings` varchar(255) NOT NULL default '',
+  `cost_lumber` int(11) NOT NULL default '0',
+  `cost_stone` int(11) NOT NULL default '0',
+  `cost_food` int(11) NOT NULL default '0',
+  `cost_metal` int(11) NOT NULL default '0',
+  `cost_runes` int(11) NOT NULL default '0',
+  `value` float NOT NULL default '0',
+  PRIMARY KEY  (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=104 ;
 
 -- 
 -- Dumping data for table `itemtype`
@@ -1332,17 +1332,17 @@ INSERT INTO `itemtype` VALUES (103, 'Spam', 'item/spam.png', 'reduziert de Nahru
 -- Table structure for table `log`
 -- 
 
-CREATE TABLE "log" (
-  "id" int(10) unsigned NOT NULL auto_increment,
-  "time" int(10) unsigned NOT NULL default '0',
-  "user" int(10) unsigned NOT NULL default '0',
-  "text" text NOT NULL,
-  "url" varchar(255) default NULL,
-  "frame" varchar(64) default NULL,
-  "type" tinyint(4) NOT NULL default '0',
-  PRIMARY KEY  ("id"),
-  KEY "user" ("user")
-) AUTO_INCREMENT=1 ;
+CREATE TABLE `log` (
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `time` int(10) unsigned NOT NULL default '0',
+  `user` int(10) unsigned NOT NULL default '0',
+  `text` text NOT NULL,
+  `url` varchar(255) default NULL,
+  `frame` varchar(64) default NULL,
+  `type` tinyint(4) NOT NULL default '0',
+  PRIMARY KEY  (`id`),
+  KEY `user` (`user`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 -- 
 -- Dumping data for table `log`
@@ -1355,14 +1355,14 @@ CREATE TABLE "log" (
 -- Table structure for table `map`
 -- 
 
-CREATE TABLE "map" (
-  "x" int(11) NOT NULL default '0',
-  "y" int(11) NOT NULL default '0',
-  "id" int(11) unsigned NOT NULL auto_increment,
-  PRIMARY KEY  ("id"),
-  KEY "x" ("x"),
-  KEY "y" ("y")
-) AUTO_INCREMENT=1 ;
+CREATE TABLE `map` (
+  `x` int(11) NOT NULL default '0',
+  `y` int(11) NOT NULL default '0',
+  `id` int(11) unsigned NOT NULL auto_increment,
+  PRIMARY KEY  (`id`),
+  KEY `x` (`x`),
+  KEY `y` (`y`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 -- 
 -- Dumping data for table `map`
@@ -1375,14 +1375,14 @@ CREATE TABLE "map" (
 -- Table structure for table `mapmark`
 -- 
 
-CREATE TABLE "mapmark" (
-  "id" int(10) unsigned NOT NULL auto_increment,
-  "user" int(10) unsigned NOT NULL default '0',
-  "x" int(11) NOT NULL default '0',
-  "y" int(11) NOT NULL default '0',
-  "name" varchar(64) NOT NULL default '',
-  PRIMARY KEY  ("id")
-) AUTO_INCREMENT=1 ;
+CREATE TABLE `mapmark` (
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `user` int(10) unsigned NOT NULL default '0',
+  `x` int(11) NOT NULL default '0',
+  `y` int(11) NOT NULL default '0',
+  `name` varchar(64) NOT NULL default '',
+  PRIMARY KEY  (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 -- 
 -- Dumping data for table `mapmark`
@@ -1395,18 +1395,18 @@ CREATE TABLE "mapmark" (
 -- Table structure for table `maptemplate`
 -- 
 
-CREATE TABLE "maptemplate" (
-  "id" int(10) unsigned NOT NULL auto_increment,
-  "cx" int(10) unsigned NOT NULL default '0',
-  "cy" int(10) unsigned NOT NULL default '0',
-  "name" varchar(128) NOT NULL default '',
-  "terrain" text NOT NULL,
-  "building" text NOT NULL,
-  "army" text NOT NULL,
-  "item" text NOT NULL,
-  "hellhole" text NOT NULL,
-  PRIMARY KEY  ("id")
-) AUTO_INCREMENT=18 ;
+CREATE TABLE `maptemplate` (
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `cx` int(10) unsigned NOT NULL default '0',
+  `cy` int(10) unsigned NOT NULL default '0',
+  `name` varchar(128) NOT NULL default '',
+  `terrain` text NOT NULL,
+  `building` text NOT NULL,
+  `army` text NOT NULL,
+  `item` text NOT NULL,
+  `hellhole` text NOT NULL,
+  PRIMARY KEY  (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=18 ;
 
 -- 
 -- Dumping data for table `maptemplate`
@@ -1423,18 +1423,18 @@ INSERT INTO `maptemplate` VALUES (17, 1, 1, 'AmeisenHügel', '0|0|10', '0|0|74|1
 -- Table structure for table `marketplace`
 -- 
 
-CREATE TABLE "marketplace" (
-  "id" int(10) unsigned NOT NULL auto_increment,
-  "building" int(10) unsigned NOT NULL default '0',
-  "offer_res" tinyint(3) unsigned NOT NULL default '0',
-  "offer_count" int(10) unsigned NOT NULL default '0',
-  "price_res" tinyint(3) unsigned NOT NULL default '0',
-  "price_count" int(10) unsigned NOT NULL default '0',
-  "starttime" int(10) unsigned NOT NULL default '0',
-  PRIMARY KEY  ("id"),
-  KEY "building" ("building"),
-  KEY "offer_res" ("offer_res")
-) AUTO_INCREMENT=1 ;
+CREATE TABLE `marketplace` (
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `building` int(10) unsigned NOT NULL default '0',
+  `offer_res` tinyint(3) unsigned NOT NULL default '0',
+  `offer_count` int(10) unsigned NOT NULL default '0',
+  `price_res` tinyint(3) unsigned NOT NULL default '0',
+  `price_count` int(10) unsigned NOT NULL default '0',
+  `starttime` int(10) unsigned NOT NULL default '0',
+  PRIMARY KEY  (`id`),
+  KEY `building` (`building`),
+  KEY `offer_res` (`offer_res`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 -- 
 -- Dumping data for table `marketplace`
@@ -1447,24 +1447,24 @@ CREATE TABLE "marketplace" (
 -- Table structure for table `message`
 -- 
 
-CREATE TABLE "message" (
-  "id" int(10) unsigned NOT NULL auto_increment,
-  "folder" int(10) unsigned NOT NULL default '0',
-  "from" int(10) unsigned NOT NULL default '0',
-  "to" int(10) unsigned NOT NULL default '0',
-  "subject" varchar(255) NOT NULL default '',
-  "text" text NOT NULL,
-  "date" int(11) NOT NULL default '1',
-  "status" tinyint(3) NOT NULL default '1',
-  "type" tinyint(3) unsigned NOT NULL default '0',
-  "html" tinyint(3) unsigned NOT NULL default '0',
-  PRIMARY KEY  ("id"),
-  KEY "from" ("from"),
-  KEY "to" ("to"),
-  KEY "status" ("status"),
-  KEY "type" ("type"),
-  KEY "folder" ("folder")
-) AUTO_INCREMENT=1 ;
+CREATE TABLE `message` (
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `folder` int(10) unsigned NOT NULL default '0',
+  `from` int(10) unsigned NOT NULL default '0',
+  `to` int(10) unsigned NOT NULL default '0',
+  `subject` varchar(255) NOT NULL default '',
+  `text` text NOT NULL,
+  `date` int(11) NOT NULL default '1',
+  `status` tinyint(3) NOT NULL default '1',
+  `type` tinyint(3) unsigned NOT NULL default '0',
+  `html` tinyint(3) unsigned NOT NULL default '0',
+  PRIMARY KEY  (`id`),
+  KEY `from` (`from`),
+  KEY `to` (`to`),
+  KEY `status` (`status`),
+  KEY `type` (`type`),
+  KEY `folder` (`folder`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 -- 
 -- Dumping data for table `message`
@@ -1477,15 +1477,15 @@ CREATE TABLE "message" (
 -- Table structure for table `message_folder`
 -- 
 
-CREATE TABLE "message_folder" (
-  "id" int(10) unsigned NOT NULL auto_increment,
-  "type" tinyint(4) NOT NULL default '0',
-  "user" int(10) unsigned NOT NULL default '0',
-  "parent" int(11) NOT NULL default '0',
-  "name" varchar(128) NOT NULL default '',
-  PRIMARY KEY  ("id"),
-  KEY "user" ("user","parent")
-) AUTO_INCREMENT=1 ;
+CREATE TABLE `message_folder` (
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `type` tinyint(4) NOT NULL default '0',
+  `user` int(10) unsigned NOT NULL default '0',
+  `parent` int(11) NOT NULL default '0',
+  `name` varchar(128) NOT NULL default '',
+  PRIMARY KEY  (`id`),
+  KEY `user` (`user`,`parent`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 -- 
 -- Dumping data for table `message_folder`
@@ -1498,25 +1498,25 @@ CREATE TABLE "message_folder" (
 -- Table structure for table `newlog`
 -- 
 
-CREATE TABLE "newlog" (
-  "id" int(10) unsigned NOT NULL auto_increment,
-  "type" int(10) unsigned NOT NULL default '0',
-  "topic" int(10) unsigned NOT NULL default '0',
-  "user" int(10) unsigned NOT NULL default '0',
-  "time" int(10) unsigned NOT NULL default '0',
-  "i1" int(11) NOT NULL default '0',
-  "i2" int(11) NOT NULL default '0',
-  "i3" int(11) NOT NULL default '0',
-  "s1" varchar(128) NOT NULL default '',
-  "s2" varchar(128) NOT NULL default '',
-  "count" int(10) unsigned NOT NULL default '1',
-  PRIMARY KEY  ("id"),
-  KEY "type" ("type"),
-  KEY "topic" ("topic"),
-  KEY "user" ("user"),
-  KEY "count" ("count"),
-  KEY "time" ("time")
-) AUTO_INCREMENT=1 ;
+CREATE TABLE `newlog` (
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `type` int(10) unsigned NOT NULL default '0',
+  `topic` int(10) unsigned NOT NULL default '0',
+  `user` int(10) unsigned NOT NULL default '0',
+  `time` int(10) unsigned NOT NULL default '0',
+  `i1` int(11) NOT NULL default '0',
+  `i2` int(11) NOT NULL default '0',
+  `i3` int(11) NOT NULL default '0',
+  `s1` varchar(128) NOT NULL default '',
+  `s2` varchar(128) NOT NULL default '',
+  `count` int(10) unsigned NOT NULL default '1',
+  PRIMARY KEY  (`id`),
+  KEY `type` (`type`),
+  KEY `topic` (`topic`),
+  KEY `user` (`user`),
+  KEY `count` (`count`),
+  KEY `time` (`time`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 -- 
 -- Dumping data for table `newlog`
@@ -1529,17 +1529,17 @@ CREATE TABLE "newlog" (
 -- Table structure for table `pending`
 -- 
 
-CREATE TABLE "pending" (
-  "name" varchar(64) NOT NULL default '',
-  "mail" varchar(128) NOT NULL default '',
-  "time" int(10) unsigned NOT NULL default '0',
-  "key" varchar(255) NOT NULL default '',
-  "pass" varchar(255) NOT NULL default '',
-  "from" varchar(255) NOT NULL default '',
-  "text" text NOT NULL,
-  "ip" varchar(16) NOT NULL default '',
-  UNIQUE KEY "name" ("name","mail")
-);
+CREATE TABLE `pending` (
+  `name` varchar(64) NOT NULL default '',
+  `mail` varchar(128) NOT NULL default '',
+  `time` int(10) unsigned NOT NULL default '0',
+  `key` varchar(255) NOT NULL default '',
+  `pass` varchar(255) NOT NULL default '',
+  `from` varchar(255) NOT NULL default '',
+  `text` text NOT NULL,
+  `ip` varchar(16) NOT NULL default '',
+  UNIQUE KEY `name` (`name`,`mail`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 -- 
 -- Dumping data for table `pending`
@@ -1552,20 +1552,20 @@ CREATE TABLE "pending" (
 -- Table structure for table `phperror`
 -- 
 
-CREATE TABLE "phperror" (
-  "id" int(10) unsigned NOT NULL auto_increment,
-  "datetime" varchar(255) NOT NULL default '',
-  "errornum" int(10) unsigned NOT NULL default '0',
-  "errortype" varchar(255) NOT NULL default '',
-  "errormsg" varchar(255) NOT NULL default '',
-  "scriptname" varchar(255) NOT NULL default '',
-  "scriptlinenum" int(10) unsigned NOT NULL default '0',
-  "code" text NOT NULL,
-  PRIMARY KEY  ("id"),
-  KEY "errormsg" ("errormsg"),
-  KEY "scriptname" ("scriptname"),
-  KEY "scriptlinenum" ("scriptlinenum")
-) AUTO_INCREMENT=1 ;
+CREATE TABLE `phperror` (
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `datetime` varchar(255) NOT NULL default '',
+  `errornum` int(10) unsigned NOT NULL default '0',
+  `errortype` varchar(255) NOT NULL default '',
+  `errormsg` varchar(255) NOT NULL default '',
+  `scriptname` varchar(255) NOT NULL default '',
+  `scriptlinenum` int(10) unsigned NOT NULL default '0',
+  `code` text NOT NULL,
+  PRIMARY KEY  (`id`),
+  KEY `errormsg` (`errormsg`),
+  KEY `scriptname` (`scriptname`),
+  KEY `scriptlinenum` (`scriptlinenum`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 -- 
 -- Dumping data for table `phperror`
@@ -1578,22 +1578,22 @@ CREATE TABLE "phperror" (
 -- Table structure for table `pillage`
 -- 
 
-CREATE TABLE "pillage" (
-  "id" int(10) unsigned NOT NULL auto_increment,
-  "army" int(10) unsigned NOT NULL default '0',
-  "building" int(10) unsigned NOT NULL default '0',
-  "start" int(10) unsigned NOT NULL default '0',
-  "type" tinyint(4) NOT NULL default '-1',
-  "lumber" float NOT NULL default '0',
-  "stone" float NOT NULL default '0',
-  "food" float NOT NULL default '0',
-  "metal" float NOT NULL default '0',
-  "runes" float NOT NULL default '0',
-  PRIMARY KEY  ("id"),
-  KEY "army" ("army"),
-  KEY "type" ("type"),
-  KEY "building" ("building")
-) AUTO_INCREMENT=1 ;
+CREATE TABLE `pillage` (
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `army` int(10) unsigned NOT NULL default '0',
+  `building` int(10) unsigned NOT NULL default '0',
+  `start` int(10) unsigned NOT NULL default '0',
+  `type` tinyint(4) NOT NULL default '-1',
+  `lumber` float NOT NULL default '0',
+  `stone` float NOT NULL default '0',
+  `food` float NOT NULL default '0',
+  `metal` float NOT NULL default '0',
+  `runes` float NOT NULL default '0',
+  PRIMARY KEY  (`id`),
+  KEY `army` (`army`),
+  KEY `type` (`type`),
+  KEY `building` (`building`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 -- 
 -- Dumping data for table `pillage`
@@ -1606,13 +1606,13 @@ CREATE TABLE "pillage" (
 -- Table structure for table `poll`
 -- 
 
-CREATE TABLE "poll" (
-  "id" int(10) unsigned NOT NULL auto_increment,
-  "name" varchar(255) NOT NULL,
-  "created" int(10) unsigned NOT NULL default '0',
-  PRIMARY KEY  ("id"),
-  KEY "created" ("created")
-) AUTO_INCREMENT=1 ;
+CREATE TABLE `poll` (
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `name` varchar(255) NOT NULL,
+  `created` int(10) unsigned NOT NULL default '0',
+  PRIMARY KEY  (`id`),
+  KEY `created` (`created`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 -- 
 -- Dumping data for table `poll`
@@ -1625,13 +1625,13 @@ CREATE TABLE "poll" (
 -- Table structure for table `poll_answer`
 -- 
 
-CREATE TABLE "poll_answer" (
-  "poll" int(10) unsigned NOT NULL,
-  "number" int(10) unsigned NOT NULL,
-  "user" int(10) unsigned NOT NULL,
-  "time" int(10) unsigned NOT NULL default '0',
-  PRIMARY KEY  ("poll","number","user")
-);
+CREATE TABLE `poll_answer` (
+  `poll` int(10) unsigned NOT NULL,
+  `number` int(10) unsigned NOT NULL,
+  `user` int(10) unsigned NOT NULL,
+  `time` int(10) unsigned NOT NULL default '0',
+  PRIMARY KEY  (`poll`,`number`,`user`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 -- 
 -- Dumping data for table `poll_answer`
@@ -1644,12 +1644,12 @@ CREATE TABLE "poll_answer" (
 -- Table structure for table `poll_choice`
 -- 
 
-CREATE TABLE "poll_choice" (
-  "number" int(10) unsigned NOT NULL default '1',
-  "poll" int(10) unsigned NOT NULL,
-  "text" varchar(255) collate latin1_general_ci NOT NULL,
-  PRIMARY KEY  ("number","poll")
-);
+CREATE TABLE `poll_choice` (
+  `number` int(10) unsigned NOT NULL default '1',
+  `poll` int(10) unsigned NOT NULL,
+  `text` varchar(255) collate latin1_general_ci NOT NULL,
+  PRIMARY KEY  (`number`,`poll`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
 -- 
 -- Dumping data for table `poll_choice`
@@ -1662,17 +1662,17 @@ CREATE TABLE "poll_choice" (
 -- Table structure for table `profile`
 -- 
 
-CREATE TABLE "profile" (
-  "page" varchar(64) NOT NULL default '',
-  "time" float NOT NULL default '0',
-  "max" float NOT NULL default '0',
-  "sql" int(10) unsigned NOT NULL default '0',
-  "sqlmax" int(10) unsigned NOT NULL default '0',
-  "hits" int(10) unsigned NOT NULL default '0',
-  "mem" int(10) unsigned NOT NULL default '0',
-  "memmax" int(10) unsigned NOT NULL default '0',
-  PRIMARY KEY  ("page")
-);
+CREATE TABLE `profile` (
+  `page` varchar(64) NOT NULL default '',
+  `time` float NOT NULL default '0',
+  `max` float NOT NULL default '0',
+  `sql` int(10) unsigned NOT NULL default '0',
+  `sqlmax` int(10) unsigned NOT NULL default '0',
+  `hits` int(10) unsigned NOT NULL default '0',
+  `mem` int(10) unsigned NOT NULL default '0',
+  `memmax` int(10) unsigned NOT NULL default '0',
+  PRIMARY KEY  (`page`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 -- 
 -- Dumping data for table `profile`
@@ -1685,28 +1685,28 @@ CREATE TABLE "profile" (
 -- Table structure for table `quest`
 -- 
 
-CREATE TABLE "quest" (
-  "id" int(10) unsigned NOT NULL auto_increment,
-  "running" tinyint(3) unsigned NOT NULL default '0',
-  "start" int(10) unsigned NOT NULL default '0',
-  "dur" int(10) unsigned NOT NULL default '0',
-  "repeat" int(10) unsigned NOT NULL default '0',
-  "type" tinyint(3) unsigned NOT NULL default '0',
-  "x" int(11) NOT NULL default '0',
-  "y" int(11) NOT NULL default '0',
-  "lumber" int(10) unsigned NOT NULL default '0',
-  "stone" int(10) unsigned NOT NULL default '0',
-  "food" int(10) unsigned NOT NULL default '0',
-  "metal" int(10) unsigned NOT NULL default '0',
-  "runes" int(10) unsigned NOT NULL default '0',
-  "rewarditemtype" int(10) unsigned NOT NULL default '0',
-  "rewarditemamount" float NOT NULL default '1',
-  "flags" int(10) unsigned NOT NULL default '0',
-  "params" varchar(255) NOT NULL default '',
-  "name" varchar(255) NOT NULL default '',
-  "descr" text NOT NULL,
-  PRIMARY KEY  ("id")
-) AUTO_INCREMENT=10 ;
+CREATE TABLE `quest` (
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `running` tinyint(3) unsigned NOT NULL default '0',
+  `start` int(10) unsigned NOT NULL default '0',
+  `dur` int(10) unsigned NOT NULL default '0',
+  `repeat` int(10) unsigned NOT NULL default '0',
+  `type` tinyint(3) unsigned NOT NULL default '0',
+  `x` int(11) NOT NULL default '0',
+  `y` int(11) NOT NULL default '0',
+  `lumber` int(10) unsigned NOT NULL default '0',
+  `stone` int(10) unsigned NOT NULL default '0',
+  `food` int(10) unsigned NOT NULL default '0',
+  `metal` int(10) unsigned NOT NULL default '0',
+  `runes` int(10) unsigned NOT NULL default '0',
+  `rewarditemtype` int(10) unsigned NOT NULL default '0',
+  `rewarditemamount` float NOT NULL default '1',
+  `flags` int(10) unsigned NOT NULL default '0',
+  `params` varchar(255) NOT NULL default '',
+  `name` varchar(255) NOT NULL default '',
+  `descr` text NOT NULL,
+  PRIMARY KEY  (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=10 ;
 
 -- 
 -- Dumping data for table `quest`
@@ -1726,13 +1726,13 @@ INSERT INTO `quest` VALUES (9, 1, 1140566460, 3600, 3600, 3, -25, 227, 0, 0, 0, 
 -- Table structure for table `race`
 -- 
 
-CREATE TABLE "race" (
-  "id" int(10) unsigned NOT NULL auto_increment,
-  "name" varchar(32) NOT NULL default '',
-  "desc" text NOT NULL,
-  "gfx" varchar(128) NOT NULL default '',
-  PRIMARY KEY  ("id")
-) AUTO_INCREMENT=3 ;
+CREATE TABLE `race` (
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `name` varchar(32) NOT NULL default '',
+  `desc` text NOT NULL,
+  `gfx` varchar(128) NOT NULL default '',
+  PRIMARY KEY  (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=3 ;
 
 -- 
 -- Dumping data for table `race`
@@ -1747,16 +1747,16 @@ INSERT INTO `race` VALUES (2, 'Gnome', 'wer will fleissige Handwerker sehen, der
 -- Table structure for table `session`
 -- 
 
-CREATE TABLE "session" (
-  "id" int(10) unsigned NOT NULL auto_increment,
-  "sid" varchar(128) NOT NULL default '',
-  "ip" varchar(16) NOT NULL default '',
-  "userid" int(10) unsigned NOT NULL default '0',
-  "lastuse" int(12) unsigned NOT NULL default '0',
-  "agent" varchar(128) NOT NULL default '',
-  "usegfx" tinyint(3) unsigned NOT NULL default '0',
-  PRIMARY KEY  ("id")
-) AUTO_INCREMENT=1 ;
+CREATE TABLE `session` (
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `sid` varchar(128) NOT NULL default '',
+  `ip` varchar(16) NOT NULL default '',
+  `userid` int(10) unsigned NOT NULL default '0',
+  `lastuse` int(12) unsigned NOT NULL default '0',
+  `agent` varchar(128) NOT NULL default '',
+  `usegfx` tinyint(3) unsigned NOT NULL default '0',
+  PRIMARY KEY  (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 -- 
 -- Dumping data for table `session`
@@ -1769,18 +1769,18 @@ CREATE TABLE "session" (
 -- Table structure for table `shooting`
 -- 
 
-CREATE TABLE "shooting" (
-  "id" int(10) unsigned NOT NULL auto_increment,
-  "attacker" int(10) unsigned NOT NULL default '0',
-  "attackertype" int(10) unsigned NOT NULL default '0',
-  "defender" int(10) unsigned NOT NULL default '0',
-  "defendertype" int(10) unsigned NOT NULL default '0',
-  "start" int(10) unsigned NOT NULL default '0',
-  "lastshot" int(10) unsigned NOT NULL default '0',
-  "fightlog" int(10) unsigned NOT NULL default '0',
-  "autocancel" tinyint(3) unsigned NOT NULL default '0',
-  PRIMARY KEY  ("id")
-) AUTO_INCREMENT=1 ;
+CREATE TABLE `shooting` (
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `attacker` int(10) unsigned NOT NULL default '0',
+  `attackertype` int(10) unsigned NOT NULL default '0',
+  `defender` int(10) unsigned NOT NULL default '0',
+  `defendertype` int(10) unsigned NOT NULL default '0',
+  `start` int(10) unsigned NOT NULL default '0',
+  `lastshot` int(10) unsigned NOT NULL default '0',
+  `fightlog` int(10) unsigned NOT NULL default '0',
+  `autocancel` tinyint(3) unsigned NOT NULL default '0',
+  PRIMARY KEY  (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 -- 
 -- Dumping data for table `shooting`
@@ -1793,15 +1793,15 @@ CREATE TABLE "shooting" (
 -- Table structure for table `siege`
 -- 
 
-CREATE TABLE "siege" (
-  "id" int(10) unsigned NOT NULL auto_increment,
-  "army" int(10) unsigned NOT NULL default '0',
-  "building" int(10) unsigned NOT NULL default '0',
-  "start" int(10) unsigned NOT NULL default '0',
-  PRIMARY KEY  ("id"),
-  KEY "army" ("army"),
-  KEY "building" ("building")
-) AUTO_INCREMENT=1 ;
+CREATE TABLE `siege` (
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `army` int(10) unsigned NOT NULL default '0',
+  `building` int(10) unsigned NOT NULL default '0',
+  `start` int(10) unsigned NOT NULL default '0',
+  PRIMARY KEY  (`id`),
+  KEY `army` (`army`),
+  KEY `building` (`building`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 -- 
 -- Dumping data for table `siege`
@@ -1814,24 +1814,24 @@ CREATE TABLE "siege" (
 -- Table structure for table `spell`
 -- 
 
-CREATE TABLE "spell" (
-  "id" int(10) unsigned NOT NULL auto_increment,
-  "x" int(11) NOT NULL default '0',
-  "y" int(11) NOT NULL default '0',
-  "radius" int(10) unsigned NOT NULL default '0',
-  "target" int(10) unsigned NOT NULL default '0',
-  "targettype" int(10) unsigned NOT NULL default '0',
-  "type" int(10) unsigned NOT NULL default '0',
-  "owner" int(10) unsigned NOT NULL default '0',
-  "lasts" int(10) unsigned NOT NULL default '0',
-  "mod" float NOT NULL default '0',
-  PRIMARY KEY  ("id"),
-  KEY "target" ("target"),
-  KEY "owner" ("owner"),
-  KEY "x" ("x"),
-  KEY "y" ("y"),
-  KEY "type" ("type")
-) AUTO_INCREMENT=1 ;
+CREATE TABLE `spell` (
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `x` int(11) NOT NULL default '0',
+  `y` int(11) NOT NULL default '0',
+  `radius` int(10) unsigned NOT NULL default '0',
+  `target` int(10) unsigned NOT NULL default '0',
+  `targettype` int(10) unsigned NOT NULL default '0',
+  `type` int(10) unsigned NOT NULL default '0',
+  `owner` int(10) unsigned NOT NULL default '0',
+  `lasts` int(10) unsigned NOT NULL default '0',
+  `mod` float NOT NULL default '0',
+  PRIMARY KEY  (`id`),
+  KEY `target` (`target`),
+  KEY `owner` (`owner`),
+  KEY `x` (`x`),
+  KEY `y` (`y`),
+  KEY `type` (`type`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 -- 
 -- Dumping data for table `spell`
@@ -1844,30 +1844,30 @@ CREATE TABLE "spell" (
 -- Table structure for table `spelltype`
 -- 
 
-CREATE TABLE "spelltype" (
-  "id" int(10) unsigned NOT NULL auto_increment,
-  "target" tinyint(3) unsigned NOT NULL default '0',
-  "name" varchar(60) NOT NULL default '',
-  "baserange" int(11) NOT NULL default '0',
-  "basetime" int(11) NOT NULL default '0',
-  "baseeffect" float NOT NULL default '0',
-  "basemod" float NOT NULL default '0',
-  "desc" text NOT NULL,
-  "primetech" int(10) unsigned NOT NULL default '0',
-  "cost_lumber" int(10) unsigned NOT NULL default '0',
-  "cost_food" int(10) unsigned NOT NULL default '0',
-  "cost_metal" int(10) unsigned NOT NULL default '0',
-  "cost_stone" int(10) unsigned NOT NULL default '0',
-  "cost_runes" int(10) unsigned NOT NULL default '0',
-  "cost_mana" int(10) unsigned NOT NULL default '0',
-  "req_tech" varchar(128) NOT NULL default '',
-  "req_building" varchar(128) NOT NULL default '',
-  "gfx" varchar(90) NOT NULL default '',
-  "orderval" tinyint(4) NOT NULL default '0',
-  PRIMARY KEY  ("id"),
-  KEY "name" ("name"),
-  KEY "target" ("target")
-) AUTO_INCREMENT=22 ;
+CREATE TABLE `spelltype` (
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `target` tinyint(3) unsigned NOT NULL default '0',
+  `name` varchar(60) NOT NULL default '',
+  `baserange` int(11) NOT NULL default '0',
+  `basetime` int(11) NOT NULL default '0',
+  `baseeffect` float NOT NULL default '0',
+  `basemod` float NOT NULL default '0',
+  `desc` text NOT NULL,
+  `primetech` int(10) unsigned NOT NULL default '0',
+  `cost_lumber` int(10) unsigned NOT NULL default '0',
+  `cost_food` int(10) unsigned NOT NULL default '0',
+  `cost_metal` int(10) unsigned NOT NULL default '0',
+  `cost_stone` int(10) unsigned NOT NULL default '0',
+  `cost_runes` int(10) unsigned NOT NULL default '0',
+  `cost_mana` int(10) unsigned NOT NULL default '0',
+  `req_tech` varchar(128) NOT NULL default '',
+  `req_building` varchar(128) NOT NULL default '',
+  `gfx` varchar(90) NOT NULL default '',
+  `orderval` tinyint(4) NOT NULL default '0',
+  PRIMARY KEY  (`id`),
+  KEY `name` (`name`),
+  KEY `target` (`target`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=22 ;
 
 -- 
 -- Dumping data for table `spelltype`
@@ -1900,12 +1900,12 @@ INSERT INTO `spelltype` VALUES (21, 3, 'Brandrodung', 0, 0, 0, 0, '', 73, 0, 0, 
 -- Table structure for table `sqlbookmark`
 -- 
 
-CREATE TABLE "sqlbookmark" (
-  "id" int(10) unsigned NOT NULL auto_increment,
-  "name" varchar(128) NOT NULL default '',
-  "sql" text NOT NULL,
-  PRIMARY KEY  ("id")
-) AUTO_INCREMENT=24 ;
+CREATE TABLE `sqlbookmark` (
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `name` varchar(128) NOT NULL default '',
+  `sql` text NOT NULL,
+  PRIMARY KEY  (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=24 ;
 
 -- 
 -- Dumping data for table `sqlbookmark`
@@ -1932,17 +1932,17 @@ INSERT INTO `sqlbookmark` VALUES (23, 'WP-Boom-Detector', 'SELECT *,COUNT(*) as 
 -- Table structure for table `sqlerror`
 -- 
 
-CREATE TABLE "sqlerror" (
-  "id" int(10) unsigned NOT NULL auto_increment,
-  "time" int(10) unsigned NOT NULL default '0',
-  "self" varchar(64) NOT NULL default '',
-  "query" varchar(255) NOT NULL default '',
-  "sqlquery" varchar(255) NOT NULL default '',
-  "error" varchar(255) NOT NULL default '',
-  "stacktrace" text NOT NULL,
-  PRIMARY KEY  ("id"),
-  KEY "time" ("time")
-) AUTO_INCREMENT=1 ;
+CREATE TABLE `sqlerror` (
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `time` int(10) unsigned NOT NULL default '0',
+  `self` varchar(64) NOT NULL default '',
+  `query` varchar(255) NOT NULL default '',
+  `sqlquery` varchar(255) NOT NULL default '',
+  `error` varchar(255) NOT NULL default '',
+  `stacktrace` text NOT NULL,
+  PRIMARY KEY  (`id`),
+  KEY `time` (`time`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 -- 
 -- Dumping data for table `sqlerror`
@@ -1955,22 +1955,22 @@ CREATE TABLE "sqlerror" (
 -- Table structure for table `stats`
 -- 
 
-CREATE TABLE "stats" (
-  "id" int(10) unsigned NOT NULL auto_increment,
-  "user" int(10) unsigned NOT NULL default '0',
-  "type" int(10) unsigned NOT NULL default '0',
-  "time" int(10) unsigned NOT NULL default '0',
-  "i1" int(11) NOT NULL default '0',
-  "i2" int(11) NOT NULL default '0',
-  "i3" int(11) NOT NULL default '0',
-  "f1" float NOT NULL default '0',
-  "f2" float NOT NULL default '0',
-  "f3" float NOT NULL default '0',
-  PRIMARY KEY  ("id"),
-  KEY "user" ("user"),
-  KEY "type" ("type"),
-  KEY "time" ("time")
-) AUTO_INCREMENT=1 ;
+CREATE TABLE `stats` (
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `user` int(10) unsigned NOT NULL default '0',
+  `type` int(10) unsigned NOT NULL default '0',
+  `time` int(10) unsigned NOT NULL default '0',
+  `i1` int(11) NOT NULL default '0',
+  `i2` int(11) NOT NULL default '0',
+  `i3` int(11) NOT NULL default '0',
+  `f1` float NOT NULL default '0',
+  `f2` float NOT NULL default '0',
+  `f3` float NOT NULL default '0',
+  PRIMARY KEY  (`id`),
+  KEY `user` (`user`),
+  KEY `type` (`type`),
+  KEY `time` (`time`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 -- 
 -- Dumping data for table `stats`
@@ -1983,23 +1983,23 @@ CREATE TABLE "stats" (
 -- Table structure for table `technology`
 -- 
 
-CREATE TABLE "technology" (
-  "id" int(10) unsigned NOT NULL auto_increment,
-  "type" int(10) unsigned NOT NULL default '0',
-  "user" int(10) unsigned NOT NULL default '0',
-  "current_level" tinyint(3) NOT NULL default '0',
-  "level" tinyint(3) unsigned NOT NULL default '0',
-  "upgrades" tinyint(3) unsigned NOT NULL default '0',
-  "upgradetime" int(10) unsigned NOT NULL default '0',
-  "upgradebuilding" int(10) unsigned NOT NULL default '0',
-  "status" tinyint(3) NOT NULL default '0',
-  "statuschange" int(11) NOT NULL default '0',
-  PRIMARY KEY  ("id"),
-  KEY "type" ("type"),
-  KEY "user" ("user"),
-  KEY "upgradebuilding" ("upgradebuilding"),
-  KEY "status" ("status")
-) AUTO_INCREMENT=1 ;
+CREATE TABLE `technology` (
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `type` int(10) unsigned NOT NULL default '0',
+  `user` int(10) unsigned NOT NULL default '0',
+  `current_level` tinyint(3) NOT NULL default '0',
+  `level` tinyint(3) unsigned NOT NULL default '0',
+  `upgrades` tinyint(3) unsigned NOT NULL default '0',
+  `upgradetime` int(10) unsigned NOT NULL default '0',
+  `upgradebuilding` int(10) unsigned NOT NULL default '0',
+  `status` tinyint(3) NOT NULL default '0',
+  `statuschange` int(11) NOT NULL default '0',
+  PRIMARY KEY  (`id`),
+  KEY `type` (`type`),
+  KEY `user` (`user`),
+  KEY `upgradebuilding` (`upgradebuilding`),
+  KEY `status` (`status`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 -- 
 -- Dumping data for table `technology`
@@ -2012,15 +2012,15 @@ CREATE TABLE "technology" (
 -- Table structure for table `technologygroup`
 -- 
 
-CREATE TABLE "technologygroup" (
-  "id" int(10) unsigned NOT NULL auto_increment,
-  "buildingtype" int(10) unsigned NOT NULL default '0',
-  "group" int(10) unsigned NOT NULL default '0',
-  "name" varchar(255) NOT NULL default '',
-  "descr" text NOT NULL,
-  "gfx" varchar(128) NOT NULL default '',
-  PRIMARY KEY  ("id")
-) AUTO_INCREMENT=21 ;
+CREATE TABLE `technologygroup` (
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `buildingtype` int(10) unsigned NOT NULL default '0',
+  `group` int(10) unsigned NOT NULL default '0',
+  `name` varchar(255) NOT NULL default '',
+  `descr` text NOT NULL,
+  `gfx` varchar(128) NOT NULL default '',
+  PRIMARY KEY  (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=21 ;
 
 -- 
 -- Dumping data for table `technologygroup`
@@ -2047,26 +2047,26 @@ INSERT INTO `technologygroup` VALUES (20, 2, 0, 'Synthese', '', 'res_mana.gif');
 -- Table structure for table `technologytype`
 -- 
 
-CREATE TABLE "technologytype" (
-  "id" int(10) unsigned NOT NULL auto_increment,
-  "buildingtype" int(10) unsigned NOT NULL default '0',
-  "buildinglevel" int(10) unsigned NOT NULL default '0',
-  "group" int(10) unsigned NOT NULL default '0',
-  "name" varchar(255) NOT NULL default '',
-  "descr" text NOT NULL,
-  "basecost_lumber" int(10) unsigned NOT NULL default '0',
-  "basecost_stone" int(10) unsigned NOT NULL default '0',
-  "basecost_food" int(10) unsigned NOT NULL default '0',
-  "basecost_metal" int(10) unsigned NOT NULL default '0',
-  "basecost_runes" int(10) unsigned NOT NULL default '0',
-  "basetime" int(10) unsigned NOT NULL default '0',
-  "maxlevel" int(10) unsigned NOT NULL default '10',
-  "increment" float NOT NULL default '0',
-  "req_tech" varchar(255) NOT NULL default '',
-  "req_geb" varchar(255) NOT NULL default '',
-  "gfx" varchar(128) NOT NULL default '',
-  PRIMARY KEY  ("id")
-) AUTO_INCREMENT=75 ;
+CREATE TABLE `technologytype` (
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `buildingtype` int(10) unsigned NOT NULL default '0',
+  `buildinglevel` int(10) unsigned NOT NULL default '0',
+  `group` int(10) unsigned NOT NULL default '0',
+  `name` varchar(255) NOT NULL default '',
+  `descr` text NOT NULL,
+  `basecost_lumber` int(10) unsigned NOT NULL default '0',
+  `basecost_stone` int(10) unsigned NOT NULL default '0',
+  `basecost_food` int(10) unsigned NOT NULL default '0',
+  `basecost_metal` int(10) unsigned NOT NULL default '0',
+  `basecost_runes` int(10) unsigned NOT NULL default '0',
+  `basetime` int(10) unsigned NOT NULL default '0',
+  `maxlevel` int(10) unsigned NOT NULL default '10',
+  `increment` float NOT NULL default '0',
+  `req_tech` varchar(255) NOT NULL default '',
+  `req_geb` varchar(255) NOT NULL default '',
+  `gfx` varchar(128) NOT NULL default '',
+  PRIMARY KEY  (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=75 ;
 
 -- 
 -- Dumping data for table `technologytype`
@@ -2121,21 +2121,21 @@ INSERT INTO `technologytype` VALUES (74, 12, 20, 0, 'Bogen', '', 5000, 500, 500,
 -- Table structure for table `terrain`
 -- 
 
-CREATE TABLE "terrain" (
-  "id" int(10) unsigned NOT NULL auto_increment,
-  "x" int(11) NOT NULL default '0',
-  "y" int(11) NOT NULL default '0',
-  "type" int(10) unsigned NOT NULL default '0',
-  "param" char(4) NOT NULL default '',
-  "nwse" tinyint(3) unsigned NOT NULL default '0',
-  "kills" int(10) unsigned NOT NULL default '0',
-  "steps" int(10) unsigned NOT NULL default '0',
-  "creator" int(10) unsigned NOT NULL default '0',
-  PRIMARY KEY  ("id"),
-  UNIQUE KEY "pos" ("x","y"),
-  KEY "type" ("type"),
-  KEY "y" ("y")
-) AUTO_INCREMENT=1 ;
+CREATE TABLE `terrain` (
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `x` int(11) NOT NULL default '0',
+  `y` int(11) NOT NULL default '0',
+  `type` int(10) unsigned NOT NULL default '0',
+  `param` char(4) NOT NULL default '',
+  `nwse` tinyint(3) unsigned NOT NULL default '0',
+  `kills` int(10) unsigned NOT NULL default '0',
+  `steps` int(10) unsigned NOT NULL default '0',
+  `creator` int(10) unsigned NOT NULL default '0',
+  PRIMARY KEY  (`id`),
+  UNIQUE KEY `pos` (`x`,`y`),
+  KEY `type` (`type`),
+  KEY `y` (`y`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 -- 
 -- Dumping data for table `terrain`
@@ -2148,17 +2148,17 @@ CREATE TABLE "terrain" (
 -- Table structure for table `terrainpatchtype`
 -- 
 
-CREATE TABLE "terrainpatchtype" (
-  "id" int(10) unsigned NOT NULL auto_increment,
-  "gfx" varchar(128) NOT NULL default '',
-  "here" int(10) unsigned NOT NULL default '0',
-  "up" int(10) unsigned NOT NULL default '0',
-  "down" int(10) unsigned NOT NULL default '0',
-  "left" int(10) unsigned NOT NULL default '0',
-  "right" int(10) unsigned NOT NULL default '0',
-  PRIMARY KEY  ("id"),
-  KEY "here" ("here","up","down","left","right")
-) AUTO_INCREMENT=36 ;
+CREATE TABLE `terrainpatchtype` (
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `gfx` varchar(128) NOT NULL default '',
+  `here` int(10) unsigned NOT NULL default '0',
+  `up` int(10) unsigned NOT NULL default '0',
+  `down` int(10) unsigned NOT NULL default '0',
+  `left` int(10) unsigned NOT NULL default '0',
+  `right` int(10) unsigned NOT NULL default '0',
+  PRIMARY KEY  (`id`),
+  KEY `here` (`here`,`up`,`down`,`left`,`right`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=36 ;
 
 -- 
 -- Dumping data for table `terrainpatchtype`
@@ -2206,13 +2206,13 @@ INSERT INTO `terrainpatchtype` VALUES (35, 'river/river-see-e.png', 2, 0, 0, 6, 
 -- Table structure for table `terrainsegment4`
 -- 
 
-CREATE TABLE "terrainsegment4" (
-  "x" int(11) NOT NULL default '0',
-  "y" int(11) NOT NULL default '0',
-  "type" int(10) unsigned NOT NULL default '1',
-  PRIMARY KEY  ("x","y"),
-  KEY "y" ("y")
-);
+CREATE TABLE `terrainsegment4` (
+  `x` int(11) NOT NULL default '0',
+  `y` int(11) NOT NULL default '0',
+  `type` int(10) unsigned NOT NULL default '1',
+  PRIMARY KEY  (`x`,`y`),
+  KEY `y` (`y`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 -- 
 -- Dumping data for table `terrainsegment4`
@@ -2225,13 +2225,13 @@ CREATE TABLE "terrainsegment4" (
 -- Table structure for table `terrainsegment64`
 -- 
 
-CREATE TABLE "terrainsegment64" (
-  "x" int(11) NOT NULL default '0',
-  "y" int(11) NOT NULL default '0',
-  "type" int(10) unsigned NOT NULL default '1',
-  PRIMARY KEY  ("x","y"),
-  KEY "y" ("y")
-);
+CREATE TABLE `terrainsegment64` (
+  `x` int(11) NOT NULL default '0',
+  `y` int(11) NOT NULL default '0',
+  `type` int(10) unsigned NOT NULL default '1',
+  PRIMARY KEY  (`x`,`y`),
+  KEY `y` (`y`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 -- 
 -- Dumping data for table `terrainsegment64`
@@ -2244,14 +2244,14 @@ CREATE TABLE "terrainsegment64" (
 -- Table structure for table `terrainsubtype`
 -- 
 
-CREATE TABLE "terrainsubtype" (
-  "id" int(10) unsigned NOT NULL auto_increment,
-  "terraintype" int(10) unsigned NOT NULL default '0',
-  "terrainconnecttype" int(10) unsigned NOT NULL default '0',
-  "gfx" varchar(255) NOT NULL default '',
-  PRIMARY KEY  ("id"),
-  KEY "terraintype" ("terraintype","terrainconnecttype")
-) AUTO_INCREMENT=1 ;
+CREATE TABLE `terrainsubtype` (
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `terraintype` int(10) unsigned NOT NULL default '0',
+  `terrainconnecttype` int(10) unsigned NOT NULL default '0',
+  `gfx` varchar(255) NOT NULL default '',
+  PRIMARY KEY  (`id`),
+  KEY `terraintype` (`terraintype`,`terrainconnecttype`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 -- 
 -- Dumping data for table `terrainsubtype`
@@ -2264,24 +2264,24 @@ CREATE TABLE "terrainsubtype" (
 -- Table structure for table `terraintype`
 -- 
 
-CREATE TABLE "terraintype" (
-  "id" int(11) NOT NULL auto_increment,
-  "name" varchar(128) NOT NULL default '',
-  "descr" text NOT NULL,
-  "speed" int(11) NOT NULL default '0',
-  "buildable" tinyint(4) NOT NULL default '0',
-  "color" varchar(8) NOT NULL default '',
-  "gfx" varchar(128) NOT NULL default '',
-  "cssclass" varchar(64) NOT NULL default '',
-  "mod_a" float NOT NULL default '1',
-  "mod_v" float NOT NULL default '1',
-  "mod_f" float NOT NULL default '1',
-  "movable_flag" int(10) unsigned NOT NULL default '0',
-  "connectto_terrain" varchar(255) NOT NULL default '',
-  "connectto_building" varchar(255) NOT NULL default '',
-  PRIMARY KEY  ("id"),
-  KEY "movable_flag" ("movable_flag")
-) AUTO_INCREMENT=26 ;
+CREATE TABLE `terraintype` (
+  `id` int(11) NOT NULL auto_increment,
+  `name` varchar(128) NOT NULL default '',
+  `descr` text NOT NULL,
+  `speed` int(11) NOT NULL default '0',
+  `buildable` tinyint(4) NOT NULL default '0',
+  `color` varchar(8) NOT NULL default '',
+  `gfx` varchar(128) NOT NULL default '',
+  `cssclass` varchar(64) NOT NULL default '',
+  `mod_a` float NOT NULL default '1',
+  `mod_v` float NOT NULL default '1',
+  `mod_f` float NOT NULL default '1',
+  `movable_flag` int(10) unsigned NOT NULL default '0',
+  `connectto_terrain` varchar(255) NOT NULL default '',
+  `connectto_building` varchar(255) NOT NULL default '',
+  PRIMARY KEY  (`id`),
+  KEY `movable_flag` (`movable_flag`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=26 ;
 
 -- 
 -- Dumping data for table `terraintype`
@@ -2318,28 +2318,28 @@ INSERT INTO `terraintype` VALUES (25, 'Taiga', '', 160, 0, '#498237', 'landschaf
 -- Table structure for table `ticket`
 -- 
 
-CREATE TABLE "ticket" (
-  "id" int(10) unsigned NOT NULL auto_increment,
-  "user" int(10) unsigned NOT NULL default '0',
-  "assigned_user" int(10) unsigned NOT NULL default '0',
-  "assigned_bug" int(10) unsigned NOT NULL default '0',
-  "subject" varchar(255) NOT NULL default '',
-  "body" text NOT NULL,
-  "created" int(10) unsigned NOT NULL default '0',
-  "topic" tinyint(3) unsigned NOT NULL default '0',
-  "prio" tinyint(3) unsigned NOT NULL default '0',
-  "flags" int(10) unsigned NOT NULL default '0',
-  "x" int(11) NOT NULL default '0',
-  "y" int(11) NOT NULL default '0',
-  "img" varchar(128) NOT NULL default '0',
-  "eventtime" int(10) unsigned NOT NULL default '0',
-  PRIMARY KEY  ("id"),
-  KEY "user" ("user","assigned_user","created","topic","prio"),
-  KEY "flags" ("flags"),
-  KEY "x" ("x","y"),
-  KEY "eventtime" ("eventtime"),
-  KEY "assigned_bug" ("assigned_bug")
-) AUTO_INCREMENT=1 ;
+CREATE TABLE `ticket` (
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `user` int(10) unsigned NOT NULL default '0',
+  `assigned_user` int(10) unsigned NOT NULL default '0',
+  `assigned_bug` int(10) unsigned NOT NULL default '0',
+  `subject` varchar(255) NOT NULL default '',
+  `body` text NOT NULL,
+  `created` int(10) unsigned NOT NULL default '0',
+  `topic` tinyint(3) unsigned NOT NULL default '0',
+  `prio` tinyint(3) unsigned NOT NULL default '0',
+  `flags` int(10) unsigned NOT NULL default '0',
+  `x` int(11) NOT NULL default '0',
+  `y` int(11) NOT NULL default '0',
+  `img` varchar(128) NOT NULL default '0',
+  `eventtime` int(10) unsigned NOT NULL default '0',
+  PRIMARY KEY  (`id`),
+  KEY `user` (`user`,`assigned_user`,`created`,`topic`,`prio`),
+  KEY `flags` (`flags`),
+  KEY `x` (`x`,`y`),
+  KEY `eventtime` (`eventtime`),
+  KEY `assigned_bug` (`assigned_bug`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 -- 
 -- Dumping data for table `ticket`
@@ -2352,15 +2352,15 @@ CREATE TABLE "ticket" (
 -- Table structure for table `ticket_reply`
 -- 
 
-CREATE TABLE "ticket_reply" (
-  "id" int(10) unsigned NOT NULL auto_increment,
-  "ticket" int(10) unsigned NOT NULL default '0',
-  "user" int(10) unsigned NOT NULL default '0',
-  "created" int(10) unsigned NOT NULL default '0',
-  "body" text NOT NULL,
-  PRIMARY KEY  ("id"),
-  KEY "ticket" ("ticket","user","created")
-) AUTO_INCREMENT=1 ;
+CREATE TABLE `ticket_reply` (
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `ticket` int(10) unsigned NOT NULL default '0',
+  `user` int(10) unsigned NOT NULL default '0',
+  `created` int(10) unsigned NOT NULL default '0',
+  `body` text NOT NULL,
+  PRIMARY KEY  (`id`),
+  KEY `ticket` (`ticket`,`user`,`created`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 -- 
 -- Dumping data for table `ticket_reply`
@@ -2373,16 +2373,16 @@ CREATE TABLE "ticket_reply" (
 -- Table structure for table `title`
 -- 
 
-CREATE TABLE "title" (
-  "id" int(10) unsigned NOT NULL auto_increment,
-  "user" int(10) unsigned NOT NULL default '0',
-  "title" varchar(255) NOT NULL default '',
-  "image" varchar(255) NOT NULL default '',
-  "time" int(10) unsigned NOT NULL default '0',
-  "text" text NOT NULL,
-  PRIMARY KEY  ("id"),
-  KEY "user" ("user")
-) AUTO_INCREMENT=6 ;
+CREATE TABLE `title` (
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `user` int(10) unsigned NOT NULL default '0',
+  `title` varchar(255) NOT NULL default '',
+  `image` varchar(255) NOT NULL default '',
+  `time` int(10) unsigned NOT NULL default '0',
+  `text` text NOT NULL,
+  PRIMARY KEY  (`id`),
+  KEY `user` (`user`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=6 ;
 
 -- 
 -- Dumping data for table `title`
@@ -2399,20 +2399,20 @@ INSERT INTO `title` VALUES (5, 76, 'Bannermacher', 'title/title-banner.png', 112
 -- Table structure for table `triggerlog`
 -- 
 
-CREATE TABLE "triggerlog" (
-  "id" int(10) unsigned NOT NULL auto_increment,
-  "time" int(10) unsigned NOT NULL default '0',
-  "x" int(11) NOT NULL default '0',
-  "y" int(11) NOT NULL default '0',
-  "id1" int(10) unsigned NOT NULL default '0',
-  "id2" int(10) unsigned NOT NULL default '0',
-  "trigger" varchar(64) NOT NULL default '',
-  "what" varchar(255) NOT NULL default '',
-  PRIMARY KEY  ("id"),
-  KEY "time" ("time"),
-  KEY "id1" ("id1"),
-  KEY "id2" ("id2")
-) AUTO_INCREMENT=1 ;
+CREATE TABLE `triggerlog` (
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `time` int(10) unsigned NOT NULL default '0',
+  `x` int(11) NOT NULL default '0',
+  `y` int(11) NOT NULL default '0',
+  `id1` int(10) unsigned NOT NULL default '0',
+  `id2` int(10) unsigned NOT NULL default '0',
+  `trigger` varchar(64) NOT NULL default '',
+  `what` varchar(255) NOT NULL default '',
+  PRIMARY KEY  (`id`),
+  KEY `time` (`time`),
+  KEY `id1` (`id1`),
+  KEY `id2` (`id2`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 -- 
 -- Dumping data for table `triggerlog`
@@ -2425,22 +2425,22 @@ CREATE TABLE "triggerlog" (
 -- Table structure for table `unit`
 -- 
 
-CREATE TABLE "unit" (
-  "id" int(10) unsigned NOT NULL auto_increment,
-  "army" int(10) unsigned NOT NULL default '0',
-  "building" int(10) unsigned NOT NULL default '0',
-  "transport" int(10) unsigned NOT NULL default '0',
-  "user" int(10) unsigned NOT NULL default '0',
-  "type" int(10) unsigned NOT NULL default '0',
-  "amount" double NOT NULL default '0',
-  "spell" int(10) unsigned NOT NULL default '0',
-  PRIMARY KEY  ("id"),
-  KEY "army" ("army"),
-  KEY "building" ("building"),
-  KEY "type" ("type"),
-  KEY "amount" ("amount"),
-  KEY "transport" ("transport")
-) AUTO_INCREMENT=1 ;
+CREATE TABLE `unit` (
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `army` int(10) unsigned NOT NULL default '0',
+  `building` int(10) unsigned NOT NULL default '0',
+  `transport` int(10) unsigned NOT NULL default '0',
+  `user` int(10) unsigned NOT NULL default '0',
+  `type` int(10) unsigned NOT NULL default '0',
+  `amount` double NOT NULL default '0',
+  `spell` int(10) unsigned NOT NULL default '0',
+  PRIMARY KEY  (`id`),
+  KEY `army` (`army`),
+  KEY `building` (`building`),
+  KEY `type` (`type`),
+  KEY `amount` (`amount`),
+  KEY `transport` (`transport`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 -- 
 -- Dumping data for table `unit`
@@ -2453,46 +2453,46 @@ CREATE TABLE "unit" (
 -- Table structure for table `unittype`
 -- 
 
-CREATE TABLE "unittype" (
-  "id" int(10) unsigned NOT NULL auto_increment,
-  "name" varchar(128) NOT NULL default '',
-  "descr" text NOT NULL,
-  "orderval" int(10) unsigned NOT NULL default '0',
-  "a" int(10) unsigned NOT NULL default '0',
-  "v" int(10) unsigned NOT NULL default '0',
-  "f" int(10) unsigned NOT NULL default '0',
-  "r" int(10) unsigned NOT NULL default '0',
-  "cooldown" int(10) unsigned NOT NULL default '0',
-  "speed" float NOT NULL default '1',
-  "pillage" int(10) unsigned NOT NULL default '0',
-  "weight" float NOT NULL default '0',
-  "cost_lumber" int(10) unsigned NOT NULL default '0',
-  "cost_stone" int(10) unsigned NOT NULL default '0',
-  "cost_food" int(10) unsigned NOT NULL default '0',
-  "cost_metal" int(10) unsigned NOT NULL default '0',
-  "cost_runes" int(10) unsigned NOT NULL default '0',
-  "last" int(10) unsigned NOT NULL default '0',
-  "buildtime" int(10) unsigned NOT NULL default '0',
-  "gfx" varchar(64) NOT NULL default '',
-  "buildingtype" int(10) unsigned NOT NULL default '0',
-  "armytype" int(10) unsigned NOT NULL default '0',
-  "flags" int(10) unsigned NOT NULL default '0',
-  "treasure" tinytext NOT NULL,
-  "req_tech_a" varchar(128) NOT NULL default '',
-  "req_tech_v" varchar(128) NOT NULL default '',
-  "req_geb" varchar(128) NOT NULL default '',
-  "movable_flag" int(10) unsigned NOT NULL default '0',
-  "eff_sail" float unsigned NOT NULL default '0',
-  "eff_fightondeck" float unsigned NOT NULL default '0',
-  "eff_capture" float unsigned NOT NULL default '0',
-  "eff_siege" float NOT NULL default '0',
-  "elite" int(10) unsigned NOT NULL default '0',
-  PRIMARY KEY  ("id"),
-  KEY "f" ("f","r"),
-  KEY "cooldown" ("cooldown"),
-  KEY "movable_flag" ("movable_flag"),
-  KEY "elite" ("elite")
-) AUTO_INCREMENT=58 ;
+CREATE TABLE `unittype` (
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `name` varchar(128) NOT NULL default '',
+  `descr` text NOT NULL,
+  `orderval` int(10) unsigned NOT NULL default '0',
+  `a` int(10) unsigned NOT NULL default '0',
+  `v` int(10) unsigned NOT NULL default '0',
+  `f` int(10) unsigned NOT NULL default '0',
+  `r` int(10) unsigned NOT NULL default '0',
+  `cooldown` int(10) unsigned NOT NULL default '0',
+  `speed` float NOT NULL default '1',
+  `pillage` int(10) unsigned NOT NULL default '0',
+  `weight` float NOT NULL default '0',
+  `cost_lumber` int(10) unsigned NOT NULL default '0',
+  `cost_stone` int(10) unsigned NOT NULL default '0',
+  `cost_food` int(10) unsigned NOT NULL default '0',
+  `cost_metal` int(10) unsigned NOT NULL default '0',
+  `cost_runes` int(10) unsigned NOT NULL default '0',
+  `last` int(10) unsigned NOT NULL default '0',
+  `buildtime` int(10) unsigned NOT NULL default '0',
+  `gfx` varchar(64) NOT NULL default '',
+  `buildingtype` int(10) unsigned NOT NULL default '0',
+  `armytype` int(10) unsigned NOT NULL default '0',
+  `flags` int(10) unsigned NOT NULL default '0',
+  `treasure` tinytext NOT NULL,
+  `req_tech_a` varchar(128) NOT NULL default '',
+  `req_tech_v` varchar(128) NOT NULL default '',
+  `req_geb` varchar(128) NOT NULL default '',
+  `movable_flag` int(10) unsigned NOT NULL default '0',
+  `eff_sail` float unsigned NOT NULL default '0',
+  `eff_fightondeck` float unsigned NOT NULL default '0',
+  `eff_capture` float unsigned NOT NULL default '0',
+  `eff_siege` float NOT NULL default '0',
+  `elite` int(10) unsigned NOT NULL default '0',
+  PRIMARY KEY  (`id`),
+  KEY `f` (`f`,`r`),
+  KEY `cooldown` (`cooldown`),
+  KEY `movable_flag` (`movable_flag`),
+  KEY `elite` (`elite`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=58 ;
 
 -- 
 -- Dumping data for table `unittype`
@@ -2556,63 +2556,63 @@ INSERT INTO `unittype` VALUES (57, 'Katapult', '', 0, 0, 0, 30, 7, 60, 60, 0, 10
 -- Table structure for table `user`
 -- 
 
-CREATE TABLE "user" (
-  "id" int(10) unsigned NOT NULL auto_increment,
-  "name" varchar(64) NOT NULL default '',
-  "pass" varchar(255) NOT NULL default '',
-  "mail" varchar(128) NOT NULL default '',
-  "homepage" varchar(128) NOT NULL default '',
-  "admin" tinyint(3) unsigned NOT NULL default '0',
-  "logins" int(10) unsigned NOT NULL default '0',
-  "lastlogin" int(10) unsigned NOT NULL default '0',
-  "iplock" tinyint(3) unsigned NOT NULL default '1',
-  "gfxpath" varchar(128) NOT NULL default '',
-  "usegfxpath" tinyint(3) unsigned NOT NULL default '0',
-  "guild" int(10) unsigned NOT NULL default '0',
-  "guildstatus" int(10) unsigned NOT NULL default '1',
-  "pop" double unsigned NOT NULL default '10',
-  "maxpop" int(15) unsigned NOT NULL default '10',
-  "lumber" double NOT NULL default '1500',
-  "stone" double NOT NULL default '1500',
-  "food" double NOT NULL default '800',
-  "metal" double NOT NULL default '800',
-  "runes" double NOT NULL default '0',
-  "max_lumber" int(15) unsigned NOT NULL default '1500',
-  "max_stone" int(15) unsigned NOT NULL default '1500',
-  "max_food" int(15) unsigned NOT NULL default '800',
-  "max_metal" int(15) unsigned NOT NULL default '800',
-  "max_runes" int(15) unsigned NOT NULL default '0',
-  "worker_lumber" float unsigned NOT NULL default '25',
-  "worker_stone" float unsigned NOT NULL default '25',
-  "worker_food" float unsigned NOT NULL default '25',
-  "worker_metal" float unsigned NOT NULL default '25',
-  "worker_runes" float unsigned NOT NULL default '0',
-  "worker_repair" float unsigned NOT NULL default '0',
-  "prod_runes" float NOT NULL default '0',
-  "prod_lumber" float NOT NULL default '2.5',
-  "prod_stone" float NOT NULL default '2.5',
-  "prod_food" float NOT NULL default '2.5',
-  "prod_metal" float NOT NULL default '2.5',
-  "color" varchar(8) NOT NULL default '#00ff00',
-  "mapmode" tinyint(3) unsigned NOT NULL default '1',
-  "lastusedarmy" int(10) unsigned NOT NULL default '0',
-  "guildpoints" int(8) NOT NULL default '0',
-  "general_pts" int(11) NOT NULL default '0',
-  "army_pts" int(11) NOT NULL default '0',
-  "registered" int(10) unsigned NOT NULL default '0',
-  "msgmode" tinyint(3) unsigned NOT NULL default '0',
-  "flatview" tinyint(4) NOT NULL default '0',
-  "race" tinyint(3) unsigned NOT NULL default '1',
-  "flags" int(10) unsigned NOT NULL default '0',
-  "moral" int(10) unsigned NOT NULL default '100',
-  PRIMARY KEY  ("id"),
-  KEY "guild" ("guild"),
-  KEY "pop" ("pop"),
-  KEY "general_pts" ("general_pts","army_pts"),
-  KEY "army_pts" ("army_pts"),
-  KEY "guildstatus" ("guildstatus"),
-  KEY "race" ("race")
-) AUTO_INCREMENT=2063 ;
+CREATE TABLE `user` (
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `name` varchar(64) NOT NULL default '',
+  `pass` varchar(255) NOT NULL default '',
+  `mail` varchar(128) NOT NULL default '',
+  `homepage` varchar(128) NOT NULL default '',
+  `admin` tinyint(3) unsigned NOT NULL default '0',
+  `logins` int(10) unsigned NOT NULL default '0',
+  `lastlogin` int(10) unsigned NOT NULL default '0',
+  `iplock` tinyint(3) unsigned NOT NULL default '1',
+  `gfxpath` varchar(128) NOT NULL default '',
+  `usegfxpath` tinyint(3) unsigned NOT NULL default '0',
+  `guild` int(10) unsigned NOT NULL default '0',
+  `guildstatus` int(10) unsigned NOT NULL default '1',
+  `pop` double unsigned NOT NULL default '10',
+  `maxpop` int(15) unsigned NOT NULL default '10',
+  `lumber` double NOT NULL default '1500',
+  `stone` double NOT NULL default '1500',
+  `food` double NOT NULL default '800',
+  `metal` double NOT NULL default '800',
+  `runes` double NOT NULL default '0',
+  `max_lumber` int(15) unsigned NOT NULL default '1500',
+  `max_stone` int(15) unsigned NOT NULL default '1500',
+  `max_food` int(15) unsigned NOT NULL default '800',
+  `max_metal` int(15) unsigned NOT NULL default '800',
+  `max_runes` int(15) unsigned NOT NULL default '0',
+  `worker_lumber` float unsigned NOT NULL default '25',
+  `worker_stone` float unsigned NOT NULL default '25',
+  `worker_food` float unsigned NOT NULL default '25',
+  `worker_metal` float unsigned NOT NULL default '25',
+  `worker_runes` float unsigned NOT NULL default '0',
+  `worker_repair` float unsigned NOT NULL default '0',
+  `prod_runes` float NOT NULL default '0',
+  `prod_lumber` float NOT NULL default '2.5',
+  `prod_stone` float NOT NULL default '2.5',
+  `prod_food` float NOT NULL default '2.5',
+  `prod_metal` float NOT NULL default '2.5',
+  `color` varchar(8) NOT NULL default '#00ff00',
+  `mapmode` tinyint(3) unsigned NOT NULL default '1',
+  `lastusedarmy` int(10) unsigned NOT NULL default '0',
+  `guildpoints` int(8) NOT NULL default '0',
+  `general_pts` int(11) NOT NULL default '0',
+  `army_pts` int(11) NOT NULL default '0',
+  `registered` int(10) unsigned NOT NULL default '0',
+  `msgmode` tinyint(3) unsigned NOT NULL default '0',
+  `flatview` tinyint(4) NOT NULL default '0',
+  `race` tinyint(3) unsigned NOT NULL default '1',
+  `flags` int(10) unsigned NOT NULL default '0',
+  `moral` int(10) unsigned NOT NULL default '100',
+  PRIMARY KEY  (`id`),
+  KEY `guild` (`guild`),
+  KEY `pop` (`pop`),
+  KEY `general_pts` (`general_pts`,`army_pts`),
+  KEY `army_pts` (`army_pts`),
+  KEY `guildstatus` (`guildstatus`),
+  KEY `race` (`race`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=2063 ;
 
 -- 
 -- Dumping data for table `user`
@@ -2626,11 +2626,11 @@ INSERT INTO `user` VALUES (249, 'Admin', '43e9a4ab75570f5b', 'elara@gmx.de', '',
 -- Table structure for table `userprofil`
 -- 
 
-CREATE TABLE "userprofil" (
-  "id" int(10) unsigned NOT NULL default '0',
-  "profil" text NOT NULL,
-  PRIMARY KEY  ("id")
-);
+CREATE TABLE `userprofil` (
+  `id` int(10) unsigned NOT NULL default '0',
+  `profil` text NOT NULL,
+  PRIMARY KEY  (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 -- 
 -- Dumping data for table `userprofil`
@@ -2643,11 +2643,11 @@ CREATE TABLE "userprofil" (
 -- Table structure for table `userrecord`
 -- 
 
-CREATE TABLE "userrecord" (
-  "userid" int(10) unsigned NOT NULL default '0',
-  "text" text NOT NULL,
-  UNIQUE KEY "userid" ("userid")
-);
+CREATE TABLE `userrecord` (
+  `userid` int(10) unsigned NOT NULL default '0',
+  `text` text NOT NULL,
+  UNIQUE KEY `userid` (`userid`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 -- 
 -- Dumping data for table `userrecord`
@@ -2660,12 +2660,12 @@ CREATE TABLE "userrecord" (
 -- Table structure for table `uservalue`
 -- 
 
-CREATE TABLE "uservalue" (
-  "user" int(10) unsigned NOT NULL default '0',
-  "name" varchar(32) NOT NULL default '',
-  "value" text NOT NULL,
-  PRIMARY KEY  ("user","name")
-);
+CREATE TABLE `uservalue` (
+  `user` int(10) unsigned NOT NULL default '0',
+  `name` varchar(32) NOT NULL default '',
+  `value` text NOT NULL,
+  PRIMARY KEY  (`user`,`name`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 -- 
 -- Dumping data for table `uservalue`
@@ -2678,17 +2678,17 @@ CREATE TABLE "uservalue" (
 -- Table structure for table `waypoint`
 -- 
 
-CREATE TABLE "waypoint" (
-  "id" int(10) unsigned NOT NULL auto_increment,
-  "army" int(10) unsigned NOT NULL default '0',
-  "priority" int(10) unsigned NOT NULL default '0',
-  "x" int(11) NOT NULL default '0',
-  "y" int(11) NOT NULL default '0',
-  PRIMARY KEY  ("id"),
-  KEY "army" ("army"),
-  KEY "x" ("x"),
-  KEY "y" ("y")
-) AUTO_INCREMENT=1 ;
+CREATE TABLE `waypoint` (
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `army` int(10) unsigned NOT NULL default '0',
+  `priority` int(10) unsigned NOT NULL default '0',
+  `x` int(11) NOT NULL default '0',
+  `y` int(11) NOT NULL default '0',
+  PRIMARY KEY  (`id`),
+  KEY `army` (`army`),
+  KEY `x` (`x`),
+  KEY `y` (`y`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 -- 
 -- Dumping data for table `waypoint`
@@ -2701,12 +2701,12 @@ CREATE TABLE "waypoint" (
 -- Table structure for table `weather`
 -- 
 
-CREATE TABLE "weather" (
-  "time" int(10) unsigned NOT NULL default '0',
-  "weather" tinyint(3) unsigned NOT NULL default '0',
-  PRIMARY KEY  ("time"),
-  KEY "weather" ("weather")
-);
+CREATE TABLE `weather` (
+  `time` int(10) unsigned NOT NULL default '0',
+  `weather` tinyint(3) unsigned NOT NULL default '0',
+  PRIMARY KEY  (`time`),
+  KEY `weather` (`weather`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 -- 
 -- Dumping data for table `weather`
