@@ -532,7 +532,7 @@ $gFlaggedBuildingTypes[kBuildingTypeFlag_Speedy] = array(0=>6,7,8,9,11,12,13,14,
 $gFlaggedBuildingTypes[kBuildingTypeFlag_Openable] = array(0=>kBuilding_Portal,kBuilding_GB,kBuilding_Gate,kBuilding_SeaGate);
 $gFlaggedBuildingTypes[kBuildingTypeFlag_Taxable] = array(0=>kBuilding_Portal);
 $gFlaggedBuildingTypes[kBuildingTypeFlag_Bodenschatz] = array(55,56,57,58,59,60,61,62,63);
-foreach ($gFlaggedBuildingTypes as $flag => $arr) foreach ($typeid as $typeid) $gBuildingType[$typeid]->flags = intval($gBuildingType[$typeid]->flags) | $flag;
+foreach ($gFlaggedBuildingTypes as $flag => $arr) foreach ($arr as $typeid) $gBuildingType[$typeid]->flags = intval($gBuildingType[$typeid]->flags) | $flag;
 
 // a list of buildingtype ids with certain flags set
 foreach ($gBuildingTypeFlagNames as $flag => $name) {
