@@ -71,7 +71,7 @@ switch($tab){
     <input type="submit" name="poll_ok" value="abschicken"></form></div>
     <?php 
     } else {
-      echo "Sie haben an allen Umfragen teilgenommen. Danke!";
+      echo "Sie haben an allen Umfragen teilgenommen. Danke!<br><a target=_blank href='../work/polls.txt'>Hier</a> kann man alle alten Umfragen einsehen.";
     }
     break;
   case 1://Alle anzeigen
