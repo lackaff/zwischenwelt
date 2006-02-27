@@ -475,7 +475,7 @@ class Hellhole_3 extends Hellhole_0 {
 		global $gUnitType,$gRes2ItemType,$gRes,$gUser;
 		
 		// need to collect at least this many ressources before spreading
-		$this->spread_min_respoints = $gUnitType[$this->type]->last * $this->armysize * 10; // 10 runs
+		$this->spread_min_respoints = $gUnitType[$this->type]->last * $this->armysize * 2; // 2 runs
 		
 		$x = $this->x;
 		$y = $this->y;
