@@ -520,6 +520,13 @@ class Hellhole_3 extends Hellhole_0 {
 		// raider-code
 		if ($raider) {
 			if (isset($gUser)) echo "raider aktiv ".opos2txt($raider)."<br>";
+			
+			if ($raider->idle > 30*60) {
+				// raider is stuck, set to random movement
+				sql("DELETE FROM `waypoint` WHERE `army` = ".$raider->id);
+				$raider = false;
+			}
+			
 			/*
 			if (intval($raider->flags) & kArmyFlag_AutoSiege) {
 				// moving out
@@ -528,7 +535,8 @@ class Hellhole_3 extends Hellhole_0 {
 				// coming back
 				echo "raider is coming back<br>";
 			}*/
-		} else if (count($potential_raiders) > 0) {
+		}
+		if (!$raider) if (count($potential_raiders) > 0) {
 			// take ressources of potential raiders
 			foreach ($potential_raiders as $army) {
 				// put res onto bughole
