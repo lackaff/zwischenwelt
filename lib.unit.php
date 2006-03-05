@@ -234,18 +234,19 @@ class cUnit {
 		$r = floor(sqrt($dx*$dx+$dy*$dy));
 		$dmg = 0;
 		foreach ($units as $o) {
-			if ($gUnitType[$o->type]->r >= $r && $gUnitType[$o->type]->f > 0)
+			if ($o->amount > 0 && $gUnitType[$o->type]->r >= $r && $gUnitType[$o->type]->f > 0)
 				$dmg += $o->amount * $gUnitType[$o->type]->f;
 		}
 		return $dmg;
 	}
 	
 	// RANGED siege damage
-	function GetUnitsRangedSiegeDamage ($units) {
+	function GetUnitsRangedSiegeDamage ($units,$dx=0,$dy=0) {
 		global $gUnitType;
+		$r = floor(sqrt($dx*$dx+$dy*$dy));
 		$dmg = 0;
 		foreach ($units as $o) 
-			if ($o->amount > 0) 
+			if ($o->amount > 0 && $gUnitType[$o->type]->r >= $r && $gUnitType[$o->type]->f > 0)
 				$dmg += max(0,$o->amount * $gUnitType[$o->type]->f * $gUnitType[$o->type]->eff_siege);
 		return $dmg;
 	}
