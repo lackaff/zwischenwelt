@@ -655,7 +655,8 @@ class Hellhole_3 extends Hellhole_0 {
 							cArmy::ArmySetWaypoint($king,$tx,$ty);
 							
 							// dont wander anymore, also used for checking if he is on his way
-							$king->flags = $king->flags & (~kArmyFlag_Wander);
+							$king->flags = $king->flags & (~(kArmyFlag_Wander | kArmyFlag_SiegePillage));
+							$king->flags = $king->flags | kArmyFlag_SiegeBlockingBuilding;
 							sql("UPDATE `army` SET `flags` = ".intval($king->flags)." WHERE `id` = ".intval($king->id));
 						} else {
 							echo "Reachable($king->x,$king->y,$tx,$ty,".$gUnitType[$this->type2]->movable_flag.") nicht ok<br>";
