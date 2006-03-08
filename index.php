@@ -23,6 +23,7 @@ Forschen, Gebäude bauen, Armeen kommandieren, Zauber sprechen, Handel betreiben 
 Aber am besten einfach anmelden und testen.<br>
 <br>
 Screenshots gibts [<a href="http://zwischenwelt.org/screenshot/">hier</a>].<br>
+Falls Sie Graphiken oder &auml;hnliches beisteuern wollen, k&ouml;nnen Sie das [<a href="upload.php">hier</a>].<br>
 <br>
 Ein paar Tipps für erste Schritte im Spiel findet man hier : [<a href="http://zwischenwelt.milchkind.net/zwwiki/index.php/Erste_Schritte">erste schritte</a>]<br>
 <?php
