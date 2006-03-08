@@ -10,7 +10,9 @@ $needed = array("upload","name","mail","ok");
 $uploadok = true;
 foreach($needed as $x)if(empty($_REQUEST[$x]))$uploadok = false;
 if($uploadok && !empty($_FILES['archiv']['name'])){
-	$uploadfile = time()."-".$_REQUEST["name"]."-".$_REQUEST["mail"]."-".basename($_FILES['archiv']['name']);
+	if($_REQUEST["complete"] == "1")$licence = "i_give_all_licences";
+	else $licence = "gpl_cc_licences";
+	$uploadfile = time()."-".$licence."-".$_REQUEST["name"]."-".$_REQUEST["mail"]."-".basename($_FILES['archiv']['name']);
 	$uploadfile = str_replace('/', "",$uploadfile);
 	$uploadfile = str_replace('\\', "",$uploadfile);
 	$uploadfile = str_replace('..', "",$uploadfile);
@@ -41,11 +43,16 @@ werden zusammen mit den hochgeladenen Daten gespeichert, damit es m&ouml;glich i
 <h2>Hochlade Formular</h2>
 <form enctype="multipart/form-data" method="post" action="upload.php">
 	<table>
-		<tr><td>kompletter Name</td><td><input type="text" name="name" size=32 value="<?=$_REQUEST["name"]?>"> (zB. Hans Mustermann)</td></tr>
-		<tr><td>eMail</td><td><input type="text" name="mail" size=32 value="<?=$_REQUEST["mail"]?>"> (zB. hans.m@domain.de)</td></tr>
-		<tr><td>Archiv Datei</td><td><input name="archiv" type="file" size=32>(zB. zip, tar.bz2)</td></tr>
+		<tr><td>kompletter Name</td><td><input type="text" name="name" size=32 value="<?=$_REQUEST["name"]?>"> (zB. Hans Mustermann) <b>(notwendig)</b></td></tr>
+		<tr><td>eMail</td><td><input type="text" name="mail" size=32 value="<?=$_REQUEST["mail"]?>"> (zB. hans.m@domain.de) <b>(notwendig)</b></td></tr>
+		<tr><td>Archiv Datei</td><td><input name="archiv" type="file" size=32>(zB. zip, tar.bz2) <b>(notwendig)</b></td></tr>
 		<tr><td>Zustimmung</td><td>
-			<input type="checkbox" name="ok" value=1> Ja, ich bin damit einverstanden, daß meine hochgeladenen Daten unter GPL (Code) und [CC]Attribution-NonCommercial-ShareAlike 2.0 (nicht Code) ver&ouml;ffentlicht werden.
+			<input type="checkbox" name="ok" value=1> Ja, ich bin damit einverstanden, daß meine hochgeladenen Daten unter GPL (Code) 
+			und [CC]Attribution-NonCommercial-ShareAlike 2.0 (nicht Code) ver&ouml;ffentlicht werden. <b>(notwendig)</b>
+		</td></tr>
+		<tr><td></td><td style="color:gray;font-style:italic;">
+			<input type="checkbox" name="complete" value=1> Ich überlasse dem ZW Team die kompletten Rechte über die Materialien, damit sie z.b. auch in anderen Projekten verwendet werden können.
+			<b>(optional)</b>
 		</td></tr>
 		<tr><td></td><td><input type="submit" name="upload" value="hochladen"></td></tr>
 	</table>
