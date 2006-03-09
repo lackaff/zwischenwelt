@@ -59,4 +59,30 @@ werden zusammen mit den hochgeladenen Daten gespeichert, damit es m&ouml;glich i
 </form>
 
 
+<h3>Landschaftsgrafiken</h3>
+Für Landschaftsgrafiken bitte am besten
+<ul>
+<li>4*4 Matrix = 16 einzelne Grafiken</li>
+<li>25 x 25 Pixel pro Grafik</li>
+<li>PNG Format</li>
+<li>benannt nach NWSE (Nord-West-Süd-Ost(=east))-System (siehe unten)</li>
+<li>alle 16 grafiken zusammenpacken (zB. zip, tar,bz2) und hier hochladen</li>
+</ul>
+dann ist das Einbauen am einfachsten für uns.<br>
+Beispiele für die solche Tiles findet man im Grafikpacket, das man im Spiel
+unter dem Menupunkt "Einstellungen" runterladen kann.<br>
+Vielen Dank an alle, die etwas beitragen !<br>
+Beispiel 4*4 Matrix mit guter Benennung : <table>
+<?php
+$namesample = explode(",","river-.png,river-n.png,river-ns.png,river-nw.png,river-nws.png,river-s.png,river-w.png,river-ws.png,river-e.png,river-ne.png,river-nse.png,river-nwe.png,river-nwse.png,river-se.png,river-we.png,river-wse.png");
+$i=0; foreach ($namesample as $o) {
+	if (($i%4)==0) echo "<tr>";
+	echo "<td><img src='gfx/river/$o'></td><td>$o</td>";
+	if (($i%4)==3) echo "</tr>";
+	++$i;
+}
+?>
+</table>
+
+
 <?php include("footer.php"); ?>
