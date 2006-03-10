@@ -263,6 +263,7 @@ class cFight {
 	// fire one shot
 	function ShootingStep ($shooting,$attackerobj=false,$defenderobj=false,$dmg=0,$debug=true) {
 		global $gContainerType2Number,$gNumber2ContainerType,$gUnitType,$gBuildingType,$gArmyType;
+		global $gAllUsers;
 		if ($dmg <= 0) return; // todo : autocalc from units in attacker
 		if (!$shooting) return;
 		if (is_numeric($shooting->attackertype)) $shooting->attackertype = $gNumber2ContainerType[$shooting->attackertype];

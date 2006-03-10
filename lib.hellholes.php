@@ -415,10 +415,10 @@ class Hellhole_2 extends Hellhole_0 {
 class Hellhole_3 extends Hellhole_0 {
 	function Hellhole_3 () {
 		// $this->spawndelay = 3600; // should be about one hour, so the hellhole can abort siege-pillaging ants
-		$this->raid_rad = 40; // maximal-travel-radius for soldiers
-		$this->spread_rad = 40; // maximal travel-radius for king
+		$this->raid_rad = 60; // maximal-travel-radius for soldiers
+		$this->spread_rad = 20; // maximal travel-radius for king
 		$this->spread_mindist = 11; // minimum distance of new base to existing bases
-		$this->victim_minpts = 30000; // don't SPREAD near players below a certain limit
+		$this->victim_minpts = 50000; // don't SPREAD near players below a certain limit
 	}
 	
 	// check if the location of a new base is ok
@@ -473,9 +473,14 @@ class Hellhole_3 extends Hellhole_0 {
 	
 	function Think () {
 		global $gUnitType,$gRes2ItemType,$gRes,$gUser;
+		$min_runs_till_spread = 10;
+		$king_size_mult = 4;
 		
 		// need to collect at least this many ressources before spreading
-		$this->spread_min_respoints = $gUnitType[$this->type]->last * $this->armysize * 2; // 2 runs
+		$this->spread_min_respoints = max(
+			$gUnitType[$this->type]->last * $this->armysize * $min_runs_till_spread,
+			$gUnitType[$this->type2]->last * $this->armysize2 * $king_size_mult
+			);
 		
 		$x = $this->x;
 		$y = $this->y;
@@ -620,7 +625,7 @@ class Hellhole_3 extends Hellhole_0 {
 						
 					// create a king
 					$kingflags = kArmyFlag_AutoAttack | kArmyFlag_Wander;
-					$king = cArmy::SpawnArmy($x,$y,cUnit::Simple($this->type2,$this->armysize2),
+					$king = cArmy::SpawnArmy($x,$y,cUnit::Simple($this->type2,$this->armysize2 * $king_size_mult),
 										false,kArmyType_Normal,0,0,$this->id,false,$kingflags);
 					
 					if ($king) {
