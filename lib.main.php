@@ -287,7 +287,15 @@ function GetBuildingPic ($type,$user=false,$level=10,$nwse="we") {
 	if (!is_object($type)) $type = $gBuildingType[$type];
 	$race = $user ? $user->race : 1;
 	$moral = $user ? $user->moral : 100;
-	if ($level < 10) $level = 0; else $level = 1; // pic level
+	if ($level < 10) $level = 0; 
+	else if ($level < 50) $level = 1;
+	else $level = 2; // pic level
+	
+	$maxgfxlevel = 1; // TODO store in buildingtype
+	if ($type->id == kBuilding_House) $maxgfxlevel = 2;
+	if ($type->id == kBuilding_Silo) $maxgfxlevel = 2;
+	$level = min($level,$maxgfxlevel);
+	
 	return g($type->gfx,$nwse,$level,$race,$moral);
 }
 	

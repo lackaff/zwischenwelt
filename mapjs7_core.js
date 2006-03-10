@@ -1045,7 +1045,15 @@ function GetBuildingPic (building,relx,rely) {
 	var user = building.user;
 	var race = (user > 0 && gUsers[user]) ? gUsers[user].race : 1;
 	var moral = (user > 0 && gUsers[user]) ? gUsers[user].moral : 100;
-	if (level < 10) level = 0; else level = 1;
+	if (level < 10) level = 0; 
+	else if (level < 50) level = 1;
+	else level = 2; // pic level
+	
+	var maxgfxlevel = 1; // TODO store in buildingtype
+	if (type == 6) maxgfxlevel = 2; // kBuilding_House = 6
+	if (type == 7) maxgfxlevel = 2; // kBuilding_Silo = 7
+	if (level > maxgfxlevel) level = maxgfxlevel;
+	
 	var nwsecode = GetNWSE(gBuildingType[type],relx,rely);
 	var gfx = gBuildingType[type].gfx;
 	
