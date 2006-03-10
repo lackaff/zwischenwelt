@@ -10,7 +10,7 @@ define("kAnimOutPrefix","gifmakerout_");
 define("kAnimOutPostfix",".gif");
 ?>
 
-NUR GIF BILDER HOCHLADEN !
+(alle gängigen grafikformate, aber am besten png oder gifs hochladen,  jpg besser nicht, das hat so hohe qualitätsverluste, und ist für solche kleinen pixelgrafiken eher ungeeignet)
 <FORM enctype="multipart/form-data" METHOD=POST ACTION="">
 msec pro Frame (100msec = 1sek) :<input type="text" name="delay" value="30"><br>
 <?php for ($i=1;$i<=kMaxFiles;$i++) {?>
