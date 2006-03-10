@@ -309,6 +309,10 @@ class cFight {
 			$defenderobj->vorher_units = $defenderobj->units;
 			$defenderobj->units = cUnit::GetUnitsAfterDamage($defenderobj->units,$dmg,$defenderobj->user);
 			$defenderobj->lost_units = cUnit::GetUnitsDiff($defenderobj->vorher_units,$defenderobj->units);
+			
+			if ($shooting->attackertype == kUnitContainer_Army)
+				cArmy::AddArmyFrags($attackerobj->id,cUnit::GetUnitsExp($defenderobj->lost_units));
+					
 			if ($debug) foreach ($defenderobj->lost_units as $o)
 				echo "<img src='".g($gUnitType[$o->type]->gfx)."'>".floor($o->amount)."<br>\n";
 			$defenderobj->size = cUnit::GetUnitsSum($defenderobj->units);
@@ -320,7 +324,11 @@ class cFight {
 		if ($shooting->defendertype == kUnitContainer_Building) {
 			$defenderobj->hp = max(0,$defenderobj->hp-$dmg);
 			sql("UPDATE `building` SET `hp`=`hp`-".$dmg." WHERE `id`=".$defenderobj->id);
-			if ($defenderobj->hp <= 0) $target_killed = true;
+			if ($defenderobj->hp <= 0) {
+				$target_killed = true;
+				if ($shooting->attackertype == kUnitContainer_Army)
+					cArmy::AddArmyFrags($attackerobj->id,1);
+			}
 		}
 		
 		// army cannot move while shooting
