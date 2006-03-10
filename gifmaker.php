@@ -18,6 +18,7 @@ msec pro Frame (100msec = 1sek) :<input type="text" name="delay" value="30"><br>
 <?php }?>
 <INPUT TYPE="submit" VALUE="animieren">
 </FORM>
+POWERED BY <a target="_blank" href="http://www.imagemagick.org/"><img border=0 src="http://www.imagemagick.org/image/logo.jpg" alt="imagemagick"></a>
 
 <hr>
 
