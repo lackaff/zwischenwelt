@@ -59,6 +59,13 @@ werden zusammen mit den hochgeladenen Daten gespeichert, damit es m&ouml;glich i
 </form>
 
 
+<h3>Animation</h3>
+Wir können auch animierte gifs einbauen,
+allerdings muss die dateigrösse möglichst klein sein, also nicht zuviele Frames verwenden.
+Wer selbst kein Programm hat, um die animation zu erstellen, kann auch einzelbilder (als gifs) machen,
+und hier <a href="http://zwischenwelt.org/gifmaker.php">ZW-GifMaker</a> zu einer Animation zusammenstellen lassen.<br>
+In <a href="http://zwischenwelt.org/forum/index.php?t=msg&th=546&start=0">diesem Thread</a> gibts infos über gängige Programme.
+
 <h3>Landschaftsgrafiken</h3>
 Für Landschaftsgrafiken bitte am besten
 <ul>
@@ -82,6 +89,7 @@ $i=0; foreach ($namesample as $o) {
 	++$i;
 }
 ?>
+
 </table>
 
 
