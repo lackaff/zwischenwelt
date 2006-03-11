@@ -1,7 +1,7 @@
 <?php
 include("lib.php");
 define("kMaxFiles",10);
-define("kMaxFileSize",1024*128);
+define("kMaxFileSize",1024*128*8);
 define("kFramesFolder","tmp/");
 define("kFramePrefix","gifmaker_");
 define("kFramePostfix",".gif");
@@ -14,7 +14,7 @@ define("kAnimOutPostfix",".gif");
 <FORM enctype="multipart/form-data" METHOD=POST ACTION="">
 msec pro Frame (100msec = 1sek) :<input type="text" name="delay" value="30"><br>
 <?php for ($i=1;$i<=kMaxFiles;$i++) {?>
-	#FRAME <?=$i?> <input name="File<?=$i?>" type="file" style="width:400px"> <br>
+	#FRAME <?=$i?> <input name="File<?=$i?>" type="file"> <br>
 <?php }?>
 <INPUT TYPE="submit" VALUE="animieren">
 </FORM>

@@ -60,11 +60,11 @@ werden zusammen mit den hochgeladenen Daten gespeichert, damit es m&ouml;glich i
 
 
 <h3>Animation</h3>
-Wir können auch animierte gifs einbauen,
-allerdings muss die dateigrösse möglichst klein sein, also nicht zuviele Frames verwenden.
-Wer selbst kein Programm hat, um die animation zu erstellen, kann auch einzelbilder (als gifs) machen,
-und hier <a href="http://zwischenwelt.org/gifmaker.php">ZW-GifMaker</a> zu einer Animation zusammenstellen lassen.<br>
-In <a href="http://zwischenwelt.org/forum/index.php?t=msg&th=546&start=0">diesem Thread</a> gibts infos über gängige Programme.
+Wir können auch animierte Gifs einbauen, z.b. für brodelnde Lava Landschaft, oder Gebäude mit rauchenden Schornsteinen oder beweglichen Teilen (Wasser-/Wind-Mühlen),
+allerdings muss die Dateigrösse möglichst klein sein, also nicht zuviele Frames verwenden.
+Wer selbst kein Programm hat, um die Animation zu erstellen, kann auch Einzelbilder machen,
+und im <a href="http://zwischenwelt.org/gifmaker.php">ZW-GifMaker</a> zu einer Animation zusammenstellen lassen.<br>
+In <a href="http://zwischenwelt.org/forum/index.php?t=msg&th=546&start=0">diesem Thread</a> gibts unter anderem Infos über gängige Programme.
 
 <h3>Landschaftsgrafiken</h3>
 Für Landschaftsgrafiken bitte am besten
