@@ -347,8 +347,7 @@ class cInfoHQ extends cInfoBuilding {
 			$tip[] = GetUnitTypeLink(kUnitType_Worker,$x,$y)." und Soldaten können ".GetTerrainTypeLink(kTerrain_Forest,$x,$y)."(".cost2txt(array(kHarvestAmount,0,0,0,0)).") und 
 				".GetTerrainTypeLink(kTerrain_Rubble,$x,$y)."(".cost2txt(array(0,kHarvestAmount,0,0,0)).") ernten";
 			$arr = array();
-			$bstypes = $gFlaggedBuildingTypes[kBuildingTypeFlag_Bodenschatz];
-			array_unique($bstypes);
+			$bstypes = array_unique($gFlaggedBuildingTypes[kBuildingTypeFlag_Bodenschatz]);
 			foreach ($bstypes as $typeid) $arr[] = GetBuildingTypeLink($typeid,$x,$y,false,false,false,false);
 			$tip[] = GetUnitTypeLink(kUnitType_Worker,$x,$y)." können Bodenschätze (".implode(" ",$arr).") abbauen (ein Arbeitertrupp produziert Rohstoffe solange er auf einem Bodenschatz-Feld steht)";
 			$tip[] = "Bodenschätze kann man mit der Suche unter der Karte finden, z.b. \"Kristall\"";
