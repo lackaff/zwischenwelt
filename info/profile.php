@@ -176,7 +176,8 @@ $s=sqlgetobject("SELECT `value` FROM `guild_pref` WHERE `var`='schulden_".$gUser
 <table>
 	<tr><th>Graphikpfad</td><td><input type="text" size="64" name="gfxpath" value="<?=$gUser->gfxpath?>"></td></tr>
 	<tr><th>benutzen?</td><td><input type="checkbox" name="usegfxpath" value="1" <?=($gUser->usegfxpath?"checked":"")?>> anklicken, wenn der Pfad benutzt werden soll, ansonsten werden die online Graphiken benutzt</td></tr>
-	<tr><td colspan=2>hier kann man den Pfad zu den lokalen Graphiken eintragen oder leer lassen, um die online Graphiken zu verwenden. <a href="http://zwischenwelt.org/gfx.zip"><u><b>hier</b></u></a> kann man das Graphik Packet runterladen. Einfach lokal enpacken (es wird ein gfx/ Ordner angelegt) und den Browserkompatiblen Pfad zum Verzeichnis, in das es entpackt wurde + gfx/, angeben.</td></tr>
+	<tr><td colspan=2>hier kann man den Pfad zu den lokalen Graphiken eintragen oder leer lassen, um die online Graphiken zu verwenden. <a href="http://zwischenwelt.org/gfx.zip"><u><b>hier</b></u></a> kann man das Graphik Packet runterladen. Einfach lokal enpacken (es wird ein gfx/ Ordner angelegt) und den Browserkompatiblen Pfad zum Verzeichnis, in das es entpackt wurde + gfx/, angeben.
+		Achtung, für Firefox 1.5 muss man aus Sicherheitsgründen Webseiten extra erlauben, solche Grafikpackete zu verwenden, wie das geht steht <a href="http://www.firefox-browser.de/wiki/Lokale_Bilder">hier</a>.</td></tr>
 	<tr><th>IP lock benutzen?</th><td><input type="checkbox" name="iplock" value="1" <?=($gUser->iplock?"checked":"")?>> anklicken, wenn die Benutzersession an eine IP gebunden werden soll</td></tr>
 	<tr><th>eMail</td><td><input type="text" size="64" name="mail" value="<?=$gUser->mail?>"></td></tr>
 	<tr><td></td><td>Mailadresse - taucht im Spiel nirgends auf</td></tr>
