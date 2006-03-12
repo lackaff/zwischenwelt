@@ -10,15 +10,6 @@ td {
 	margin-bottom:0px;
 }
 
-BODY {
-	BACKGROUND-COLOR: #FFFFFF;
-	COLOR: #000000;
-	FONT-FAMILY: monospace;
-	FONT-SIZE: 9pt;
-	FONT-WEIGHT: normal;
-	margin:2px;
-	padding:2px;
-}
 * INPUT,TEXTAREA {
 	BACKGROUND-COLOR: #EEEEEE;
 	COLOR: #000000;
@@ -448,6 +439,8 @@ BODY {
 	FONT-FAMILY: monospace;
 	FONT-SIZE: 9pt;
 	FONT-WEIGHT: normal;
+	margin:2px;
+	padding:2px;
 }
 
 /* ***** old stuff ***** */
