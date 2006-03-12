@@ -410,7 +410,7 @@ function CompileTerrain () {
 			var terraintype = GetTerrainType(x,y);
 			if (terraintype == 1) {
 				// grass random hack
-				randnum = Math.abs((x+gLeft)*71 + ((y+gTop)*28393))% 10;
+				randnum = Math.abs( (x+gLeft)*(x+gLeft)*71 + (y*y*(y+gTop)*28393))% 10;
 				gTerrainMap_raw[y+1][x+1] = "landschaft/grassrandom/grass_nwse_"+randnum+".png";
 			} else {
 				gTerrainMap_raw[y+1][x+1] = gTerrainType[terraintype].gfx;
