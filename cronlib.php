@@ -42,6 +42,7 @@ function StartBuild ($con) {
 				$building = false;
 				$building->x = $con->x;
 				$building->y = $con->y;
+				$building->flags = kBuildingFlag_AutoShoot_Enemy;
 				$building->param = $con->param;
 				$building->user = $con->user;
 				$building->type = $con->type;
