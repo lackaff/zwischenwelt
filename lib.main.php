@@ -50,8 +50,17 @@ function RegenTypeCache ($newadder = -1) {
 
 function GetZWStylePath () {
 	global $gGlobal;
+	global $gUser,$gSessionObj;
+	
+	if($gUser && $gUser->usegfxpath && !empty($gUser->gfxpath) && (!$gSessionObj || $gSessionObj->usegfx)){
+		if($gUser->gfxpath{strlen($gUser->gfxpath)-1} != '/')$base = $gUser->gfxpath . "/";
+		else $base = $gUser->gfxpath;
+	} else $base = kGfxServerPath;
+	
+	
 	// todo : replace by neutral/good/evil, or user-defined
-	return kStyleServerPath.kZWStyle_Neutral."?cssv=".(intval(kStyleSheetVersion)+intval($gGlobal["typecache_version_adder"]));
+	//return kStyleServerPath.kZWStyle_Neutral."?cssv=".(intval(kStyleSheetVersion)+intval($gGlobal["typecache_version_adder"]));
+	return $base.kZWStyle_Neutral."?cssv=".(intval(kStyleSheetVersion)+intval($gGlobal["typecache_version_adder"]));
 }
 
 function AdminBtn ($title,$url) {

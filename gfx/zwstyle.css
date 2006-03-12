@@ -109,7 +109,7 @@ div.mainmenu ul {
 .tabheader {
   float:left;
   width:100%;
-  background:#DAE0D2 url("gfx/tab/bg.png") repeat-x bottom;
+  background:#DAE0D2 url("tab/bg.png") repeat-x bottom;
 }
 .tabheader ul {
   margin:0;
@@ -118,14 +118,14 @@ div.mainmenu ul {
 }
 .tabheader li {
   float:left;
-  background:url("gfx/tab/left.png") no-repeat left top;
+  background:url("tab/left.png") no-repeat left top;
   margin:0;
   padding:0 0 0 3px;
 }
 .tabheader ul .tabhead {
   float:left;
   display:block;
-  background:url("gfx/tab/right.png") no-repeat right top;
+  background:url("tab/right.png") no-repeat right top;
   padding:1px 3px 0px 0px;
 }
 
@@ -148,8 +148,8 @@ div.mainmenu ul {
 /* End IE5-Mac hack */
 .tabheader ul .tabhead:hover { color:#333; }
 
-.tabheader .activetab			{ background-image:url("gfx/tab/left_on.png"); }
-.tabheader .activetab .tabhead	{ background-image:url("gfx/tab/right_on.png"); color:#333; padding-bottom:1px; }
+.tabheader .activetab			{ background-image:url("tab/left_on.png"); }
+.tabheader .activetab .tabhead	{ background-image:url("tab/right_on.png"); color:#333; padding-bottom:1px; }
 .tabheader .activetab .tabhead	a	{ color:#333; }
 .tabheader	{ margin-top:2px; margin-right:2px; }
 .tabcorner	{ margin-right:5px; float:right; }
@@ -173,7 +173,7 @@ div.mainmenu ul {
 .mapnavi_curtool * { vertical-align:middle; text-align:center; }
 .mapnavitool_general {}
 .mapnavitool_general textarea { background:#DDDDDD; }
-.mapnavitool_buildings span { /* background:url("gfx/landschaft/grass.png"); border:3px solid black; */ }
+.mapnavitool_buildings span { /* background:url("landschaft/grass.png"); border:3px solid black; */ }
 
 .mapnavitools .tabpane .buildable img { border:1px solid #006600; }
 .mapnavitools .tabpane .unbuildable img { border:1px solid red; }
@@ -209,14 +209,14 @@ table.map { background-color: #66AA55; table-layout:fixed; border:1px solid blac
 .mapborder div { background-position:center; background-repeat:no-repeat; }
 .mapborder_nw_edge { width:23px; height:23px; }
 .mapborder_se_edge { width:23px; height:23px; }
-.mapborder_n { background-image: url(gfx/scroll/n.png); }
-.mapborder_s { background-image: url(gfx/scroll/s.png); }
-.mapborder_w { background-image: url(gfx/scroll/w.png); }
-.mapborder_e { background-image: url(gfx/scroll/e.png); }
-.mapborder_nw_edge { background-image: url(gfx/scroll/nw.png); }
-.mapborder_ne_edge { background-image: url(gfx/scroll/ne.png); }
-.mapborder_sw_edge { background-image: url(gfx/scroll/sw.png); }
-.mapborder_se_edge { background-image: url(gfx/scroll/se.png); }
+.mapborder_n { background-image: url(scroll/n.png); }
+.mapborder_s { background-image: url(scroll/s.png); }
+.mapborder_w { background-image: url(scroll/w.png); }
+.mapborder_e { background-image: url(scroll/e.png); }
+.mapborder_nw_edge { background-image: url(scroll/nw.png); }
+.mapborder_ne_edge { background-image: url(scroll/ne.png); }
+.mapborder_sw_edge { background-image: url(scroll/sw.png); }
+.mapborder_se_edge { background-image: url(scroll/se.png); }
 .mapborder_n span { visibility:hidden; }
 .mapborder_s span { visibility:hidden; }
 .mapborder_w span { visibility:hidden; }
@@ -226,15 +226,15 @@ table.map { background-color: #66AA55; table-layout:fixed; border:1px solid blac
 .mapborder_sw_edge span { visibility:hidden; }
 .mapborder_se_edge span { visibility:hidden; }
 
-.mapborder_n_big { background-image: url(gfx/scroll/n_big.png); }
-.mapborder_s_big { background-image: url(gfx/scroll/s_big.png); }
-.mapborder_w_big { background-image: url(gfx/scroll/w_big.png); }
-.mapborder_e_big { background-image: url(gfx/scroll/e_big.png); }
+.mapborder_n_big { background-image: url(scroll/n_big.png); }
+.mapborder_s_big { background-image: url(scroll/s_big.png); }
+.mapborder_w_big { background-image: url(scroll/w_big.png); }
+.mapborder_e_big { background-image: url(scroll/e_big.png); }
 
-.mapborder_n_small { background-image: url(gfx/scroll/n_small.png); }
-.mapborder_s_small { background-image: url(gfx/scroll/s_small.png); }
-.mapborder_w_small { background-image: url(gfx/scroll/w_small.png); }
-.mapborder_e_small { background-image: url(gfx/scroll/e_small.png); }
+.mapborder_n_small { background-image: url(scroll/n_small.png); }
+.mapborder_s_small { background-image: url(scroll/s_small.png); }
+.mapborder_w_small { background-image: url(scroll/w_small.png); }
+.mapborder_e_small { background-image: url(scroll/e_small.png); }
 
 .mapborder_n_big span { visibility:hidden; }
 .mapborder_s_big span { visibility:hidden; }
