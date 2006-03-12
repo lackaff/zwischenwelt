@@ -404,10 +404,17 @@ function CompileTerrain () {
 	
 	profiling("construct terrain, pass1");
 	// first pass, simple nwse (with connect to building/terrain...)
+	var randnum;
 	for (y=-1;y<gCY+1;++y) {
 		for (x=-1;x<gCX+1;++x) {
 			var terraintype = GetTerrainType(x,y);
-			gTerrainMap_raw[y+1][x+1] = gTerrainType[terraintype].gfx;
+			if (terraintype == 1) {
+				// grass random hack
+				randnum = Math.abs((x+gLeft) + ((y+gTop)*4))% 10;
+				gTerrainMap_raw[y+1][x+1] = "landschaft/grassrandom/grass_nwse_"+randnum+".png";
+			} else {
+				gTerrainMap_raw[y+1][x+1] = gTerrainType[terraintype].gfx;
+			}
 			gTerrainMap_nwse[y+1][x+1] = GetNWSE(gTerrainType[terraintype],x,y);
 		}
 	}
