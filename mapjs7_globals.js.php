@@ -342,7 +342,7 @@ function php2js_objarray ($name,$arr,$fields) {
 }
 
 php2js_objarray("gTerrainType",$gTerrainType,"name,speed,buildable,gfx,mod_a,mod_v,mod_f,movable_flag,connectto_terrain,connectto_building,maxrandcenter,maxrandborder");
-php2js_objarray("gBuildingType",$gBuildingType,"name,maxhp,speed,gfx,flags,mod_a,mod_v,mod_f,connectto_terrain,connectto_building,neednear_building,require_building,exclude_building,border,movable_flag,movable_override_terrain,buildingtype,maxrandcenter,maxrandborder");
+php2js_objarray("gBuildingType",$gBuildingType,"name,maxhp,speed,gfx,flags,mod_a,mod_v,mod_f,connectto_terrain,connectto_building,neednear_building,require_building,exclude_building,border,movable_flag,movable_override_terrain,buildingtype,maxgfxlevel,maxrandcenter,maxrandborder");
 php2js_objarray("gUnitType",$gUnitType,"name,orderval,a,v,f,r,speed,gfx,movable_flag");
 php2js_objarray("gItemType",$gItemType,"name,gfx");
 php2js_objarray("gTerrainPatchType",$gTerrainPatchType,"id,gfx,here,up,down,left,right");

@@ -1061,17 +1061,18 @@ function GetBuildingPic (building,relx,rely) {
 	var type = building.type;
 	if (!gBuildingType[type]) return ""; // broken types
 	var level = building.level;
+	var gfxlevel = 0;
 	var user = building.user;
 	var race = (user > 0 && gUsers[user]) ? gUsers[user].race : 1;
 	var moral = (user > 0 && gUsers[user]) ? gUsers[user].moral : 100;
-	if (level < 10) level = 0; 
-	else if (level < 50) level = 1;
-	else if (level < 100) level = 2;
-	else if (level < 200) level = 3;
-	else level = 4; // pic level
+	if (level < 10) gfxlevel = 0; 
+	else if (level < 50) gfxlevel = 1;
+	else if (level < 100) gfxlevel = 2;
+	else if (level < 200) gfxlevel = 3;
+	else gfxlevel = 4; // pic level
 	
 	var maxgfxlevel = gBuildingType[type].maxgfxlevel;
-	if (level > maxgfxlevel) level = maxgfxlevel;
+	if (gfxlevel > maxgfxlevel) gfxlevel = maxgfxlevel;
 	
 	var nwsecode = GetNWSE(gBuildingType[type],relx,rely);
 	var gfx = gBuildingType[type].gfx;
@@ -1083,7 +1084,7 @@ function GetBuildingPic (building,relx,rely) {
 	// HACK: special nwse for path,gates,bridge...  also in UpdateBuildingNWSE()
 	nwsecode = HackNWSE(type,nwsecode,relx,rely); // see mapjs7_globals.js.php
 	
-	return g5(gfx,nwsecode,level,race,moral);
+	return g5(gfx,nwsecode,gfxlevel,race,moral);
 }
 
 // simple,fast versions of g
