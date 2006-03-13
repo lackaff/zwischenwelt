@@ -402,6 +402,8 @@ function PosRandPath (path,x,y,randmax) {
 	if (x < 0) x = 444-x;
 	if (y < 0) y = 333-y;
 	// positional pseudo random number generator by ishka
+	// liefert fuer gleiche x,y coordinaten immer denselben wert (also kein richtiger zufall)
+	// koennte man auch als Gfx-Variator bezeichen ;)
 	var t = Math.sqrt(Math.sqrt(x+0.2)+Math.sqrt(y+0.3))*gRandSeed;
 	t = t - Math.floor(t); // (also der Nachkommateil)
 	return path.split("%RND%").join(Math.floor(t*16777216) % randmax);

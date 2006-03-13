@@ -20,7 +20,9 @@ $flaglist = array(
 	"WikiHilfe ausblenden" => kUserFlags_DontShowWikiHelp,
 	"Monsterkampfberichte entfernen" => kUserFlags_NoMonsterFightReport,
 	"bei neuen Gebäuden automatisch Upgrades planen" => kUserFlags_AutomaticUpgradeBuildingTo,
-	"NoobTips ausblenden" => kUserFlags_DontShowNoobTip
+	"NoobTips ausblenden" => kUserFlags_DontShowNoobTip,
+	"Lagerkapazität anzeigen" => kUserFlags_ShowMaxRes,
+	"Tabs Deaktivieren (bei Abstürzen im IE)" => kUserFlags_NoTabs,
 );
 
 profile_page_start("profile.php");
@@ -30,8 +32,8 @@ if(isset($f_ok)){
 	$o->mail = $f_mail;
 	$o->homepage = $f_homepage;
 	$o->gfxpath = $f_gfxpath;
-	if(isset($f_usegfxpath) && $f_usegfxpath)$o->usegfxpath = 1;
-	else $o->usegfxpath = 0;
+	if(isset($f_localstyles) && $f_localstyles)$o->localstyles = 1;
+	else $o->localstyles = 0;
 	if(isset($f_iplock) && $f_iplock)$o->iplock = 1;
 	else $o->iplock = 0;
 	$o->flags = intval($gUser->flags);
@@ -93,7 +95,6 @@ if(isset($f_do)){
    "http://www.w3.org/TR/html4/transitional.dtd">
 <html>
 <head>
-<link rel="stylesheet" type="text/css" href="../styles.css">
 <link rel="stylesheet" type="text/css" href="<?=GetZWStylePath()?>">
 <title>Zwischenwelt - Einstellungen</title>
 
@@ -175,7 +176,7 @@ $s=sqlgetobject("SELECT `value` FROM `guild_pref` WHERE `var`='schulden_".$gUser
 <form method="post" action="<?=query("profile.php?sid=?")?>">
 <table>
 	<tr><th>Graphikpfad</td><td><input type="text" size="64" name="gfxpath" value="<?=$gUser->gfxpath?>"></td></tr>
-	<tr><th>benutzen?</td><td><input type="checkbox" name="usegfxpath" value="1" <?=($gUser->usegfxpath?"checked":"")?>> anklicken, wenn der Pfad benutzt werden soll, ansonsten werden die online Graphiken benutzt</td></tr>
+	<tr><th>lokales CSS-Stylesheet</td><td><input type="checkbox" name="localstyles" value="1" <?=($gUser->localstyles?"checked":"")?>> benutzten ? (zwstyle.css im gfx-pack)<br>(geht bei manchen Browsern nicht)</td></tr>
 	<tr><td colspan=2>hier kann man den Pfad zu den lokalen Graphiken eintragen oder leer lassen, um die online Graphiken zu verwenden. <a href="http://zwischenwelt.org/gfx.zip"><u><b>hier</b></u></a> kann man das Graphik Packet runterladen. Einfach lokal enpacken (es wird ein gfx/ Ordner angelegt) und den Browserkompatiblen Pfad zum Verzeichnis, in das es entpackt wurde + gfx/, angeben.
 		Achtung, für Firefox 1.5 muss man aus Sicherheitsgründen Webseiten extra erlauben, solche Grafikpackete zu verwenden, wie das geht steht <a href="http://www.firefox-browser.de/wiki/Lokale_Bilder"><u><b>hier</b></u></a>.</td></tr>
 	<tr><th>IP lock benutzen?</th><td><input type="checkbox" name="iplock" value="1" <?=($gUser->iplock?"checked":"")?>> anklicken, wenn die Benutzersession an eine IP gebunden werden soll</td></tr>
@@ -188,7 +189,7 @@ $s=sqlgetobject("SELECT `value` FROM `guild_pref` WHERE `var`='schulden_".$gUser
 	<?php foreach($flaglist as $text=>$flag){ ?>
 	<tr><td colspan=2><input type="checkbox" name="flag_<?=$flag?>" value="1" <?=(intval($gUser->flags) & $flag?"checked":"")?>> <b><?=$text?></b> 
 	<?php } ?>
-	<tr><td colspan=2 align=center><input type="submit" name="ok" value="übernehmen"></td></tr>
+	<tr><td colspan=2 align=left><input type="submit" name="ok" value="übernehmen"></td></tr>
 </table>
 </form>
 

@@ -13,3 +13,7 @@ UPDATE `buildingtype` SET `maxgfxlevel` = 2 WHERE `id` IN (6,7);
 
 # gras
 UPDATE `terraintype` SET `maxrandcenter` = 10, `maxrandborder` = 10, `gfx` = 'landschaft/grassrandom/grass_nwse_%RND%.png' WHERE `id` = 1;
+
+# local styles
+ALTER TABLE `user` CHANGE `usegfxpath` `localstyles` TINYINT( 3 ) UNSIGNED DEFAULT '0' NOT NULL ;
+UPDATE `user` SET `localstyles` = 0;

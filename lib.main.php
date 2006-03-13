@@ -52,7 +52,7 @@ function GetZWStylePath () {
 	global $gGlobal;
 	global $gUser,$gSessionObj;
 	
-	if($gUser && $gUser->usegfxpath && !empty($gUser->gfxpath) && (!$gSessionObj || $gSessionObj->usegfx)){
+	if($gUser && $gUser->localstyles && !empty($gUser->gfxpath) && (!$gSessionObj || $gSessionObj->usegfx)){
 		if($gUser->gfxpath{strlen($gUser->gfxpath)-1} != '/')$base = $gUser->gfxpath . "/";
 		else $base = $gUser->gfxpath;
 	} else $base = kGfxServerPath;
@@ -903,19 +903,19 @@ function obj2jsparams ($obj,$fields,$quote='"') {
 //ie. item/drachenei.png
 //todo: local path replacement
 //done: %L% %NWSE% path replacement
-function g($path,$nwse="ns",$level="0",$race="0",$moral="100"){
+function g($path,$nwse="ns",$level="0",$race="0",$moral="100",$random=0){
 	global $gUser,$gSessionObj;
 	$moral = max(0,min(200,$moral));
 	//moral range from 0 - 4
 	$moral = round($moral/200*4);
 	if(is_numeric($nwse))$nwse = NWSECodeToStr($nwse);
 	if($race == 0) $race = $gUser?$gUser->race:1;
-	if($gUser && $gUser->usegfxpath && !empty($gUser->gfxpath) && (!$gSessionObj || $gSessionObj->usegfx)){
+	if($gUser && !empty($gUser->gfxpath) && (!$gSessionObj || $gSessionObj->usegfx)){
 		if($gUser->gfxpath{strlen($gUser->gfxpath)-1} != '/')$base = $gUser->gfxpath . "/";
 		else $base = $gUser->gfxpath;
 	} else $base = kGfxServerPath;
 	//return str_replace("%M%",$moral,str_replace("%R%",$race,str_replace("%NWSE%",$nwse,str_replace("%L%",$level,$base.$path))));
-	return $base.str_replace("%M%",$moral,str_replace("%R%",$race,str_replace("%NWSE%",$nwse,str_replace("%L%",$level,$path))));
+	return $base.str_replace("%M%",$moral,str_replace("%R%",$race,str_replace("%NWSE%",$nwse,str_replace("%L%",$level,str_replace("%RND%",$random,$path)))));
 }
 
 

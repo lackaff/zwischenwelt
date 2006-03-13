@@ -10,6 +10,38 @@ $gTabPaneNumber = 0;
 // selected is compared to the keys of the $tabs array, can be numeric or associative
 // $jschangecallback : if not false, then this is javascript function is called at tabchange jschangecallback(tabnum)
 function GenerateTabs ($cssclass,$tabs,$corner="",$jschangecallback=false,$selected=0) {
+	global $gUser;
+	if (intval($gUser->flags) & kUserFlags_NoTabs)
+		return GenerateCompatibilityTabs($cssclass,$tabs,$corner,$jschangecallback,$selected);
+	return GenerateCSSTabs($cssclass,$tabs,$corner,$jschangecallback,$selected);
+}
+
+function GenerateCompatibilityTabs ($cssclass,$tabs,$corner="",$jschangecallback=false,$selected=0) {
+	// internally for the javascript new numbers are used ($i)
+	global $gTabPaneNumber;
+	$anzahl_tabs = count($tabs);
+	rob_ob_start();
+	?>
+	
+	<div class="<?=$cssclass?>">
+	<?=$corner?>
+	
+	<?php $i = 0; foreach ($tabs as $id => $tupel) {?>
+		<?php $hasurl = isset($tupel[2]) && $tupel[2];?>
+		<hr>
+		<?php if ($hasurl) {?> <a href="<?=$tupel[2]?>"> <?php } ?>
+		<?=($tupel[0])?> : 
+		<?php if ($hasurl) {?> </a> <?php } ?>
+		
+		<?=($tupel[1])?>
+	<?php ++$i; } // endforeach?>	
+	</div>
+	<?php
+	return rob_ob_end();
+}
+
+
+function GenerateCSSTabs ($cssclass,$tabs,$corner="",$jschangecallback=false,$selected=0) {
 	// internally for the javascript new numbers are used ($i)
 	global $gTabPaneNumber;
 	$anzahl_tabs = count($tabs);

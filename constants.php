@@ -130,14 +130,16 @@ define("kTech_MagieMeisterschaft",58);
 
 define("kTerraFormer_SicherheitsAbstand",$gGlobal["kTerraFormer_SicherheitsAbstand"]); //25);
 
-define("kUserFlags_TerraFormer",1);
-define("kUserFlags_DropDownMenu",2);
-define("kUserFlags_BugOperator",4);
-define("kUserFlags_ShowLogFrame",8);
-define("kUserFlags_DontShowWikiHelp",16);
-define("kUserFlags_NoMonsterFightReport",32);
-define("kUserFlags_AutomaticUpgradeBuildingTo",64);
-define("kUserFlags_DontShowNoobTip",128);
+define("kUserFlags_TerraFormer",				(1<<0));
+define("kUserFlags_DropDownMenu",				(1<<1));
+define("kUserFlags_BugOperator",				(1<<2));
+define("kUserFlags_ShowLogFrame",				(1<<3));
+define("kUserFlags_DontShowWikiHelp",			(1<<4));
+define("kUserFlags_NoMonsterFightReport",		(1<<5));
+define("kUserFlags_AutomaticUpgradeBuildingTo",	(1<<6));
+define("kUserFlags_DontShowNoobTip",			(1<<7));
+define("kUserFlags_ShowMaxRes",					(1<<8));
+define("kUserFlags_NoTabs",						(1<<9));
 
 define("kDiplo_BreakFriendOnAttack","diplo_breakfriendonattack");
 

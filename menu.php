@@ -67,28 +67,50 @@ else $newpoll = false;
 		</div>
 	</div>
 	<div class="mainmenu_res">
-		<ul>
-			<?php foreach($gRes as $n=>$f) {
-				$rel = round(100*max(0,$gUser->$f)/(max(1,$gUser->{"max_".$f})));
-				$col = GradientRYG($rel/100,0.8);
-				$alt = $n." ($rel%): ".kplaintrenner(floor(max(0,$gUser->$f)))." / ".kplaintrenner(floor($gUser->{"max_".$f}));
+		<?php
+			$reslist = array();
+			foreach($gRes as $n=>$f) {
+				$o = false;
+				$o->cur = $gUser->$f;
+				$o->max = $gUser->{"max_".$f};
+				$o->name = $n;
+				$o->img = g("res_$f.gif");
+				$o->imglink = Query("../info/waren.php?sid=?&t=".(isset($gRes2ItemType)?$gRes2ItemType[$f]:"?"));
+				$reslist[] = $o;
+			}
+			if (1) {
+				$o = false;
+				$o->cur = $gUser->pop;
+				$o->max = $gUser->maxpop;
+				$o->name = "Bev&ouml;lkerung";
+				$o->img = g("pop-r%R%.png","","",$gUser->race);
+				$o->imglink = false;
+				$reslist[] = $o;
+			}
+			$i = 0;
+			$resperrow = 2;
+		?>
+		
+		<table cellspacing=0 cellpadding=0><tr>
+		<?php foreach($reslist as $o) {
+			$rel = round(100*max(0,$o->cur)/(max(1,$o->max)));
+			$col = GradientRYG($rel/100,0.8);
+			$alt = $o->name." ($rel%): ".kplaintrenner(floor(max(0,$o->cur)))." / ".kplaintrenner(floor($o->max));
 			?>
-				<li>
-					<a href="<?=Query("../info/waren.php?sid=?&t=".(isset($gRes2ItemType)?$gRes2ItemType[$f]:"?"))?>">
-						<img border=0 title="<?=$alt?>" alt="<?=$alt?>" src="<?=g("res_$f.gif")?>">
-					</a>
-					(<span style="color:<?=$col?>"><?=$rel?>%</span>) <?=ktrenner(floor(max(0,$gUser->$f)))?>
-				</li>
-			<?php }?>
-			<li>
-				<?php 
-				$rel = round(100*max(0,$gUser->pop)/max(1,($gUser->maxpop)));
-				$col = GradientRYG($rel/100,0.8);
-				$alt = "Bev&ouml;lkerung ($rel%): ".kplaintrenner(floor(max(0,$gUser->pop)))." / ".kplaintrenner(floor($gUser->maxpop));
-				?>
-				<img title="<?=$alt?>" alt="<?=$alt?>" src="<?=g("pop-r%R%.png","","",$gUser->race)?>">
-				(<span style="color:<?=$col?>"><?=$rel?>%</span>) <?=ktrenner(floor(max(0,$gUser->pop)))?>
-			</li>
-		</ul>
+				<td align=right>
+					<?php if ($o->imglink) {?> <a href="<?=$o->imglink?>">  <?php }?>
+						<img border=0 title="<?=$alt?>" alt="<?=$alt?>" src="<?=$o->img?>">
+					<?php if ($o->imglink) {?> </a>  <?php }?>
+				</td>
+				<td align=right class="menuResPercent">(<span style="color:<?=$col?>"><?=$rel?>%</span>)</td>
+				<td align=right class="menuCurRes"><?=ktrenner(floor(max(0,$o->cur)))?></td>
+				<?php if (intval($gUser->flags) & kUserFlags_ShowMaxRes) {?>
+					<td class="menuMaxResSlash">/</td>
+					<td class="menuMaxRes" align=right><?=ktrenner(floor(max(0,$o->max)))?></td>
+				<?php } // endif?>
+				<?php if (($i%$resperrow)!=$resperrow-1) {?><td>&nbsp;</td><?php } // endif?>
+				<?php if (($i%$resperrow)==$resperrow-1) {?></tr><tr><?php } // endif?>
+			<?php ++$i; } ?>
+		</table>
 	</div>
 </div>

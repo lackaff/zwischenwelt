@@ -61,7 +61,6 @@ if (isset($f_singleupgrades)) {
    "http://www.w3.org/TR/html4/transitional.dtd">
 <html>
 <head>
-<link rel="stylesheet" type="text/css" href="../styles.css">
 <link rel="stylesheet" type="text/css" href="<?=GetZWStylePath()?>">
 <title>Zwischenwelt - Übersicht</title>
 <SCRIPT LANGUAGE="JavaScript" type="text/javascript">

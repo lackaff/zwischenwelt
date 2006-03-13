@@ -8,7 +8,6 @@ Lock();
 <html>
 <head>
 <meta http-equiv="refresh" content="300; URL=<?=sessionLink("log.php")?>">
-<link rel="stylesheet" type="text/css" href="styles.css">
 <link rel="stylesheet" type="text/css" href="<?=GetZWStylePath()?>">
 <title>Zwischenwelt - log</title>
 </head>
