@@ -539,6 +539,23 @@ if (!isset($f_blind)) {
 		</FORM>
 	<?php } // endif ?>
 	
+	<?php if ($gUser->admin || intval($gUser->flags) & kUserFlags_TerraFormer) {?>
+	<h3>Landschaftsgestaltung</h3>
+	<form method="post" target="_blank" action="<?=Query("../terraformpic.php?sid=?&x=?&y=?")?>">
+		<INPUT TYPE="hidden" NAME="do" VALUE="terraform">
+		Landschaft von <input type="text" name="von" value="<?=intval($f_x).",".intval($f_y)?>" style="width:80px">
+		bis <input type="text" name="bis" value="<?=(intval($f_x)+100).",".(intval($f_y)+100)?>" style="width:80px">
+		<input type="submit" name="export" value="als Bild Exportieren">
+	</form>
+	<hr>
+	<form method="post" enctype="multipart/form-data"  target="_blank" action="<?=Query("../terraformpic.php?sid=?&x=?&y=?")?>">
+		Landschafts-import-Dialog für Bild <input name="bildup" type="file"> (nur PNG)
+		<input type="submit" name="openimporter" value="oeffnen">
+	</form>
+	
+	<?php } // endif?>
+
+	
 	<?php 
 	RegisterInfoTab($terrainpic."",rob_ob_end());
 }

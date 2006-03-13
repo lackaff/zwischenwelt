@@ -67,15 +67,14 @@ function renderMinimap_walkhex2imgcolor (&$item,$key,$im) {
 
 // minimap 2 file : $filename = "tmp/minimap/seg_".$mode."_".$px."_".$py.".png";
 //renders a part of the minimap from top to almost bottom
-//segment*segment terrainfields a read in one step
+// $segment is currently ignored
+// if $fullmap is set, then the sql-querries are not limited by x,y
 function renderMinimap($top,$left,$bottom,$right,$filename,$mode="normal",$segment=128,$fullmap=false){
 	//echo "renderMinimap($top,$left,$bottom,$right,$filename,$mode,$segment)<br>";
 
 	global $gTerrainType,$gBuildingType,$gAllGuilds,$gAllUsers,$gBodenSchatzBuildings,$gUnitType;
 	$dx = abs($right-$left);
 	$dy = abs($bottom-$top);
-	$sx = ceil($dx / $segment);
-	$sy = ceil($dy / $segment);
 	
 	$im = imagecreatetruecolor($dx, $dy) or die("Cannot Initialize new GD image stream");
 	
@@ -162,7 +161,7 @@ function renderMinimap($top,$left,$bottom,$right,$filename,$mode="normal",$segme
 	$portallist = array();
 	$condxy = $fullmap?"":(" WHERE `x` >= ".$x." AND x < ".($x+$dx)." AND `y` >= ".$y." AND y <= ".($y+$dy)); 
 	
-	if (1) {
+	if ($mode != "terraformexport") {
 		$r = sql("SELECT `x`,`y`,`user`,`type` FROM `building` ".$condxy);
 		/*
 		if (0 && $mode != "creep") {
@@ -213,27 +212,32 @@ function renderMinimap($top,$left,$bottom,$right,$filename,$mode="normal",$segme
 	
 	
 	
-	// armeen
-	$r = sql("SELECT `x`,`y` FROM `army` ".$condxy);
-	//echo "draw armies<br>\n";
-	while ($x = mysql_fetch_object($r)) 
-			imagefilledrectangle($im,
-				$x->x-$left,
-				$x->y-$top,
-				$x->x-$left+1,
-				$x->y-$top+1,
-				$color_red);
-	mysql_free_result($r);
-	
-	// portale
-	//echo "draw portals<br>\n";
-	//$portallist = sqlgettable("SELECT `x`,`y` FROM `building` WHERE `type` = ".kBuilding_Portal." AND $left<=`x` AND `x`<=($right) AND $top<=`y` AND `y`<=($bottom)");
-	foreach($portallist as $x) {
-		imagefilledrectangle($im,$x->x-$left-2,$x->y-$top-2,$x->x-$left+2,$x->y-$top+2,$color_portal3);
-		imagefilledrectangle($im,$x->x-$left-1,$x->y-$top-1,$x->x-$left+1,$x->y-$top+1,$color_portal2);
-		imagesetpixel($im, $x->x-$left,		$x->y-$top,$color_portal);
+	if ($mode != "terraformexport") {
+		// armeen
+		$r = sql("SELECT `x`,`y` FROM `army` ".$condxy);
+		//echo "draw armies<br>\n";
+		while ($x = mysql_fetch_object($r)) 
+				imagefilledrectangle($im,
+					$x->x-$left,
+					$x->y-$top,
+					$x->x-$left+1,
+					$x->y-$top+1,
+					$color_red);
+		mysql_free_result($r);
 	}
-	unset($portallist);
+	
+	
+	if ($mode != "terraformexport") {
+		// portale
+		//echo "draw portals<br>\n";
+		//$portallist = sqlgettable("SELECT `x`,`y` FROM `building` WHERE `type` = ".kBuilding_Portal." AND $left<=`x` AND `x`<=($right) AND $top<=`y` AND `y`<=($bottom)");
+		foreach($portallist as $x) {
+			imagefilledrectangle($im,$x->x-$left-2,$x->y-$top-2,$x->x-$left+2,$x->y-$top+2,$color_portal3);
+			imagefilledrectangle($im,$x->x-$left-1,$x->y-$top-1,$x->x-$left+1,$x->y-$top+1,$color_portal2);
+			imagesetpixel($im, $x->x-$left,		$x->y-$top,$color_portal);
+		}
+		unset($portallist);
+	}
 	
 	imagepng($im,$filename);
 }

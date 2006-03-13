@@ -578,7 +578,7 @@ rob_ob_start(); ?>
 		<?php } // endforeach?>
 	</select>
 	</td><td>
-	<input type="checkbox" name="grassonly" value="1" checked>
+	<input type="checkbox" name="grassonly" value="1">
 	<img border=0 src="<?=g($gTerrainType[kTerrain_Grass]->gfx)?>" alt="<?=$tip="nur auf Grass bearbeiten"?>" title="<?=$tip?>">
 	</td>
 	</tr>
