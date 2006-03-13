@@ -20,7 +20,6 @@ gBuildingsCache = false;
 gTerrainPatchTypeMap = new Array(); // generated from gTerrainPatchType
 gTerrainMap = false; // generated from CompileTerrain()
 gTerrainMap_raw = false; // generated from CompileTerrain()
-gTerrainMap_nwse = false; // generated from CompileTerrain()
 gWPMap = false; // generated from CompileWPs
 var gXMid,gYMid;
 gNWSEDebug = false; // shows typeid and connect-to infos in maptip
@@ -119,10 +118,8 @@ function JSRefreshCell (x,y) {
 	var relx = x - gLeft;
 	var rely = y - gTop;
 	var type = gTerrain[rely+1][relx+1];
-	gTerrainMap_raw[rely+1][relx+1] = gTerrainType[type].gfx;
-	gTerrainMap_nwse[rely+1][relx+1] = GetNWSE(gTerrainType[type],relx,rely);
 	// patches have been ignored for speed here
-	gTerrainMap[rely+1][relx+1] = g_nwse(gTerrainMap_raw[rely+1][relx+1],gTerrainMap_nwse[rely+1][relx+1]);
+	gTerrainMap[rely+1][relx+1] = g_nwse(gTerrainType[type].gfx,GetNWSE(gTerrainType[type],relx,rely));
 	
 	RefreshCell(x-gLeft,y-gTop);
 }
@@ -381,11 +378,9 @@ function MapInit() {
 	
 	gTerrainMap = new Array(gCY+2);
 	gTerrainMap_raw = new Array(gCY+2);
-	gTerrainMap_nwse = new Array(gCY+2);
 	for (y=-1;y<gCY+1;++y) {
 		gTerrainMap[y+1] = new Array(gCX+2);
 		gTerrainMap_raw[y+1] = new Array(gCX+2);
-		gTerrainMap_nwse[y+1] = new Array(gCX+2);
 	}
 	CompileTerrain();
 	
@@ -399,6 +394,19 @@ function MapInit() {
 	if (naviframe) gBigMapWindow = naviframe.GetBigMap();
 }
 
+var gRandSeed =  555.0; // zahl zwischen 500 und 50 000 (nicht zwingend Ganzzahl)
+function PosRandPath (path,x,y,randmax) {
+	if (randmax <= 1) return path.split("%RND%").join("0");
+	x += gLeft;
+	y += gTop;
+	if (x < 0) x = 444-x;
+	if (y < 0) y = 333-y;
+	// positional pseudo random number generator by ishka
+	var t = Math.sqrt(Math.sqrt(x+0.2)+Math.sqrt(y+0.3))*gRandSeed;
+	t = t - Math.floor(t); // (also der Nachkommateil)
+	return path.split("%RND%").join(Math.floor(t*16777216) % randmax);
+}
+
 function CompileTerrain () {
 	// construct terrain map
 	
@@ -407,35 +415,37 @@ function CompileTerrain () {
 	var randnum;
 	for (y=-1;y<gCY+1;++y) {
 		for (x=-1;x<gCX+1;++x) {
-			var terraintype = GetTerrainType(x,y);
-			if (terraintype == 1) {
-				// grass random hack
-				randnum = Math.abs( (x+gLeft)*(x+gLeft)*71 + (y*y*(y+gTop)*28393))% 10;
-				gTerrainMap_raw[y+1][x+1] = "landschaft/grassrandom/grass_nwse_"+randnum+".png";
-			} else {
-				gTerrainMap_raw[y+1][x+1] = gTerrainType[terraintype].gfx;
-			}
-			gTerrainMap_nwse[y+1][x+1] = GetNWSE(gTerrainType[terraintype],x,y);
+			var tile = new Object();
+			tile.terraintype = GetTerrainType(x,y);
+			tile.terraintypeobj = gTerrainType[tile.terraintype];
+			tile.gfx = tile.terraintypeobj.gfx;
+			tile.nwse = GetNWSE(tile.terraintypeobj,x,y);
+			if (tile.nwse == kNWSE_N+kNWSE_W+kNWSE_S+kNWSE_E)
+					tile.randmax = tile.terraintypeobj.maxrandcenter;
+			else	tile.randmax = tile.terraintypeobj.maxrandborder;
+			gTerrainMap_raw[y+1][x+1] = tile;
 		}
 	}
 	
 	profiling("construct terrain, pass2");
 	// second pass : terrain patches
 	for (x=-1;x<gCX+1;++x) for (y=-1;y<gCY+1;++y) {
-		var type = GetTerrainType(x,y);
-		if (!KeyInArray(type,gTerrainPatchTypeMap)) continue;
-		var patches = gTerrainPatchTypeMap[type];
+		var tile = gTerrainMap_raw[y+1][x+1];
+		if (!KeyInArray(tile.terraintype,gTerrainPatchTypeMap)) continue;
+		var patches = gTerrainPatchTypeMap[tile.terraintype];
 		for (i in patches) {
 			var o = patches[i];
 			if(	(o.left	==0 || (o.left	>0 && GetTerrainType(x-1,y) == o.left)) &&
 				(o.right==0 || (o.right	>0 && GetTerrainType(x+1,y) == o.right)) &&
 				(o.up	==0 || (o.up	>0 && GetTerrainType(x,y-1) == o.up)) &&
 				(o.down	==0 || (o.down	>0 && GetTerrainType(x,y+1) == o.down)) ) {
-				gTerrainMap_raw[y+1][x+1] = o.gfx;
-				if (o.left	>0 && x >= 0)	gTerrainMap_nwse[y+1][x+1-1] |= kNWSE_E;
-				if (o.right	>0 && x < gCX)	gTerrainMap_nwse[y+1][x+1+1] |= kNWSE_W;
-				if (o.up	>0 && y >= 0)	gTerrainMap_nwse[y+1-1][x+1] |= kNWSE_S;
-				if (o.down	>0 && y < gCY)	gTerrainMap_nwse[y+1+1][x+1] |= kNWSE_N;
+				tile.randmax = 0;
+				tile.gfx = o.gfx;
+				gTerrainMap_raw[y+1][x+1] = tile;
+				if (o.left	>0 && x >= 0)	gTerrainMap_raw[y+1][x+1-1].nwse |= kNWSE_E;
+				if (o.right	>0 && x < gCX)	gTerrainMap_raw[y+1][x+1+1].nwse |= kNWSE_W;
+				if (o.up	>0 && y >= 0)	gTerrainMap_raw[y+1-1][x+1].nwse |= kNWSE_S;
+				if (o.down	>0 && y < gCY)	gTerrainMap_raw[y+1+1][x+1].nwse |= kNWSE_N;
 			}
 		}
 	}
@@ -443,8 +453,10 @@ function CompileTerrain () {
 	profiling("construct terrain, compile");
 	// compile to terrainmap
 	for (y=-1;y<gCY+1;++y) {
-		for (x=-1;x<gCX+1;++x)
-			gTerrainMap[y+1][x+1] = g_nwse(gTerrainMap_raw[y+1][x+1],gTerrainMap_nwse[y+1][x+1]);
+		for (x=-1;x<gCX+1;++x) {
+			var tile = gTerrainMap_raw[y+1][x+1];
+			gTerrainMap[y+1][x+1] = g_nwse(PosRandPath(tile.gfx,x,y,tile.randmax),tile.nwse);
+		}
 	}
 }
 
@@ -779,7 +791,7 @@ function ShowMapTip(relx,rely) {
 	var builddistfactor = GetBuildDistFactor(GetBuildDist(relx,rely));
 	//tiptext += "<span>BuildDist "+GetBuildDist(relx,rely).toPrecision(2)+"</span>";
 	tiptext += "<span>Bauzeit * "+builddistfactor.toPrecision(3)+"</span>";
-	if (gNWSEDebug) tiptext += "<br><span>type="+terraintype+",nwse="+gTerrainMap_nwse[rely+1][relx+1]+"</span>";
+	if (gNWSEDebug) tiptext += "<br><span>type="+terraintype+"</span>";
 	if (gNWSEDebug) tiptext += "<br><span>tc="+gTerrainType[terraintype].connectto_terrain.join(",")+"</span>";
 	if (gNWSEDebug) tiptext += "<br><span>bc="+gTerrainType[terraintype].connectto_building.join(",")+"</span>";
 	tiptext += "</td></tr>";
@@ -1054,11 +1066,11 @@ function GetBuildingPic (building,relx,rely) {
 	var moral = (user > 0 && gUsers[user]) ? gUsers[user].moral : 100;
 	if (level < 10) level = 0; 
 	else if (level < 50) level = 1;
-	else level = 2; // pic level
+	else if (level < 100) level = 2;
+	else if (level < 200) level = 3;
+	else level = 4; // pic level
 	
-	var maxgfxlevel = 1; // TODO store in buildingtype
-	if (type == 6) maxgfxlevel = 2; // kBuilding_House = 6
-	if (type == 7) maxgfxlevel = 2; // kBuilding_Silo = 7
+	var maxgfxlevel = gBuildingType[type].maxgfxlevel;
 	if (level > maxgfxlevel) level = maxgfxlevel;
 	
 	var nwsecode = GetNWSE(gBuildingType[type],relx,rely);

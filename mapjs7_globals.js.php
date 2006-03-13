@@ -207,7 +207,7 @@ function HackCon () {
 // give water a blue background(=gridlines), green lines on water suck !
 function HackBackgroundColor (relx,rely) {
 	var terraintype = GetTerrainType(relx,rely);
-	var nwsecode = gTerrainMap_nwse[rely+1][relx+1];
+	var nwsecode = gTerrainMap_raw[rely+1][relx+1].nwse;
 	var nwseadcount = 0; // adjacted nwse
 	if ((nwsecode & 3) == 3) ++nwseadcount;
 	if ((nwsecode & 9) == 9) ++nwseadcount;
@@ -341,8 +341,8 @@ function php2js_objarray ($name,$arr,$fields) {
 	}
 }
 
-php2js_objarray("gTerrainType",$gTerrainType,"name,speed,buildable,gfx,mod_a,mod_v,mod_f,movable_flag,connectto_terrain,connectto_building");
-php2js_objarray("gBuildingType",$gBuildingType,"name,maxhp,speed,gfx,flags,mod_a,mod_v,mod_f,connectto_terrain,connectto_building,neednear_building,require_building,exclude_building,border,movable_flag,movable_override_terrain");
+php2js_objarray("gTerrainType",$gTerrainType,"name,speed,buildable,gfx,mod_a,mod_v,mod_f,movable_flag,connectto_terrain,connectto_building,maxrandcenter,maxrandborder");
+php2js_objarray("gBuildingType",$gBuildingType,"name,maxhp,speed,gfx,flags,mod_a,mod_v,mod_f,connectto_terrain,connectto_building,neednear_building,require_building,exclude_building,border,movable_flag,movable_override_terrain,buildingtype,maxrandcenter,maxrandborder");
 php2js_objarray("gUnitType",$gUnitType,"name,orderval,a,v,f,r,speed,gfx,movable_flag");
 php2js_objarray("gItemType",$gItemType,"name,gfx");
 php2js_objarray("gTerrainPatchType",$gTerrainPatchType,"id,gfx,here,up,down,left,right");
