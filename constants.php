@@ -357,6 +357,8 @@ define("kUnitType_TransportShip",4000); // todo : einheit einbauen + id anpassen
 define("kUnitType_Zombie",49);
 define("kUnitType_Ghost",48);
 define("kUnitType_Worker",51);
+define("kUnitType_Kanone",53);
+define("kUnitType_Ameise",55);
 
 
 define("kMonster_HyperblobID",kUnitType_HyperBlob);
@@ -504,6 +506,7 @@ define("kBuilding_Galgen",52);
 define("kBuilding_Spielhalle",64);
 define("kBuilding_Platz",65);
 define("kBuilding_Leuchtturm",66);
+define("kBuilding_Verteidigungsturm",73);
 
 
 define("kBuildingTypeFlag_BuildDistSource",		1<<0); // 1 not yet used, set for hq,silo(lager),harbor, affects build-distance

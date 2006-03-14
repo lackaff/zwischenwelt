@@ -6,6 +6,7 @@ profile_page_start("minimap.php");
 
 // appended to graphic path, to disable caching of the graphics, as the filename itself doesn't change
 $gAntiCache = floor(time()/(24*3600));
+if (isset($f_regenerate_minimap2)) $gAntiCache = time();
 
 $tiles_h = 3;
 $tiles_v = 2;
@@ -171,6 +172,7 @@ ImgBorderStart("s1","jpg","#ffffee","",32,33);
 					($py+1)*kSegmentSize,
 					($px+1)*kSegmentSize,
 					$filename,$mode,kSegmentSize);
+				$gAntiCache = filectime($filename);
 				?>
 				<td><input name="seg_<?=$px?>_<?=$py?>" type="image" src="<?=$filename."?anticache=".$gAntiCache?>"></td>
 				<?php

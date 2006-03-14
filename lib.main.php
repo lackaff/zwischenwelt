@@ -186,6 +186,20 @@ function CountUserBuildingType ($userid,$typeid,$plans_also=true) {
 	return intval($res);
 }
 
+function CountUserUnitType ($userid,$typeid) {
+	if (is_object($userid)) $userid = $userid->id;
+	if (is_object($typeid)) $typeid = $typeid->id;
+	$res = sqlgetone("SELECT SUM(`amount`) FROM `unit`,`building` WHERE 
+		`unit`.`type` = ".intval($typeid)." AND 
+		`unit`.`building` = `building`.`id` AND 
+		`building`.`user` = ".intval($userid)." LIMIT 1");
+	$res += sqlgetone("SELECT SUM(`amount`) FROM `unit`,`army` WHERE 
+		`unit`.`type` = ".intval($typeid)." AND 
+		`unit`.`army` = `army`.`id` AND 
+		`army`.`user` = ".intval($userid)." LIMIT 1");
+	return intval($res);
+}
+
 // $o must be building object, returns css-class for map
 // TODO: DOOMED, OBSOLETE
 function GetBuildingCSS ($o,$blocked) {

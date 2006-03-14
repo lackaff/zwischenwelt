@@ -267,7 +267,7 @@ class cInfoHQ extends cInfoBuilding {
 		?>
 		
 		
-		<?php if(($gUser->flags & kUserFlags_DontShowNoobTip)==0)$this->PrintTips(); ?>
+		<?php if((intval($gUser->flags) & kUserFlags_DontShowNoobTip)==0)$this->PrintTips(); ?>
 		
 		<?php
 		return rob_ob_end();
@@ -343,7 +343,9 @@ class cInfoHQ extends cInfoBuilding {
 		}
 		
 		if (1) {
-			$tip[] = "Im ".GetBuildingTypeLink(kBuilding_Silo,$x,$y)." kann man ".GetUnitTypeLink(kUnitType_Worker,$x,$y)." ausbilden";
+		
+			if (CountUserUnitType($gUser->id,kUnitType_Worker) < 1)
+				$tip[] = "Im ".GetBuildingTypeLink(kBuilding_Silo,$x,$y)." kann man ".GetUnitTypeLink(kUnitType_Worker,$x,$y)." ausbilden";
 			$tip[] = GetUnitTypeLink(kUnitType_Worker,$x,$y)." und Soldaten können ".GetTerrainTypeLink(kTerrain_Forest,$x,$y)."(".cost2txt(array(kHarvestAmount,0,0,0,0)).") und 
 				".GetTerrainTypeLink(kTerrain_Rubble,$x,$y)."(".cost2txt(array(0,kHarvestAmount,0,0,0)).") ernten";
 			$arr = array();
@@ -351,11 +353,18 @@ class cInfoHQ extends cInfoBuilding {
 			foreach ($bstypes as $typeid) $arr[] = GetBuildingTypeLink($typeid,$x,$y,false,false,false,false);
 			$tip[] = GetUnitTypeLink(kUnitType_Worker,$x,$y)." können Bodenschätze (".implode(" ",$arr).") abbauen (ein Arbeitertrupp produziert Rohstoffe solange er auf einem Bodenschatz-Feld steht)";
 			$tip[] = "Bodenschätze kann man mit der Suche unter der Karte finden, z.b. \"Kristall\"";
-			$tip[] = "rechts-obenhalb der Karte gibt es ein paar Knöpfe für unterschiedliche Weltkarten";
+			$tip[] = "rechts-oberhalb der Karte gibt es ein paar Knöpfe für unterschiedliche Weltkarten";
 			$tip[] = "Zeichen auf den Weltkarten : &nbsp; ".
 							"<img src=\"".kGfxServerPath."/minimap_sample_army.png\">:Armee/Monster &nbsp; ".
 							"<img src=\"".kGfxServerPath."/minimap_sample_portal.png\">:Portal &nbsp; ".
 							"<img src=\"".kGfxServerPath."/minimap_sample_bodenschatz.png\">:Bodenschatz &nbsp; ";
+		}
+		
+		$cannon_count = CountUserUnitType($gUser->id,kUnitType_Kanone);
+		if ($cannon_count < 1) {
+			$tip[] = "Du solltest noch einen ".GetBuildingTypeLink(kBuilding_Verteidigungsturm,$x,$y).
+				" bauen, und darin eine ".GetUnitTypeLink(kUnitType_Kanone,$x,$y).
+				" aufstellen, um dich gegen ".GetUnitTypeLink(kUnitType_Ameise,$x,$y)." zu schützen<br>";
 		}
 		
 		if (count($tip) == 0) return;
