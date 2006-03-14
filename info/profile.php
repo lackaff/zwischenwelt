@@ -186,6 +186,8 @@ $s=sqlgetobject("SELECT `value` FROM `guild_pref` WHERE `var`='schulden_".$gUser
 		user_pref("capability.policy.localfilelinks.sites", "http://www.zwischenwelt.org"); 
 		user_pref("capability.policy.localfilelinks.checkloaduri.enabled", "allAccess"); 
 		</pre>
+		Achtung, NICHT http://zwischenwelt.org  (ohne www) , sondern immer MIT "www.", scheint sonst Probleme zu geben.<br>
+		Vielen Dank an scara2 für diese Tipps !
 		</td></tr>
 	<tr><th>IP lock benutzen?</th><td><input type="checkbox" name="iplock" value="1" <?=($gUser->iplock?"checked":"")?>> anklicken, wenn die Benutzersession an eine IP gebunden werden soll</td></tr>
 	<tr><th>eMail</td><td><input type="text" size="64" name="mail" value="<?=$gUser->mail?>"></td></tr>
