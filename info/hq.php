@@ -344,8 +344,12 @@ class cInfoHQ extends cInfoBuilding {
 		
 		if (1) {
 		
+			if (CountUserUnitType($gUser->id,kUnitType_Kamel) < 1)
+				$tip[] = "Im ".GetBuildingTypeLink(kBuilding_Market,$x,$y)." kann man ".GetUnitTypeLink(kUnitType_Kamel,$x,$y)." ausbilden";
+			
 			if (CountUserUnitType($gUser->id,kUnitType_Worker) < 1)
 				$tip[] = "Im ".GetBuildingTypeLink(kBuilding_Silo,$x,$y)." kann man ".GetUnitTypeLink(kUnitType_Worker,$x,$y)." ausbilden";
+			
 			$tip[] = GetUnitTypeLink(kUnitType_Worker,$x,$y)." und Soldaten können ".GetTerrainTypeLink(kTerrain_Forest,$x,$y)."(".cost2txt(array(kHarvestAmount,0,0,0,0)).") und 
 				".GetTerrainTypeLink(kTerrain_Rubble,$x,$y)."(".cost2txt(array(0,kHarvestAmount,0,0,0)).") ernten";
 			$arr = array();

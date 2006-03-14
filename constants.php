@@ -356,6 +356,7 @@ define("kUnitType_Einmaster",39);
 define("kUnitType_TransportShip",4000); // todo : einheit einbauen + id anpassen
 define("kUnitType_Zombie",49);
 define("kUnitType_Ghost",48);
+define("kUnitType_Kamel",50);
 define("kUnitType_Worker",51);
 define("kUnitType_Kanone",53);
 define("kUnitType_Ameise",55);
