@@ -634,7 +634,7 @@ class cInfoArmy extends cInfoBase {
 				</tr>
 			<?php }?>
 			</table>
-			<?php if ($gUser->id == $gArmy->user) {?>
+			<?php if ($gCanControllArmy) {?>
 				<input type="submit" name="save" value="übernehmen">
 				<input type="submit" name="drop" value="ablegen">
 				<a href="<?=query("?sid=?&x=?&y=?&do=itemdropall&army=".$gArmy->id)?>">
