@@ -177,8 +177,16 @@ $s=sqlgetobject("SELECT `value` FROM `guild_pref` WHERE `var`='schulden_".$gUser
 <table>
 	<tr><th>Graphikpfad</td><td><input type="text" size="64" name="gfxpath" value="<?=$gUser->gfxpath?>"></td></tr>
 	<tr><th>lokales CSS-Stylesheet</td><td><input type="checkbox" name="localstyles" value="1" <?=($gUser->localstyles?"checked":"")?>> benutzten ? (zwstyle.css im gfx-pack)<br>(geht bei manchen Browsern nicht)</td></tr>
-	<tr><td colspan=2>hier kann man den Pfad zu den lokalen Graphiken eintragen oder leer lassen, um die online Graphiken zu verwenden. <a href="http://zwischenwelt.org/gfx.zip"><u><b>hier</b></u></a> kann man das Graphik Packet runterladen. Einfach lokal enpacken (es wird ein gfx/ Ordner angelegt) und den Browserkompatiblen Pfad zum Verzeichnis, in das es entpackt wurde + gfx/, angeben.
-		Achtung, für Firefox 1.5 muss man aus Sicherheitsgründen Webseiten extra erlauben, solche Grafikpackete zu verwenden, wie das geht steht <a href="http://www.firefox-browser.de/wiki/Lokale_Bilder"><u><b>hier</b></u></a>.</td></tr>
+	<tr><td colspan=2>hier kann man den Pfad zu den lokalen Graphiken eintragen oder leer lassen, um die online Graphiken zu verwenden. <a href="http://zwischenwelt.org/gfx.zip"><u><b>hier</b></u></a> kann man das Graphik Packet runterladen. Einfach lokal enpacken (es wird ein gfx/ Ordner angelegt) und den Browserkompatiblen Pfad zum Verzeichnis, in das es entpackt wurde + gfx/, angeben.</td></tr>
+	<tr><th>GFX-Pack unter Firefox 1.5</th><td>
+		Für Firefox 1.5 muss man aus Sicherheitsgründen Webseiten extra erlauben, solche Grafikpackete zu verwenden, wie das geht steht <a href="http://www.firefox-browser.de/wiki/Lokale_Bilder"><u><b>hier</b></u></a>.<br>
+		Im Prinzip muss man in die user.js nur folgende Zeilen einfügen:
+		<pre>
+		user_pref("capability.policy.policynames", "localfilelinks"); 
+		user_pref("capability.policy.localfilelinks.sites", "http://www.zwischenwelt.org"); 
+		user_pref("capability.policy.localfilelinks.checkloaduri.enabled", "allAccess"); 
+		</pre>
+		</td></tr>
 	<tr><th>IP lock benutzen?</th><td><input type="checkbox" name="iplock" value="1" <?=($gUser->iplock?"checked":"")?>> anklicken, wenn die Benutzersession an eine IP gebunden werden soll</td></tr>
 	<tr><th>eMail</td><td><input type="text" size="64" name="mail" value="<?=$gUser->mail?>"></td></tr>
 	<tr><td></td><td>Mailadresse - taucht im Spiel nirgends auf</td></tr>
