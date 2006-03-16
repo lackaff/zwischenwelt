@@ -63,3 +63,5 @@ ALTER TABLE `fight` ADD `fightlog` INT UNSIGNED NOT NULL ;
 ALTER TABLE `buildingtype` ADD `weightlimit` INT UNSIGNED DEFAULT '0' NOT NULL AFTER `flags` ;
 ALTER TABLE `session` ADD `usegfx` TINYINT UNSIGNED DEFAULT '0' NOT NULL ;
 
+INSERT INTO `buildingtype` VALUES (75, 'Muehle', 'bis jetzt nur reine Dekoration', 100, 100, 0, 0, 0, '1:0', '', 14400, 100, 0, '', 'red', 'A', 'yellow', 0, 'gebaeude-r1/muehle.gif', 0, 0, 0, '', 5, 0, 0, 0, 1, 1, 1, '', '', '3', '', '', 1, 0, 1, 0, 1, 0, 0);
+
