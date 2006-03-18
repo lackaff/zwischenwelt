@@ -10,9 +10,10 @@ require_once("lib.item.php");
 require_once("lib.unit.php");
 
 class cArmy {
-	function GetJavaScriptArmyData ($army) {
+	function GetJavaScriptArmyData ($army,$gLeft=false,$gTop=false,$gCX=false,$gCY=false) {
 		if (!is_object($army)) $army = sqlgetobject("SELECT * FROM `army` WHERE `id` = ".intval($army));
-		global $gRes2ItemType,$gRes;
+		if (!$army) exit();
+		global $gRes2ItemType,$gRes,$gUser,$gContainerType2Number;
 		$units = cUnit::GetUnits($army->id);
 		$army->unitstxt = ""; 
 		foreach ($units as $u) $army->unitstxt .= $u->type.":".floor($u->amount)."|";
@@ -20,12 +21,57 @@ class cArmy {
 		$items = sqlgettable("SELECT * FROM `item` WHERE `army` = ".$army->id);
 		foreach ($items as $u) $army->itemstxt .= $u->type.":".floor($u->amount)."|";
 		foreach ($gRes as $n=>$f) if ($army->$f >= 1) $army->itemstxt .= $gRes2ItemType[$f].":".floor($army->$f)."|";
-		$o->flags = 0;// TODO : subset for walking, fighting, shooting...
-		return obj2jsparams($army,"id,x,y,name,type,user,unitstxt,itemstxt,flags");
+		$cancontroll = cArmy::CanControllArmy($army,$gUser);
+		$army->jsflags = 0;// TODO : subset for walking, fighting, shooting... $cancontroll
+		if ($cancontroll) {
+			$wps = sqlgettable("SELECT * FROM `waypoint` WHERE `army` = ".$army->id." ORDER BY `priority`");
+			$army->wpstxt = cArmy::GetJavaScriptWPs($wps,$gLeft,$gTop,$gCX,$gCY);
+			$lastwp = (count($wps)>0)?$wps[count($wps)-1]:false;
+			$army->wpmaxprio = $lastwp?$lastwp->priority:0;
+			$army->jsflags |= kJSMapArmyFlag_Controllable;
+			if (intval($army->flags) & kArmyFlag_GuildCommand) $army->jsflags |= kJSMapArmyFlag_GC;
+		} else {
+			$army->wpstxt = "";
+			$lastwp = false;
+			$army->wpmaxprio = 0;
+		}
+		
+		if (sqlgetone("SELECT 1 FROM `fight` WHERE `attacker` = ".$army->id." OR `defender` = ".$army->id." LIMIT 1"))
+			$army->jsflags |= kJSMapArmyFlag_Fighting;
+			
+		if (sqlgetone("SELECT 1 FROM `siege` WHERE `army` = ".$army->id." LIMIT 1"))
+			$army->jsflags |= kJSMapArmyFlag_Sieging;
+			
+		if (sqlgetone("SELECT 1 FROM `pillage` WHERE `army` = ".$army->id." LIMIT 1"))
+			$army->jsflags |= kJSMapArmyFlag_Pillaging;
+			
+		if (sqlgetone("SELECT 1 FROM `shooting` WHERE `lastshot` > ".(time()-kShootingAlarmTimeout)." AND
+			`attacker` = ".$army->id." AND `attackertype` = ".$gContainerType2Number[kUnitContainer_Army]." LIMIT 1"))
+			$army->jsflags |= kJSMapArmyFlag_Shooting;
+			
+		if (sqlgetone("SELECT 1 FROM `shooting` WHERE `lastshot` > ".(time()-kShootingAlarmTimeout)." AND
+			`defender` = ".$army->id." AND `defendertype` = ".$gContainerType2Number[kUnitContainer_Army]." LIMIT 1"))
+			$army->jsflags |= kJSMapArmyFlag_BeingShot;
+		
+		// lastwpx : for distance in maptip
+		$army->lastwpx = $lastwp?$lastwp->x:$army->x;
+		$army->lastwpy = $lastwp?$lastwp->y:$army->y;
+		
+		$max_army_weight = cUnit::GetMaxArmyWeight($army->type);
+		$army_unit_weight = cUnit::GetUnitsSum($units,"weight");
+		$fill = $max_army_weight?max(0.0,$army_unit_weight/$max_army_weight):0;
+		$army->fill_limit = max(0,min(100,intval($fill*100.0)));
+		
+		$max_army_last = cUnit::GetUnitsSum($units,"last");
+		$cur_army_last = cArmy::GetArmyTotalWeight($army);
+		$fill = $max_army_last?max(0.0,$cur_army_last/$max_army_last):0;
+		$army->fill_last = max(0,min(100,intval($fill*100.0)));
+		
+		return obj2jsparams($army,	"id,x,y,name,type,user,unitstxt,itemstxt,jsflags,wpstxt,lastwpx,lastwpy,wpmaxprio,fill_limit,fill_last");
 	}
-	function GetJavaScriptWPs ($armyid,$gLeft=false,$gTop=false,$gCX=false,$gCY=false) {
-		if (is_object($armyid)) $armyid = $armyid->id;
-		$wps = sqlgettable("SELECT * FROM `waypoint` WHERE `army` = ".intval($armyid)." ORDER BY `priority`");
+	
+	/// $wps = sqlgettable("SELECT * FROM `waypoint` WHERE `army` = ".intval($armyid)." ORDER BY `priority`");
+	function GetJavaScriptWPs ($wps,$gLeft=false,$gTop=false,$gCX=false,$gCY=false) {
 		$res = "";
 		// foreach connection between 2 waypoints
 		$curvisible = false;
@@ -37,7 +83,7 @@ class cArmy {
 			$lastvisible = $curvisible;
 			$curvisible = false;
 			// filter out if connection is not visible
-			if ($gLeft !== false) {
+			if ($gLeft !== false && $i != $imax-2) {
 				if (max($x1,$x2) < $gLeft)			continue;
 				if (min($x1,$x2) >= $gLeft+$gCX)	continue;
 				if (max($y1,$y2) < $gTop)			continue;
@@ -82,6 +128,25 @@ class cArmy {
 		if (!(intval($army->flags) & kArmyFlag_GuildCommand)) return false;
 		$ownerguild = sqlgetone("SELECT `guild` FROM `user` WHERE `id`=".$army->user);
 		return $user->guild == $ownerguild && (intval($user->guildstatus) % kGuildCommander) == 0;
+	}
+	
+	// returns a list of all armies, that can be controlled by a specific user,
+	// the list is ordered by "armytype,user", contains an extra field `username`, and is indexed by armyid
+	function ListControllableArmies ($user=false) {
+		global $gUser;
+		if ($user === false) $user = $gUser;
+		if (!is_object($user)) $user = sqlgetobject("SELECT * FROM `user` WHERE `id`=".intval($user));
+		if (!$user) return array();
+		$isgc = (intval($user->guildstatus) % kGuildCommander) == 0;
+		if ($isgc) 
+				return sqlgettable("SELECT `army`.*,`user`.`name` as `username` FROM `army`,`user` WHERE 
+					`army`.`user` = `user`.`id` AND
+					`user`.`guild` = ".$user->guild." AND
+					(`army`.`user` = ".$user->id." OR (`army`.`flags` & ".kArmyFlag_GuildCommand."))
+					ORDER BY `army`.`type`,`army`.`user`","id");
+		else	return sqlgettable("SELECT *,'".addslashes($user->name)."' as `username` FROM `army` WHERE 
+					`army`.`user` = ".$user->id." AND
+					ORDER BY `army`.`type`,`army`.`user`","id");
 	}
 	
 	// save the capture calc in cUnit::CaptureShips

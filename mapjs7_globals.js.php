@@ -18,8 +18,23 @@ kConstructionPic = "<?=kConstructionPic?>";
 kTransCP = "<?=kTransCP?>"; // transparent construction plan
 kBASEURL = "<?=BASEURL?>";
 
-kJSMapBuildingFlag_Open = <?=kJSMapBuildingFlag_Open?>;
-kJSMapBuildingFlag_Tax = <?=kJSMapBuildingFlag_Tax?>;
+kJSMapBuildingFlag_Open				= <?=kJSMapBuildingFlag_Open?>;
+kJSMapBuildingFlag_Tax				= <?=kJSMapBuildingFlag_Tax?>;
+kJSMapBuildingFlag_Locked			= <?=kJSMapBuildingFlag_Locked?>;
+kJSMapBuildingFlag_BeingSieged		= <?=kJSMapBuildingFlag_BeingSieged?>;
+kJSMapBuildingFlag_BeingPillaged	= <?=kJSMapBuildingFlag_BeingPillaged?>;
+kJSMapBuildingFlag_Shooting			= <?=kJSMapBuildingFlag_Shooting?>;
+kJSMapBuildingFlag_BeingShot		= <?=kJSMapBuildingFlag_BeingShot?>;
+
+kJSMapArmyFlag_Controllable	= <?=kJSMapArmyFlag_Controllable?>;
+kJSMapArmyFlag_GC			= <?=kJSMapArmyFlag_GC?>;
+kJSMapArmyFlag_Fighting		= <?=kJSMapArmyFlag_Fighting?>;
+kJSMapArmyFlag_Sieging		= <?=kJSMapArmyFlag_Sieging?>;
+kJSMapArmyFlag_Pillaging	= <?=kJSMapArmyFlag_Pillaging?>;
+kJSMapArmyFlag_Shooting		= <?=kJSMapArmyFlag_Shooting?>;
+kJSMapArmyFlag_BeingShot	= <?=kJSMapArmyFlag_BeingShot?>;
+
+<?php if (0) {?>
 kJSMapArmyFlag_Moving_N = <?=kJSMapArmyFlag_Moving_N?>;
 kJSMapArmyFlag_Moving_W = <?=kJSMapArmyFlag_Moving_W?>;
 kJSMapArmyFlag_Moving_S = <?=kJSMapArmyFlag_Moving_S?>;
@@ -28,7 +43,7 @@ kJSMapArmyFlag_Fighting_N = <?=kJSMapArmyFlag_Fighting_N?>;
 kJSMapArmyFlag_Fighting_W = <?=kJSMapArmyFlag_Fighting_W?>;
 kJSMapArmyFlag_Fighting_S = <?=kJSMapArmyFlag_Fighting_S?>;
 kJSMapArmyFlag_Fighting_E = <?=kJSMapArmyFlag_Fighting_E?>;
-kJSMapArmyFlag_Shooting = <?=kJSMapArmyFlag_Shooting?>;
+<?php } // endif?>
 
 kBuildingTypeFlag_BuildDistSource = <?=kBuildingTypeFlag_BuildDistSource?>;
 kBuildingTypeFlag_Speedy = <?=kBuildingTypeFlag_Speedy?>;
@@ -349,12 +364,12 @@ php2js_objarray("gTerrainPatchType",$gTerrainPatchType,"id,gfx,here,up,down,left
 // bodenschaetze (ressources,perks,specials,deposit...)
 
 php2js_objectfunction("jsUser","id,guild,color,name,race,moral","gUsers","id");
-php2js_objectfunction("jsArmy","id,x,y,name,type,user,unitstxt,itemstxt,jsflags","gArmies","id");
+php2js_objectfunction("jsArmy","id,x,y,name,type,user,unitstxt,itemstxt,jsflags,wpstxt,lastwpx,lastwpy,wpmaxprio,fill_limit,fill_last","gArmies","id");
 // php2js_parser("jsParseBuildings","x,y,type,user,level,hp,construction,jsflags","gBuildings"); // special for speed
 php2js_parser("jsParseItems","x,y,type,amount","gItems");
 php2js_parser("jsParsePlans","x,y,type,priority","gPlans");
 php2js_parser("jsParseBuildSources","x,y","gBuildSources");
-php2js_parser("jsWPs","x,y","gWPs");
+//php2js_parser("jsWPs","x,y","gWPs");
 
 
 

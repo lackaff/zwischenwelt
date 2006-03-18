@@ -29,10 +29,22 @@ $gMapNaviGotoCatNames = array(
 	);
 $gMapNaviGotoCat_AdminOnly = array(0=>kMapNaviGotoCat_Hellhole);
 
-define("kJSMapBuildingFlag_Open",(1<<0));
-define("kJSMapBuildingFlag_Tax",(1<<1)); // todo
-define("kJSMapBuildingFlag_Locked",(1<<2)); // (portal cannot be used) todo 
+define("kJSMapBuildingFlag_Open",			(1<<0));
+define("kJSMapBuildingFlag_Tax",			(1<<1)); // todo
+define("kJSMapBuildingFlag_Locked",			(1<<2)); // todo : (portal cannot be used, display a little lock icon..)  
+define("kJSMapBuildingFlag_BeingSieged",	(1<<3));
+define("kJSMapBuildingFlag_BeingPillaged",	(1<<4));
+define("kJSMapBuildingFlag_Shooting",		(1<<5));
+define("kJSMapBuildingFlag_BeingShot",		(1<<6));
 
+define("kJSMapArmyFlag_Controllable",	(1<<0));
+define("kJSMapArmyFlag_GC",				(1<<1));
+define("kJSMapArmyFlag_Fighting",		(1<<2));
+define("kJSMapArmyFlag_Sieging",		(1<<3));
+define("kJSMapArmyFlag_Pillaging",		(1<<4));
+define("kJSMapArmyFlag_Shooting",		(1<<5));
+define("kJSMapArmyFlag_BeingShot",		(1<<6));
+/*
 define("kJSMapArmyFlag_Moving_N",(1<<0)); // todo
 define("kJSMapArmyFlag_Moving_W",(1<<1)); // todo
 define("kJSMapArmyFlag_Moving_S",(1<<2)); // todo
@@ -42,7 +54,7 @@ define("kJSMapArmyFlag_Fighting_W",(1<<5)); // todo
 define("kJSMapArmyFlag_Fighting_S",(1<<6)); // todo
 define("kJSMapArmyFlag_Fighting_E",(1<<7)); // todo
 define("kJSMapArmyFlag_Shooting",(1<<8)); // todo
-
+*/
 		
 define("kNWSE_N",1);
 define("kNWSE_W",2);

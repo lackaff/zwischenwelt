@@ -166,6 +166,9 @@ class cFight {
 				if (intval($gBuildingType[$o->type]->flags) & kBuildingTypeFlag_Bodenschatz) $fof = kFOF_Friend;
 				if ($debug) echo "checking near : $ctype,".oposinfolink($o)." in range, fof=$fof <br>";
 				if ($fof == kFOF_Friend) continue;
+				
+				// TODO : insameguild, is hellhole building...
+				
 				$attack = false;
 				if ($fof == kFOF_Enemy && $autosiege && $canshoot_buildings && $ctype == kUnitContainer_Building) $attack = true;
 				if ($fof == kFOF_Enemy && $autoshoot_enemy)		$attack = true;

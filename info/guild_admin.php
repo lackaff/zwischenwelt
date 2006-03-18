@@ -182,7 +182,7 @@ if($gGuild->founder == $gUser->id || ($gUser->guildstatus%kGuildAdmin)==0){
 		<tr><td colspan="<?=count($gRight)+5?>" align=right><input type=submit name=saveright value=Save></td></tr>
 			</form>
 	</table>
-	<p>Standartrechte f&uuml;r neue Mitglieder:
+	<p>Standardrechte f&uuml;r neue Mitglieder:
 	<table><tr><?foreach ($gRight as $key=>$r){?>
 				<th><img src="<?=g($r->gfx)?>" title="<?=$r->desc?>"></th>
 			<?}?><th></th></tr>
@@ -290,7 +290,7 @@ ImgBorderStart();?>
 
 <form method="post" action="<?=Query("?sid=?")?>">
 <input type=hidden name=do value="setstdlimit">
-<tr><td>Standartlimit für neue Mitglieder</td><td align=right><input align=right type=text size=15 name="stdlimit" value="<?=getStdGPLimit($gGuild->id)?>"></td><td><input type=submit name=setstdlimit value=Set></td></tr>
+<tr><td>Standardlimit für neue Mitglieder</td><td align=right><input align=right type=text size=15 name="stdlimit" value="<?=getStdGPLimit($gGuild->id)?>"></td><td><input type=submit name=setstdlimit value=Set></td></tr>
 </form>
 
 <form method="post" action="<?=Query("?sid=?")?>">
@@ -316,7 +316,7 @@ ImgBorderStart();?>
 </table>
 <br>
 <table>
-<tr><td>Standartlimit für neue Mitglieder</td><td><?=getStdGPLimit($gGuild->id)?></td><td></td></tr>
+<tr><td>Standardlimit für neue Mitglieder</td><td><?=getStdGPLimit($gGuild->id)?></td><td></td></tr>
 </table>
 </form>
 <?ImgBorderEnd();

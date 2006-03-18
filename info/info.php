@@ -39,12 +39,12 @@ function RegisterInfoTab ($head,$content,$select_priority=false) {
 }
 
 function JSRefreshArmy ($army) {
-	if (!$army) return;
 	global $gJSCommands;
+	if (!$army) return;
 	if (!is_object($army)) $army = sqlgetobject("SELECT * FROM `army` WHERE `id` = ".intval($army));
 	if (!$army) return;
 	$gJSCommands[] = "parent.map.JSArmyUpdate(".cArmy::GetJavaScriptArmyData($army).");";
-	$gJSCommands[] = "parent.map.JSActivateArmy(".$army->id.",\"".cArmy::GetJavaScriptWPs($army->id)."\");";
+	$gJSCommands[] = "parent.map.JSActivateArmy(".$army->id.",true);";
 }
 
 // collect data for a single cell, and send to js map
@@ -147,6 +147,7 @@ if (!isset($f_building) && !isset($f_army) && isset($f_do)) {
 		break;
 		case "delwaypoint":
 			require_once("../lib.army.php");
+			// only accessable from info.php - waypoint info, see "./info/info.php:326:" for the wp-cancelling used by jsmap
 			$wp = sqlgetobject("SELECT * FROM `waypoint` WHERE `id` = ".intval($f_id));
 			if ($wp) {
 				$army = sqlgetobject("SELECT * FROM `army` WHERE `id` = ".$wp->army);

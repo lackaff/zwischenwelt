@@ -49,13 +49,21 @@ if ($gUser->admin && isset($f_regentypes)) {
 		if ($guild == 0 || $guild == kGuild_Weltbank) return false;
 		$res = array();
 		$res["Mitglieder"] = sqlgettable("SELECT * FROM `user` WHERE `guild` = ".$guild." ORDER BY `name`","id","name");
-		foreach ($gArmyType as $o) {
-			$gildenarmeen = sqlgettable("SELECT `army`.* FROM `army`,`user` WHERE `army`.`user` = `user`.`id` AND `user`.`guild` = ".$guild." AND `army`.`type` = ".$o->id." ORDER BY `name`","id");
-			$controllable = array();
-			foreach ($gildenarmeen as $a)
-				if ($a->user != $gUser->id && cArmy::CanControllArmy($a,$gUser))
-					$controllable[$a->id] = $a->name;
-			if (count($controllable) > 0) $res[$o->name] = $controllable;
+		$isgc = (intval($gUser->guildstatus) % kGuildCommander) == 0;
+		if ($isgc) {
+			foreach ($gArmyType as $o) {
+				$gildenarmeen = sqlgettable("SELECT `army`.*,`user`.`name` as `username` FROM `army`,`user` WHERE 
+					`army`.`user` = `user`.`id` AND 
+					`user`.`guild` = ".$guild." AND 
+					`army`.`type` = ".$o->id." 
+					ORDER BY `name`","id");
+				$controllable = array();
+				foreach ($gildenarmeen as $a)
+					if (($a->user != $gUser->id || (intval($a->flags) & kArmyFlag_GuildCommand)) && 
+						cArmy::CanControllArmy($a,$gUser)) // only gc armies, not own armies who are not under gc
+						$controllable[$a->id] = $a->name."(".$a->username.")";
+				if (count($controllable) > 0) $res[$o->name] = $controllable;
+			}
 		}
 		return $res;
 	}
@@ -142,8 +150,8 @@ if ($gUser->admin && isset($f_regentypes)) {
 		// show new cat
 		if (gGotoCat == <?=kMapNaviGotoCat_Pos?>) 		{ Show("pos"); }
 		if (gGotoCat == <?=kMapNaviGotoCat_Mark?>)		{ ShowList1(); }
-		if (gGotoCat == <?=kMapNaviGotoCat_Own?>)		{ ShowList2(); Show("armyshow"); }
-		if (gGotoCat == <?=kMapNaviGotoCat_Guild?>)		{ ShowList2(); Show("armyshow"); }
+		if (gGotoCat == <?=kMapNaviGotoCat_Own?>)		{ ShowList2(); if (0) Show("armyshow"); }
+		if (gGotoCat == <?=kMapNaviGotoCat_Guild?>)		{ ShowList2(); if (0) Show("armyshow"); }
 		if (gGotoCat == <?=kMapNaviGotoCat_Friends?>)	{ ShowList1(); }
 		if (gGotoCat == <?=kMapNaviGotoCat_Enemies?>)	{ ShowList1(); }
 		if (gGotoCat == <?=kMapNaviGotoCat_Search?>)	{ ShowList1(); Show("search"); }
@@ -162,6 +170,14 @@ if ($gUser->admin && isset($f_regentypes)) {
 			sublist = gGotoCats[gGotoCat][field];
 		}
 		ShowList("gotocat3",sublist);
+		ChangeGotoCat3();
+	}
+	
+	function ChangeGotoCat3 () {
+		var activate_army = 0;
+		if (gGotoCat == <?=kMapNaviGotoCat_Own?>)	activate_army = GetName("gotocat3").value;
+		if (gGotoCat == <?=kMapNaviGotoCat_Guild?>)	activate_army = GetName("gotocat3").value;
+		if (activate_army > 0 && !gNoArmyActivate) parent.map.JSActivateArmy(activate_army,false);
 	}
 	
 	var gBrush = 0;
@@ -185,10 +201,13 @@ if ($gUser->admin && isset($f_regentypes)) {
 		document.getElementsByName("pos")[0].value = x+","+y;
 		SetBrushBorder();
 	}
+	gLastToolGFX = "<?=g("tool_look.png")?>";
+	function GetLastToolGFX () { return gLastToolGFX; }
 	function settool (tool,param,gfx) {
 		curtool = tool;
 		curtoolparam = param;
 		document.getElementsByName("curtoolpic")[0].src = gfx;
+		gLastToolGFX = gfx;
 		StopBrushLine();
 	}
 	function resettool () {
@@ -330,20 +349,23 @@ if ($gUser->admin && isset($f_regentypes)) {
 		//if (parent.map != null && parent.map.JSUpdateNaviPos != null)
 		//	parent.map.JSUpdateNaviPos();
 	}
+	var gNoArmyActivate = false;
 	function SelectArmy (armyid) {
 		if (armyid == 0) return;
 		// called from map when an army is activated for waypoint-setting, select it from the dropdown
-		// might be under own gGotoCats[3] or under guild gGotoCats[4], but not gGotoCats[4].Mitglieder
+		// might be under own gGotoCats[2] or under guild gGotoCats[3], but not gGotoCats[3].Mitglieder
 		var i,j,k,id;
-		for (i=3;i<=4;++i) {
+		for (i=2;i<=3;++i) {
 			k = 0;
 			for (j in gGotoCats[i]) {
 				if (j != "Mitglieder") for (id in gGotoCats[i][j]) if (id == armyid) {
+					gNoArmyActivate = true;
 					GetName("gotocat").value = i;
 					ChangeGotoCat();
 					GetName("gotocat2").value = k;
 					ChangeGotoCat2();
 					GetName("gotocat3").value = armyid;
+					gNoArmyActivate = false;
 					return;
 				}
 				++k;
@@ -395,7 +417,7 @@ if ($gUser->admin && isset($f_regentypes)) {
 	<?php }?>
 </SELECT>
 <SELECT NAME="gotocat2" onChange="ChangeGotoCat2()" style="display:none;"></SELECT>
-<SELECT NAME="gotocat3" style="display:none;"></SELECT>
+<SELECT NAME="gotocat3" onChange="ChangeGotoCat3()" style="display:none;"></SELECT>
 <INPUT TYPE="text" NAME="pos" VALUE="" style="width:90px;display:none;">
 <INPUT TYPE="text" NAME="search" VALUE="" style="width:90px;display:none;" >
 <INPUT TYPE="submit" NAME="armygoto" VALUE="&gt;">

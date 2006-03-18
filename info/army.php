@@ -391,10 +391,9 @@ class cInfoArmy extends cInfoBase {
 		$gCanControllArmy =	cArmy::CanControllArmy($gArmy,$gUser);
 		$gArmyAction = sqlgettable("SELECT * FROM `armyaction` WHERE `army` = ".$gArmy->id." ORDER BY `id`");
 		
-		// activate army in map, show wps if own army
-		if (cArmy::CanControllArmy($gArmy,$gUser)) {
-			JSRefreshArmy($gArmy);
-		}
+		// make the army blink on the map or something...
+		global $gJSCommands;
+		$gJSCommands[] = "parent.map.JSActivateArmy(".$gArmy->id.",true);";
 		?>
 		
 		

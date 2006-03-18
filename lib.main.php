@@ -689,7 +689,7 @@ function ktrenner($wert,$farbe="#000000",$neg_farbe="",$fontsize=11){
 	if(count($o)<1)$o[]=0;
 	$o[]=$s;
 	$o=array_reverse($o);
-	return "<span style='font-size:".$fontsize."pts;font-family:verdana;color:$farbe'>".join("",$o)."</span>";
+	return "<span style='font-size:".$fontsize."pt;font-family:verdana;color:$farbe'>".join("",$o)."</span>";
 }
 
 // 1.234.456 instead of 123456

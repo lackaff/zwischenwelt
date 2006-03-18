@@ -17,7 +17,7 @@ class cBuilding {
 	}
 	
 	function GetJavaScriptBuildingData ($building,$userid=false,$quote='"') {
-		global $gUser,$gBuildingType;
+		global $gUser,$gBuildingType,$gContainerType2Number;
 		if ($userid === false) $userid = $gUser->id;
 		$building->jsflags = 0;
 		$building->hp = floor($building->hp);
@@ -33,6 +33,21 @@ class cBuilding {
 		} else {
 			if (cBuilding::BuildingOpenForUser($building,$userid)) $building->jsflags |= kJSMapBuildingFlag_Open;
 		}
+		
+		if (sqlgetone("SELECT 1 FROM `siege` WHERE `building` = ".$building->id." LIMIT 1"))
+			$building->jsflags |= kJSMapBuildingFlag_BeingSieged;
+			
+		if (sqlgetone("SELECT 1 FROM `pillage` WHERE `building` = ".$building->id." LIMIT 1"))
+			$building->jsflags |= kJSMapBuildingFlag_BeingPillaged;
+			
+		if (sqlgetone("SELECT 1 FROM `shooting` WHERE `lastshot` > ".(time()-kShootingAlarmTimeout)." AND
+			`attacker` = ".$building->id." AND `attackertype` = ".$gContainerType2Number[kUnitContainer_Building]." LIMIT 1"))
+			$building->jsflags |= kJSMapBuildingFlag_Shooting;
+			
+		if (sqlgetone("SELECT 1 FROM `shooting` WHERE `lastshot` > ".(time()-kShootingAlarmTimeout)." AND
+			`defender` = ".$building->id." AND `defendertype` = ".$gContainerType2Number[kUnitContainer_Building]." LIMIT 1"))
+			$building->jsflags |= kJSMapBuildingFlag_BeingShot;
+			
 		return obj2jsparams($building,"x,y,type,user,level,hp,construction,jsflags,unitstxt,id",$quote); // end
 	}
 	
