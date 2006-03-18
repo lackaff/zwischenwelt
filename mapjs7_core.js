@@ -586,7 +586,7 @@ function CreateMapStep () {
 		++gMapConstructionCurY;
 		if (gBig) {
 			// timeout
-			window.setTimeout("CreateMapStep()",10);
+			window.setTimeout("CreateMapStep()",20);
 			return true;
 		}
 		return false; // loop in createmap, false -> not done
