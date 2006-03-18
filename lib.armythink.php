@@ -232,6 +232,7 @@ function ArmyThink ($army,$debug=false) {
 		if ($siege_ok) foreach ($nearbuildings as $building) {
 			if ($army->user == 0 && $building->user == 0) continue;
 			if ($army->user > 0 && GetFOF($army->user,$building->user) != kFOF_Enemy) continue;
+			if ($army->user > 0 && IsFriendlyServerBuilding($building)) continue;
 			if ($debug) echo "AutoSiege buildingid:$building->id<br>";
 			if (TryExecArmyAction($army,ARMY_ACTION_SIEGE,$building->x,$building->y,0,0,$debug)) return;
 		}

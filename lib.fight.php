@@ -163,7 +163,10 @@ class cFight {
 				}
 				// now check fof
 				$fof = GetFOF($attackerobj->user,$o->user);
-				if (intval($gBuildingType[$o->type]->flags) & kBuildingTypeFlag_Bodenschatz) $fof = kFOF_Friend;
+				if ($ctype == kUnitContainer_Building && IsFriendlyServerBuilding($o)) 
+					$fof = kFOF_Friend;
+				
+				
 				if ($debug) echo "checking near : $ctype,".oposinfolink($o)." in range, fof=$fof <br>";
 				if ($fof == kFOF_Friend) continue;
 				

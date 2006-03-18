@@ -131,6 +131,13 @@ function GetFOF ($masteruserid,$otheruserid) {
 	if ($otheruserid == 0 && $masteruserid > 0) return kFOF_Enemy; // =0 means server, usually monsters
 	return intval(sqlgetone("SELECT `class` FROM `fof_user` WHERE `master` = ".intval($masteruserid)." AND `other` = ".intval($otheruserid)));
 }
+function IsFriendlyServerBuilding ($building) {
+	if (!is_object($building)) $building = sqlgetobject("SELECT * FROM `building` WHERE `id` = ".intval($building));
+	if (!$building) return false;
+	if ($building->user != 0) return false;
+	if (sqlgetone("SELECT 1 FROM `hellhole` WHERE `x` = ".$building->x." AND `y` = ".$building->y)) return false;
+	return true;
+}
 
 // set state
 function SetFOF ($masteruserid,$otheruserid,$fof) {
