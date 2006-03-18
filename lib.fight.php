@@ -169,13 +169,14 @@ class cFight {
 				
 				if ($debug) echo "checking near : $ctype,".oposinfolink($o)." in range, fof=$fof <br>";
 				if ($fof == kFOF_Friend) continue;
+				if (IsInSameGuild($attackerobj->user,$o->user)) continue;
 				
 				// TODO : insameguild, is hellhole building...
 				
 				$attack = false;
 				if ($fof == kFOF_Enemy && $autosiege && $canshoot_buildings && $ctype == kUnitContainer_Building) $attack = true;
 				if ($fof == kFOF_Enemy && $autoshoot_enemy)		$attack = true;
-				if ($fof != kFOF_Enemy && $autoshoot_stranger)	$attack = true;
+				if ($fof != kFOF_Enemy && && $autoshoot_stranger)	$attack = true;
 				// start the attack (add to myshootings to consider it right away for next shot
 				if ($attack) {
 					if ($debug) echo "start shooting at $ctype,".oposinfolink($o)."<br>";
