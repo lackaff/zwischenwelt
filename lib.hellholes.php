@@ -497,7 +497,8 @@ class Hellhole_3 extends Hellhole_0 {
 			kArmyFlag_HarvestRubble	|
 			kArmyFlag_HarvestField	|
 			kArmyFlag_AlwaysCollectItems| // finders keepers ;)
-			kArmyFlag_AutoSiege			| // deactivated for abort and return
+			//kArmyFlag_AutoSiege			| // deactivated for abort and return
+			kArmyFlag_SiegeBlockingBuilding |
 			kArmyFlag_StopSiegeWhenFull	| // stop and return
 			kArmyFlag_SiegePillage
 			);
@@ -594,6 +595,8 @@ class Hellhole_3 extends Hellhole_0 {
 						$reachable = Reachable($raider->x,$raider->y,$tx,$ty,$gUnitType[$this->type]->movable_flag,true,true);
 						if ($reachable === true) {
 							$position_ok = true;
+							echo "raider ".opos2txt($raider)." has orders to siege ".opos2txt($building)."<br>";
+							cArmy::GiveSiegeCommand($raider,$building);
 						}
 					}
 				}

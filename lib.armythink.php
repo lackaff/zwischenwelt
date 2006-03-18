@@ -406,21 +406,24 @@ function ArmyThink ($army,$debug=false) {
 			if (kProfileArmyLoop) LoopProfiler("armyloop:moveblocked");
 			if ($debug) echo "army is blocked<br>";
 			// armee blockiert
-			if ($army->flags & kArmyFlag_SiegeBlockingBuilding &&
-				(!sqlgetone("SELECT 1 FROM `army` WHERE `x` = ".$pos[0]." AND `y` = ".$pos[1]." LIMIT 1")) &&
-				($blocking=sqlgetobject("SELECT * FROM `building` WHERE `x` = ".$pos[0]." AND `y` = ".$pos[1]." LIMIT 1"))) {
-				// siege blocking
-				if ($debug) echo "army tries to siege blocking<br>";
-				if (TryExecArmyAction($army,ARMY_ACTION_SIEGE,$blocking->x,$blocking->y,0,0,$debug)) return;
-			} 
-			if ($army->flags & kArmyFlag_AttackBlockingArmy &&
-				($blocking=sqlgetobject("SELECT * FROM `army` WHERE `x` = ".$pos[0]." AND `y` = ".$pos[1]." LIMIT 1"))) {
-				// attack-blocking
-				if ($blocking->user != $army->user) { // don't attack own armies
-					if ($debug) echo "army tries to attack blocking<br>";
-					if (TryExecArmyAction($army,ARMY_ACTION_ATTACK,$blocking->id,0,0,0,$debug)) return;
-				}
-			} 
+			if (($army->flags & kArmyFlag_SiegeBlockingBuilding) || ($army->flags & kArmyFlag_AttackBlockingArmy)) {
+				$blockingarmy = sqlgetobject("SELECT * FROM `army` WHERE `x` = ".$pos[0]." AND `y` = ".$pos[1]." LIMIT 1");
+				
+				if (($army->flags & kArmyFlag_SiegeBlockingBuilding) && !$blockingarmy &&
+					($blocking=sqlgetobject("SELECT * FROM `building` WHERE `x` = ".$pos[0]." AND `y` = ".$pos[1]." LIMIT 1"))) {
+					// siege blocking
+					if ($debug) echo "army tries to siege blocking building<br>";
+					if (!($blocking->user == 0 && $army->user == 0)) // monsters don't attack their own hellhole (ants)s
+						if (TryExecArmyAction($army,ARMY_ACTION_SIEGE,$blocking->x,$blocking->y,0,0,$debug)) return;
+				} 
+				if (($army->flags & kArmyFlag_AttackBlockingArmy) && $blockingarmy) {
+					// attack-blocking
+					if ($blockingarmy->user != $army->user) { // don't attack own armies
+						if ($debug) echo "army tries to attack blocking army<br>";
+						if (TryExecArmyAction($army,ARMY_ACTION_ATTACK,$blockingarmy->id,0,0,0,$debug)) return;
+					}
+				} 
+			}
 			
 			if (($army->flags & kArmyFlag_RecalcBlockedRoute) && $army->idle >= kArmyRecalcBlockedRoute_Timeout &&
 				($army->flags & kArmyFlag_LastWaypointArrived)) {

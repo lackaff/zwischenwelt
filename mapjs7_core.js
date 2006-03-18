@@ -963,7 +963,7 @@ function ShowMapTip(relx,rely) {
 		var wp = SearchPos(gWPs,relx,rely);
 		var army = GetActiveArmy();
 		var user = (army && army.user > 0 && gUsers[army.user])?gUsers[army.user]:false;
-		if (1) { 
+		if (army) { 
 			// distance to last wp
 			tiptext += "<tr><td nowrap colspan=2>";
 			tiptext += "<span>Entf.zum letzten WP:"+(army.lastwpx-relx-gLeft)+","+(army.lastwpy-rely-gTop)+"</span><br>";

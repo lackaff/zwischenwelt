@@ -97,6 +97,23 @@ class cArmy {
 	}
 	
 	
+	function GiveSiegeCommand ($armyid,$building) {
+		if (is_object($armyid)) $armyid = $armyid->id;
+		if (!is_object($building)) $building = sqlgetobject("SELECT * FROM `building` WHERE `id` = ".intval($building));
+		if (!$armyid) return false;
+		if (!$building) return false;
+		$t = false;
+		$t->cmd = ARMY_ACTION_SIEGE;
+		$t->army = intval($armyid);
+		$t->param1 = $building->x;
+		$t->param2 = $building->y;
+		sql("DELETE FROM `armyaction` WHERE ".obj2sql($t," AND "));
+		$t->orderval = sqlgetone("SELECT MAX(`orderval`)+1 FROM `armyaction` WHERE `army`=".intval($armyid));
+		sql("INSERT INTO `armyaction` SET ".obj2sql($t));
+		return true;
+	}
+					
+	
 	function CanCreateNewArmy ($userid,$armytype) {
 		global $gArmyType;
 		if ($gArmyType[$armytype]->limit < 0) return true;

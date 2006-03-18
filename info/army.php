@@ -294,14 +294,7 @@ class cInfoArmy extends cInfoBase {
 				if ($rangedsiegedmg > 0) {
 					cFight::StartShooting($army->id,kUnitContainer_Army,$building->id,kUnitContainer_Building,false,$army,$building);
 				} else {
-					$t = false;
-					$t->cmd = ARMY_ACTION_SIEGE;
-					$t->army = $f_army;
-					$t->param1 = $building->x;
-					$t->param2 = $building->y;
-					sql("DELETE FROM `armyaction` WHERE ".obj2sql($t," AND "));
-					$t->orderval = sqlgetone("SELECT MAX(`orderval`)+1 FROM `armyaction` WHERE `army`=".intval($f_army));
-					sql("INSERT INTO `armyaction` SET ".obj2sql($t));
+					cArmy::GiveSiegeCommand($f_army,$building);
 				}
 			break;
 			case "armycollect":
