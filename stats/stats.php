@@ -49,6 +49,7 @@ include("../stats/header.php");
 		<tr><td align="left" nowrap>Zauber</td><td><?=$maxb=sqlgetone("SELECT COUNT(`id`) FROM `spell`");?></td></tr>
 		<tr><td align="left" nowrap>Gilden</td><td><?=$maxb=sqlgetone("SELECT COUNT(`id`) FROM `guild`");?></td></tr>
 		<tr><td align="left" nowrap>maximale Bevölkerung</td><td><?=kplaintrenner(round(sqlgetone("SELECT MAX(`pop`) FROM `user` WHERE `admin`=0")));?></td></tr>
+		<tr><td align="left" nowrap>Weltbevölkerung</td><td><?=kplaintrenner(round(sqlgetone("SELECT SUM(`pop`) FROM `user` WHERE `admin`=0")));?></td></tr>
 		<tr><td align="left" nowrap>horizontale Weltgrösse</td>
 			<td><?=sqlgetone("SELECT MIN(`x`) FROM `building`")?> bis 
 				<?=sqlgetone("SELECT MAX(`x`) FROM `building`")?></td></tr>
