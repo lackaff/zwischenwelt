@@ -150,8 +150,8 @@ if ($gUser->admin && isset($f_regentypes)) {
 		// show new cat
 		if (gGotoCat == <?=kMapNaviGotoCat_Pos?>) 		{ Show("pos"); }
 		if (gGotoCat == <?=kMapNaviGotoCat_Mark?>)		{ ShowList1(); }
-		if (gGotoCat == <?=kMapNaviGotoCat_Own?>)		{ ShowList2(); if (0) Show("armyshow"); }
-		if (gGotoCat == <?=kMapNaviGotoCat_Guild?>)		{ ShowList2(); if (0) Show("armyshow"); }
+		if (gGotoCat == <?=kMapNaviGotoCat_Own?>)		{ ShowList2();  Show("armyshow"); }
+		if (gGotoCat == <?=kMapNaviGotoCat_Guild?>)		{ ShowList2();  Show("armyshow"); }
 		if (gGotoCat == <?=kMapNaviGotoCat_Friends?>)	{ ShowList1(); }
 		if (gGotoCat == <?=kMapNaviGotoCat_Enemies?>)	{ ShowList1(); }
 		if (gGotoCat == <?=kMapNaviGotoCat_Search?>)	{ ShowList1(); Show("search"); }
@@ -174,10 +174,12 @@ if ($gUser->admin && isset($f_regentypes)) {
 	}
 	
 	function ChangeGotoCat3 () {
+		/*
 		var activate_army = 0;
 		if (gGotoCat == <?=kMapNaviGotoCat_Own?>)	activate_army = GetName("gotocat3").value;
 		if (gGotoCat == <?=kMapNaviGotoCat_Guild?>)	activate_army = GetName("gotocat3").value;
 		if (activate_army > 0 && !gNoArmyActivate) parent.map.JSActivateArmy(activate_army,false);
+		*/
 	}
 	
 	var gBrush = 0;
