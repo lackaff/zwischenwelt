@@ -673,7 +673,7 @@ function GetTechnologyLevel ($typeid,$userid=0) {
 
 // 1.234.456 instead of 123456 + coloring
 //uebergebe den integer wert , farbe ist die std farbe, neg_farbe ist die farbe fuer negative werte (default = farbe)
-function ktrenner($wert,$farbe="#000000",$neg_farbe="",$fontsize=11){
+function ktrenner($wert,$farbe="#000000",$neg_farbe="",$fontsize=9){
 	$s="";
 	if($neg_farbe=="")$neg_farbe=$farbe;
 	if($wert<0){
