@@ -553,6 +553,8 @@ if (!isset($f_blind)) {
 		Landschafts-import-Dialog für Bild <input name="bildup" type="file"> (nur PNG)
 		<input type="submit" name="openimporter" value="oeffnen">
 	</form>
+	<a href="http://zwischenwelt.org/forum/index.php?t=msg&th=580">
+	<u>Beschreibung und Kommentare zum Tool</u></a>
 	
 	<?php } // endif?>
 
