@@ -6,6 +6,8 @@ define("kMaxFileSize",1024*1024*2);
 Lock();
 if (!($gUser && ($gUser->admin || intval($gUser->flags) & kUserFlags_TerraFormer))) exit("access denied");
 
+
+
 if (isset($f_export)) {
 	$von = explode(",",trim($f_von));
 	$bis = explode(",",trim($f_bis));
@@ -13,9 +15,9 @@ if (isset($f_export)) {
 	$top  = intval($von[1]);
 	$right = intval($bis[0]);
 	$bottom = intval($bis[1]);
-	$filename = "tmp/lg_".time()."_x".$left."_y".$top."_x".$right."_y".$bottom.".png";
 	
-	renderMinimap($top,$left,$bottom,$right,$filename,"terraformexport",$segment=128,$fullmap=false)
+	$filename = "tmp/lg_".time()."_x".$left."_y".$top."_x".$right."_y".$bottom.".png";
+	renderMinimap($top,$left,$bottom,$right,$filename,"terraformexport");
 	
 	?>
 	<img border=0 src="<?=$filename?>" alt="" title="">
@@ -31,7 +33,7 @@ if (isset($f_openimporter)) {
 	// $f_bildup
 	$picok = false;
 	$pictime = time();
-	$picpath = "tmp/lgup_".$pictime."_".intval($gUser->id).".png";
+	$path_upload = "tmp/lgup_".$pictime."_".intval($gUser->id).".png";
 	$pic_orig_filename = false;
 	foreach ($HTTP_POST_FILES as $name => $upload) {
 		$origfilename = basename($upload['name']);
@@ -53,7 +55,7 @@ if (isset($f_openimporter)) {
 
 		//echo "($name)($origfilename)(".$upload['tmp_name'].")<br>";
 		
-		if (!move_uploaded_file($upload['tmp_name'],$picpath)) {
+		if (!move_uploaded_file($upload['tmp_name'],$path_upload)) {
 			echo "($origfilename) abspeichern fehlgeschlagen<br>";
 			continue;
 		}
@@ -67,12 +69,12 @@ if (isset($f_openimporter)) {
 		?>
 		Upload erfolgreich, starte analyse....<br>
 		Orginal-Dateiname = <?=$pic_orig_filename?><br>
-		<img border=0 src="<?=$picpath?>" alt="" title=""><br>
+		<img border=0 src="<?=$path_upload?>" alt="" title=""><br>
 		<?php
-		$img = imagecreatefrompng($picpath);
+		$img = imagecreatefrompng($path_upload);
 		imagetruecolortopalette($img,false,255);
 		$totalcolors = imagecolorstotal($img);
-		list($width, $height, $type, $attr) = getimagesize($picpath);
+		list($width, $height, $type, $attr) = getimagesize($path_upload);
 		echo "width=$width, height=$height, type=$type, attr=($attr)<br>";
 		echo "totalcolors=$totalcolors<br>";
 		?>
@@ -101,7 +103,7 @@ if (isset($f_openimporter)) {
 		</table>
 			ZW-Koordinaten für die Linke Obere Ecke= <input type="text" name="von" value="<?=intval($f_x).",".intval($f_y)?>" style="width:80px">,
 			Grösse = <?=$width.",".$height?>
-			<input type="submit" name="import" value="Importieren">
+			<input type="submit" name="import_preview" value="weiter zur Vorschau">
 		</form>
 		
 		<?php
@@ -109,26 +111,117 @@ if (isset($f_openimporter)) {
 		//int 
 		// int imagecolorat ( resource image, int x, int y )
 	}
-} else if (isset($f_import)) {
-	$picpath = "tmp/lgup_".intval($f_pictime)."_".intval($gUser->id).".png";
-	if (!file_exists($picpath)) exit("datei existiert nicht");
-	$img = imagecreatefrompng($picpath);
-	imagetruecolortopalette($img,false,255);
-	$totalcolors = imagecolorstotal($img);
-	list($width, $height, $type, $attr) = getimagesize($picpath);
+	
+	
+	
+} else if (isset($f_import_preview)) {
+	$time = intval($f_pictime);
+	$path_upload = "tmp/lgup_".$time."_".intval($gUser->id).".png";
+	if (!file_exists($path_upload)) exit("datei existiert nicht");
+	$img_dif = imagecreatefrompng($path_upload);
+	imagetruecolortopalette($img_dif,false,255);
+	$totalcolors = imagecolorstotal($img_dif);
+	list($width, $height, $type, $attr) = getimagesize($path_upload);
 	
 	$von = explode(",",trim($f_von));
 	$left = intval($von[0]);
 	$top  = intval($von[1]);
 	
+	if ($width <= 0) exit("breite passt nicht");
+	if ($height <= 0) exit("breite passt nicht");
+	if ($totalcolors != count($f_setterrain)) exit("farb-anzahl passt nicht");
+	
+	$right = $left + $width;
+	$bottom = $top + $height;
+	
+	echo "Vorschau für Import von Bild mit $width x $height Pixeln und $totalcolors Farben nach ($left,$top)...<br>";
+	echo "(der Landschaftsgestalter-Sicherheitsabstand wird hier noch nicht berücksichtig,<br> beim endgültigen Import aber schon)<br>";
+	
+	$path_old = "tmp/lgold_".$time."_x".$left."_y".$top."_x".$right."_y".$bottom.".png";
+	$path_new = "tmp/lgnew_".$time."_x".$left."_y".$top."_x".$right."_y".$bottom.".png";
+	$path_dif = "tmp/lgdif_".$time."_x".$left."_y".$top."_x".$right."_y".$bottom.".png";
+	
+	
+	renderMinimap($top,$left,$bottom,$right,$path_old,"terraformexport");
+	$img_new = imagecreatefrompng($path_old);
+	
+	$img_dif_changed	= hex2imgcolor($img_dif,"#000000");
+	$img_dif_unchanged	= hex2imgcolor($img_dif,"#DDDDDD");
+	$img_new_colors = array();
+	foreach ($f_setterrain as $colorindex => $terrtypeid) if ($terrtypeid > 0) {
+		$img_new_colors[$colorindex] = hex2imgcolor($img_new,$gTerrainType[$terrtypeid]->color);
+	}
+	//	= hex2imgcolor($img_dif,"#ffffff");
+	
+	$countarr = array();
+	$myterrain = false;
+	for ($iy=0;$iy<$height;++$iy) 
+	for ($ix=0;$ix<$width;++$ix) {
+		$colorindex = imagecolorat($img_dif,$ix,$iy);
+		$myterrain->type = intval($f_setterrain[$colorindex]);
+		if ($myterrain->type == 0 || !isset($gTerrainType[$myterrain->type])) {
+			imagesetpixel($img_dif,$ix,$iy,$img_dif_unchanged);
+		} else {
+			imagesetpixel($img_dif,$ix,$iy,$img_dif_changed);
+			imagesetpixel($img_new,$ix,$iy,$img_new_colors[$colorindex]);
+			
+			if (!isset($countarr[$myterrain->type])) $countarr[$myterrain->type] = 0;
+			++$countarr[$myterrain->type];
+		}
+	}
+	
+	foreach ($countarr as $terrtypeid => $count) echo "Neu : ".$count." Felder ".$gTerrainType[$terrtypeid]->name."<br>";
+	
+	imagepng($img_dif,$path_dif);
+	imagepng($img_new,$path_new);
+	
+	?>
+	<table>
+	<tr>
+		<th>Upload</th>
+		<th>Änderungen</th>
+		<th>Vorher</th>
+		<th>Nachher</th>
+	</tr><tr>
+		<td><img border=0 src="<?=$path_upload?>" alt="" title=""></td>
+		<td><img border=0 src="<?=$path_dif?>" alt="" title=""></td>
+		<td><img border=0 src="<?=$path_old?>" alt="" title=""></td>
+		<td><img border=0 src="<?=$path_new?>" alt="" title=""></td>
+	</tr>
+	</table>
+	
+	<form method="post" action="<?=Query("?sid=?&x=?&y=?")?>">
+		<input type="hidden" name="pictime" value="<?=$time?>">
+		<?php foreach ($f_setterrain as $colorindex => $terrtypeid) {?>
+			<input type="hidden" name="setterrain[<?=$colorindex?>]" value="<?=$terrtypeid?>">
+		<?php } // endforeach?>
+		<input type="hidden" name="von" value="<?=$f_von?>" style="width:80px">
+		<input type="submit" name="import" value="Import Durchführen">
+	</form>
+	<?php
+	
+} else if (isset($f_import)) {
+	$time = intval($f_pictime);
+	$path_upload = "tmp/lgup_".$time."_".intval($gUser->id).".png";
+	if (!file_exists($path_upload)) exit("datei existiert nicht");
+	$img = imagecreatefrompng($path_upload);
+	imagetruecolortopalette($img,false,255);
+	$totalcolors = imagecolorstotal($img);
+	list($width, $height, $type, $attr) = getimagesize($path_upload);
+	
+	$von = explode(",",trim($f_von));
+	$left = intval($von[0]);
+	$top  = intval($von[1]);
 	
 	if ($width <= 0) exit("breite passt nicht");
 	if ($height <= 0) exit("breite passt nicht");
 	if ($totalcolors != count($f_setterrain)) exit("farb-anzahl passt nicht");
 	
-	echo "importiere bild mit $width x $height pixeln und $totalcolors Farben nach ($left,$top)...<br>";
+	$right = $left + $width;
+	$bottom = $top + $height;
 	
-	vardump2($f_setterrain);
+	echo "Import von Bild mit $width x $height Pixeln und $totalcolors Farben nach ($left,$top)...<br>";
+	
 	$block_counter = 0;
 	$countarr = array();
 	
@@ -176,8 +269,34 @@ if (isset($f_openimporter)) {
 	
 	echo "Neu gesetztes Terrain: z.b. ($lastinsertedx,$lastinsertedy)<br>";
 	foreach ($countarr as $terrtypeid => $count) echo $gTerrainType[$terrtypeid]->name.":".$count."<br>";
-	
+	echo "Import erfolgreich beendet =)<br>";
 	imagedestroy($img);
+	
+	// $path_upload
+	$path_old = "tmp/lgold_".$time."_x".$left."_y".$top."_x".$right."_y".$bottom.".png";
+	$path_new = "tmp/lgnew_".$time."_x".$left."_y".$top."_x".$right."_y".$bottom.".png";
+	$path_dif = "tmp/lgdif_".$time."_x".$left."_y".$top."_x".$right."_y".$bottom.".png";
+	$path_result = "tmp/lgresult_".$time."_x".$left."_y".$top."_x".$right."_y".$bottom.".png";
+	renderMinimap($top,$left,$bottom,$right,$path_result,"terraformexport");
+	
+	?>
+	<table>
+	<tr>
+		<th>Upload</th>
+		<th>Änderungen</th>
+		<th>Vorher</th>
+		<th>Nachher-Soll</th>
+		<th>Ergebnis</th>
+	</tr><tr>
+		<td><img border=0 src="<?=$path_upload?>" alt="" title=""></td>
+		<td><img border=0 src="<?=$path_dif?>" alt="" title=""></td>
+		<td><img border=0 src="<?=$path_old?>" alt="" title=""></td>
+		<td><img border=0 src="<?=$path_new?>" alt="" title=""></td>
+		<td><img border=0 src="<?=$path_result?>" alt="" title=""></td>
+	</tr>
+	</table>
+	(nur das "Ergebnis" berücksichtigt den Terraformer-Sicherheitsabstand)
+	<?php
 } else {
 	?>
 	<form method="post" enctype="multipart/form-data" action="<?=Query("?sid=?&x=?&y=?")?>">
