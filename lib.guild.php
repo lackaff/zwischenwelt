@@ -27,7 +27,7 @@ function leaveGuild($id=0)
 			setGPLimit($gUser->id,0);
 		}
 		if($guild==kGuild_Weltbank){
-			sql("REPLACE INTO `guild_pref` SET `guild`=".kGuild_Weltbank.",`var`='schulden_".$gUser->id."',`value`='".abs(ceil($gUser->guildpoints/2))."'");
+			sql("REPLACE INTO `guild_pref` SET `guild`=".kGuild_Weltbank.",`var`='schulden_".$gUser->id."',`value`='".max(0,-ceil($gUser->guildpoints/2))."'");
 		}
 	}
 	sql("UNLOCK TABLES");
