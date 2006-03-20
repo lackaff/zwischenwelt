@@ -9,23 +9,35 @@ if (!($gUser && ($gUser->admin || intval($gUser->flags) & kUserFlags_TerraFormer
 
 
 if (isset($f_export)) {
-	$von = explode(",",trim($f_von));
-	$bis = explode(",",trim($f_bis));
-	$left = intval($von[0]);
-	$top  = intval($von[1]);
-	$right = intval($bis[0]);
-	$bottom = intval($bis[1]);
+	$mid = explode(",",trim($f_mid));
+	$size = explode(",",trim($f_size));
+	$width = intval($size[0]);
+	$height = intval($size[1]);
+	$left = intval($mid[0])-floor($width/2);
+	$top  = intval($mid[1])-floor($height/2);
+	$right = $left+$width;
+	$bottom = $top+$height;
 	
-	$filename = "tmp/lg_".time()."_x".$left."_y".$top."_x".$right."_y".$bottom.".png";
+	$filename = "tmp/lg_".time()."_mx".intval($mid[0])."_my".intval($mid[1])."_w".$width."_h".$height.".png";
 	renderMinimap($top,$left,$bottom,$right,$filename,"terraformexport");
 	
 	?>
-	<img border=0 src="<?=$filename?>" alt="" title="">
-	TIPP : am besten beim bearbeiten markante Farben wie rot,lila,... verwenden, <br>
-	die nicht in der normalen mimimap vorkommen, <br>
-	Beim RE-Import kann man einfach dann alle "normalen" farben ignorieren, <br>
+	<img border=0 src="<?=$filename?>" alt="" title=""><br>
+	Mitte(x,y) : (<?=intval($mid[0])?>,<?=intval($mid[1])?>)<br>
+	Grösse(x,y) : (<?=$width?>,<?=$height?>)<br>
+	<hr>
+	TIPP : am besten beim Bearbeiten markante Farben verwenden, wie z.b. hellgrün,rot,orange,knallrosa,...<br>
+	die nicht in der normalen Mimimap vorkommen.<br>
+	Beim Re-Import kann man einfach dann alle "normalen" Farben ignorieren, <br>
 	so minimiert man das Risiko, bestehendes Terrain unabsichtlich zu verändern, <br>
-	vor allem, weil manchmal mehrere terrain-typen die gleiche Farben haben.
+	vor allem, weil manchmal mehrere terrain-typen die gleiche Farben haben.<br>
+	<hr>
+	WICHTIG : beim bearbeiten keine Pinsel mit "weichem Rand" benutzten, die Farbverläufe am Rand erzeugen,<br>
+	Es ist wichtig, dass das Bild möglichst wenige, klar voneinander unterscheidbare Farben hat,<br>
+	denn beim Reimport kann man in einer Farb-Liste FÜR JEDE FARBE einen Terrain-Typ wählen (oder sie ignorieren).<br>
+	Wenn man einen weichen Pinsel verwendet, oder irgendwie anders Farbverläufe ins Bild bringt,<br>
+	hat man schnell eine Farbliste mit mehreren hundert Einträgen, da wird das zuweisen sehr mühselig ;)<br>
+	<hr>
 	<?php
 }
 
@@ -101,7 +113,7 @@ if (isset($f_openimporter)) {
 		}
 		?>
 		</table>
-			ZW-Koordinaten für die Linke Obere Ecke= <input type="text" name="von" value="<?=intval($f_x).",".intval($f_y)?>" style="width:80px">,
+			ZW-Koordinaten für die Mitte (x,y) : <input type="text" name="mid" value="<?=intval($f_x).",".intval($f_y)?>" style="width:80px">,
 			Grösse = <?=$width.",".$height?>
 			<input type="submit" name="import_preview" value="weiter zur Vorschau">
 		</form>
@@ -123,9 +135,9 @@ if (isset($f_openimporter)) {
 	$totalcolors = imagecolorstotal($img_dif);
 	list($width, $height, $type, $attr) = getimagesize($path_upload);
 	
-	$von = explode(",",trim($f_von));
-	$left = intval($von[0]);
-	$top  = intval($von[1]);
+	$mid = explode(",",trim($f_mid));
+	$left = intval($mid[0])-floor($width/2);
+	$top  = intval($mid[1])-floor($height/2);
 	
 	if ($width <= 0) exit("breite passt nicht");
 	if ($height <= 0) exit("breite passt nicht");
@@ -134,7 +146,7 @@ if (isset($f_openimporter)) {
 	$right = $left + $width;
 	$bottom = $top + $height;
 	
-	echo "Vorschau für Import von Bild mit $width x $height Pixeln und $totalcolors Farben nach ($left,$top)...<br>";
+	echo "Vorschau für Import von Bild mit $width x $height Pixeln und $totalcolors Farben nach (".intval($mid[0]).",".intval($mid[1]).")(Mitte)...<br>";
 	echo "(der Landschaftsgestalter-Sicherheitsabstand wird hier noch nicht berücksichtig,<br> beim endgültigen Import aber schon)<br>";
 	
 	$path_old = "tmp/lgold_".$time."_x".$left."_y".$top."_x".$right."_y".$bottom.".png";
@@ -195,7 +207,7 @@ if (isset($f_openimporter)) {
 		<?php foreach ($f_setterrain as $colorindex => $terrtypeid) {?>
 			<input type="hidden" name="setterrain[<?=$colorindex?>]" value="<?=$terrtypeid?>">
 		<?php } // endforeach?>
-		<input type="hidden" name="von" value="<?=$f_von?>" style="width:80px">
+		<input type="hidden" name="mid" value="<?=$f_mid?>" style="width:80px">
 		<input type="submit" name="import" value="Import Durchführen">
 	</form>
 	<?php
@@ -209,9 +221,9 @@ if (isset($f_openimporter)) {
 	$totalcolors = imagecolorstotal($img);
 	list($width, $height, $type, $attr) = getimagesize($path_upload);
 	
-	$von = explode(",",trim($f_von));
-	$left = intval($von[0]);
-	$top  = intval($von[1]);
+	$mid = explode(",",trim($f_mid));
+	$left = intval($mid[0])-floor($width/2);
+	$top  = intval($mid[1])-floor($height/2);
 	
 	if ($width <= 0) exit("breite passt nicht");
 	if ($height <= 0) exit("breite passt nicht");
@@ -220,7 +232,7 @@ if (isset($f_openimporter)) {
 	$right = $left + $width;
 	$bottom = $top + $height;
 	
-	echo "Import von Bild mit $width x $height Pixeln und $totalcolors Farben nach ($left,$top)...<br>";
+	echo "Import von Bild mit $width x $height Pixeln und $totalcolors Farben nach (".intval($mid[0]).",".intval($mid[1]).")(Mitte)...<br>";
 	
 	$block_counter = 0;
 	$countarr = array();

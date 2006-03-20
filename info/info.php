@@ -544,9 +544,9 @@ if (!isset($f_blind)) {
 	<h3>Landschaftsgestaltung</h3>
 	<form method="post" target="_blank" action="<?=Query("../terraformpic.php?sid=?&x=?&y=?")?>">
 		<INPUT TYPE="hidden" NAME="do" VALUE="terraform">
-		Landschaft von (Linke Obere Ecke) <input type="text" name="von" value="<?=intval($f_x).",".intval($f_y)?>" style="width:80px">
-		bis (Rechte Untere Ecke) <input type="text" name="bis" value="<?=(intval($f_x)+100).",".(intval($f_y)+100)?>" style="width:80px">
-		<input type="submit" name="export" value="als Bild Exportieren">
+		Landschaft um (Mitte:x,y)<input type="text" name="mid" value="<?=intval($f_x).",".intval($f_y)?>" style="width:80px">
+		als Bild<br> mit der Grösse (Breite,Höhe) <input type="text" name="size" value="100,100" style="width:80px">
+		<input type="submit" name="export" value="exportieren">
 	</form>
 	<hr>
 	<form method="post" enctype="multipart/form-data"  target="_blank" action="<?=Query("../terraformpic.php?sid=?&x=?&y=?")?>">
