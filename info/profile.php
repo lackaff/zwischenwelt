@@ -166,7 +166,7 @@ if(sqlgetone("SELECT `founder` FROM `guild` WHERE `id`=".$gUser->guild)!=$gUser-
 <table>
 <tr><?php foreach($gRes as $n=>$f)echo '<td><img alt="'.$f.'" src="'.g('res_'.$f.'.gif').'"><td align="right"><input value="0" type="text" size="8" name="'.$f.'"></td>'; 
 $s=sqlgetobject("SELECT `value` FROM `guild_pref` WHERE `var`='schulden_".$gUser->id."'");?>
-<td><input type=submit name=give value="<?=($s && $s->value > 0)?"Zurückzahlen":"Spenden")?>"></td>
+<td><input type=submit name=give value="<?=($s && $s.value > 0)?"Zurückzahlen":"Spenden")?>"></td>
 </tr>
 </table>
 </form><?}else echo "du bist in der weltbank<br>"?>
