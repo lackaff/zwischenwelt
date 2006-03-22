@@ -162,7 +162,7 @@ class cArmy {
 					(`army`.`user` = ".$user->id." OR (`army`.`flags` & ".kArmyFlag_GuildCommand."))
 					ORDER BY `army`.`type`,`army`.`user`","id");
 		else	return sqlgettable("SELECT *,'".addslashes($user->name)."' as `username` FROM `army` WHERE 
-					`army`.`user` = ".$user->id." AND
+					`army`.`user` = ".$user->id."
 					ORDER BY `army`.`type`,`army`.`user`","id");
 	}
 	
