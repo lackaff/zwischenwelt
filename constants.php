@@ -5,6 +5,26 @@ define("kURL_Chess","http://zwischenwelt.org/~hagish/occ/");
 define("kURL_Wiki","http://zwischenwelt.milchkind.net/zwwiki/index.php/");
 
 
+define("kMapNaviTool_Look"			,0);
+define("kMapNaviTool_Plan"			,1);
+define("kMapNaviTool_SetTerrain"	,2); // admin and terraformer only
+define("kMapNaviTool_WP"			,3);
+define("kMapNaviTool_Route"			,4);
+define("kMapNaviTool_Cancel"		,5);
+define("kMapNaviTool_SetBuilding"	,6); // admin only (TODO : restricted for terraformer ?)
+define("kMapNaviTool_SetArmy"		,7); // admin only
+define("kMapNaviTool_SetItem"		,8); // admin only
+define("kMapNaviTool_Pick"			,9);
+define("kMapNaviTool_Center"		,10);
+define("kMapNaviTool_Zap"			,11); // admin only
+define("kMapNaviTool_Ruin"			,12); // admin only
+define("kMapNaviTool_rmArmy"		,13); // admin only
+define("kMapNaviTool_rmItem"		,14); // admin only
+define("kMapNaviTool_Clear"			,15); // admin only
+define("kMapNaviTool_QuickMagic"	,20);
+define("kMapNaviTool_MultiTool"		,30);
+
+
 define("kAdminCanAccessMysql",true);
 
 define("kMapNaviGotoCat_Pos",1);
@@ -53,7 +73,6 @@ define("kJSMapArmyFlag_Fighting_N",(1<<4)); // todo
 define("kJSMapArmyFlag_Fighting_W",(1<<5)); // todo
 define("kJSMapArmyFlag_Fighting_S",(1<<6)); // todo
 define("kJSMapArmyFlag_Fighting_E",(1<<7)); // todo
-define("kJSMapArmyFlag_Shooting",(1<<8)); // todo
 */
 		
 define("kNWSE_N",1);

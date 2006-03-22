@@ -386,7 +386,7 @@ class cInfoArmy extends cInfoBase {
 		
 		// make the army blink on the map or something...
 		global $gJSCommands;
-		$gJSCommands[] = "parent.map.JSActivateArmy(".$gArmy->id.",true);";
+		//$gJSCommands[] = "parent.map.JSActivateArmy(".$gArmy->id.",true);";
 		?>
 		
 		

@@ -106,6 +106,9 @@ if ($gUser->admin && isset($f_regentypes)) {
 	// $hellholetypename[$o->ai_type]
 	?>
 	gGotoCat = <?=kMapNaviGotoCat_Pos?>;
+	<?php 
+	PrintPHPConstantsToJS("kMapNaviTool_");
+	?>
 	function GetName (name) { return document.getElementsByName(name)[0]; }
 	function Hide (name) { GetName(name).style.display = "none"; }
 	function Show (name) { GetName(name).style.display = "inline"; }
@@ -215,7 +218,7 @@ if ($gUser->admin && isset($f_regentypes)) {
 	function resettool () {
 		//if (curtool == 3 || curtool == 4)
 		//if (curtool != 10)
-		settool(0,0,'<?=g("tool_look.png")?>');
+		settool(<?=kMapNaviTool_Look?>,0,'<?=g("tool_look.png")?>');
 	}
 	function addpatch (text) {
 		//if (document.getElementsByName("patchcheck")[0].checked)
@@ -223,21 +226,24 @@ if ($gUser->admin && isset($f_regentypes)) {
 		//	document.getElementsByName("patch")[0].value += text;
 	}
 	function mapclicktool_hasoverlay () {
-		if (curtool == 1) return true;
-		if (curtool == 2) return true;
-		if (curtool == 3) return true;
-		if (curtool == 4) return true;
-		if (curtool == 5) return true;
-		if (curtool >= 6) return true;
+		if (curtool == <?=kMapNaviTool_Look?>		) return true;
+		if (curtool == <?=kMapNaviTool_SetTerrain?>	) return true;
+		if (curtool == <?=kMapNaviTool_WP?>			) return true;
+		if (curtool == <?=kMapNaviTool_Route?>		) return true;
+		if (curtool == <?=kMapNaviTool_Cancel?>		) return true;
+		if (curtool >= <?=kMapNaviTool_SetBuilding?>) return true;
 		return false;
 	}
-	function mapclicktool (x,y,activearmyid) {
+	function GetCurTool () { return curtool; }
+	function mapclicktool (x,y,activearmyid,wpmaxprio,tooloverride) {
+		var mytool = (tooloverride==-1)?curtool:tooloverride;
 		updatepos(x,y);
-		if (curtool == 9) {
+		if (mytool == <?=kMapNaviTool_MultiTool?>) { return; } // other tools will be called intelligently by map
+		if (mytool == <?=kMapNaviTool_Pick?>) {
 			document.getElementsByName("notizblock")[0].value += "  "+x+","+y;
 			return;
 		}	
-		if (curtool == 10) {
+		if (mytool == <?=kMapNaviTool_Center?>) {
 			parent.map.extnavabs(x,y,false);
 			return;
 		}	
@@ -247,55 +253,55 @@ if ($gUser->admin && isset($f_regentypes)) {
 		if (army == 0 && document.getElementsByName("gotocat3")[0] != null)
 			army = document.getElementsByName("gotocat3")[0].value;
 		
-		switch(curtool){
-			case 1:
+		switch(mytool){
+			case <?=kMapNaviTool_Plan?>:
 				urladd = "&do=build&build["+curtoolparam+"]=bauen";
 			break;
-			case 2:
+			case <?=kMapNaviTool_SetTerrain?>:
 				urladd = "&do=adminsetterrain&terrain="+curtoolparam;
 			break;
-			case 3:
-				urladd = "&do=setwaypoint&army="+army+"&button_wp=1";
+			case <?=kMapNaviTool_WP?>:	
+				urladd = "&do=setwaypoint&army="+army+"&button_wp=1&wpmaxprio="+wpmaxprio;
 			break;
-			case 4:
+			case <?=kMapNaviTool_Route?>:
 				urladd = "&do=setwaypoint&army="+army+"&button_route=1";
 			break;
-			case 5:
+			case <?=kMapNaviTool_Cancel?>:
 				urladd = "&do=cancel&cancel_wp_armyid="+army;
 			break;
-			case 6:
+			case <?=kMapNaviTool_SetBuilding?>:
 				urladd = "&do=adminsetbuilding&btype="+curtoolparam+
 				"&blevel="+document.getElementsByName("sellevel")[0].value+
 				"&buser="+document.getElementsByName("seluser")[0].value+
 				"&quest="+document.getElementsByName("selquest")[0].value;
 			break;
-			case 7:
+			case <?=kMapNaviTool_SetArmy?>:
 				urladd = "&do=adminsetarmy&unit="+curtoolparam+
 					"&anzahl="+document.getElementsByName("sellevel")[0].value+
 					"&user="+document.getElementsByName("seluser")[0].value+
 					"&quest="+document.getElementsByName("selquest")[0].value;
 			break;
-			case 8:
+			case <?=kMapNaviTool_SetItem?>:
 				urladd = "&do=adminsetitem&type="+curtoolparam+
 					"&anzahl="+document.getElementsByName("sellevel")[0].value+
 					"&quest="+document.getElementsByName("selquest")[0].value;
 			break;
-			case 11:
+			case <?=kMapNaviTool_Zap?>:
 				urladd = "&do=adminzap";
 			break;
-			case 12:
+			case <?=kMapNaviTool_Ruin?>:
 				urladd = "&do=adminruin";
 			break;
-			case 13:
+			case <?=kMapNaviTool_rmArmy?>:
 				urladd = "&do=adminremovearmy";
 			break;
-			case 14:
+			case <?=kMapNaviTool_rmItem?>:
 				urladd = "&do=adminremoveitems";
 			break;
-			case 15:
+			case <?=kMapNaviTool_Clear?>:
 				urladd = "&do=adminclear";
 			break;
-			case 20:
+			case <?=kMapNaviTool_QuickMagic?>:
 				urladd = "&do=quickmagic&spellid="+curtoolparam;
 			break;
 		}
@@ -317,7 +323,7 @@ if ($gUser->admin && isset($f_regentypes)) {
 		// vermutlich weil die funktion ueber das map frame aufgerufen wird -> browserbug ?
 		var url = "<?=BASEURL?>info/info.php?x="+x+"&y="+y+urladd+"&sid=<?=$gSID?>";
 		//alert(url);
-		if (curtool == 0 || curtool == 20) 
+		if (mytool == 0 || mytool == 20) 
 				parent.info.location.href = url;
 		else {
 			<?php for ($i=0;$i<kDummyFrames;++$i) {?>
@@ -326,7 +332,7 @@ if ($gUser->admin && isset($f_regentypes)) {
 		}
 		
 		// update the brush tool
-		if (curtool == 1 || curtool == 2 || curtool == 5 || (curtool >= 6 && curtool <= 15)) {
+		if (mytool == 1 || mytool == 2 || mytool == 5 || (mytool >= 6 && mytool <= 15)) {
 			if (gBrushLineOn) {
 				if (gBrush == 1 || gBrush == 3) StopBrushLine();
 			} else {
@@ -462,19 +468,27 @@ function NaviTool ($pic,$param1,$param2,$tooltip="",$css="") {
 $head = "<img src=\"".g("tool_look.png")."\" alt=\"".($tip="anschauen und Wegpunkte setzen")."\" title=\"".$tip."\">";
 $content = "";
 $content .= "<div class=\"mapnavitool_general\">\n";
-$content .= NaviTool(g("tool_look.png"),0,0,"anschauen","navtoolicon");
-$content .= NaviTool(g("tool_cancel.png"),5,0,"Bauplan/Wegpunkt löschen","navtoolicon");
-$content .= NaviTool(g("tool_wp.png"),3,0,"Wegpunkt setzen","navtoolicon");
-$content .= NaviTool(g("tool_route.png"),4,0,"Route berechnen","navtoolicon");
-$content .= NaviTool(g("pick.png"),9,0,"Koordinate aufschreiben","navtoolicon");
+$content .= NaviTool(g("tool_look.png")		,kMapNaviTool_Look		,0,"anschauen"					,"navtoolicon");
+$content .= NaviTool(g("tool_cancel.png")	,kMapNaviTool_Cancel	,0,"Bauplan/Wegpunkt löschen"	,"navtoolicon");
+$content .= NaviTool(g("tool_wp.png")		,kMapNaviTool_WP		,0,"Wegpunkt setzen"			,"navtoolicon");
+$content .= NaviTool(g("tool_route.png")	,kMapNaviTool_Route		,0,"Route berechnen"			,"navtoolicon");
+$content .= NaviTool(g("pick.png")			,kMapNaviTool_Pick		,0,"Koordinate aufschreiben"	,"navtoolicon");
+// icon/guild-admin.png		// yellow star
+// icon/guild-founder.png	// red star
+// icon/guild-lock.png		// crosshair
+// icon/guild-gc.png		// sword
+// icon/log-fight.png		// sword
+// icon/guild-view.png		// eye
+// icon/info.png			// red !
 if ($gUser->admin) {
-	$content .= NaviTool(g("del.png"),11,0,"Zap","navtoolicon");
-	$content .= NaviTool(g("del.png"),12,0,"ruin","navtoolicon");
-	$content .= NaviTool(g("del.png"),13,0,"rm_army","navtoolicon");
-	$content .= NaviTool(g("del.png"),14,0,"rm_items","navtoolicon");
-	$content .= NaviTool(g("del.png"),15,0,"clear","navtoolicon");
+	$content .= NaviTool(g("del.png")		,kMapNaviTool_Zap		,0,"Zap","navtoolicon");
+	$content .= NaviTool(g("del.png")		,kMapNaviTool_Ruin		,0,"ruin","navtoolicon");
+	$content .= NaviTool(g("del.png")		,kMapNaviTool_rmArmy	,0,"rm_army","navtoolicon");
+	$content .= NaviTool(g("del.png")		,kMapNaviTool_rmItem	,0,"rm_items","navtoolicon");
+	$content .= NaviTool(g("del.png")		,kMapNaviTool_Clear		,0,"clear","navtoolicon");
 }
-$content .= NaviTool(g("tool_crosshair.png"),10,0,"Zentrieren");
+$content .= NaviTool(g("tool_crosshair.png"),kMapNaviTool_Center	,0,"Zentrieren");
+$content .= NaviTool(g("icon/info.png")		,kMapNaviTool_MultiTool	,0,"Armeen-Befehl"	,"navtoolicon"); 
 $content .= "<br>";
 $content .= "<textarea class=\"notizblock\" name=\"notizblock\" rows=2 cols=40></textarea>";
 $content .= "</div>\n";
@@ -493,7 +507,7 @@ if ($user_has_hq) {
 			if ($id == kBuilding_HQ) continue;
 			if (!isset($gBuildingType[$id])) continue;
 			$canbuild = HasReq($gBuildingType[$id]->req_geb,$gBuildingType[$id]->req_tech,$gUser->id);
-			$content .= NaviTool(g($gBuildingType[$id]->gfx,"we",1),1,$id,$gBuildingType[$id]->name.($canbuild?"":"(noch nicht baubar)"),$canbuild?"buildable":"unbuildable");
+			$content .= NaviTool(g($gBuildingType[$id]->gfx,"we",1),kMapNaviTool_Plan,$id,$gBuildingType[$id]->name.($canbuild?"":"(noch nicht baubar)"),$canbuild?"buildable":"unbuildable");
 		}
 		$content .= "</div>\n";
 		$gNaviToolTabs[] = array($head,$content);
@@ -503,7 +517,7 @@ if ($user_has_hq) {
 	$id = kBuilding_HQ;
 	$head = "<img src=\"".g($gBuildingType[$id]->gfx,"we",1)."\">";
 	$content = "";
-	$content .= NaviTool(g($gBuildingType[$id]->gfx,"we",1),1,$id,$gBuildingType[$id]->name,"navtoolicon");
+	$content .= NaviTool(g($gBuildingType[$id]->gfx,"we",1),kMapNaviTool_Plan,$id,$gBuildingType[$id]->name,"navtoolicon");
 	$gNaviToolTabs[] = array($head,$content);
 }
 
@@ -519,7 +533,7 @@ foreach ($candospells as $group => $arr) if (count($arr) > 0) {
 	$head = "<img src=\"".g("tool_mana.png")."\" alt=\"".($tip)."\" title=\"".$tip."\">";
 	$content = "<div class=\"mapnavitool_magic\">\n";
 	foreach ($arr as $spelltype)
-		$content .= NaviTool(g($spelltype->gfx),20,$spelltype->id,$spelltype->name,"navtoolicon");
+		$content .= NaviTool(g($spelltype->gfx),kMapNaviTool_QuickMagic,$spelltype->id,$spelltype->name,"navtoolicon");
 	$content .= "</div>\n";
 	$gNaviToolTabs[] = array($head,$content);
 }
@@ -529,7 +543,7 @@ if ($gUser->admin || intval($gUser->flags) & kUserFlags_TerraFormer) {
 	$head = "<img src=\"".g("icon/admin.png")."\">";
 	$content = "<div class=\"mapnavitool_terraform\">\n";
 	foreach($gTerrainType as $o)
-		$content .= NaviTool(g($o->gfx,"ns"),2,$o->id,$o->name,"navtoolicon");
+		$content .= NaviTool(g($o->gfx,"ns"),kMapNaviTool_SetTerrain,$o->id,$o->name,"navtoolicon");
 	$content .= "</div>\n";
 	$gNaviToolTabs[] = array($head,$content);
 }
@@ -542,21 +556,21 @@ if ($gUser->admin) {
 	// buildings
 	$content = "<div class=\"mapnavitool_admin\">\n";
 	foreach($gBuildingType as $o)
-		$content .= NaviTool(GetBuildingPic($o->id),6,$o->id,$o->name,"navtoolicon");
+		$content .= NaviTool(GetBuildingPic($o->id),kMapNaviTool_SetBuilding,$o->id,$o->name,"navtoolicon");
 	$content .= "</div>\n";
 	$gNaviToolTabs[] = array($head,$content);
 	
 	// units
 	$content = "<div class=\"mapnavitool_admin\">\n";
 	foreach($gUnitType as $o)
-		$content .= NaviTool(g($gUnitType[$o->id]->gfx),7,$o->id,$o->name,"navtoolicon");
+		$content .= NaviTool(g($gUnitType[$o->id]->gfx),kMapNaviTool_SetArmy,$o->id,$o->name,"navtoolicon");
 	$content .= "</div>\n";
 	$gNaviToolTabs[] = array($head,$content);
 	
 	// items
 	$content = "<div class=\"mapnavitool_admin\">\n";
 	foreach($gItemType as $o)
-		$content .= NaviTool(g($gItemType[$o->id]->gfx),8,$o->id,$o->name,"navtoolicon");
+		$content .= NaviTool(g($gItemType[$o->id]->gfx),kMapNaviTool_SetItem,$o->id,$o->name,"navtoolicon");
 	$content .= "</div>\n";
 	$gNaviToolTabs[] = array($head,$content);
 }

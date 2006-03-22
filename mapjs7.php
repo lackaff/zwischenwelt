@@ -226,8 +226,14 @@ function MapLoad () {
 	$gActiveArmy = false;
 	if (isset($f_army)) $gActiveArmy = sqlgetobject("SELECT * FROM `army` WHERE `id`=".intval($f_army)." LIMIT 1");
 
-	$gArmies = sqlgettable("SELECT * FROM `army` WHERE ".($gActiveArmy?("`id` <> ".$gActiveArmy->id." AND "):"")." ".$xylimit);
-	if ($gActiveArmy) $gArmies[] = $gActiveArmy;
+	$gArmies = sqlgettable("SELECT * FROM `army` WHERE ".$xylimit);
+	$controllable_armies = cArmy::ListControllableArmies();
+	if ($gActiveArmy) $controllable_armies[] = $gActiveArmy;
+	foreach ($controllable_armies as $o) {
+		$found = false;
+		foreach ($gArmies as $x) if ($o->id == $x->id) { $found = true; break; }
+		if (!$found) $gArmies[] = $o;
+	}
 	foreach ($gArmies as $o) {
 		$gLocalUserIDs[] = $o->user;
 		echo "jsArmy(".cArmy::GetJavaScriptArmyData($o,$gLeft,$gTop,$gCX,$gCY).");\n";

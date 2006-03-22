@@ -180,7 +180,8 @@ function ParseWPs (wpstxt) {
 	
 function JSActivateArmy (armyid,refreshnavi) {
 	if (!gBig && gBigMapWindow && !gBigMapWindow.closed) gBigMapWindow.JSActivateArmy(armyid,false);
-	var newactiveid = gArmies[armyid]?armyid:0;
+	var army = gArmies[armyid] ? gArmies[armyid] : false;
+	var newactiveid = (army && (army.jsflags & kJSMapArmyFlag_Controllable)) ? armyid : 0;
 	if (gActiveArmyID == newactiveid && !gWPMapDirty) return; // nothing to do
 	var armychanged = (gActiveArmyID != newactiveid);
 	//alert("JSActivateArmy("+armyid+"),gActiveArmyID="+gActiveArmyID+",newactiveid="+newactiveid+",newactivename="+(newactiveid?gArmies[armyid].name:"")+",armychanged="+(armychanged?1:0));
@@ -805,9 +806,77 @@ function mapclick (relx,rely) {
 	var naviframe = GetNaviFrame();
 	if (naviframe) {
 		if (naviframe.mapclicktool_hasoverlay()) SetTempOverlayGraphic(relx,rely,g1("sanduhrklein.gif"));
-		naviframe.mapclicktool(relx+gLeft,rely+gTop,gActiveArmyID); // TODO : pass next-priority & in navi : pass no_refresh_on_basic_add..
+		LocalMapTool(relx,rely,naviframe.GetCurTool());
+		ExecuteTool(relx+gLeft,rely+gTop,-1);
 	}
 	KillTip();
+}
+
+function ExecuteTool	(absx,absy,tool) {
+	var naviframe = GetNaviFrame();
+	if (!naviframe) return;
+	var activearmy = GetActiveArmy();
+	var wpmaxprio = activearmy?activearmy.wpmaxprio:-1;
+	naviframe.mapclicktool(absx,absy,gActiveArmyID,wpmaxprio,tool);
+}
+
+function GetToolActionInfo (relx,rely) {
+	var naviframe = GetNaviFrame();
+	if (!naviframe) return false;
+	var curtool = naviframe.GetCurTool();
+	if (curtool == kMapNaviTool_WP) {
+		var activearmy = GetActiveArmy();
+		if (activearmy) 
+			return "WP für "+activearmy.name+" setzten";
+	}
+	if (curtool == kMapNaviTool_MultiTool) {
+		// flostre multitool
+		var army = SearchPos(gArmies,relx,rely);
+		var building = GetBuilding(relx,rely);
+		if (army) {
+			if (army.jsflags & kJSMapArmyFlag_Controllable)
+					return ""+army.name+" auswählen";
+			else	return "Info für "+army.name+" abrufen";
+		} else if (building) {
+			return "Info für Gebäude abrufen";
+		} else {
+			var activearmy = GetActiveArmy();
+			return "WP für "+activearmy.name+" setzten";
+		}
+	}
+	return false;
+}
+
+function LocalMapTool (relx,rely,curtool) {
+	// called from mapclick for tools that have local effects for the map
+	if (curtool == kMapNaviTool_Look) {
+		// activate army
+		var army = SearchPos(gArmies,relx,rely);
+		if (army) JSActivateArmy(army.id,true);
+	}
+	if (curtool == kMapNaviTool_WP) {
+		var activearmy = GetActiveArmy();
+		if (activearmy) {
+			activearmy.wpmaxprio++;
+			// TODO : local update of waypoints
+		}
+	}
+	if (curtool == kMapNaviTool_MultiTool) {
+		// flostre multitool
+		var army = SearchPos(gArmies,relx,rely);
+		var building = GetBuilding(relx,rely);
+		if (army) {
+			if (army.jsflags & kJSMapArmyFlag_Controllable)
+					JSActivateArmy(army.id,true);
+			else	ExecuteTool(relx+gLeft,rely+gTop,kMapNaviTool_Look);
+		} else if (building) {
+			ExecuteTool(relx+gLeft,rely+gTop,kMapNaviTool_Look);
+		} else {
+			// TODO else if (haswp) cancelwp
+			LocalMapTool(relx,rely,kMapNaviTool_WP);
+			ExecuteTool(relx+gLeft,rely+gTop,kMapNaviTool_WP);
+		}
+	}
 }
 
 var gLastTipX = -1;
@@ -967,7 +1036,6 @@ function ShowMapTip(relx,rely) {
 			// distance to last wp
 			tiptext += "<tr><td nowrap colspan=2>";
 			tiptext += "<span>Entf.zum letzten WP:"+(army.lastwpx-relx-gLeft)+","+(army.lastwpy-rely-gTop)+"</span><br>";
-			tiptext += "<span>WP-Anzeige für "+army.name+"</span><br>";
 			tiptext += "</td></tr>";
 		}
 		if (wp || (gWPMap && gWPMap[relx][rely].length > 1)) {
@@ -988,13 +1056,22 @@ function ShowMapTip(relx,rely) {
 	}
 	
 	// ausgewaehltes tool anzeigen:
+	var toolactioninfo = GetToolActionInfo(relx,rely);
 	if (gBig) {
 		var curtoolgfx = false;
 		var naviframe = GetNaviFrame();
 		if (naviframe) curtoolgfx = naviframe.GetLastToolGFX();
 		if (curtoolgfx) {
 			tiptext += "<tr><td nowrap colspan=2>";
-			tiptext += "<span>Tool:<img src=\""+curtoolgfx+"\"></span><br>";
+			tiptext += "<span><img src=\""+curtoolgfx+"\">";
+			if (toolactioninfo) tiptext += ":"+toolactioninfo;
+			tiptext += "</span><br>";
+			tiptext += "</td></tr>";
+		}
+	} else {
+		if (toolactioninfo) {
+			tiptext += "<tr><td nowrap colspan=2>";
+			tiptext += "<span>"+toolactioninfo+"</span><br>";
 			tiptext += "</td></tr>";
 		}
 	}

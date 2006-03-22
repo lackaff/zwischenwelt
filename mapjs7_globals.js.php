@@ -9,51 +9,19 @@ header('Cache-Control: max-age='.$maxage.', must-revalidate');
 ?>
 kCoreJSMapVersion = <?=intval(kJSMapVersion)+intval($gGlobal["typecache_version_adder"])?>;
 kDefaultTerrainID = <?=kTerrain_Grass?>;
-kNWSE_N = <?=kNWSE_N?>;
-kNWSE_W = <?=kNWSE_W?>;
-kNWSE_S = <?=kNWSE_S?>;
-kNWSE_E = <?=kNWSE_E?>;
 kConstructionPlanPic = "<?=kConstructionPlanPic?>";
 kConstructionPic = "<?=kConstructionPic?>";
 kTransCP = "<?=kTransCP?>"; // transparent construction plan
 kBASEURL = "<?=BASEURL?>";
 
-kJSMapBuildingFlag_Open				= <?=kJSMapBuildingFlag_Open?>;
-kJSMapBuildingFlag_Tax				= <?=kJSMapBuildingFlag_Tax?>;
-kJSMapBuildingFlag_Locked			= <?=kJSMapBuildingFlag_Locked?>;
-kJSMapBuildingFlag_BeingSieged		= <?=kJSMapBuildingFlag_BeingSieged?>;
-kJSMapBuildingFlag_BeingPillaged	= <?=kJSMapBuildingFlag_BeingPillaged?>;
-kJSMapBuildingFlag_Shooting			= <?=kJSMapBuildingFlag_Shooting?>;
-kJSMapBuildingFlag_BeingShot		= <?=kJSMapBuildingFlag_BeingShot?>;
+<?php 
+PrintPHPConstantsToJS("kNWSE_");
+PrintPHPConstantsToJS("kMapNaviTool_");
+PrintPHPConstantsToJS("kJSMapArmyFlag_");
+PrintPHPConstantsToJS("kJSMapBuildingFlag_");
+PrintPHPConstantsToJS("kBuildingTypeFlag_");
+?>
 
-kJSMapArmyFlag_Controllable	= <?=kJSMapArmyFlag_Controllable?>;
-kJSMapArmyFlag_GC			= <?=kJSMapArmyFlag_GC?>;
-kJSMapArmyFlag_Fighting		= <?=kJSMapArmyFlag_Fighting?>;
-kJSMapArmyFlag_Sieging		= <?=kJSMapArmyFlag_Sieging?>;
-kJSMapArmyFlag_Pillaging	= <?=kJSMapArmyFlag_Pillaging?>;
-kJSMapArmyFlag_Shooting		= <?=kJSMapArmyFlag_Shooting?>;
-kJSMapArmyFlag_BeingShot	= <?=kJSMapArmyFlag_BeingShot?>;
-
-<?php if (0) {?>
-kJSMapArmyFlag_Moving_N = <?=kJSMapArmyFlag_Moving_N?>;
-kJSMapArmyFlag_Moving_W = <?=kJSMapArmyFlag_Moving_W?>;
-kJSMapArmyFlag_Moving_S = <?=kJSMapArmyFlag_Moving_S?>;
-kJSMapArmyFlag_Moving_E = <?=kJSMapArmyFlag_Moving_E?>;
-kJSMapArmyFlag_Fighting_N = <?=kJSMapArmyFlag_Fighting_N?>;
-kJSMapArmyFlag_Fighting_W = <?=kJSMapArmyFlag_Fighting_W?>;
-kJSMapArmyFlag_Fighting_S = <?=kJSMapArmyFlag_Fighting_S?>;
-kJSMapArmyFlag_Fighting_E = <?=kJSMapArmyFlag_Fighting_E?>;
-<?php } // endif?>
-
-kBuildingTypeFlag_BuildDistSource = <?=kBuildingTypeFlag_BuildDistSource?>;
-kBuildingTypeFlag_Speedy = <?=kBuildingTypeFlag_Speedy?>;
-kBuildingTypeFlag_Openable = <?=kBuildingTypeFlag_Openable?>;
-kBuildingTypeFlag_Taxable = <?=kBuildingTypeFlag_Taxable?>;
-kBuildingTypeFlag_CanShootArmy = <?=kBuildingTypeFlag_CanShootArmy?>;
-kBuildingTypeFlag_CanShootBuilding = <?=kBuildingTypeFlag_CanShootBuilding?>;
-kBuildingTypeFlag_OthersCanSeeUnits = <?=kBuildingTypeFlag_OthersCanSeeUnits?>;
-kBuildingTypeFlag_DrawMaxTypeOnTop = <?=kBuildingTypeFlag_DrawMaxTypeOnTop?>;
-kBuildingTypeFlag_Bodenschatz = <?=kBuildingTypeFlag_Bodenschatz?>;
 
 gMapModiHelp = "<?=addslashes(cText::Wiki("MapModi"))?>";
 

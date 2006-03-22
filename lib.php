@@ -162,6 +162,24 @@ function intarray ($var=null) {
 	return $var;
 }
 
+// returns an array with key=name_of_constant value=value_of_constant
+function GetConstants ($prefix="") {
+	if ($prefix == "") return get_defined_constants();
+	$res = array();
+	$prefixlen = strlen($prefix);
+	$arr = get_defined_constants();
+	foreach ($arr as $k=>$v) if (strlen($k) >= $prefixlen && strncmp($k,$prefix,$prefixlen) == 0) $res[$k] = $v;
+	return $res;
+}
+function PrintPHPConstantsToJS ($prefix) {
+	$arr = GetConstants($prefix);
+	foreach ($arr as $k => $v) {
+		if (is_numeric($v))	
+				echo "$k = $v;\n";
+		else	echo "$k = \"$v\";\n";
+	}
+}
+
 function microtime_float()
 {
 	list($usec, $sec) = explode(" ", microtime());
@@ -546,6 +564,7 @@ import_request_variables("gp", "f_");
 
 if (get_cfg_var("magic_quotes_gpc"))
 {
+	// TODO : OR if (ini_get('gpc_magic_quotes')=='on') 
 	// unescape globals if neccessary
 	foreach($GLOBALS as $key => $val)
 		if (strncmp($key,"f_",2) == 0)
