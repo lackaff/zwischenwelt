@@ -21,7 +21,7 @@ else $newpoll = false;
 ?>
 
 <!-- ########################### GANZE NEUES MENU ################################# -->
-
+<!-- <h1>Heute Abend findet wieder ein Chat statt. Mehr unter Umfrage oder Taverne</h1> --> 
 <div class="mainmenu">
 	<div class="mainmenu_links">
 		<ul>
