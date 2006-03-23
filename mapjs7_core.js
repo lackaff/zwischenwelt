@@ -937,7 +937,7 @@ function ExecuteTool	(absx,absy,tool) {
 	if (!naviframe) return;
 	var activearmy = GetActiveArmy();
 	var wpmaxprio = activearmy?gReportedWPMaxPrio:-1;
-	if (((tool==-1)?naviframe.GetCurTool():tool) == kMapNaviTool_WP) alert("Adding WP with prio "+wpmaxprio);
+	// if (((tool==-1)?naviframe.GetCurTool():tool) == kMapNaviTool_WP) alert("Adding WP with prio "+wpmaxprio);
 	naviframe.mapclicktool(absx,absy,gActiveArmyID,wpmaxprio,tool);
 }
 
