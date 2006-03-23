@@ -28,6 +28,7 @@ gPathDetected = 0;
 gStaticCellInner = ""; // set to IE blind-gif (otpionally from gfxpack)
 gWPAffectedCells = new Array();
 gActiveArmyMarkerGfx = "";
+gReportedWPMaxPrio = -1;
 
 
 // compare version with kBaseJSMapVersion from mapjs7.php and kNaviJSMapVersion available with GetkNaviJSMapVersion
@@ -159,7 +160,10 @@ function JSArmyUpdate (	id,x,y,name,type,user,unitstxt,itemstxt,jsflags,wpstxt,l
 	gArmies[id].items = ParseTypeAmountList(gArmies[id].itemstxt);
 	gArmies[id].wps = ParseWPs(gArmies[id].wpstxt);
 	
-	if (id == gActiveArmyID) gWPMapDirty = true; // regen needed TODO refresh map here ? or better afterwards ?
+	if (id == gActiveArmyID) {
+		gWPMapDirty = true; // regen needed TODO refresh map here ? or better afterwards ?
+		gReportedWPMaxPrio = wpmaxprio;
+	}
 	
 	// alert("JSArmyUpdate("+name+")");
 	
@@ -241,6 +245,7 @@ function AddWP (absx,absy) {
 	wps[wps.length] = oldwp;
 	wps[wps.length] = newwp;
 	
+	gReportedWPMaxPrio = activearmy.wpmaxprio;
 	if (activearmy.wpmaxprio == -1)
 			activearmy.wpmaxprio = 1;
 	else	activearmy.wpmaxprio++;
@@ -931,7 +936,8 @@ function ExecuteTool	(absx,absy,tool) {
 	var naviframe = GetNaviFrame();
 	if (!naviframe) return;
 	var activearmy = GetActiveArmy();
-	var wpmaxprio = activearmy?activearmy.wpmaxprio:-1;
+	var wpmaxprio = activearmy?gReportedWPMaxPrio:-1;
+	if (((tool==-1)?naviframe.GetCurTool():tool) == kMapNaviTool_WP) alert("Adding WP with prio "+wpmaxprio);
 	naviframe.mapclicktool(absx,absy,gActiveArmyID,wpmaxprio,tool);
 }
 
@@ -1149,7 +1155,7 @@ function ShowMapTip(relx,rely) {
 		if (army) { 
 			// distance to last wp
 			tiptext += "<tr><td nowrap colspan=2>";
-			tiptext += "<span>Entf.zum letzten WP:"+(army.lastwpx-relx-gLeft)+","+(army.lastwpy-rely-gTop)+"</span><br>";
+			tiptext += "<span>Entf.zum letzten WP:"+(army.lastwpx-relx-gLeft)+","+(army.lastwpy-rely-gTop)+":"+army.wpmaxprio+"</span><br>";
 			tiptext += "</td></tr>";
 		}
 		if (wp || (gWPMap && gWPMap[relx][rely].length > 1)) {

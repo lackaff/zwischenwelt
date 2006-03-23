@@ -324,7 +324,7 @@ if ($gUser->admin && isset($f_regentypes)) {
 		// vermutlich weil die funktion ueber das map frame aufgerufen wird -> browserbug ?
 		var url = "<?=BASEURL?>info/info.php?x="+x+"&y="+y+urladd+"&sid=<?=$gSID?>";
 		//alert(url);
-		if (mytool == 0 || mytool == 20) 
+		if (mytool == kMapNaviTool_Look || mytool == kMapNaviTool_QuickMagic || 1) 
 				parent.info.location.href = url;
 		else {
 			<?php for ($i=0;$i<kDummyFrames;++$i) {?>
@@ -333,7 +333,10 @@ if ($gUser->admin && isset($f_regentypes)) {
 		}
 		
 		// update the brush tool
-		if (mytool == 1 || mytool == 2 || mytool == 5 || (mytool >= 6 && mytool <= 15)) {
+		if (mytool == kMapNaviTool_Plan || 
+			mytool == kMapNaviTool_SetTerrain || 
+			mytool == kMapNaviTool_Cancel || 
+			(mytool >= kMapNaviTool_SetBuilding && mytool <= kMapNaviTool_Clear)) {
 			if (gBrushLineOn) {
 				if (gBrush == 1 || gBrush == 3) StopBrushLine();
 			} else {
