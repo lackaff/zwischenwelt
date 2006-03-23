@@ -1,5 +1,6 @@
 <?php
 
+
 $agent = $_SERVER["HTTP_USER_AGENT"];
 $newmenu = intval($gUser->flags) & kUserFlags_DropDownMenu;
 //!(strpos($agent,"Firefox")===false);
