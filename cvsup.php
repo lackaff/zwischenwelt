@@ -13,6 +13,6 @@ Lock();
 <?php
 if ($gUser->admin){
 	// cvs up :
-	?><pre><?php passthru("sudo -u hagish /home/hagish/zw/cvsup.sh")?></pre><?php
+	?><pre><?php passthru("sudo -u hagish /usr/bin/svn up /home/hagish/zw")?></pre><?php
 }
 ?>
