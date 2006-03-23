@@ -156,6 +156,7 @@ gThisUserID = <?=intval($gUser->id)?>;
 gGFXBase = "<?=$gGFXBase?>";
 gBig = <?=(isset($f_big) && $f_big)?1:0?>;
 gMapMode = <?=isset($f_mode)?intval($f_mode):kJSMapMode_Normal?>;
+gSlowMap = <?=(intval($gUser->flags) & kUserFlags_SlowMap)?1:0?>;
 
 function MapLoad () {
 	<?php
@@ -303,7 +304,12 @@ function MapLoad () {
 //-->
 </SCRIPT>
 </head><body id="mapbody" onLoad="MapLoad()">
-<span id="mapzone">JavaScript Karte wird geladen...</span>
+<?php if (1) {?><div class="mapreporttext" name="mapdebug" id="mapdebug"></div><?php }?>
+<div class="tabs"><?php // prevent linefeeds ins html here...
+?><div class="tabheader"><span id="mapzone">JavaScript Karte wird geladen...</span></div><?php
+?><div class="tabpane"><div id="totalmapborder" style="border:2px solid white;"><?php
+?><table class="map" onMouseout="AbortTip()" border=0 cellpadding=0 cellspacing=0><?php for ($i=0;$i<$gCY+2;++$i) {?><tr id="row<?=$i?>"></tr><?php }?></table><?php
+?></div></div></div><?php
+?><div class="tabsend"></div><span id="maptipzone"></span>
 <noscript><b style="color:red">JavaScript needed!</b><br></noscript>
-<?php if (1) {?><div name="mapdebug" id="mapdebug"></div><?php }?>
 </body></html>

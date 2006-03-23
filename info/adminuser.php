@@ -11,15 +11,6 @@ AdminLock();
 $userrecord = sqlgetone("SELECT `userid` FROM `userrecord` WHERE `userid`=".intval($f_id));
 if(!$userrecord)sql("INSERT INTO `userrecord` SET `userid`=".intval($f_id));
 
-$flags = array(
-	kUserFlags_TerraFormer => "TerraFormer",
-	kUserFlags_DropDownMenu => "DropDownMenu",
-	kUserFlags_BugOperator => "BugOperator",
-	kUserFlags_ShowLogFrame => "ShowLogFrame",
-	kUserFlags_DontShowWikiHelp => "DontShowWikiHelp",
-	kUserFlags_AutomaticUpgradeBuildingTo => "AutoUpgradeBuildingTo"
-);
-
 $races = array(
 	kRace_Mensch => "Mensch",
 	kRace_Gnome => "Gnome"
@@ -36,7 +27,7 @@ $form = new cTableEditForm("?sid=?&id=$f_id","user $f_id editieren",
 			new cTableEditCheckedField("user","id",$f_id,"IPLock?","iplock"),
 			new cTableEditTextField("user","id",$f_id,"GFXPath","gfxpath"),
 			new cTableEditCheckedField("user","id",$f_id,"Use Local CSS?","localstyles"),
-			new cTableEditFlagField("user","id",$f_id,"Flags","flags",$flags),
+			new cTableEditFlagField("user","id",$f_id,"Flags","flags",$gUserFlagNames),
 			new cTableEditRadioField("user","id",$f_id,"Rasse","race",$races),
 			new cTableEditTextField("user","id",$f_id,"Pop","pop"),
 			new cTableEditTextField("user","id",$f_id,"GP","guildpoints"),

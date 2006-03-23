@@ -161,9 +161,9 @@ define("kTech_MagieMeisterschaft",58);
 
 define("kTerraFormer_SicherheitsAbstand",$gGlobal["kTerraFormer_SicherheitsAbstand"]); //25);
 
-define("kUserFlags_TerraFormer",				(1<<0));
-define("kUserFlags_DropDownMenu",				(1<<1));
-define("kUserFlags_BugOperator",				(1<<2));
+define("kUserFlags_TerraFormer",				(1<<0)); // set by admin
+define("kUserFlags_DropDownMenu",				(1<<1)); // obsolete
+define("kUserFlags_BugOperator",				(1<<2)); // set by admin
 define("kUserFlags_ShowLogFrame",				(1<<3));
 define("kUserFlags_DontShowWikiHelp",			(1<<4));
 define("kUserFlags_NoMonsterFightReport",		(1<<5));
@@ -171,6 +171,23 @@ define("kUserFlags_AutomaticUpgradeBuildingTo",	(1<<6));
 define("kUserFlags_DontShowNoobTip",			(1<<7));
 define("kUserFlags_ShowMaxRes",					(1<<8));
 define("kUserFlags_NoTabs",						(1<<9));
+define("kUserFlags_SlowMap",					(1<<10));
+$gUserFlagNames = array(
+	kUserFlags_TerraFormer					=> "TerraFormer",
+	kUserFlags_BugOperator					=> "BugOperator",
+	kUserFlags_DropDownMenu					=> "DropDownMenu benutzen (geht nur im Firefox!)?", // obsolete
+	
+	kUserFlags_ShowLogFrame					=> "LogFrame anzeigen?",
+	kUserFlags_DontShowWikiHelp				=> "WikiHilfe ausblenden",
+	kUserFlags_NoMonsterFightReport			=> "Monsterkampfberichte entfernen",
+	kUserFlags_AutomaticUpgradeBuildingTo	=> "bei neuen Gebäuden automatisch Upgrades planen",
+	kUserFlags_DontShowNoobTip				=> "NoobTips ausblenden",
+	kUserFlags_ShowMaxRes					=> "Lagerkapazität anzeigen",
+	kUserFlags_NoTabs						=> "Tabs Deaktivieren (bei Abstürzen im IE)",
+	kUserFlags_SlowMap						=> "Karte langsam aufbauen (hilft gegen 'Script-abbrechen?'-Warnungen)",
+);
+$gUserFlag_AdminSet = array( kUserFlags_TerraFormer, kUserFlags_BugOperator, kUserFlags_DropDownMenu);
+
 
 define("kDiplo_BreakFriendOnAttack","diplo_breakfriendonattack");
 

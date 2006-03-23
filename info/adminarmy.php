@@ -32,9 +32,6 @@ $form = new cTableEditForm("?sid=?&id=$f_id","armee $f_id editieren",
 );
 
 $form->HandleInput();
-// regenerate typecache
-RegenTypeCache();
-require(kTypeCacheFile);
 
 
 require_once("header.php"); 

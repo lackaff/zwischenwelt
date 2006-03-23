@@ -27,13 +27,13 @@ class cArmy {
 			$wps = sqlgettable("SELECT * FROM `waypoint` WHERE `army` = ".$army->id." ORDER BY `priority`");
 			$army->wpstxt = cArmy::GetJavaScriptWPs($wps,$gLeft,$gTop,$gCX,$gCY);
 			$lastwp = (count($wps)>0)?$wps[count($wps)-1]:false;
-			$army->wpmaxprio = $lastwp?$lastwp->priority:0;
+			$army->wpmaxprio = $lastwp?$lastwp->priority:-1;
 			$army->jsflags |= kJSMapArmyFlag_Controllable;
 			if (intval($army->flags) & kArmyFlag_GuildCommand) $army->jsflags |= kJSMapArmyFlag_GC;
 		} else {
 			$army->wpstxt = "";
 			$lastwp = false;
-			$army->wpmaxprio = 0;
+			$army->wpmaxprio = -1;
 		}
 		
 		if (sqlgetone("SELECT 1 FROM `fight` WHERE `attacker` = ".$army->id." OR `defender` = ".$army->id." LIMIT 1"))
@@ -587,12 +587,13 @@ class cArmy {
 	
 	
 	
-	function ArmySetWaypoint ($army,$x,$y) {  // object or id
+	function ArmySetWaypoint ($army,$x,$y,$waypointmaxprio=-1) {  // object or id
 		if (!is_object($army)) $army = sqlgetobject("SELECT * FROM `army` WHERE `id`=".intval($army));
 		if(!$army) return false;
 		echo "ArmySetWaypoint($army->name,$x,$y)<br>";
 		
-		$waypointmaxprio = sqlgetone("SELECT MAX(`priority`) FROM `waypoint` WHERE `army` = ".$army->id);	
+		if ($waypointmaxprio == -1)
+			$waypointmaxprio = sqlgetone("SELECT MAX(`priority`) FROM `waypoint` WHERE `army` = ".$army->id);	
 		if (!$waypointmaxprio) {
 			// first waypoint set, start move delay
 			sql("UPDATE `army` SET `nextactiontime` = ".(time()+60)." WHERE `id` = ".$army->id." LIMIT 1");  // TODO :unhardcode

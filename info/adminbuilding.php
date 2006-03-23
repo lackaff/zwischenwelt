@@ -38,8 +38,6 @@ $form = new cTableEditForm("?sid=?&id=$f_id","Building $f_id editieren",
 
 $form->HandleInput();
 // regenerate typecache
-RegenTypeCache();
-require(kTypeCacheFile);
 
 require_once("header.php"); 
 $form->Show();

@@ -178,7 +178,8 @@ class cInfoArmy extends cInfoBase {
 				if (!$lastwp) { $lastwp->x = $army->x; $lastwp->y = $army->y; }
 				if ($f_gfxbuttonmode == "wp") $f_button_wp = 1;
 				if ($f_gfxbuttonmode == "route") $f_button_route = 1;
-				if(isset($f_button_wp)) $newwps = array(cArmy::ArmySetWaypoint($army->id,$f_x,$f_y));
+				$old_wpmaxprio = isset($f_wpmaxprio)?intval($f_wpmaxprio):-1; // jsmap can pass its oldest known maxprio and not wait for feedback before adding new wps
+				if(isset($f_button_wp)) $newwps = array(cArmy::ArmySetWaypoint($army->id,$f_x,$f_y,$old_wpmaxprio));
 				else if(isset($f_button_route)){
 					require_once("../lib.path.php");
 					profile_page_start("pathfinding");
@@ -219,7 +220,13 @@ class cInfoArmy extends cInfoBase {
 					}
 				}
 				$pathlen = count($path);
-				JSRefreshArmy($army);
+				
+				
+				if ($f_button_wp && isset($f_wpmaxprio)) { 
+					// don't send any commando to map, generates it's own feedback, as it knows where the wp has been set
+				} else {
+					JSRefreshArmy($army);
+				}
 				
 				for ($i=0;$i<$newwplen;++$i) { 
 					list($x,$y) = $newwps[$i]; 

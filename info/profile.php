@@ -14,16 +14,8 @@ function setPlayerProfil($id,$profil) {
 	sql("INSERT INTO `userprofil` SET `profil`='".addslashes($profil)."' , `id`=".intval($id));
 }
 
-$flaglist = array(
-//	"DropDownMenu benutzen (geht nur im Firefox!)?" => kUserFlags_DropDownMenu,
-	"LogFrame anzeigen?" => kUserFlags_ShowLogFrame,
-	"WikiHilfe ausblenden" => kUserFlags_DontShowWikiHelp,
-	"Monsterkampfberichte entfernen" => kUserFlags_NoMonsterFightReport,
-	"bei neuen Gebäuden automatisch Upgrades planen" => kUserFlags_AutomaticUpgradeBuildingTo,
-	"NoobTips ausblenden" => kUserFlags_DontShowNoobTip,
-	"Lagerkapazität anzeigen" => kUserFlags_ShowMaxRes,
-	"Tabs Deaktivieren (bei Abstürzen im IE)" => kUserFlags_NoTabs,
-);
+$flaglist = array();
+foreach ($gUserFlagNames as $flag => $descr) if (!in_array($flag,$gUserFlag_AdminSet)) $flaglist[$flag] = $descr;
 
 profile_page_start("profile.php");
 $s=sqlgetobject("SELECT `value` FROM `guild_pref` WHERE `var`='schulden_".$gUser->id."'");
@@ -37,7 +29,7 @@ if(isset($f_ok)){
 	if(isset($f_iplock) && $f_iplock)$o->iplock = 1;
 	else $o->iplock = 0;
 	$o->flags = intval($gUser->flags);
-	foreach($flaglist as $name=>$flag){
+	foreach($flaglist as $flag => $name){
 		if(isset(${"f_flag_".$flag}) && ${"f_flag_".$flag}) {$o->flags |= intval($flag);}
 		//else if($o->flags & $flag) {$o->flags ^= $flag;$outi .= "xor $flag";}
 		else {$o->flags &= ~intval($flag);}
@@ -196,7 +188,7 @@ $s=sqlgetobject("SELECT `value` FROM `guild_pref` WHERE `var`='schulden_".$gUser
 	<tr><td></td><td>eigene Homepage</td></tr>
 	<tr><th>Password</td><td><input type="password" size="64" name="pass" value=""></td></tr>
 	<tr><td></td><td>mindestens 6 Zeichen</td></tr>
-	<?php foreach($flaglist as $text=>$flag){ ?>
+	<?php foreach($flaglist as $flag => $text){ ?>
 	<tr><td colspan=2><input type="checkbox" name="flag_<?=$flag?>" value="1" <?=(intval($gUser->flags) & $flag?"checked":"")?>> <b><?=$text?></b> 
 	<?php } ?>
 	<tr><td colspan=2 align=left><input type="submit" name="ok" value="übernehmen"></td></tr>

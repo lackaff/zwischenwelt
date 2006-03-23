@@ -39,8 +39,14 @@ function GetBuildDistFactor (dist) {
 }
 
 // equals the php function GetNextStep in lib.main.php
+var gGetNextStepX;
+var gGetNextStepY;
 function GetNextStep (x,y,x1,y1,x2,y2) {
-	if (x == x2 && y == y2) return new Array(x,y); // already arrived
+	if (x == x2 && y == y2) {
+		gGetNextStepX = x;
+		gGetNextStepY = y;
+		return; // already arrived
+	}
 	var minx,maxx,backx,xdif,line_x1,line_x2;
 	var miny,maxy,backy,ydif,line_y1,line_y2;
 	
@@ -54,13 +60,23 @@ function GetNextStep (x,y,x1,y1,x2,y2) {
 	backx = (x < minx) ? (minx - x) : ( (x > maxx) ? (maxx - x) : 0 );
 	backy = (y < miny) ? (miny - y) : ( (y > maxy) ? (maxy - y) : 0 );
 	if (backx != 0 || backy != 0) {
-		if (Math.abs(backx) > Math.abs(backy)) 
-				return new Array(x+((backx>0)?1:-1),y);
-		else	return new Array(x,y+((backy>0)?1:-1));
+		if (Math.abs(backx) > Math.abs(backy)) {
+			gGetNextStepX = x+((backx>0)?1:-1);
+			gGetNextStepY = y;
+			return;
+		} else {
+			gGetNextStepX = x;
+			gGetNextStepY = y+((backy>0)?1:-1);
+			return;
+		}
 	}
 	
 	// waylength zero
-	if (x1 == x2 && y1 == y2) return new Array(x1,y1);
+	if (x1 == x2 && y1 == y2) {
+		gGetNextStepX = x1;
+		gGetNextStepY = y1;
+		return;
+	}
 	
 	xdif = x2-x1;
 	ydif = y2-y1;
@@ -71,9 +87,18 @@ function GetNextStep (x,y,x1,y1,x2,y2) {
 		miny = Math.round(Math.min(line_y1,line_y2));
 		maxy = Math.round(Math.max(line_y1,line_y2));
 		
-		if (ydif > 0 && y < maxy) return new Array(x,y+1); // move verti
-		if (ydif < 0 && y > miny) return new Array(x,y-1); // move verti
-		return new Array(x+((xdif > 0)?1:-1),y); // move hori
+		if (ydif > 0 && y < maxy) {
+			gGetNextStepX = x;
+			gGetNextStepY = y+1; // move verti
+			return;
+		}
+		if (ydif < 0 && y > miny) {
+			gGetNextStepX = x;
+			gGetNextStepY = y-1; // move verti
+			return;
+		}
+		gGetNextStepX = x+((xdif > 0)?1:-1); // move hori
+		gGetNextStepY = y;
 	} else {
 		// vertical movement
 		line_x1 = (x1+((y-0.5-y1)/ydif)*xdif);
@@ -81,9 +106,18 @@ function GetNextStep (x,y,x1,y1,x2,y2) {
 		minx = Math.round(Math.min(line_x1,line_x2));
 		maxx = Math.round(Math.max(line_x1,line_x2));
 		
-		if (xdif > 0 && x < maxx) return new Array(x+1,y); // move hori
-		if (xdif < 0 && x > minx) return new Array(x-1,y); // move hori
-		return new Array(x,y+((ydif > 0)?1:-1)); // move verti
+		if (xdif > 0 && x < maxx) {
+			gGetNextStepX = x+1; // move hori
+			gGetNextStepY = y;
+			return;
+		}
+		if (xdif < 0 && x > minx) {
+			gGetNextStepX = x-1; // move hori
+			gGetNextStepY = y;
+			return;
+		}
+		gGetNextStepX = x;
+		gGetNextStepY = y+((ydif > 0)?1:-1); // move verti
 	}
 }
 

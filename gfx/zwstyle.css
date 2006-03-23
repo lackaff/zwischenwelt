@@ -338,7 +338,10 @@ div.mainmenu ul {
   font:x-small/1.5em Georgia,Serif;
   voice-family: "\"}\""; voice-family:inherit;
   font-size:small;
+}
+/*
 } html>body {font-size:small;}
+*/
 
 .mapnav {
 	border:1px solid black;
@@ -441,6 +444,10 @@ BODY {
 	FONT-WEIGHT: normal;
 	margin:2px;
 	padding:2px;
+}
+
+.mapreporttext {
+	font-family: arial, sans-serif;
 }
 
 /* ***** old stuff ***** */

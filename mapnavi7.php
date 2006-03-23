@@ -153,8 +153,8 @@ if ($gUser->admin && isset($f_regentypes)) {
 		// show new cat
 		if (gGotoCat == <?=kMapNaviGotoCat_Pos?>) 		{ Show("pos"); }
 		if (gGotoCat == <?=kMapNaviGotoCat_Mark?>)		{ ShowList1(); }
-		if (gGotoCat == <?=kMapNaviGotoCat_Own?>)		{ ShowList2();  Show("armyshow"); }
-		if (gGotoCat == <?=kMapNaviGotoCat_Guild?>)		{ ShowList2();  Show("armyshow"); }
+		if (gGotoCat == <?=kMapNaviGotoCat_Own?>)		{ ShowList2(); Show("armyshow"); }
+		if (gGotoCat == <?=kMapNaviGotoCat_Guild?>)		{ ShowList2(); Show("armyshow"); }
 		if (gGotoCat == <?=kMapNaviGotoCat_Friends?>)	{ ShowList1(); }
 		if (gGotoCat == <?=kMapNaviGotoCat_Enemies?>)	{ ShowList1(); }
 		if (gGotoCat == <?=kMapNaviGotoCat_Search?>)	{ ShowList1(); Show("search"); }
@@ -231,6 +231,7 @@ if ($gUser->admin && isset($f_regentypes)) {
 		if (curtool == <?=kMapNaviTool_WP?>			) return true;
 		if (curtool == <?=kMapNaviTool_Route?>		) return true;
 		if (curtool == <?=kMapNaviTool_Cancel?>		) return true;
+		if (curtool == <?=kMapNaviTool_MultiTool?>	) return false;
 		if (curtool >= <?=kMapNaviTool_SetBuilding?>) return true;
 		return false;
 	}
@@ -409,6 +410,11 @@ if ($gUser->admin && isset($f_regentypes)) {
 		StopBrushLine();
 		gBrush = newbrushnum;
 	}
+	function NaviActivateWP () {
+		var armyid = GetName("gotocat3").value;
+		//alert("NaviActivateWP "+armyid);
+		parent.map.JSActivateArmy(armyid,false);
+	}
 //-->
 </SCRIPT>
 </head><body onLoad="MyOnLoad()">
@@ -429,7 +435,7 @@ if ($gUser->admin && isset($f_regentypes)) {
 <INPUT TYPE="text" NAME="pos" VALUE="" style="width:90px;display:none;">
 <INPUT TYPE="text" NAME="search" VALUE="" style="width:90px;display:none;" >
 <INPUT TYPE="submit" NAME="armygoto" VALUE="&gt;">
-<INPUT TYPE="submit" NAME="armyshow" VALUE="wp" style="display:none;">
+<input type="button" name="armyshow" value="wp" onClick="NaviActivateWP()" style="display:none;">
 </FORM>
 </div>
 
