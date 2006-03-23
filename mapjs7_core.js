@@ -651,6 +651,7 @@ function CreateMapStep () {
 		for (x=-1;x<gCX+1;++x) if (x >= 0 && x < gCX && y >= 0 && y < gCY) {
 			// cell
 			rowhtml += "<td nowrap class=\"mapcell\" id=\"cell_"+x+"_"+y+"\">"+GetCellHTML(x,y)+"</td>\n";
+			document.getElementById("cell_"+(x+1)+"_"+(y+1)).innerHTML = GetCellHTML(x,y);
 		} else {
 			// border
 			myclass = "mapborder_" + (y<gYMid ? "n" : (y==gYMid?"":"s")) + (x<gXMid ? "w" : (x==gXMid?"":"e"));
@@ -675,9 +676,13 @@ function CreateMapStep () {
 			//var blindcy = (x<0)?kJSForceIESpace:1;
 			//var blindgif = (x<0&&y<0)?"":("<img src=\""+g("edit.png")+"\" width="+blindcx+" height="+blindcy+">");
 			rowhtml += "<th nowrap class=\"mapborder\"><div class=\""+myclass+"\" onClick=\"navrel("+navx+","+navy+","+step+")\"><span>"+text+"</span></div></th>\n";
+			document.getElementById("cell_"+(x+1)+"_"+(y+1)).innerHTML = "<div class=\""+myclass+"\" onClick=\"navrel("+navx+","+navy+","+step+")\"><span>"+text+"</span></div>";
 		}
 		
-		document.getElementById("row"+(y+1)).innerHTML = rowhtml;
+		
+		//if(y < 1)alert(y+": "+rowhtml);
+		//document.getElementById("row"+(y+1)).innerHTML = rowhtml;
+		//if(y < 1)alert(y+": "+document.getElementById("row"+(y+1)).innerHTML);
 		
 		++gMapConstructionCurY;
 		if (gBig) {
