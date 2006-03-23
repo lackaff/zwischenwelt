@@ -36,7 +36,8 @@ ob sie vom Stil her zu den restlichen Sachen passen. Es d&uuml;rfen nur eigene S
 Urheberrechte hat hochgeladen werden. Auﬂerdem muﬂ man mit den Lizenzbestimmungen einverstanden sein.
 Code wird unter der GPL ver&ouml;ffentlicht und andere Daten unter der 
 <a target="_blank" href="http://creativecommons.org/licenses/by-nc-sa/2.0/">[CC]Attribution-NonCommercial-ShareAlike 2.0</a>.
-Alle Daten mit eventuellen Hinweisen bitte in ein Archiv zusammenpacken (zB. zip, tar,bz2) und das Archiv hochladen. Der Name und die eMail
+Alle Daten mit eventuellen Hinweisen bitte in ein Archiv zusammenpacken (zB. zip, tar,bz2) und das Archiv hochladen. Einzelne Dateien muss man nicht
+in ein Archiv packen, wenn man aber ein ganzes Set hochladen will, soll man es in einem Archiv hochladen. Der Name und die eMail
 werden zusammen mit den hochgeladenen Daten gespeichert, damit es m&ouml;glich ist den Urheber der Daten zu kontaktieren.
 <br>
 <br>
