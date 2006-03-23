@@ -133,6 +133,12 @@ function GetUnitsMovableMask (units) {
 	return mask;
 }
 
+function GetArmyPosSpeed (relx,rely,army) {
+	if (!army) return 0;
+	var movablemask = GetUnitsMovableMask(army.units);
+	return GetPosSpeed(relx,rely,movablemask,army.id);
+}
+				
 // equals the php function GetPosSpeed in lib.main.php
 function GetPosSpeed (relx,rely,movablemask,skiparmyid) {
 	// check army

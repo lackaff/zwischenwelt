@@ -306,19 +306,9 @@ function MapLoad () {
 </head><body id="mapbody" onLoad="MapLoad()">
 <?php if (1) {?><div class="mapreporttext" name="mapdebug" id="mapdebug"></div><?php }?>
 <div class="tabs"><?php // prevent linefeeds ins html here...
-?><div class="tabheader"><span id="mapzone">JavaScript Karte wird geladen...</span></div><?php
+?><div class="tabheader"><span id="mapheaderzone">JavaScript Karte wird geladen...</span></div><?php
 ?><div class="tabpane"><div id="totalmapborder" style="border:2px solid white;"><?php
-?><table class="map" onMouseout="AbortTip()" border=0 cellpadding=0 cellspacing=0>
-<?php 
-for ($y=0;$y<$gCY+2;++$y){
-	echo '<tr id="row'.$y.'">';
-	for($x=0;$x<$gCX+2;++$x) {
-		if($x>0 && $x<$gCX+2-1 && $y>0 && $y<$gCY+2-1)echo "<td nowrap class=\"mapcell\" id=\"cell_".$x."_".$y."\"></td>";
-		else echo "<th nowrap class=\"mapborder\" id=\"cell_".$x."_".$y."\"></th>";
-	}
-	echo "</tr>\n";
-}
-?></table><?php
+?><span id="mapzone">...</span><?php
 ?></div></div></div><?php
 ?><div class="tabsend"></div><span id="maptipzone"></span>
 <noscript><b style="color:red">JavaScript needed!</b><br></noscript>

@@ -392,13 +392,14 @@ class Spell_Portalstein extends Spell {
 		if (!parent::Birth($success)) return false;
 		$itemtypeids = array(
 			kItem_Portalstein_Blau,
-			kItem_Portalstein_Blau,
-			kItem_Portalstein_Gruen,
 			kItem_Portalstein_Gruen,
 			kItem_Portalstein_Schwarz,
 			kItem_Portalstein_Rot);
 		$itemtypeid = $itemtypeids[array_rand($itemtypeids)];
-		cItem::SpawnItem($this->x,$this->y,$itemtypeid);
+		$army = sqlgetone("SELECT * FROM `army` WHERE `x` = ".intval($this->x)." AND `y` = ".intval($this->y));
+		if ($army)
+				cItem::SpawnArmyItem($army,$itemtypeid);
+		else	cItem::SpawnItem($this->x,$this->y,$itemtypeid);
 		global $gItemType;
 		echo "<img src='".g($gItemType[$itemtypeid]->gfx)."'>erzeugt<br>";
 		return true;
