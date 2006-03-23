@@ -56,12 +56,12 @@ if ($gUser->admin && isset($f_regentypes)) {
 					`army`.`user` = `user`.`id` AND 
 					`user`.`guild` = ".$guild." AND 
 					`army`.`type` = ".$o->id." 
-					ORDER BY `name`","id");
+					ORDER BY `army`.`user`,`name`","id");
 				$controllable = array();
 				foreach ($gildenarmeen as $a)
 					if (($a->user != $gUser->id || (intval($a->flags) & kArmyFlag_GuildCommand)) && 
 						cArmy::CanControllArmy($a,$gUser)) // only gc armies, not own armies who are not under gc
-						$controllable[$a->id] = $a->name."(".$a->username.")";
+						$controllable[$a->id] = "(".$a->username.")".$a->name;
 				if (count($controllable) > 0) $res[$o->name] = $controllable;
 			}
 		}
