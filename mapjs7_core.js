@@ -657,8 +657,6 @@ function CreateMapStep () {
 	
 	// maptiles
 	if (y<gCY+1) {
-		MapReport("Erzeuge Kartenzeile "+y+"/"+(gCY)+gMapWarnTipp);
-		
 		gMapHTML += '<tr>';
 		for (x=-1;x<gCX+1;++x) {
 			if (x >= 0 && x < gCX && y >= 0 && y < gCY) {
@@ -699,11 +697,13 @@ function CreateMapStep () {
 		if (gBig) {
 			if (gSlowMap) {
 				if ((y % 4) == 0) {
+					MapReport("Erzeuge Kartenzeile "+y+"/"+(gCY)+gMapWarnTipp);
 					window.setTimeout("CreateMapLoopPart()",800);
 					return true;
 				}
 			} else {
 				if (y > 0 && (y % 4) == 0) {
+					MapReport("Erzeuge Kartenzeile "+y+"/"+(gCY)+gMapWarnTipp);
 					window.setTimeout("CreateMapLoopPart()",200);
 					return true;
 				}
