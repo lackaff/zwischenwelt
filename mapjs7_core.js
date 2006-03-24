@@ -658,13 +658,38 @@ function CreateMapStep () {
 	// maptiles
 	if (y<gCY+1) {
 		MapReport("Erzeuge Kartenzeile "+y+"/"+(gCY)+gMapWarnTipp);
-		//profiling("Erzeuge Kartenzeile "+y+"/"+gCY+1);
-		//rowhtml = "";
-		for (x=-1;x<gCX+1;++x) if (x >= 0 && x < gCX && y >= 0 && y < gCY) {
-			// cell
-			//rowhtml += "<td nowrap class=\"mapcell\" id=\"cell_"+x+"_"+y+"\">"+GetCellHTML(x,y)+"</td>\n";
-			document.getElementById("cell_"+(x)+"_"+(y)).innerHTML = GetCellHTML(x,y);
+		
+		gMapHTML += '<tr>';
+		for (x=-1;x<gCX+1;++x) {
+			if (x >= 0 && x < gCX && y >= 0 && y < gCY) {
+				gMapHTML += "<td nowrap class=\"mapcell\" id=\"cell_"+x+"_"+y+"\">"+GetCellHTML(x,y)+"</td>\n";
+			} else {
+				// border
+				myclass = "mapborder_" + (y<gYMid ? "n" : (y==gYMid?"":"s")) + (x<gXMid ? "w" : (x==gXMid?"":"e"));
+				if ((x < 0 || x >= gCX) && (y < 0 || y >= gCY)) myclass += "_edge";
+				
+				// arrows for the big and small steps
+				step = normalstep;
+				
+					 if(x+1 == gXMid && y<gYMid){step = smallstep;	myclass = "mapborder_n_small";}
+				else if(x-1 == gXMid && y<gYMid){step = bigstep;	myclass = "mapborder_n_big";}
+				else if(y+1 == gYMid && x<gXMid){step = smallstep;	myclass = "mapborder_w_small";}
+				else if(y-1 == gYMid && x<gXMid){step = bigstep;	myclass = "mapborder_w_big";}
+				else if(x+1 == gXMid && y>gYMid){step = smallstep;	myclass = "mapborder_s_small";}
+				else if(x-1 == gXMid && y>gYMid){step = bigstep;	myclass = "mapborder_s_big";}
+				else if(y+1 == gYMid && x>gXMid){step = smallstep;	myclass = "mapborder_e_small";}
+				else if(y-1 == gYMid && x>gXMid){step = bigstep;	myclass = "mapborder_e_big";}
+				
+				navx = x<0?-1:(x>=gCX?1:0);
+				navy = y<0?-1:(y>=gCY?1:0);
+				text = (x < 0 || x >= gCX) ? (y+gTop) : (x+gLeft);
+				//var blindcx = (y<0)?kJSForceIESpace:1;
+				//var blindcy = (x<0)?kJSForceIESpace:1;
+				//var blindgif = (x<0&&y<0)?"":("<img src=\""+g("edit.png")+"\" width="+blindcx+" height="+blindcy+">");
+				gMapHTML += "<th nowrap class=\"mapborder\"><div class=\""+myclass+"\" onClick=\"navrel("+navx+","+navy+","+step+")\"><span>"+text+"</span></div></th>\n";
+			}
 		}
+		gMapHTML += '</tr>';
 		
 		//if(y < 1)alert(y+": "+rowhtml);
 		//document.getElementById("row"+(y+1)).innerHTML = rowhtml;
@@ -678,7 +703,7 @@ function CreateMapStep () {
 					return true;
 				}
 			} else {
-				if (y > 0 && (y % 8) == 0) {
+				if (y > 0 && (y % 4) == 0) {
 					window.setTimeout("CreateMapLoopPart()",200);
 					return true;
 				}
@@ -692,6 +717,9 @@ function CreateMapStep () {
 		
 		//profiling("sending html to browser");
 		MapReport("");
+		
+		gMapHTML += '</table>';
+		document.getElementById("mapzone").innerHTML = gMapHTML;
 		
 		VersionCheckNavi();
 	
@@ -729,44 +757,8 @@ function CreateMap() {
 	var smallstep = Math.floor(gXMid/2),bigstep = gCX-1,normalstep = gXMid;
 	var navx,navy,text;
 	
-	gMapHTML = "";
-	gMapHTML += '<table class="map" onMouseout="AbortTip()" border=0 cellpadding=0 cellspacing=0>';
+	gMapHTML = '<table class="map" onMouseout="AbortTip()" border=0 cellpadding=0 cellspacing=0>';
 	
-	for (y=-1;y<gCY+1;++y){
-		gMapHTML += '<tr>';
-		for (x=-1;x<gCX+1;++x) {
-			if (x >= 0 && x < gCX && y >= 0 && y < gCY) {
-				gMapHTML += "<td nowrap class=\"mapcell\" id=\"cell_"+x+"_"+y+"\"></td>\n";
-			} else {
-				// border
-				myclass = "mapborder_" + (y<gYMid ? "n" : (y==gYMid?"":"s")) + (x<gXMid ? "w" : (x==gXMid?"":"e"));
-				if ((x < 0 || x >= gCX) && (y < 0 || y >= gCY)) myclass += "_edge";
-				
-				// arrows for the big and small steps
-				step = normalstep;
-				
-					 if(x+1 == gXMid && y<gYMid){step = smallstep;	myclass = "mapborder_n_small";}
-				else if(x-1 == gXMid && y<gYMid){step = bigstep;	myclass = "mapborder_n_big";}
-				else if(y+1 == gYMid && x<gXMid){step = smallstep;	myclass = "mapborder_w_small";}
-				else if(y-1 == gYMid && x<gXMid){step = bigstep;	myclass = "mapborder_w_big";}
-				else if(x+1 == gXMid && y>gYMid){step = smallstep;	myclass = "mapborder_s_small";}
-				else if(x-1 == gXMid && y>gYMid){step = bigstep;	myclass = "mapborder_s_big";}
-				else if(y+1 == gYMid && x>gXMid){step = smallstep;	myclass = "mapborder_e_small";}
-				else if(y-1 == gYMid && x>gXMid){step = bigstep;	myclass = "mapborder_e_big";}
-				
-				navx = x<0?-1:(x>=gCX?1:0);
-				navy = y<0?-1:(y>=gCY?1:0);
-				text = (x < 0 || x >= gCX) ? (y+gTop) : (x+gLeft);
-				//var blindcx = (y<0)?kJSForceIESpace:1;
-				//var blindcy = (x<0)?kJSForceIESpace:1;
-				//var blindgif = (x<0&&y<0)?"":("<img src=\""+g("edit.png")+"\" width="+blindcx+" height="+blindcy+">");
-				gMapHTML += "<th nowrap class=\"mapborder\"><div class=\""+myclass+"\" onClick=\"navrel("+navx+","+navy+","+step+")\"><span>"+text+"</span></div></th>\n";
-			}
-		}
-		gMapHTML += '</tr>';
-	}
-	gMapHTML += '</table>';
-	document.getElementById("mapzone").innerHTML = gMapHTML;
 	
 	document.getElementById("maptipzone").innerHTML = "<span class=\"maptip\" onClick=\"KillTip()\" id=\""+kMapTipName+"\" style=\"position:absolute;top:0px;left:0px; visibility:hidden;\">&nbsp;</span>";
 	
