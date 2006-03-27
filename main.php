@@ -13,8 +13,8 @@ $dummyframesetcols = implode(",",$dummyframesetcols);
 </head>
 <frameset cols="*,360" noresize>
 	<?php if((intval($gUser->flags) & kUserFlags_ShowLogFrame) == 0){ ?>
-	<frameset rows="80,*,0" noresize>
-		<frame src="<?=SessionLink("compactmenu.php".((isset($f_fc) && $f_fc==1)?"?fc=1":""));?>" scrolling=no name="menu" noresize frameborder="0">
+	<frameset rows="85,*,0" noresize>
+		<frame src="<?=SessionLink("compactmenu.php".((isset($f_fc) && $f_fc==1)?"?fc=1":""));?>" scrolling=no name="menu" frameborder="1">
 		<frame src="<?=SessionLink("info.php".((isset($f_fc) && $f_fc==1)?"?fc=1":""));?>" name="info" frameborder="0" noresize>
 		<frameset cols="<?=$dummyframesetcols?>" noresize>
 			<?php for($i=0;$i<kDummyFrames;++$i) {?>
@@ -23,8 +23,8 @@ $dummyframesetcols = implode(",",$dummyframesetcols);
 		</frameset>
 	</frameset>
 	<?php } else { ?>
-	<frameset rows="80,*,100,0" noresize>
-		<frame src="<?=SessionLink("compactmenu.php".((isset($f_fc) && $f_fc==1)?"?fc=1":""));?>" scrolling=no name="menu" noresize frameborder="0">
+	<frameset rows="85,*,100,0" noresize>
+		<frame src="<?=SessionLink("compactmenu.php".((isset($f_fc) && $f_fc==1)?"?fc=1":""));?>" scrolling=no name="menu" frameborder="1">
 		<frame src="<?=SessionLink("info.php".((isset($f_fc) && $f_fc==1)?"?fc=1":""));?>" name="info" frameborder="1">
 		<frame src="<?=SessionLink("log.php");?>" name="log" frameborder="0">
 		<frameset cols="<?=$dummyframesetcols?>" noresize>
