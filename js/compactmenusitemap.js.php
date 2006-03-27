@@ -79,10 +79,18 @@ compactmenusitemap=new Array
 */
   'Einheiten',
   <?php
+    foreach($gArmyType as $id=>$type){
+      $l = sqlgettable("SELECT `id`,`name`,`x`,`y` FROM `army` WHERE `type`=".$type->id." AND `user`=".$gUser->id." ORDER BY `name` ASC");
+      if(sizeof($l)>0){
+        ?>
+        '- <?=$type->name?>',        
+        <?php foreach($l as $x){?>
+        '- - <?=$x->name?> | <a target=info href="info/info.php?jumptoarmy=<?=$x->id?>'+phpsid+'" title="<?=$obj->name?> (<?=$x->x?>,<?=$x->y?>)"><?=$x->name?></a>',
+        <?php } }
+    }
+  ?>
+  <?php
     $l = sqlgettable("SELECT `id`,`name`,`x`,`y` FROM `army` WHERE `user`=".$gUser->id." ORDER BY `type` ASC,`name` ASC");
-    foreach($l as $x){?>
-        '- <?=$x->name?> | <a target=info href="info/info.php?jumptoarmy=<?=$x->id?>'+phpsid+'" title="<?=$obj->name?> (<?=$x->x?>,<?=$x->y?>)"><?=$x->name?></a>',
-    <?php }
   ?>
   'Gilde | <a href="info/guild.php?'+phpsid+'" target="info">Gilde</a>',
   '- Allgemein | <a href="info/guild.php?'+phpsid+'" target="info">Allgemein</a>',
