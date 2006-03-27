@@ -41,8 +41,8 @@ compactmenusitemap=new Array
 (
   'HQ | <a target=info href="info/info.php?x=<?=$hq->x?>&y=<?=$hq->y?>'+phpsid+'" title="HQ (<?=$hq->x?>,<?=$hq->y?>)">HQ</a>', 
   '- Haupthaus | <a target=info href="info/info.php?x=<?=$hq->x?>&y=<?=$hq->y?>'+phpsid+'" title="HQ (<?=$hq->x?>,<?=$hq->y?>)">Haupthaus</a>', 
-  '- Forschung | <a href="info/info.php?x=<?=$hq->x?>&y=<?=$hq->y?>&TabPane0Activate=3'+phpsid+'" target="info">Forschung</a>',
-  '- Produktion | <a href="info/info.php?x=<?=$hq->x?>&y=<?=$hq->y?>&TabPane0Activate=4'+phpsid+'" target="info">Produktion</a>',
+  '- Forschung | <a href="info/info.php?x=<?=$hq->x?>&y=<?=$hq->y?>&selectedtab=3'+phpsid+'" target="info">Forschung</a>',
+  '- Produktion | <a href="info/info.php?x=<?=$hq->x?>&y=<?=$hq->y?>&selectedtab=4'+phpsid+'" target="info">Produktion</a>',
   'Übersicht',
   '- Gebäude | <a href="info/summary_buildings.php?'+phpsid+'" target="info">Gebäude</a>',
   '- Forschung | <a href="info/summary_techs.php?'+phpsid+'" target="info">Forschung</a>',
@@ -65,7 +65,7 @@ compactmenusitemap=new Array
   '- Kosten | <a href="info/kosten.php?'+phpsid+'" target="info">Kosten</a>',
   '- Baupläne | <a href="info/bauplan.php?'+phpsid+'" target="info">Baupläne</a>',
   '- Quests | <a href="info/quest.php?'+phpsid+'" target="info">Quests</a>',
-  '- Diplomatie | <a href="info/info.php?x=<?=$hq->x?>&y=<?=$hq->y?>&TabPane0Activate=5'+phpsid+'" target="info">Diplomatie</a>',
+  '- Diplomatie | <a href="info/info.php?x=<?=$hq->x?>&y=<?=$hq->y?>&selectedtab=5'+phpsid+'" target="info">Diplomatie</a>',
 /*
   'Sprung',
   <?php
@@ -79,9 +79,9 @@ compactmenusitemap=new Array
 */
   'Einheiten',
   <?php
-    $l = sqlgettable("SELECT * FROM `army` WHERE `user`=".$gUser->id." ORDER BY `type` ASC,`name` ASC");
+    $l = sqlgettable("SELECT `id`,`name`,`x`,`y` FROM `army` WHERE `user`=".$gUser->id." ORDER BY `type` ASC,`name` ASC");
     foreach($l as $x){?>
-        '- <?=$x->name?> | <a target=info href="info/info.php?x=<?=$x->x?>&y=<?=$x->y?>'+phpsid+'" title="<?=$obj->name?> (<?=$x->x?>,<?=$x->y?>)"><?=$x->name?></a>',
+        '- <?=$x->name?> | <a target=info href="info/info.php?jumptoarmy=<?=$x->id?>'+phpsid+'" title="<?=$obj->name?> (<?=$x->x?>,<?=$x->y?>)"><?=$x->name?></a>',
     <?php }
   ?>
   'Gilde | <a href="info/guild.php?'+phpsid+'" target="info">Gilde</a>',
@@ -117,15 +117,6 @@ $dev = sqlgetobject("SELECT * FROM `building` WHERE `type` = 10 LIMIT 1"); ?>
   '- - ohne Militär | <a href="stats/gen_guild_pts.php?what=gnm'+phpsid+'" target="info">ohne Militär</a>',
   '- - nur Militär | <a href="stats/gen_guild_pts.php?what=gom'+phpsid+'" target="info">nur Militär </a>',
   '- Armeen | <a href="stats/armeen.php?'+phpsid+'" target="info">Armeen</a>',
-  'Account',
-  '- Notiz schreiben | <a href="info/note.php?'+phpsid+'" target="_blank">Notiz schreiben</a>',
-  '- Einstellungen | <a href="info/profile.php?'+phpsid+'" target="info">Einstellungen</a>',
-  /*
-  '- Punkte | <a href="info/profile.php?'+phpsid+'" target="info">Punkte</a>',
-  '- Schulden | <a href="info/profile.php?'+phpsid+'" target="info">Schulden</a>',
-  '- Anzeige | <a href="info/profile.php?'+phpsid+'" target="info">Anzeige</a>',
-  '- Browser | <a href="info/profile.php?'+phpsid+'" target="info">Browser</a>',
-  */
   'Forum | <a href="http://zwischenwelt.org/forum/?'+phpsid+'" target="_blank">Forum</a>',
   '- Private Nachrichten | <a href="forum/index.php?t=pmsg'+phpsid+'" target="_blank">Private Nachrichten</a>',
   '- Ungelesene Beiträge | <a href="forum/index.php?t=selmsg&unread=1&frm_id=0'+phpsid+'" target="_blank">Ungelesene Beiträge</a>',
@@ -133,7 +124,15 @@ $dev = sqlgetobject("SELECT * FROM `building` WHERE `type` = 10 LIMIT 1"); ?>
   '- ZW Wiki | <a href="http://zwischenwelt.org/wiki/?'+phpsid+'" target="_blank">Nachschlagewerk</a>',
   '- Admin fragen | <a href="info/msg.php?show=compose&to=Admin'+phpsid+'" target="info">Admin fragen</a>',
   '- Menu neuladen | <a href="compactmenu.php?sid='+phpsid+'">Menu neuladen</a>',
-  'Logout',
-  '- Wirklich? | <a href="logout.php?'+phpsid+'" target="_blank">Wirklich?</a>',
+  'Account',
+  '- Notiz schreiben | <a href="info/note.php?'+phpsid+'" target="_blank">Notiz schreiben</a>',
+  '- Einstellungen | <a href="info/profile.php?'+phpsid+'" target="info">Einstellungen</a>',
+  '- Logout | <a href="logout.php?'+phpsid+'" target="_blank">Logout</a>',
+  /*
+  '- Punkte | <a href="info/profile.php?'+phpsid+'" target="info">Punkte</a>',
+  '- Schulden | <a href="info/profile.php?'+phpsid+'" target="info">Schulden</a>',
+  '- Anzeige | <a href="info/profile.php?'+phpsid+'" target="info">Anzeige</a>',
+  '- Browser | <a href="info/profile.php?'+phpsid+'" target="info">Browser</a>',
+  */
   ''
 );

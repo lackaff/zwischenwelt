@@ -88,6 +88,11 @@ if ($gUser->guild > 0) {
 	if(in_array($gUser->id,$gc))$guildcommander=TRUE;
 }
 
+if(isset($f_jumptoarmy)){
+	$jarmy = sqlgetobject("SELECT `x`,`y` FROM `army` WHERE `id`=".intval($f_jumptoarmy));
+	$f_x = $jarmy->x;
+	$f_y = $jarmy->y;
+}
 $f_x = intval($f_x);
 $f_y = intval($f_y);
 $gDoReload = true;
@@ -993,7 +998,9 @@ if (isset($f_blind)) { // blind modus im dummy frame, fuer schnellere map-click-
 
 <?php
 if ($gInfoTabsSelected == -1) $gInfoTabsSelected = count($gInfoTabs)-1;
-if ($gInfoTabsPriority < 100 && isset($_COOKIE["activeinfotab"]) && $_COOKIE["activeinfotabx"] == $f_x && $_COOKIE["activeinfotaby"] == $f_y) {
+if(isset($f_selectedtab)){
+	$gInfoTabsSelected = intval($f_selectedtab);
+} else if ($gInfoTabsPriority < 100 && isset($_COOKIE["activeinfotab"]) && $_COOKIE["activeinfotabx"] == $f_x && $_COOKIE["activeinfotaby"] == $f_y) {
 	$gInfoTabsSelected = intval($_COOKIE["activeinfotab"]);
 }
 foreach($gInfoTabs as $i=>$v)$gInfoTabs[$i][0] = "<img border=0 src=\"".g("1px.gif")."\" width=1 height=18>".$gInfoTabs[$i][0];
