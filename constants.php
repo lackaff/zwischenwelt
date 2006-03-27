@@ -567,6 +567,7 @@ define("kBuildingTypeFlag_CanShootBuilding",	1<<5); // 16 used for cannon towers
 define("kBuildingTypeFlag_OthersCanSeeUnits",	1<<6); // 32 used for cannon towers, other players can see units inside
 define("kBuildingTypeFlag_DrawMaxTypeOnTop",	1<<7); // 64 used for cannon towers, draw maximal unit type on top
 define("kBuildingTypeFlag_Bodenschatz",			1<<8); // 128 not yet used -> $gBodenSchatzBuildings
+define("kBuildingTypeFlag_IsInQuickJump",			1<<9); // apears in the quickjump bar
 $gBuildingTypeFlagNames = array(
 	kBuildingTypeFlag_BuildDistSource => 	"BuildDistSource (Abstand zu diesen typen bestimmt den bauzeit faktor)",
 	kBuildingTypeFlag_Speedy => 			"Speedy (newbee Faktor betrifft diese gebäude)",
@@ -577,6 +578,7 @@ $gBuildingTypeFlagNames = array(
 	kBuildingTypeFlag_OthersCanSeeUnits => 	"fremde Spieler können Einheiten im Gebäude sehen (Turm)",
 	kBuildingTypeFlag_DrawMaxTypeOnTop => 	"Haupt-EinheitenTyp wird über das Gebäudebild gezeichnet (Kanonen-Turm)",
 	kBuildingTypeFlag_Bodenschatz => 		"Bodenschatz",
+	kBuildingTypeFlag_IsInQuickJump => 		"im Schnellsprung?",
 );
 
  // TODO : unhardcode : set flags in db and empty these lists

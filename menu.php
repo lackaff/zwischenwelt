@@ -60,7 +60,7 @@ else $newpoll = false;
 					</a>
 				</li>
 				<li>
-					<?php if ($gUser->admin == 1) { $o = sqlgetobject("SELECT * FROM `building` WHERE `type` = 10");?>
+					<?php if ($gUser->admin == 1) { $o = sqlgetobject("SELECT * FROM `building` WHERE `type` = 10 LIMIT 1");?>
 						<a href="<?=Query("../info/info.php?sid=?&x=".$o->x."&y=".$o->y)?>"><img src="<?=g("icon/admin.png")?>" alt="zur Entwickleranstalt springen" title="zur Entwickleranstalt springen" border=0></a>
 					<?php } else { ?>
 						<a href="<?=query("msg.php?show=compose&to=Admin&sid=?")?>"><img border=0 src="<?=g("icon/help2.png")?>" alt="Nachricht an die Admins schreiben" title="Nachricht an die Admins schreiben"></a>
