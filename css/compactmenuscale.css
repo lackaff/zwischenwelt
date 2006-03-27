@@ -1,0 +1,146 @@
+table.compactmenu tr.t td.c,
+table.compactmenu tr.b td.c,
+table.compactmenu tr.m td.c
+{
+  height: 3px; /* empfohlen 33px, damit es bei Bildern nicht springt */
+}
+table.compactmenu
+{
+  width: 100%;
+}
+table.compactmenu,
+table.compactmenu table
+{
+  empty-cells: show;
+}
+table.compactmenu td,
+table.compactmenu table td
+{
+  padding: 0px;
+  font-family: arial;
+  text-align: left;
+  vertical-align: center;
+}
+table.compactmenu a
+{
+  text-decoration: none !important;
+}
+table.compactmenu tr.t td,
+table.compactmenu tr.t td a,
+table.compactmenu tr.t td div
+{
+  font-size: 12px;
+}
+table.compactmenu tr.b td,
+table.compactmenu tr.b td a,
+table.compactmenu tr.b td div
+{
+  font-size: 12px;
+}
+table.compactmenu tr.m td,
+table.compactmenu tr.m td a,
+table.compactmenu tr.m td div
+{
+  font-size: 12px;
+}
+table.compactmenu tr.t td.c table td div,
+table.compactmenu tr.m td.c table td div,
+table.compactmenu tr.b td.c table td div
+{
+  cursor: pointer;
+}
+table.compactmenu tr.t td.l { background-position: top left; }
+table.compactmenu tr.t td.c { background-position: top left; }
+table.compactmenu tr.t td.r { background-position: top right; }
+table.compactmenu tr.m td.l { background-position: center left; }
+table.compactmenu tr.m td.c { background-position: center left; }
+table.compactmenu tr.m td.r { background-position: center right; }
+table.compactmenu tr.b td.l { background-position: bottom left; }
+table.compactmenu tr.b td.c { background-position: bottom left; }
+table.compactmenu tr.b td.r { background-position: bottom right; }
+
+table.compactmenu tr.t td.c table tr.s td.on     { background-position: top left; }
+table.compactmenu tr.t td.c table tr.s td.onin   { background-position: top left; }
+table.compactmenu tr.t td.c table tr.s td.onout  { background-position: top right; }
+table.compactmenu tr.t td.c table tr.r td.on     { background-position: top left; }
+table.compactmenu tr.t td.c table tr.r td.onin   { background-position: top left; }
+table.compactmenu tr.t td.c table tr.r td.onout  { background-position: top right; }
+
+table.compactmenu tr.t td.c table tr.s td.off    { background-position: top left; }
+table.compactmenu tr.t td.c table tr.s td.offin  { background-position: top left; }
+table.compactmenu tr.t td.c table tr.s td.offout { background-position: top right; }
+table.compactmenu tr.t td.c table tr.r td.off    { background-position: top left; }
+table.compactmenu tr.t td.c table tr.r td.offin  { background-position: top left; }
+table.compactmenu tr.t td.c table tr.r td.offout { background-position: top right; }
+
+table.compactmenu tr.b td.c table tr.s td.on     { background-position: bottom left; }
+table.compactmenu tr.b td.c table tr.s td.onin   { background-position: bottom left; }
+table.compactmenu tr.b td.c table tr.s td.onout  { background-position: bottom right; }
+table.compactmenu tr.b td.c table tr.r td.on     { background-position: bottom left; }
+table.compactmenu tr.b td.c table tr.r td.onin   { background-position: bottom left; }
+table.compactmenu tr.b td.c table tr.r td.onout  { background-position: bottom right; }
+
+table.compactmenu tr.b td.c table tr.s td.off    { background-position: bottom left; }
+table.compactmenu tr.b td.c table tr.s td.offin  { background-position: bottom left; }
+table.compactmenu tr.b td.c table tr.s td.offout { background-position: bottom right; }
+table.compactmenu tr.b td.c table tr.r td.off    { background-position: bottom left; }
+table.compactmenu tr.b td.c table tr.r td.offin  { background-position: bottom left; }
+table.compactmenu tr.b td.c table tr.r td.offout { background-position: bottom right; }
+
+table.compactmenu tr.t td.c table tr.r td,
+table.compactmenu tr.b td.c table tr.r td
+{
+  height: 6px;
+}
+table.compactmenu tr.t td.c table tr.s td.onin,
+table.compactmenu tr.t td.c table tr.s td.offin,
+table.compactmenu tr.b td.c table tr.s td.onin,
+table.compactmenu tr.b td.c table tr.s td.offin
+{
+  width: 5px;
+}
+table.compactmenu tr.t td.c table tr.s td.onout,
+table.compactmenu tr.t td.c table tr.s td.offout,
+table.compactmenu tr.b td.c table tr.s td.onout,
+table.compactmenu tr.b td.c table tr.s td.offout
+{
+  width: 6px;
+}
+table.compactmenu td.l,
+table.compactmenu td.r,
+table.compactmenu tr.t td.c table tr td.l,
+table.compactmenu tr.t td.c table tr td.r,
+table.compactmenu tr.b td.c table tr td.l,
+table.compactmenu tr.b td.c table tr td.r,
+table.compactmenu tr.t td.c table tr.s td.l,
+table.compactmenu tr.t td.c table tr.s td.r,
+table.compactmenu tr.b td.c table tr.s td.l,
+table.compactmenu tr.b td.c table tr.s td.r
+{
+  width: 10px;
+}
+table.compactmenu tr.m td.c table tr td.r,
+table.compactmenu tr.m td.c table tr td.l
+{
+  width: 5px;
+}
+table.compactmenu tr.m td.c table tr td.offin,
+table.compactmenu tr.m td.c table tr td.onin
+{
+  width: 10px;
+  background-repeat: no-repeat;
+  background-position: left center;
+}
+table.compactmenu tr.m td.c table tr td.offout,
+table.compactmenu tr.m td.c table tr td.onout
+{
+  width: 5px;
+}
+table.compactmenu tr.t td.c table tr.s td
+{
+  padding-top: 4px !important;
+}
+table.compactmenu tr.b td.c table tr.s td
+{
+  padding-bottom: 4px !important;
+}
