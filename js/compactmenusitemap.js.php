@@ -85,7 +85,7 @@ compactmenusitemap=new Array
         ?>
         '- <?=$type->name?>',        
         <?php foreach($l as $x){?>
-        '- - <?=$x->name?> | <a target=info href="info/info.php?jumptoarmy=<?=$x->id?>'+phpsid+'" title="<?=$obj->name?> (<?=$x->x?>,<?=$x->y?>)"><?=$x->name?></a>',
+        '- - <?=$x->name?> | <a target=info href="info/info.php?jumptoarmy=<?=$x->id?>'+phpsid+'" title="<?=$x->name?>"><?=$x->name?></a>',
         <?php } }
     }
   ?>
