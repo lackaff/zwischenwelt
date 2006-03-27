@@ -695,26 +695,15 @@ function CreateMapStep () {
 		
 		++gMapConstructionCurY;
 		if (gBig) {
-			if (gSlowMap) {
-				if ((y % 4) == 0) {
-					MapReport("Erzeuge Kartenzeile "+y+"/"+(gCY)+gMapWarnTipp);
-					window.setTimeout("CreateMapLoopPart()",800);
-					return true;
-				}
-			} else {
-				if (y > 0 && (y % 4) == 0) {
-					MapReport("Erzeuge Kartenzeile "+y+"/"+(gCY)+gMapWarnTipp);
-					window.setTimeout("CreateMapLoopPart()",200);
-					return true;
-				}
+			if (y > 0 && ((y % 3) == 0 || gCX > 70)) {
+				MapReport("Erzeuge Kartenzeile "+y+"/"+(gCY)+gMapWarnTipp);
+				window.setTimeout("CreateMapLoopPart()",gSlowMap?800:200);
+				return true;
 			}
 			return false;
 		}
 		return false; // loop in createmap, false -> not done
 	} else {
-		//profiling("construct map tabs");
-		
-		
 		//profiling("sending html to browser");
 		MapReport("");
 		
@@ -761,8 +750,9 @@ function CreateMap() {
 	
 	
 	document.getElementById("maptipzone").innerHTML = "<span class=\"maptip\" onClick=\"KillTip()\" id=\""+kMapTipName+"\" style=\"position:absolute;top:0px;left:0px; visibility:hidden;\">&nbsp;</span>";
-	
-	CreateMapLoopPart();
+	if (gBig && gSlowMap)
+			window.setTimeout("CreateMapLoopPart()",800);
+	else	CreateMapLoopPart();
 }
 
 function OpenMap (type) {
@@ -807,7 +797,6 @@ function GetCellHTML (relx,rely) {
 	if (relx < 0 || rely < 0 || relx >= gCX || rely >= gCY) return "x";
 	var i;
 	var layers = new Array();
-	var celltext = "";
 	
 	// terrain
 	layers[layers.length] = GetTerrainPic(relx,rely);
@@ -885,7 +874,7 @@ function GetCellHTML (relx,rely) {
 	//else
 	if (army) res += "<div id=\"armymarker_"+army.id+"\" "+((army.id==gActiveArmyID)?("style=\"background-image:url("+gActiveArmyMarkerGfx+");\""):"")+">";
 	res += "<div id=\"wpzone_"+rely+"_"+relx+"\" >";
-	res += ApplyWPGfx(relx,rely,gStaticCellInner + celltext);
+	res += ApplyWPGfx(relx,rely,gStaticCellInner);
 	if (army) res += '</div>';
 	res += '</div></div></div>';
 	for (i in layers) res += '</div>';
@@ -1248,7 +1237,7 @@ function GetMaxUnitType (units) {
 	var i,maxtype=0,maxamount=0;
 	for (i in units)
 		if (maxamount < units[i]) {
-			maxamount < units[i];
+			maxamount = units[i];
 			maxtype = i;
 		}
 	return maxtype;

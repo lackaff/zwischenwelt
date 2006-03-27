@@ -359,8 +359,18 @@ class cInfoBuilding extends cInfoBase {
 		</form>
 		<?php 
 		
+		// building weight-limit, used to block ramme
+		$max_weight_left = cUnit::GetMaxBuildingWeight($gObject->type);
+		$cur_weight = cUnit::GetUnitsSum(cUnit::GetUnits($gObject->id,kUnitContainer_Building),"weight");
+		
+		if ($max_weight_left >= 0) {?>
+		Platz im Gebäude : <?=kplaintrenner($cur_weight)?> / <?=kplaintrenner($max_weight_left)?>
+		<?php }
+		
+		
 		// current actions
 		if (count($gActions) > 0) {?>
+		
 			<FORM METHOD=POST ACTION="<?=Query("?sid=?&x=?&y=?&building=unit_producer&id=".$gObject->id."&do=action")?>">
 			<table border=1 cellspacing=0>
 			<tr><th colspan=4>In Ausbildung</th></tr>
@@ -374,6 +384,9 @@ class cInfoBuilding extends cInfoBase {
 					<td nowrap><?=$o->param2?></td>
 					<td><INPUT TYPE="submit" NAME="abort_<?=$o->id?>" VALUE="abbrechen"></td>
 					<td><?=($o->starttime>0)?Duration2Text($unittype->buildtime - (time() - $o->starttime)):""?></td>
+					<?php if ($max_weight_left >= 0 && $max_weight_left < $unittype->weight) {?>
+					<td><font color=red><b>hier ist kein Platz mehr</b></font></td>
+					<?php } // endif?>
 					</tr>
 					<?php
 				break;
