@@ -384,7 +384,7 @@ class cInfoBuilding extends cInfoBase {
 					<td nowrap><?=$o->param2?></td>
 					<td><INPUT TYPE="submit" NAME="abort_<?=$o->id?>" VALUE="abbrechen"></td>
 					<td><?=($o->starttime>0)?Duration2Text($unittype->buildtime - (time() - $o->starttime)):""?></td>
-					<?php if ($max_weight_left >= 0 && $max_weight_left < $unittype->weight) {?>
+					<?php if ($max_weight_left >= 0 && $max_weight_left - $cur_weight < $unittype->weight) {?>
 					<td><font color=red><b>hier ist kein Platz mehr</b></font></td>
 					<?php } // endif?>
 					</tr>
