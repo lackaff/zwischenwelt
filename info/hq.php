@@ -238,6 +238,7 @@ class cInfoHQ extends cInfoBuilding {
 		
 		<?php if (1) {
 			$first = true;
+			/*
 			$quickbuildingtypes = array(kBuilding_Market,
 										kBuilding_Smith,
 										kBuilding_Garage,
@@ -251,7 +252,9 @@ class cInfoHQ extends cInfoBuilding {
 										kBuilding_Tavern,
 										kBuilding_Harbor,
 										kBuilding_Werft);
-			foreach ($quickbuildingtypes as $typeid) {
+										*/
+			foreach ($gBuildingType as $typeid=>$type) {
+				if($type->flags & kBuildingTypeFlag_IsInQuickJump == 0)continue;
 				$tquick = sqlgettable("SELECT * FROM `building` WHERE `construction`=0 AND `user` = ".$gUser->id." AND `type` = ".$typeid);	
 				$i=0;foreach($tquick as $o){
 					if ($first) { $first = false; ?> <table border=0><tr><th>Schnellsprung</th></tr></table> <?php }
