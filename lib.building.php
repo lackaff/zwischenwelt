@@ -51,11 +51,18 @@ class cBuilding {
 		return obj2jsparams($building,"x,y,type,user,level,hp,construction,jsflags,unitstxt,id",$quote); // end
 	}
 	
-	function CanControllBuilding ($building,$user) { 
+	function CanControllBuilding ($building,$user) {
 		return $user->id == $building->user || ($building->user == 0 && $user->admin);
 	}
 	
 	function getPortalConCost ($building,$target=false) {
+		// currently target is not important, passed as false
+		if ($building->user == 0)
+				return array(1000,1000,1000,1000,0);  	// TODO :unhardcode
+		else	return array(1000,1000,1000,1000,1500); // TODO :unhardcode
+	}
+	
+	function getPortalFetchArmyCost ($building) {
 		// currently target is not important, passed as false
 		if ($building->user == 0)
 				return array(1000,1000,1000,1000,0);  	// TODO :unhardcode

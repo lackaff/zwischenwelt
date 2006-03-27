@@ -86,9 +86,8 @@ else
 			}
 			?>&nbsp;</td>
 			<td style="background-color:<?=$u->color?>">&nbsp;</td>
-			<td>
-			<a style="font-family:verdana;color:<?=$online?>" href="<?=query("msg.php?sid=?&show=compose&to=".urlencode($u->name))?>"><?=$u->name." $dead"?></a></td>
-			<td align=center><a style="font-family:verdana;font-size:10px" href="<?=query("info.php?sid=?&x=".$hq->x."&y=".$hq->y)?>">(<?=$hq->x.'/'.$hq->y?>)</a></td>
+			<td><?=GetUserLink($u,false,true,$online)." ".$dead?></td>
+			<td align=center><?=opos2txt($hq)?></td>
 			<td align=right><?=ktrenner($u->guildpoints,"#4444cc","#aa5555")?></td></tr>
 		<?}?>
 		</table>

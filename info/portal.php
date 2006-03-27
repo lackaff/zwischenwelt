@@ -2,6 +2,9 @@
 require_once("../lib.main.php");
 require_once("../lib.army.php");
 
+
+$gPortalConCost = false;
+
 $gClassName = "cInfoPortal";
 class cInfoPortal extends cInfoBuilding {
 	function mycommand () {
@@ -11,9 +14,35 @@ class cInfoPortal extends cInfoBuilding {
 		global $gUser;
 		global $gRes;
 		global $gRes2ItemType;
+		global $gPortalConCost;
 		
 		if ($gObject->type != kBuilding_Portal) return;
 		switch ($f_do) {
+			case "fetcharmies":
+				if (!cBuilding::BuildingOpenForUser($gObject,$gUser->id)) break;
+				$cost = cBuilding::getPortalFetchArmyCost($gObject);
+				foreach ($f_sel as $id) {
+					$army = sqlgetobject("SELECT * FROM `army` WHERE `id` = ".intval($id));
+					if (!$army) continue;
+					if (!cArmy::CanControllArmy($army,$gUser)) continue;
+					if (!cArmy::CanFetchArmyToPortal($gObject,$army)) continue;
+					$army->units = cUnit::GetUnits($army->id); 
+					
+					$target = $gObject;
+					$exit = cArmy::FindExit($target->x,$target->y,$army->user,$army->units);
+					
+					if (!$exit) {
+						echo "<h3><font color='red'>Ausgang Blockiert !</font></h3>";
+					} else if (userPay($gUser->id,$cost[0],$cost[1],$cost[2],$cost[3],$cost[4]) && cItem::ArmyPayItem($army->id,kItem_Portalstein_Blau,1)) {
+					
+						// teleportation
+						sql("UPDATE `army` SET `x`=".$exit[0].",`y`=".$exit[1]." WHERE `id`=".$army->id);
+						QuestTrigger_TeleportArmy($army,$gObject,$exit[0],$exit[1]);
+						echo "<b><font color='green'>teleportation nach ".pos2txt($exit[0],$exit[1])." geglückt !</font></b><br>";
+						$gUser = sqlgetobject("SELECT * FROM `user` WHERE `id` = ".$gUser->id);
+					} else echo "<h3><font color='red'>ZU TEUER !</font></h3>";
+				}
+			break;
 			case "openconnection":
 				global $f_showdest; unset($f_showdest);
 				if (!cBuilding::BuildingOpenForUser($gObject,$gUser->id)) break;
@@ -21,7 +50,7 @@ class cInfoPortal extends cInfoBuilding {
 				foreach ($possibleTargets as $o) if(isset(${"f_con_".($o->id)})) {
 					if (!cBuilding::BuildingOpenForUser($o,$gUser->id)) break;
 					$concost = cBuilding::getPortalConCost($gObject,$o);
-					echo "Verbindungskosten ".cost2txt($concost,$gUser)."<br>";
+					$gPortalConCost = "Verbindungskosten ".cost2txt($concost,$gUser)."<br>";
 					if (userPay($gUser->id,$concost[0],$concost[1],$concost[2],$concost[3],$concost[4])) {
 						// close old connections
 						$source_target = GetBParam($gObject->id,"target");
@@ -41,7 +70,7 @@ class cInfoPortal extends cInfoBuilding {
 						SetBParam($gObject->id,"transportcount",$transportcount);
 						SetBParam($o->id,"transportcount",$transportcount);
 						$gUser = sqlgetobject("SELECT * FROM `user` WHERE `id` = ".$gUser->id);
-					} else echo "<h3><font color='red'>ZU TEUER !</font></h3>";
+					} else $gPortalConCost = "<h3><font color='red'>ZU TEUER !</font></h3>";
 					break;
 				}
 			break;
@@ -143,9 +172,11 @@ class cInfoPortal extends cInfoBuilding {
 		global $gObject;
 		global $gRes;
 		global $gGlobal;
+		global $gPortalConCost;
 		profile_page_start("portal.php");
 		rob_ob_start();
 		
+		if ($gPortalConCost) echo $gPortalConCost;
 		
 		$transportcount = intval(GetBParam($gObject->id,"transportcount"));
 		$target = GetBParam($gObject->id,"target");
@@ -155,7 +186,10 @@ class cInfoPortal extends cInfoBuilding {
 		<br>
 		<br>
 		<?php if ($target) {?>
-			Das Portal ist verbunden mit dem bei <?=opos2txt($target)?> <?=$target->user?("von ".usermsglink($target->user)):"(öffentlich)"?><br>
+			<?php
+			$mark = sqlgetobject("SELECT * FROM `mapmark` WHERE `user` = ".$gUser->id." AND `x` = ".$target->x." AND `y` = ".$target->y." ORDER BY `name`");
+			?>
+			Das Portal ist verbunden mit <?=$mark?$mark->name:"dem"?> bei <?=opos2txt($target)?>  <?=$target->user?("von ".usermsglink($target->user)):"(öffentlich)"?><br>
 			Es sind noch <?=$transportcount?> Transporte möglich<br>
 			<br>
 			
@@ -207,6 +241,36 @@ class cInfoPortal extends cInfoBuilding {
 		
 		<br><hr>
 		<?php if (cBuilding::BuildingOpenForUser($gObject,$gUser->id)) {?>
+			Kosten für das Herholen einer Armee : (<?=GetItemTypeLink(kItem_Portalstein_Blau,$gObject->x,$gObject->y)?>in der Armee) + <?=cost2txt(cBuilding::getPortalFetchArmyCost($gObject),$gUser)?><br>
+			<?php 
+				$armylist = cArmy::ListControllableArmies(); 
+				$fetchlist = array();
+				foreach ($armylist as $o) if (cArmy::CanFetchArmyToPortal($gObject,$o)) 
+					if (!cArmy::ArmyAtDiag($o,$gObject->x,$gObject->y)) $fetchlist[] = $o;
+			?>
+			<?php if (count($fetchlist) > 0) {?>
+				<FORM method="post" action="<?=Query("?sid=?&x=?&y=?")?>">
+				<INPUT TYPE="hidden" NAME="building" VALUE="portal">
+				<INPUT TYPE="hidden" NAME="id" VALUE="<?=$gObject->id?>">
+				<INPUT TYPE="hidden" NAME="do" VALUE="fetcharmies">
+				<table>
+				<?php foreach ($fetchlist as $o) {?>
+					<tr>
+					<td><input type="checkbox" name="sel[]" value="<?=$o->id?>"></td>
+					<td><?=$o->name?></td>
+					<td><?=GetUserLink($o->user,false)?></td>
+					<td align="center"><?=opos2txt($o)?></td>
+					<td>hat im Moment</td>
+					<td><?=GetItemTypeLink(kItem_Portalstein_Blau,$gObject->x,$gObject->y)?></td>
+					<td><?=cItem::CountArmyItem($o,kItem_Portalstein_Blau)?></td>
+					</tr>
+				<?php } // endforeach?>
+				</table>
+				<input type="submit" name="fetcharmies" value="Herholen">
+				</FORM>
+			<?php }?>
+			
+		<br><hr>
 			Kosten für eine neue Verbindung : <?=cost2txt(cBuilding::getPortalConCost($gObject),$gUser)?>
 			<?php $possibleTargets = cBuilding::listAllPortalTargets($gObject,$gUser);?>
 			<FORM method="post" action="<?=Query("?sid=?&x=?&y=?")?>">

@@ -931,11 +931,7 @@ class cInfoArmy extends cInfoBase {
 				</tr>
 				<tr>
 					<td nowrap>
-					<?php if ($gObject->user>0) {?>
-						<?php $ownername = sqlgetone("SELECT `name` FROM `user` WHERE `id` = ".$gObject->user);?>
-						<?php $ownerhq = sqlgetobject("SELECT * FROM `building` WHERE `type` = ".kBuilding_HQ." AND `user` = ".$gObject->user);?>
-						von <a href="<?=query("?sid=?&x=".$ownerhq->x."&y=".$ownerhq->y)?>"><?=GetFOFtxt($gUser->id,$gObject->user,$ownername)?></a>
-					<?php }?>
+					<?php if ($gObject->user>0) {?> von <?=GetUserLink($gObject->user)?> <?php }?>
 					</td>
 				</tr>
 				</table>

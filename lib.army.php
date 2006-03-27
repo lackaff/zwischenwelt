@@ -147,6 +147,18 @@ class cArmy {
 		return $user->guild == $ownerguild && (intval($user->guildstatus) % kGuildCommander) == 0;
 	}
 	
+	// army must also be controllable, and portal must be open for user, not checked in here
+	function CanFetchArmyToPortal ($portal,$army) {
+		if (!is_object($portal))	$portal = sqlgetobject("SELECT * FROM `building` WHERE `id`=".intval($portal));
+		if (!is_object($army))		$army = sqlgetobject("SELECT * FROM `army` WHERE `id`=".intval($army));
+		$item = sqlgetobject("SELECT * FROM `item` WHERE `army` = ".$army->id." AND `type` = ".kItem_Portalstein_Blau);
+		if (!$portal) return false;
+		global $gUser;
+		if ($portal->user > 0 && !cBuilding::CanControllBuilding($portal,$gUser)) return false;
+		if (!$item) return false;
+		return cItem::canUseItem($item,$army);
+	}
+	
 	// returns a list of all armies, that can be controlled by a specific user,
 	// the list is ordered by "armytype,user", contains an extra field `username`, and is indexed by armyid
 	function ListControllableArmies ($user=false) {

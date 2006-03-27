@@ -7,7 +7,7 @@ profile_page_start("viewguild.php");
 
 $gGuild = sqlgetobject("SELECT * FROM `guild` WHERE `id`=".intval($f_id));
 if($gGuild){
-	$members = sqlgettable("SELECT * FROM `user` WHERE `guild`=".$gGuild->id." ORDER BY `name` ASC");
+	$members = sqlgettable("SELECT * FROM `user` WHERE `guild`=".$gGuild->id." ORDER BY `general_pts`+`army_pts` DESC");
 	$gcs=getGuildCommander($gGuild->id);
 } else {
 	$members = Array();
@@ -52,8 +52,7 @@ include("../menu.php");
 			$b = $owner->id == $gGuild->founder;
 			?>
 			<tr><td style="background-color:<?=$u->color?>">&nbsp;</td>
-			<td align=center><a href="<?=query("msg.php?show=compose&to=".urlencode($owner->name)."&sid=?")?>"><img border=0 src="<?=g("icon/guild-send.png")?>"></a></td>
-			<td <?=$b?"class='founder'":""?>><a href="<?=query("info.php?sid=?&x=".$ownerhq->x."&y=".$ownerhq->y)?>"><?=$b?"<b>":""?><?=GetFOFtxt($gUser->id,$owner->id,$owner->name)?><?=$b?"</b>":""?></a></td>
+			<td <?=$b?"class='founder'":""?>><?=GetUserLink($u,false)?></td>
 			<td align=center><?=opos2txt($u)?></td></tr>
 			<?php
 		}

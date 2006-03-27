@@ -201,6 +201,22 @@ function usermsglink ($user) { // obj or id
 	return "<a href='".query("../info/msg.php?sid=?&show=compose&to=".urlencode($user->name))."'>".GetFOFtxt($gUser->id,$user->id,$user->name)."</a>";
 }
 
+
+function GetUserLink ($user,$guildinfo=true,$msglink=true,$specialcolor=false) {
+	if ($user && !is_object($user)) $user = sqlgetobject("SELECT * FROM `user` WHERE `id` = ".intval($user)); 
+	if (!$user) return false; // no fallback in here
+	global $gUser;
+	$hq = sqlgetobject("SELECT * FROM `building` WHERE `type` = ".kBuilding_HQ." AND `user` = ".$user->id);
+	$guild = ($guildinfo && $user->guild)?sqlgetobject("SELECT * FROM `guild` WHERE `id` = ".$user->guild):false;
+	$res = "";
+	if ($msglink) $res .= '<a href="'.query("msg.php?show=compose&to=".urlencode($user->name)."&sid=?").'"><img border=0 src="'.g("icon/guild-send.png").'"></a>';
+	if ($specialcolor)
+			$res .= '<a style="color:'.$specialcolor.'" href="'.query("?sid=?&x=".$hq->x."&y=".$hq->y).'">'.($user->name).'</a>';
+	else	$res .= '<a href="'.query("../info/info.php?sid=?&x=".$hq->x."&y=".$hq->y).'">'.GetFOFtxt($gUser->id,$user->id,$user->name).'</a>';
+	if ($guild) $res .= '<a href="'.query("../info/viewguild.php?sid=?&id=".$guild->id).'">['.$guild->name.']</a>';
+	return $res;
+}
+
 // user false means no coloring
 function cost2txt ($costarr,$user=false) {
 	global $gRes;
@@ -245,6 +261,13 @@ function GetUnitTypeLink ($type,$x,$y,$text=false,$user=false) {
 function GetTerrainTypeLink ($type,$x,$y,$text=false,$user=false) {
 	global $gObject,$gTerrainType;
 	if (!is_object($type)) $type = $gTerrainType[$type];
+	if (!$text) $text = "<img border=0 src=\"".g($type->gfx)."\" alt=\"".$type->name."\" title=\"".$type->name."\">";
+	return "$text";
+}
+// text=false is replaced by item picture
+function GetItemTypeLink ($type,$x,$y,$text=false,$user=false) {
+	global $gObject,$gItemType;
+	if (!is_object($type)) $type = $gItemType[$type];
 	if (!$text) $text = "<img border=0 src=\"".g($type->gfx)."\" alt=\"".$type->name."\" title=\"".$type->name."\">";
 	return "$text";
 }
