@@ -25,6 +25,7 @@ else $newpoll = false;
 <!-- ########################### GANZE NEUES MENU ################################# -->
 <!-- <h1>Heute Abend findet wieder ein Chat statt. Mehr unter Umfrage oder Taverne</h1> --> 
 <div class="mainmenu">
+	<!-- 
 	<div class="mainmenu_links">
 		<ul>
 			<?php if ($hq) {?><li><a href="<?=Query("../info/info.php?sid=?&x=".$hq->x."&y=".$hq->y)?>">Haupthaus</a></li><?php } ?>
@@ -68,6 +69,7 @@ else $newpoll = false;
 			</ul>
 		</div>
 	</div>
+	-->
 	<div class="mainmenu_res">
 		<?php
 			$reslist = array();
@@ -90,7 +92,7 @@ else $newpoll = false;
 				$reslist[] = $o;
 			}
 			$i = 0;
-			$resperrow = 2;
+			$resperrow = 4;
 		?>
 		
 		<table cellspacing=0 cellpadding=0><tr>
