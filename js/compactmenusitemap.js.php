@@ -78,6 +78,7 @@ compactmenusitemap=new Array
   ?>
 */
   'Einheiten',
+  '- neu laden | <a href="?sid=<?=$f_sid?>"><img border=0 src="<?=g("icon/reload.png")?>" alt=reload title=reload></a>',
   <?php
     foreach($gArmyType as $id=>$type){
       $l = sqlgettable("SELECT `id`,`name`,`x`,`y` FROM `army` WHERE `type`=".$type->id." AND `user`=".$gUser->id." ORDER BY `name` ASC");
