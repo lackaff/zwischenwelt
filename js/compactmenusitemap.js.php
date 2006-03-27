@@ -41,8 +41,8 @@ compactmenusitemap=new Array
 (
   'HQ | <a target=info href="info/info.php?x=<?=$hq->x?>&y=<?=$hq->y?>'+phpsid+'" title="HQ (<?=$hq->x?>,<?=$hq->y?>)">HQ</a>', 
   '- Haupthaus | <a target=info href="info/info.php?x=<?=$hq->x?>&y=<?=$hq->y?>'+phpsid+'" title="HQ (<?=$hq->x?>,<?=$hq->y?>)">Haupthaus</a>', 
-  '- Forschung | <a href="info/info.php?x=<?=$hq->x?>&y=<?=$hq->y?>&selectedtab=3'+phpsid+'" target="info">Forschung</a>',
-  '- Produktion | <a href="info/info.php?x=<?=$hq->x?>&y=<?=$hq->y?>&selectedtab=4'+phpsid+'" target="info">Produktion</a>',
+  '- Forschung | <a href="info/info.php?x=<?=$hq->x?>&y=<?=$hq->y?>&selectedtab=2'+phpsid+'" target="info">Forschung</a>',
+  '- Produktion | <a href="info/info.php?x=<?=$hq->x?>&y=<?=$hq->y?>&selectedtab=3'+phpsid+'" target="info">Produktion</a>',
   'Übersicht',
   '- Gebäude | <a href="info/summary_buildings.php?'+phpsid+'" target="info">Gebäude</a>',
   '- Forschung | <a href="info/summary_techs.php?'+phpsid+'" target="info">Forschung</a>',
@@ -65,7 +65,7 @@ compactmenusitemap=new Array
   '- Kosten | <a href="info/kosten.php?'+phpsid+'" target="info">Kosten</a>',
   '- Baupläne | <a href="info/bauplan.php?'+phpsid+'" target="info">Baupläne</a>',
   '- Quests | <a href="info/quest.php?'+phpsid+'" target="info">Quests</a>',
-  '- Diplomatie | <a href="info/info.php?x=<?=$hq->x?>&y=<?=$hq->y?>&selectedtab=5'+phpsid+'" target="info">Diplomatie</a>',
+  '- Diplomatie | <a href="info/info.php?x=<?=$hq->x?>&y=<?=$hq->y?>&selectedtab=4'+phpsid+'" target="info">Diplomatie</a>',
 /*
   'Sprung',
   <?php
