@@ -15,7 +15,7 @@ $dummyframesetcols = implode(",",$dummyframesetcols);
 	<?php if((intval($gUser->flags) & kUserFlags_ShowLogFrame) == 0){ ?>
 	<frameset rows="85,*,0" noresize>
 		<frame src="<?=SessionLink("compactmenu.php".((isset($f_fc) && $f_fc==1)?"?fc=1":""));?>" scrolling=no name="menu" frameborder="1">
-		<frame src="<?=SessionLink("info.php".((isset($f_fc) && $f_fc==1)?"?fc=1":""));?>" name="info" frameborder="0" noresize>
+		<frame src="<?=SessionLink("info.php".((isset($f_fc) && $f_fc==1)?"?fc=1":""));?>" name="info" frameborder="0">
 		<frameset cols="<?=$dummyframesetcols?>" noresize>
 			<?php for($i=0;$i<kDummyFrames;++$i) {?>
 			<frame src="about:blank" name="dummy<?=$i?>" noresize frameborder="0">
