@@ -14,9 +14,9 @@ include("header.php");
 (in random order)
 
 ==[ Code ]==
-* merlin
 * ghoulsblade
 * hagish
+* merlin
 * something rotten
 * shiranai
 
@@ -26,15 +26,15 @@ include("header.php");
 * hagish
 * ghoulsblade
 
-==[ Contributed Gfx ]==
-* forty
-* masterhunter
-
 ==[ Admin ]==
 * hagish
-* merlin
 * ghoulsblade
-* Moreta
+
+==[ fleißige Helfer ]==
+* forty
+* masterhunter
+* ishka
+* darian
 
 ==[ Layout ]==
 + sowas haben wir nicht ;) und wenn doch, 
@@ -46,7 +46,7 @@ include("header.php");
 * blob (für moralische Unterstützung und den Schrott im alten Forum)
 * lil_spack
 * felix + jan
-* carion
+* cairon
 * großkonsul
 * sturnine
 * KiliK
