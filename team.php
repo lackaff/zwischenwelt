@@ -10,40 +10,40 @@ if(isset($f_sid))
 include("header.php");
 ?>
 <span id=team><h1>Team</h1></span>
-<pre>
+<pre style="font-family:monospace">
 (in random order)
 
-==[ Code ]==
-* ghoulsblade
-* hagish
-* merlin
-* something rotten
+=-..-=-..-=-..-=[  Code  ]=-..-=-..-=-..-=
+
+* ghoulsblade          * hagish
+* merlin               * something rotten
 * shiranai
 
-==[ Gfx ]==
-* isha
-* elara
-* hagish
-* ghoulsblade
+=-..-=-..-=-..-=[  Gfx   ]=-..-=-..-=-..-=
 
-==[ Admin ]==
-* hagish
-* ghoulsblade
+* isha                 * elara
+* hagish               * ghoulsblade
 
-==[ fleißige Helfer ]==
-* forty
-* masterhunter
-* ishka
-* darian
+=-..-=-..-=-..-=[ Admin  ]=-..-=-..-=-..-=
 
-==[ Layout ]==
+* hagish               * ghoulsblade
+
+=-..-=-..-=-..-=[ Helfer ]=-..-=-..-=-..-=
+
+* forty                * masterhunter
+* ishka                * darian
+
+=-..-=-..-=-..-=[ Layout ]=-..-=-..-=-..-=
+
 + sowas haben wir nicht ;) und wenn doch, 
   dann stammt es von den Entwicklern
 * Nr 4: ray (kray-c.net)
 
-==[ Greets ]==
+=-..-=-..-=-..-=[ Greets ]=-..-=-..-=-..-=
+
 * talia (für viel viel faq)
-* blob (für moralische Unterstützung und den Schrott im alten Forum)
+* blob (für moralische Unterstützung
+        und den Schrott im alten Forum)
 * lil_spack
 * felix + jan
 * cairon
