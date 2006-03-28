@@ -91,13 +91,13 @@ compactmenusitemap=new Array
   <?php
     $l = sqlgettable("SELECT `id`,`name`,`x`,`y` FROM `army` WHERE `user`=".$gUser->id." ORDER BY `type` ASC,`name` ASC");
   ?>
-  'Gilde | <a href="info/guild.php?'+phpsid+'" target="info">Gilde</a>',
+  'Gilde | <a href="info/guild.php?'+phpsid+'" target="info"><span id="guildnotify">Gilde</span></a>',
   '- Allgemein | <a href="info/guild.php?'+phpsid+'" target="info">Allgemein</a>',
   '- Mitglieder | <a href="info/guild_members.php?'+phpsid+'" target="info">Mitglieder</a>',
   '- Forum | <a href="info/guild_forum.php?'+phpsid+'" target="info">Forum</a>',
   '- Log | <a href="info/guild_log.php?'+phpsid+'" target="info">Log</a>',
   '- Verwalten | <a href="info/guild_admin.php?'+phpsid+'" target="info">Verwalten</a>',
-  'Post | <a href="<?=Query("info/msg.php?sid=?&folder=".$cpost->folder)?>" target=info title=Post>Post</a>',
+  'Post | <a href="<?=Query("info/msg.php?sid=?&folder=".$cpost->folder)?>" target=info title=Post><span id="postnotify">Post</span></a>',
   '- Eingang | <a href="info/msg.php?show=content&folder=<?=$folder_root->id?>'+phpsid+'" target="info"><img src="gfx/post/inbox.png" border="0" title="Eingang"></a>',
   '- Ausgang | <a href="info/msg.php?show=content&folder=<?=$folder_send->id?>'+phpsid+'" target="info"><img src="gfx/post/outbox.png" border="0" title="Ausgang"></a>',
   '- Berichte | <a href="info/msg.php?show=content&folder=<?=$folder_berichte->id?>'+phpsid+'" target="info"><img src="gfx/post/berichte.png" border="0" title="Berichte"></a>',
@@ -110,7 +110,7 @@ $dev = sqlgetobject("SELECT * FROM `building` WHERE `type` = 10 LIMIT 1"); ?>
   '- Alles auflisten| <a href="<?=Query("info/listall.php?sid=?")?>" target=info>Alles auflisten</a>',
 <?php } ?>
   'Umfrage',
-  '- offene Umfragen | <a href="info/poll.php?'+phpsid+'" target="info">offene Umfragen</a>',
+  '- offene Umfragen | <a href="info/poll.php?'+phpsid+'" target="info"><span id="pollnotify">offene Umfragen</span></a>',
   '- schon beantwortete Umfragen | <a href="info/poll.php?tab=1'+phpsid+'" target="info">schon beantwortete Umfragen</a>',
   'Scores',
   '- Spieler',
@@ -134,6 +134,10 @@ $dev = sqlgetobject("SELECT * FROM `building` WHERE `type` = 10 LIMIT 1"); ?>
   'Account',
   '- Notiz schreiben | <a href="info/note.php?'+phpsid+'" target="_blank">Notiz schreiben</a>',
   '- Einstellungen | <a href="info/profile.php?'+phpsid+'" target="info">Einstellungen</a>',
+  '- Menü Layout',
+  <?php foreach($gMenuStyles as $name=>$css){?>
+  '- - <?=$name?> | <a href="?style=<?=$name?>'+phpsid+'" title="<?=$name?>"><?=$name?></a>',
+  <?php } ?>
   '- Logout | <a href="logout.php?'+phpsid+'" target="_blank">Logout</a>',
   /*
   '- Punkte | <a href="info/profile.php?'+phpsid+'" target="info">Punkte</a>',

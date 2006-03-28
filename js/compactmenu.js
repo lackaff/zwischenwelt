@@ -194,4 +194,16 @@ function arrayAdd(myarray,myelem,myid)
   myarray[myid]=myelem;
 } // ArrayAdd()
 
+function displaymenunotify(myid,type) 
+{ 
+ if (type=='reset') 
+   parent.menu.getElementById(myid).className=''; 
+ else 
+ { 
+   cn=parent.menu.getElementById(myid).className; 
+   if (cn.indexOf(type)==-1) 
+     parent.menu.getElementById(myid).className+=' '+type; 
+ } 
+} // displaymenunotify() 
+
 // eof

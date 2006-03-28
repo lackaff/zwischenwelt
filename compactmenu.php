@@ -1,14 +1,38 @@
+<?php 
+
+include("lib.main.php");
+
+if(isset($f_style) && !empty($gMenuStyles[$f_style])){
+  SetUserValue($gUser,"menustyle",$f_style);
+  //echo "[".GetUserValue($gUser,"menustyle")."]";
+  header("Location: ?sid=".$f_sid);
+  exit;
+}
+
+$css = $gMenuStyles[GetUserValue($gUser->id,"menustyle")];
+if(empty($css))$css = $gMenuStyles["default"];
+
+?>
 <html>
   <head>
     <title>"compact menu" demo by Gor_de_Mar</title>
     <script src="js/compactmenu.js"></script>
     <script src="js/compactmenusitemap.js.php?sid=<?=$_REQUEST["sid"]?>"></script>
+    <script> 
+     function displaymenunotify(id,type) 
+     { 
+       if (type=='reset') 
+         parent.menu.getElementById(id).className=''; 
+       else 
+       { 
+         cn=parent.menu.getElementById(id).className; 
+         if (cn.indexOf(type)==-1) 
+           parent.menu.getElementById(id).className+=' '+type; 
+       } 
+     } // displaymenunotify() 
+    </script>
     <link rel="stylesheet" href="css/compactmenuscale.css" type="text/css">
-    <link rel="stylesheet" href="css/brownbig.css" type="text/css">
-    <link rel="stylesheet" href="css/cleanbig.css" type="text/css">
-    <link rel="stylesheet" href="css/darkbig.css" type="text/css">
-    <link rel="stylesheet" href="css/zw6big.css" type="text/css">
-    <link rel="stylesheet" href="css/whitebig.css" type="text/css">
+    <link rel="stylesheet" href="<?=$css?>" type="text/css">
     <style type="text/css">
     <!--
       body {

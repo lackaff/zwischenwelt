@@ -693,4 +693,14 @@ $gBuildingFlagNames = array(	kBuildingFlag_AutoShoot_Enemy => "Automatisch auf F
 								kBuildingFlag_AutoShoot_Strangers => "Automatisch auf Fremde schiessen",
 								);
 
+
+$gMenuStyles = array(
+"darkbig" => "css/darkbig.css",
+"cleanbig" => "css/cleanbig.css",
+"brownbig" => "css/brownbig.css",
+"whitebig" => "css/whitebig.css",
+"zw6big" => "css/zw6big.css",
+"default" => "css/zw6big.css",
+);
+
 ?>

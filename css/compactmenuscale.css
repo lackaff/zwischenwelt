@@ -1,3 +1,11 @@
+table.compactmenu span.notify#postnotify,
+table.compactmenu span.notify#guildnotify,
+table.compactmenu span.notify#pollnotify
+{ 
+ color: #ff0000; 
+ text-decoration: underline !important; 
+} 
+
 table.compactmenu tr.t td.c,
 table.compactmenu tr.b td.c,
 table.compactmenu tr.m td.c

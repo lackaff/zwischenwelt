@@ -1,6 +1,5 @@
 <?php
 
-
 $agent = $_SERVER["HTTP_USER_AGENT"];
 $newmenu = intval($gUser->flags) & kUserFlags_DropDownMenu;
 //!(strpos($agent,"Firefox")===false);
@@ -21,6 +20,9 @@ if(sqlgetone("select p1.`id` from poll as p1 left outer join (SELECT id from pol
 else $newpoll = false;
 
 ?>
+<a href="javascript:displaymenunotify('postnotify','notify'); void(0);">Notify</a> 
+<a href="javascript:displaymenunotify('postnotify','reset'); void(0);">Reset</a> 
+
 
 <!-- ########################### GANZE NEUES MENU ################################# -->
 <!-- <h1>Heute Abend findet wieder ein Chat statt. Mehr unter Umfrage oder Taverne</h1> --> 
