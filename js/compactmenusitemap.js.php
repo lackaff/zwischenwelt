@@ -138,7 +138,7 @@ $dev = sqlgetobject("SELECT * FROM `building` WHERE `type` = 10 LIMIT 1"); ?>
   <?php foreach($gMenuStyles as $name=>$css){?>
   '- - <?=$name?> | <a href="?setpage=__MENUID__&style=<?=$name?>'+phpsid+'" title="<?=$name?>"><?=$name?></a>',
   <?php } ?>
-  '- Logout | <a href="logout.php?'+phpsid+'" target="_blank">Logout</a>',
+  '- Logout | <a href="logout.php?'+phpsid+'" target="_parent">Logout</a>',
   /*
   '- Punkte | <a href="info/profile.php?'+phpsid+'" target="info">Punkte</a>',
   '- Schulden | <a href="info/profile.php?'+phpsid+'" target="info">Schulden</a>',
