@@ -2,15 +2,19 @@
 
 include("lib.main.php");
 
+if(isset($f_setpage))$page = intval($f_setpage);
+else $page = 1;      
+
 if(isset($f_style) && !empty($gMenuStyles[$f_style])){
   SetUserValue($gUser,"menustyle",$f_style);
   //echo "[".GetUserValue($gUser,"menustyle")."]";
-  header("Location: ?sid=".$f_sid);
+  header("Location: ?setpage=$page&sid=".$f_sid);
   exit;
 }
 
 $css = $gMenuStyles[GetUserValue($gUser->id,"menustyle")];
 if(empty($css))$css = $gMenuStyles["default"];
+
 
 ?>
 <html>
@@ -54,7 +58,7 @@ if(empty($css))$css = $gMenuStyles["default"];
     </table>
     <script>
       compactmenuparse(compactmenusitemap);
-      compactmenusetpage(1);
+      compactmenusetpage(<?=$page?>);
     </script>
   </body>
 </html>

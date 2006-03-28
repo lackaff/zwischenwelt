@@ -76,7 +76,7 @@ compactmenusitemap=new Array
   '- Baupläne | <a href="info/bauplan.php?'+phpsid+'" target="info">Baupläne</a>',
   '- Quests | <a href="info/quest.php?'+phpsid+'" target="info">Quests</a>',
   'Einheiten',
-  '- neu laden | <a href="?sid=<?=$f_sid?>"><img border=0 src="<?=g("icon/reload.png")?>" alt=reload title=reload></a>',
+  '- neu laden | <a href="?setpage=__MENUID__&sid=<?=$f_sid?>"><img border=0 src="<?=g("icon/reload.png")?>" alt=reload title=reload></a>',
   <?php
     foreach($gArmyType as $id=>$type){
       $l = sqlgettable("SELECT `id`,`name`,`x`,`y` FROM `army` WHERE `type`=".$type->id." AND `user`=".$gUser->id." ORDER BY `name` ASC");
@@ -136,7 +136,7 @@ $dev = sqlgetobject("SELECT * FROM `building` WHERE `type` = 10 LIMIT 1"); ?>
   '- Einstellungen | <a href="info/profile.php?'+phpsid+'" target="info">Einstellungen</a>',
   '- Menü Layout',
   <?php foreach($gMenuStyles as $name=>$css){?>
-  '- - <?=$name?> | <a href="?style=<?=$name?>'+phpsid+'" title="<?=$name?>"><?=$name?></a>',
+  '- - <?=$name?> | <a href="?setpage=__MENUID__&style=<?=$name?>'+phpsid+'" title="<?=$name?>"><?=$name?></a>',
   <?php } ?>
   '- Logout | <a href="logout.php?'+phpsid+'" target="_blank">Logout</a>',
   /*

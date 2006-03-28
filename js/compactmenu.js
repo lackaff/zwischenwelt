@@ -60,7 +60,8 @@ function compactmenuparse(sitemap)
         compactmenu_children[compactmenu_parentlinenr]=new Array();
       compactmenu_children[compactmenu_parentlinenr][linenr]=linenr;
       compactmenu_path[linenr]=compactmenu_path[compactmenu_parentlinenr]+','+linenr;
-
+      compactmenu_label[linenr]  = compactmenu_label[linenr].replace(/__MENUID__/,String(linenr)); 
+      compactmenu_content[linenr]= compactmenu_content[linenr].replace(/__MENUID__/,String(linenr));
       // document.write(String(linenr)+' '+String(depth)+' '+line+"\r\n");
     } // if def
   } // each line
