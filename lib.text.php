@@ -211,7 +211,7 @@ function GetUserLink ($user,$guildinfo=true,$msglink=true,$specialcolor=false) {
 	$res = "";
 	if ($msglink) $res .= '<a href="'.query("msg.php?show=compose&to=".urlencode($user->name)."&sid=?").'"><img border=0 src="'.g("icon/guild-send.png").'"></a>';
 	if ($specialcolor)
-			$res .= '<a style="color:'.$specialcolor.'" href="'.query("?sid=?&x=".$hq->x."&y=".$hq->y).'">'.($user->name).'</a>';
+			$res .= '<a style="color:'.$specialcolor.'" href="'.query("../info/info.php?sid=?&x=".$hq->x."&y=".$hq->y).'">'.($user->name).'</a>';
 	else	$res .= '<a href="'.query("../info/info.php?sid=?&x=".$hq->x."&y=".$hq->y).'">'.GetFOFtxt($gUser->id,$user->id,$user->name).'</a>';
 	if ($guild) $res .= '<a href="'.query("../info/viewguild.php?sid=?&id=".$guild->id).'">['.$guild->name.']</a>';
 	return $res;
