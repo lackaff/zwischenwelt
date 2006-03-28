@@ -695,6 +695,8 @@ $gBuildingFlagNames = array(	kBuildingFlag_AutoShoot_Enemy => "Automatisch auf F
 
 
 $gMenuStyles = array(
+"classicbig" => "css/classicbig.css",
+"paperbig" => "css/paperbig.css",
 "darkbig" => "css/darkbig.css",
 "cleanbig" => "css/cleanbig.css",
 "brownbig" => "css/brownbig.css",
