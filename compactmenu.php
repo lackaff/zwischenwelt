@@ -33,14 +33,6 @@ if(empty($css))$css = $gMenuStyles["default"];
     </script>
     <link rel="stylesheet" href="css/compactmenuscale.css" type="text/css">
     <link rel="stylesheet" href="<?=$css?>" type="text/css">
-    <style type="text/css">
-    <!--
-      body {
-        margin:2px;
-        padding:0px;
-      }
-    -->
-    </style>
   </head>
   <body>
     <table cellpadding="0" cellspacing="0" border="0" class="compactmenu">
