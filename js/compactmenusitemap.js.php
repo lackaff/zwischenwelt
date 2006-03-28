@@ -109,7 +109,7 @@ $dev = sqlgetobject("SELECT * FROM `building` WHERE `type` = 10 LIMIT 1"); ?>
   '- Admin | <a href="<?=Query("info/info.php?sid=?&x=".$dev->x."&y=".$dev->y)?>" target=info>Admin</a>',
   '- Alles auflisten| <a href="<?=Query("info/listall.php?sid=?")?>" target=info>Alles auflisten</a>',
 <?php } ?>
-  'Umfrage',
+  'Umfrage | <a href="info/poll.php?'+phpsid+'" target="info"><span id="pollnotify">Umfragen</span></a>',
   '- offene Umfragen | <a href="info/poll.php?'+phpsid+'" target="info"><span id="pollnotify">offene Umfragen</span></a>',
   '- schon beantwortete Umfragen | <a href="info/poll.php?tab=1'+phpsid+'" target="info">schon beantwortete Umfragen</a>',
   'Scores',
