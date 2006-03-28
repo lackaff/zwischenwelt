@@ -26,12 +26,12 @@ if(empty($css))$css = $gMenuStyles["default"];
      function displaymenunotify(id,type) 
      { 
        if (type=='reset') 
-         parent.menu.getElementById(id).className=''; 
+         document.getElementById(id).className=''; 
        else 
        { 
-         cn=parent.menu.getElementById(id).className; 
+         cn=document.getElementById(id).className; 
          if (cn.indexOf(type)==-1) 
-           parent.menu.getElementById(id).className+=' '+type; 
+           document.getElementById(id).className+=' '+type; 
        } 
      } // displaymenunotify() 
     </script>

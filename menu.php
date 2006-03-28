@@ -20,10 +20,16 @@ if(sqlgetone("select p1.`id` from poll as p1 left outer join (SELECT id from pol
 else $newpoll = false;
 
 ?>
-<a href="javascript:displaymenunotify('postnotify','notify'); void(0);">Notify</a> 
-<a href="javascript:displaymenunotify('postnotify','reset'); void(0);">Reset</a> 
-
-
+<script> 
+	<?php 
+	if($newpost)echo "parent.menu.displaymenunotify('postnotify','notify');\n";
+	else echo "parent.menu.displaymenunotify('postnotify','reset');\n";
+	if($newguild)echo "parent.menu.displaymenunotify('guildnotify','notify');\n";
+	else echo "parent.menu.displaymenunotify('guildnotify','reset');\n";
+	if($newpoll)echo "parent.menu.displaymenunotify('pollnotify','notify');\n";
+	else echo "parent.menu.displaymenunotify('pollnotify','reset');\n";
+	?>
+</script>
 <!-- ########################### GANZE NEUES MENU ################################# -->
 <!-- <h1>Heute Abend findet wieder ein Chat statt. Mehr unter Umfrage oder Taverne</h1> --> 
 <div class="mainmenu">

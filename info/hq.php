@@ -236,6 +236,8 @@ class cInfoHQ extends cInfoBuilding {
 		</tr>
 		</table>
 		
+		
+		<h1>Schnellsprung</h1>
 		<?php if (1) {
 			$first = true;
 			/*
@@ -253,19 +255,29 @@ class cInfoHQ extends cInfoBuilding {
 										kBuilding_Harbor,
 										kBuilding_Werft);
 										*/
-			foreach ($gBuildingType as $typeid=>$type) {
-				if($type->flags & kBuildingTypeFlag_IsInQuickJump == 0)continue;
-				$tquick = sqlgettable("SELECT * FROM `building` WHERE `construction`=0 AND `user` = ".$gUser->id." AND `type` = ".$typeid);	
-				$i=0;foreach($tquick as $o){
-					if ($first) { $first = false; ?> <table border=0><tr><th>Schnellsprung</th></tr></table> <?php }
-					++$i; 
-					if ($i>1) continue; // all only once
-					$lpic = ($o->level>=10)?"1":"0";
-					$btype = $gBuildingType[$o->type];?>
-					<a href="<?=Query("?sid=?&x=".$o->x."&y=".$o->y)?>">
-					<img title="<?=strip_tags($btype->name)?>" alt="<?=strip_tags($btype->name)?>" border=1 src="<?=g($btype->gfx,($o->nwse=="?")?"ns":$o->nwse,$lpic)?>"></a>
+			foreach($gBuildingType as $id=>$obj)if($obj->flags & kBuildingTypeFlag_IsInQuickJump){
+				$x = sqlgetobject("SELECT `x`,`y`,`level` FROM `building` WHERE `user`=".$gUser->id." AND `type`=".$obj->id." ORDER BY `level` DESC LIMIT 1");
+				if(!empty($x)){?>
+					<a target=info href="<?=SessionLink("info/info.php?x=".$x->x."&y=".$x->y)?>" title="<?=$obj->name?> (<?=$x->x?>,<?=$x->y?>)">
+						<img src="<?=GetBuildingPic($obj,false,$x->level)?>" border="0" title="<?=$obj->name?> (<?=$x->x?>,<?=$x->y?>)">
+					</a>
 				<?php }
 			}
+			/*
+			foreach ($gBuildingType as $typeid=>$type) {
+				if($type->flags & kBuildingTypeFlag_IsInQuickJump == 0)continue;
+				//$tquick = sqlgettable("SELECT * FROM `building` WHERE `construction`=0 AND `user` = ".$gUser->id." AND `type` = ".$typeid);	
+				$i=0;
+				if ($first) { $first = false; ?> <table border=0><tr><th>Schnellsprung</th></tr></table> <?php }
+				++$i; 
+				if ($i>1) continue; // all only once
+				$lpic = ($o->level>=10)?"1":"0";
+				$btype = $gBuildingType[$o->type];?>
+				<a href="<?=Query("?sid=?&x=".$o->x."&y=".$o->y)?>">
+				<img title="<?=strip_tags($btype->name)?>" alt="<?=strip_tags($btype->name)?>" border=1 src="<?=g($btype->gfx,($o->nwse=="?")?"ns":$o->nwse,$lpic)?>"></a>
+				<?php 
+			}
+			*/
 		} // endif
 		?>
 		
@@ -379,6 +391,7 @@ class cInfoHQ extends cInfoBuilding {
 		//ImgBorderStart("s1","jpg","#ffffee","",32,33);
 		?>
 		<div class="hqtips">
+		<h1>Tips</h1>
 		<ul>
 		<?php foreach ($tip as $o) {?>
 		<li><?=$o?></li>

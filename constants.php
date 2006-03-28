@@ -700,7 +700,7 @@ $gMenuStyles = array(
 "brownbig" => "css/brownbig.css",
 "whitebig" => "css/whitebig.css",
 "zw6big" => "css/zw6big.css",
-"default" => "css/zw6big.css",
+"default" => "css/whitebig.css",
 );
 
 ?>
