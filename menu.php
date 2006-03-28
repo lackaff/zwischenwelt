@@ -57,7 +57,7 @@ function shortNumber($x){
 	if($x>10000000){
 		$unit = "M";
 		$x = round($x / 1000000);
-	} else if($x>10000){
+	} else if($x>100000){
 		$unit = "k";
 		$x = round($x / 1000);
 	}
