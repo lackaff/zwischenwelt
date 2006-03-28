@@ -39,7 +39,7 @@ if(empty($css))$css = $gMenuStyles["default"];
     <link rel="stylesheet" href="<?=$css?>" type="text/css">
   </head>
   <body>
-    <table cellpadding="0" cellspacing="0" border="0" class="compactmenu">
+    <table cellpadding="0" cellspacing="0" border="0" class="compactmenu" id="compactmenutable">
       <tr class="t">
         <td class="l"></td>
         <td class="c" id="compactmenutop">&nbsp;</td>

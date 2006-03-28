@@ -121,6 +121,7 @@ function compactmenuupdate(elemid, data, highlight, root)
 
 function compactmenusetpage(menuitemid)
 {
+  document.getElementById('compactmenutable').style.display = 'none';
   var compactmenu_data_top=new Array();
   var compactmenu_data_path=new Array();
   var compactmenu_data_bottom=new Array();
@@ -179,6 +180,7 @@ function compactmenusetpage(menuitemid)
     }
   }
   compactmenuupdate('compactmenubottom', compactmenu_data_bottom, menuitemid, 'bottom');
+  document.getElementById('compactmenutable').style.display = 'block';
   return true;
 } // compactmenusetpage()
 
