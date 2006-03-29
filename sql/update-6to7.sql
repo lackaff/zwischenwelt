@@ -17,3 +17,5 @@ UPDATE `terraintype` SET `maxrandcenter` = 10, `maxrandborder` = 10, `gfx` = 'la
 # local styles
 ALTER TABLE `user` CHANGE `usegfxpath` `localstyles` TINYINT( 3 ) UNSIGNED DEFAULT '0' NOT NULL ;
 UPDATE `user` SET `localstyles` = 0;
+
+INSERT INTO `terraintype` VALUES (26, 'Nadelwald', '', 120, 0, '#2D6220', 'nadelwald/nadelwald-%NWSE%.png', '', 1, 1, 1, 2, '26', '', 0, 0);
