@@ -103,7 +103,7 @@ class cText {
 						<tr><td>Reichweite</td>		<td align=right><?=$type->r?></td></tr>
 						<tr><td>Ladezeit</td>		<td nowrap><?=round($type->cooldown/60,1)?> min</td></tr>
 						<?php if ($armyidle !== false) {?>
-						<tr><td>Nachladen</td><td align=right><?=(round(min(100,100*$armyidle/$type->cooldown))."%")?></td></tr>
+						<tr><td>Nachladen</td><td align=right><?=(round(min(100,100*$armyidle/max(1,$type->cooldown)))."%")?></td></tr>
 						<?php } // endif?>
 						</table>
 					<?php } else echo ""; ?>	
