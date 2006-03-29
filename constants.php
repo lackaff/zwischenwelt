@@ -628,6 +628,7 @@ $gBuildingTypeGroups = array( // used by for mapnavi tabs
 								kBuilding_StoneProd,
 								kBuilding_IronMine),*/
 	"Infrastruktur" => array(0=>kBuilding_Path,
+								kBuilding_Verteidigungsturm,
 								kBuilding_Wall,
 								kBuilding_Gate,
 								kBuilding_Bridge,
