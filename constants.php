@@ -183,7 +183,7 @@ $gUserFlagNames = array(
 	kUserFlags_NoMonsterFightReport			=> "Monsterkampfberichte entfernen",
 	kUserFlags_AutomaticUpgradeBuildingTo	=> "bei neuen Gebäuden automatisch Upgrades planen",
 	kUserFlags_DontShowNoobTip				=> "NoobTips ausblenden",
-	kUserFlags_ShowMaxRes					=> "Lagerkapazität anzeigen",
+	kUserFlags_ShowMaxRes					=> "Lagerkapazität anzeigen (obsolete, da man nun das komplette Format einstellen kann)",
 	kUserFlags_NoTabs						=> "Tabs Deaktivieren (bei Abstürzen im IE)",
 	kUserFlags_SlowMap						=> "Karte langsam aufbauen (hilft gegen 'Script-abbrechen?'-Warnungen)",
 );
