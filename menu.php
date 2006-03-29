@@ -32,6 +32,10 @@ else $newpoll = false;
 </script>
 <!-- <h1>Heute Abend findet wieder ein Chat statt. Mehr unter Umfrage oder Taverne</h1> --> 
 <?php
+
+$fmt = GetUserValue($gUser->id,"resformat",kDefaultResFormat);
+drawRessources($gUser,$fmt);
+/*
 $reslist = array();
 foreach($gRes as $n=>$f) {
 	$o = false;
@@ -52,17 +56,7 @@ if (1) {
 	$reslist[] = $o;
 }
 
-function shortNumber($x){
-	$unit = "";
-	if($x>10000000){
-		$unit = "M";
-		$x = round($x / 1000000);
-	} else if($x>100000){
-		$unit = "k";
-		$x = round($x / 1000);
-	}
-	return ktrenner($x).$unit;
-}
+
 
 foreach($reslist as $o){
 	$i = round(16*max(0,$o->cur)/(max(1,$o->max)));
@@ -78,5 +72,6 @@ foreach($reslist as $o){
 	 if (intval($gUser->flags) & kUserFlags_ShowMaxRes)echo " / ".shortNumber($o->max);
 	echo " ";
 }
+*/
 echo "<hr>";
 ?>

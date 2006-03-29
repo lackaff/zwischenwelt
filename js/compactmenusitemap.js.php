@@ -135,6 +135,7 @@ $dev = sqlgetobject("SELECT * FROM `building` WHERE `type` = 10 LIMIT 1"); ?>
   'Account',
   '- Notiz schreiben | <a href="info/note.php?'+phpsid+'" target="_blank">Notiz schreiben</a>',
   '- Einstellungen | <a href="info/profile.php?'+phpsid+'" target="info">Einstellungen</a>',
+  '- Ressourcenanzeige | <a href="info/showressource.php?'+phpsid+'" target="info">Ressourcenanzeige</a>',
   '- Menü Layout',
   <?php foreach($gMenuStyles as $name=>$css){?>
   '- - <?=$name?> | <a href="?setpage=__MENUID__&style=<?=$name?>'+phpsid+'" title="<?=$name?>"><?=$name?></a>',

@@ -4,6 +4,7 @@ define("kURL_Nethack","http://zwischenwelt.org/telnet.html");
 define("kURL_Chess","http://zwischenwelt.org/~hagish/occ/");
 define("kURL_Wiki","http://zwischenwelt.milchkind.net/zwwiki/index.php/");
 
+define("kDefaultResFormat","HOR G2 RG BR AK / MK TAB");
 
 define("kMapNaviTool_Look"			,0);
 define("kMapNaviTool_Plan"			,1);

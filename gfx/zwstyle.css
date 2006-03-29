@@ -2,7 +2,12 @@
 	FONT-FAMILY: monospace;
 	FONT-SIZE: 9pt;
 	FONT-WEIGHT: normal;
-				
+}
+
+h1 {
+	font-size:10pt;
+	font-weight:bold;
+	margin-top:10pt;
 }
 
 td {
@@ -25,11 +30,11 @@ td {
 	FONT-WEIGHT: normal;
 }
 A {
-	COLOR: #000000;
+	COLOR: #000;
 	FONT-FAMILY: monospace;
 	FONT-SIZE: 9pt;
 	FONT-WEIGHT: normal;
-	TEXT-DECORATION: none;
+	TEXT-DECORATION: underline;
 }
 A:hover {
 	COLOR: #00AA00; TEXT-DECORATION: underline
@@ -615,3 +620,14 @@ ul#mainnavi span#new, ul#mainnavi a#new {
 	background-color:green;
 	color:white;
 }
+
+  table.resinfo tr td
+  {
+    text-align: left;
+    font-family: arial;
+    font-size: 12px;
+  }
+  table.resinfo tr.hor td
+  {
+    text-align: center;
+  }

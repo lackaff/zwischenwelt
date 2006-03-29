@@ -882,10 +882,8 @@ function profile_page_end() {
 function SetUserValue($user,$name,$value){
 	if(is_numeric($user))$id = $user;
 	else $id = $user->id;
-	$where = "`user`=".intval($id)." AND `name`='".addslashes($name)."'";
-	$c = sqlgetone("SELECT count(*) FROM `uservalue` WHERE $where");
-	if($c == 0)sql("INSERT INTO `uservalue` SET `user`=".intval($user->id).",`name`='".addslashes($name)."',`value`='".addslashes($value)."'");
-	else sql("UPDATE `uservalue` SET `value`='".addslashes($value)."' WHERE $where");
+	$where = "`user`=".intval($id)." , `name`='".addslashes($name)."'";
+	sql("REPLACE INTO `uservalue` SET `value`='".addslashes($value)."' , $where");
 }
 
 //liest wie die global name value paare aus, aber zu usern
@@ -1053,5 +1051,152 @@ function calcFoodNeed($n,$dt){
 	return $n*$dt/24/60/60;
 }
 
+  function getacolor($position,$bright=1,$gamma=0,$min=0,$max=1)
+  {
+    $colorset=array
+    (
+      0 => array(128,0,0),
+      15 => array(200,0,0),
+      30 => array(255,128,0),
+      55 => array(255,255,0),
+      70 => array(192,255,0),
+      100 => array(0,128,0),
+    );
+    ksort($colorset);
+    $position=round($position);
+    if ($position<min) $position=$min;
+    if (position>$max) $position=$max;
+    if (!$colorset[$position])
+    {
+      $knownpos=array_keys($colorset);
+      foreach ($knownpos as $i=>$p)
+        if ($p>$position) break;
+      $x1=$knownpos[$i-1];
+      $x2=$knownpos[$i];
+      $r=$colorset[$x1][0]+($colorset[$x2][0]-$colorset[$x1][0])/($x2-$x1)*($position-$x1);
+      $g=$colorset[$x1][1]+($colorset[$x2][1]-$colorset[$x1][1])/($x2-$x1)*($position-$x1);
+      $b=$colorset[$x1][2]+($colorset[$x2][2]-$colorset[$x1][2])/($x2-$x1)*($position-$x1);
+      $colorset[$position]=array($r,$g,$b);
+    }
+    $rgb=$colorset[$position];
+    $rgb[0]=round($rgb[0]*$bright)+$gamma;
+    $rgb[1]=round($rgb[1]*$bright)+$gamma;
+    $rgb[2]=round($rgb[2]*$bright)+$gamma;
+
+    // overbright
+    if ($rgb[0]>255) { $rgb[1]+=floor(($rgb[0]-255)/2); $rgb[2]+=floor(($rgb[0]-255)/2); }
+    if ($rgb[1]>255) { $rgb[0]+=floor(($rgb[1]-255)/2); $rgb[2]+=floor(($rgb[1]-255)/2); }
+    if ($rgb[2]>255) { $rgb[0]+=floor(($rgb[2]-255)/2); $rgb[1]+=floor(($rgb[2]-255)/2); }
+
+    // undderbright
+    if ($rgb[0]<0) { $rgb[1]+=ceil($rgb[0]/2); $rgb[2]+=ceil($rgb[0]/2); }
+    if ($rgb[1]<0) { $rgb[0]+=ceil($rgb[1]/2); $rgb[2]+=ceil($rgb[1]/2); }
+    if ($rgb[2]<0) { $rgb[0]+=ceil($rgb[2]/2); $rgb[1]+=ceil($rgb[2]/2); }
+
+    // limiting
+    if ($rgb[0]<0) $rgb[0]=0; if ($rgb[0]>255) $rgb[0]=255;
+    if ($rgb[1]<0) $rgb[1]=0; if ($rgb[1]>255) $rgb[1]=255;
+    if ($rgb[2]<0) $rgb[2]=0; if ($rgb[2]>255) $rgb[2]=255;
+    return sprintf('#%02s%02s%02s',dechex($rgb[0]),dechex($rgb[1]),dechex($rgb[2]));
+  } // getacolor()
+
+function shortNumber($x){
+	$unit = "";
+	if($x>10000000){
+		$unit = "M";
+		$x = round($x / 1000000);
+	} else if($x>100000){
+		$unit = "k";
+		$x = round($x / 1000);
+	}
+	return ktrenner($x).$unit;
+}
+
+function drawressource($resname,$resimg,$resact,$resmax,$fmt)
+{
+  $resproz=round(100*$resact/$resmax);
+  $res16=round(16*$resact/$resmax);
+  $rescolor='#ff0000'; // hier ne Funktion hin! - Satte Farben
+  $resbcolor='#ff9090'; // hier ne Funktion hin! - Dezente Farben
+  $info = "$resname: $resact / $resmax ($resproz%)";
+  $lagerstandcode=array
+  (
+    'HOR' => '',
+    'VERT'=> '',
+    'VER' => '',
+    'RT'  => $resname,
+    'RN'  => $resname,
+    'RG'  => '<img alt="'.$info.'" title="'.$info.'" src="'.g($resimg).'">',
+    'RI'  => '<img alt="'.$info.'" title="'.$info.'" src="'.g($resimg).'">',
+    'T1'  => $resproz.'%',
+    'PROZ'=> $resproz.'%',
+    'T2'  => '<span style="color:'.$rescolor.'">'.$resproz.'%</span>',
+    'TCOL'=> '<span style="color:'.$rescolor.'">'.$resproz.'%</span>',
+    'T3'  => '<span style="background-color:'.$resbcolor.'">'.$resproz.'%</span>',
+    'TB'  => '<span style="background-color:'.$resbcolor.'">'.$resproz.'%</span>',
+    'G1'  => '<img alt="'.$resproz.'%" title="'.$resproz.'%" src="'.g('lager/breit/lagerstand_'.$res16.'.gif').'">',
+    'G2'  => '<img alt="'.$resproz.'%" title="'.$resproz.'%" src="'.g('lager/schmal/lagerstand_'.$res16.'.gif').'">',
+    'G3'  => '<img alt="'.$resproz.'%" title="'.$resproz.'%" src="'.g('lager/soft/lagerstand_'.$res16.'.gif').'">',
+    'G4'  => '<img alt="'.$resproz.'%" title="'.$resproz.'%" src="'.g('lager/grau/lagerstand_'.$res16.'.gif').'">',
+    'G5'  => '<img alt="'.$resproz.'%" title="'.$resproz.'%" src="'.g('lager/breituni/lagerstand_'.$res16.'.gif').'">',
+    'MX'  => ktrenner($resmax),
+    'MAX' => ktrenner($resmax),
+    'MK'  => shortNumber($resmax),
+    'AX'  => ktrenner($resact),
+    'ACT' => shortNumber($resact),
+    'AK'  => shortNumber($resact),
+    'BR'  => '<br>',
+    'TAB' => '</td><td>',
+  );
+  $output=htmlentities($fmt);
+  $output=str_replace("  "," &nbsp;",$output); // PRE
+  foreach ($lagerstandcode as $key=>$value)
+  {
+    $output=str_replace($key,$value,$output);
+  }
+  $output='<td>'.$output.'</td>';
+  if (strpos($fmt,'HOR')===false)
+    $output='<tr>'.$output.'</tr>';
+  echo $output."\n";
+
+}
+
+//echoes a formated ($fmt) table with the ressources of the $user
+//showrealcontent - draw user content or testvalues to the the bars?
+function drawRessources($user,$fmt,$showrealcontent=true){
+	global $gRes;
+	$reslist = array();
+	foreach($gRes as $n=>$f) {
+		$o = false;
+		$o->cur = $user->$f;
+		$o->max = $user->{"max_".$f};
+		$o->name = $n;
+		$o->img = "res_$f.gif";
+		$o->imglink = false;
+		$reslist[] = $o;
+	}
+	if (1) {
+		$o = false;
+		$o->cur = $user->pop;
+		$o->max = $user->maxpop;
+		$o->name = "Bev&ouml;lkerung";
+		$o->img = "pop-r1.png";
+		$o->imglink = false;
+		$reslist[] = $o;
+	}
+
+	echo '<table cellpadding="2" cellspacing="0" border="0" class="resinfo">';
+	if (strpos($fmt,'HOR')!==false) echo '<tr class="hor">';
+	$imax = sizeof($reslist)-1;
+	$i = 0;
+	foreach($reslist as $x){
+		if($showrealcontent)$cur = $x->cur;
+		else $cur = $x->max*$i/$imax;
+		drawressource($x->name,$x->img,$cur,$x->max,$fmt);
+		++$i;
+	}
+	if (strpos($fmt,'HOR')!==false) echo '</tr>';
+	echo "</table>";
+}
 
 ?>
