@@ -41,9 +41,9 @@ compactmenusitemap=new Array
 (
   'HQ | <a target=info href="info/info.php?x=<?=$hq->x?>&y=<?=$hq->y?>&selectedtab=1'+phpsid+'" title="HQ (<?=$hq->x?>,<?=$hq->y?>)">HQ</a>', 
   '- Haupthaus | <a target=info href="info/info.php?x=<?=$hq->x?>&y=<?=$hq->y?>selectedtab=1'+phpsid+'" title="HQ (<?=$hq->x?>,<?=$hq->y?>)">Haupthaus</a>', 
-  '- Forschung | <a href="info/info.php?x=<?=$hq->x?>&y=<?=$hq->y?>&selectedtab=2'+phpsid+'" target="info">Forschung</a>',
+//  '- Forschung | <a href="info/info.php?x=<?=$hq->x?>&y=<?=$hq->y?>&selectedtab=2'+phpsid+'" target="info">Forschung</a>',
   '- Produktion | <a href="info/info.php?x=<?=$hq->x?>&y=<?=$hq->y?>&selectedtab=3'+phpsid+'" target="info">Produktion</a>',
-  '- Diplomatie | <a href="info/info.php?x=<?=$hq->x?>&y=<?=$hq->y?>&selectedtab=5'+phpsid+'" target="info">Diplomatie</a>',
+//  '- Diplomatie | <a href="info/info.php?x=<?=$hq->x?>&y=<?=$hq->y?>&selectedtab=5'+phpsid+'" target="info">Diplomatie</a>',
   'Sprung',
   <?php
     foreach($gBuildingType as $id=>$obj)if($obj->flags & kBuildingTypeFlag_IsInQuickJump){
@@ -75,6 +75,7 @@ compactmenusitemap=new Array
   '- Kosten | <a href="info/kosten.php?'+phpsid+'" target="info">Kosten</a>',
   '- Baupläne | <a href="info/bauplan.php?'+phpsid+'" target="info">Baupläne</a>',
   '- Quests | <a href="info/quest.php?'+phpsid+'" target="info">Quests</a>',
+  '- Diplomatie | <a href="info/info.php?x=<?=$hq->x?>&y=<?=$hq->y?>&selectedtab=5'+phpsid+'" target="info">Diplomatie</a>',
   'Einheiten',
   '- neu laden | <a href="?setpage=__MENUID__&sid=<?=$f_sid?>"><img border=0 src="<?=g("icon/reload.png")?>" alt=reload title=reload></a>',
   <?php
@@ -112,7 +113,7 @@ $dev = sqlgetobject("SELECT * FROM `building` WHERE `type` = 10 LIMIT 1"); ?>
   'Umfrage | <a href="info/poll.php?'+phpsid+'" target="info"><span id="pollnotify">Umfragen</span></a>',
   '- offene Umfragen | <a href="info/poll.php?'+phpsid+'" target="info"><span id="pollnotify">offene Umfragen</span></a>',
   '- schon beantwortete Umfragen | <a href="info/poll.php?tab=1'+phpsid+'" target="info">schon beantwortete Umfragen</a>',
-  'Scores',
+  'Stats | <a href="<?= sessionLink("../stats/gen_pts.php")?>" title=stats target=info>Stats</a>',
   '- Spieler',
   '- - totale Punkte | <a href="stats/gen_pts.php?what=p'+phpsid+'" target="info">totale Punke</a>',
   '- - ohne Militär | <a href="stats/gen_pts.php?what=pnm'+phpsid+'" target="info">ohne Militär</a>',

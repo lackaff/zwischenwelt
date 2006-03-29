@@ -76,7 +76,7 @@ foreach($reslist as $o){
 	echo "<img src='".g($img)."' border=0 alt='$rel%' title='$rel%'> ";
 	echo shortNumber($o->cur);
 	 if (intval($gUser->flags) & kUserFlags_ShowMaxRes)echo " / ".shortNumber($o->max);
-	echo " | ";
+	echo " ";
 }
 echo "<hr>";
 ?>

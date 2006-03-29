@@ -23,7 +23,7 @@ $dummyframesetcols = implode(",",$dummyframesetcols);
 		</frameset>
 	</frameset>
 	<?php } else { ?>
-	<frameset rows="85,*,100,0" noresize>
+	<frameset rows="85,*,85,0" noresize>
 		<frame src="<?=SessionLink("compactmenu.php".((isset($f_fc) && $f_fc==1)?"?fc=1":""));?>" scrolling=no name="menu" frameborder="1">
 		<frame src="<?=SessionLink("info.php".((isset($f_fc) && $f_fc==1)?"?fc=1":""));?>" name="info" frameborder="1">
 		<frame src="<?=SessionLink("log.php");?>" name="log" frameborder="0">
