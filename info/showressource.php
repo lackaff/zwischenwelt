@@ -79,6 +79,9 @@ G1    Füllicon, breit, knalliger Farbverlauf
 G2    Füllicon, halbbreit, knalliger Farbverlauf
 G3    Füllicon, halbbreit, dezenter Farbverlauf
 G4    Füllicon, halbbreit, grauer Balken
+G5    Füllicon, breit, knalliger Farbverlauf
+G6    Füllblase
+G7    Füllblase (tech)
 HR    Horizontaler Trennstrich (richtet auch aus wie TAB)
 SEP   Horizontaler Trennstrich etwas breiter aber blasser (richtet auch aus wie TAB)
 AXC   Aktuell Exakt Textfarbe

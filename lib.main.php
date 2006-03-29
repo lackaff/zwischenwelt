@@ -1168,6 +1168,8 @@ function drawressource($resname,$resimg,$resact,$resmax,$fmt)
     'G3'  => '<img alt="'.$resproz.'%" title="'.$resproz.'%" src="'.g('lager/blass/lagerstand_'.$res16.'.gif').'">',
     'G4'  => '<img alt="'.$resproz.'%" title="'.$resproz.'%" src="'.g('lager/grau/lagerstand_'.$res16.'.gif').'">',
     'G5'  => '<img alt="'.$resproz.'%" title="'.$resproz.'%" src="'.g('lager/normal/lagerstand_'.$res16.'.gif').'">',
+    'G6'  => '<img alt="'.$resproz.'%" title="'.$resproz.'%" src="'.g('lager/bubble/lagerstand_'.$res16.'.gif').'">',
+    'G7'  => '<img alt="'.$resproz.'%" title="'.$resproz.'%" src="'.g('lager/bubbletech/lagerstand_'.$res16.'.gif').'">',
     'MX'  => number_format($resmax,0,',','.'),
     'MAX' => number_format($resmax,0,',','.'),
     'MK'  => number_format(round($resmax/1000),0,',','.').'k',
