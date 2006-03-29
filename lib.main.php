@@ -1138,7 +1138,7 @@ function drawressource($resname,$resimg,$resact,$resmax,$fmt)
     'TCOL'=> '<span style="color:'.$rescolor.'">'.$resproz.'%</span>',
     'T3'  => '<span style="background-color:'.$resbcolor.'">'.$resproz.'%</span>',
     'TB'  => '<span style="background-color:'.$resbcolor.'">'.$resproz.'%</span>',
-    'G1'  => '<img alt="'.$resproz.'%" title="'.$resproz.'%" src="'.g('lager/normal/lagerstand_'.$res16.'.gif').'">',
+    'G1'  => '<img alt="'.$resproz.'%" title="'.$resproz.'%" src="'.g('lager/breit/lagerstand_'.$res16.'.gif').'">',
     'G2'  => '<img alt="'.$resproz.'%" title="'.$resproz.'%" src="'.g('lager/schmal/lagerstand_'.$res16.'.gif').'">',
     'G3'  => '<img alt="'.$resproz.'%" title="'.$resproz.'%" src="'.g('lager/blass/lagerstand_'.$res16.'.gif').'">',
     'G4'  => '<img alt="'.$resproz.'%" title="'.$resproz.'%" src="'.g('lager/grau/lagerstand_'.$res16.'.gif').'">',
