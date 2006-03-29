@@ -1127,74 +1127,109 @@ function drawressource_cmp($a, $b)
 
 function drawressource($resname,$resimg,$resact,$resmax,$fmt)
 {
-  if($resmax > 0)$p = $resact/$resmax;
-  else $p = 0;
-  $resproz = round(100*$p);
-  $res16=round(16*$p);
-  $rescolor=getacolor($resproz,1.5,-60);//'#ff0000'; // hier ne Funktion hin! - Satte Farben
-  $resbcolor=getacolor($resproz,0.8,100);//'#ff9090'; // hier ne Funktion hin! - Dezente Farben
-  $info = "$resname: $resact / $resmax ($resproz%)";
-  $lagerstandcode=array
-  (
-    'PROZ'=> $resproz.'%',
-    'TCOL'=> '<span style="color:'.$rescolor.'">'.$resproz.'%</span>',
-    'SEP' => '</td><td style="border-left: 3px solid #d0d0d0;">',
-    'AXC' => '<span style="color:'.$rescolor.'">'.number_format($resact,0,',','.').'</span>',
-    'AKC' => '<span style="color:'.$rescolor.'">'.number_format(round($resact/100),0,',','.').'</span>',
-    'ASC' => '<span style="color:'.$rescolor.'">'.shortNumber($resact).'</span>',
-    'AXB' => '<span style="background-color:'.$rescolor.'">'.number_format($resact,0,',','.').'</span>',
-    'AKB' => '<span style="background-color:'.$rescolor.'">'.number_format(round($resact/100),0,',','.').'</span>',
-    'ASB' => '<span style="background-color:'.$rescolor.'">'.shortNumber($resact).'</span>',
-    'MXC' => '<span style="color:'.$rescolor.'">'.number_format($resmax,0,',','.').'</span>',
-    'MKC' => '<span style="color:'.$rescolor.'">'.number_format(round($resmax/100),0,',','.').'</span>',
-    'MSC' => '<span style="color:'.$rescolor.'">'.shortNumber($resmax).'</span>',
-    'MXB' => '<span style="background-color:'.$rescolor.'">'.number_format($resmax,0,',','.').'</span>',
-    'MKB' => '<span style="background-color:'.$rescolor.'">'.number_format(round($resmax/100),0,',','.').'</span>',
-    'MSB' => '<span style="background-color:'.$rescolor.'">'.shortNumber($resmax).'</span>',
-    'HOR' => '',
-    'VERT'=> '',
-    'VER' => '',
-    'HR' => '</td><td style="border-left: 1px solid #e0e0e0;">',
-    'RT'  => $resname,
-    'RN'  => $resname,
-    'RG'  => '<img alt="'.$info.'" title="'.$info.'" src="'.g($resimg).'">',
-    'RI'  => '<img alt="'.$info.'" title="'.$info.'" src="'.g($resimg).'">',
-    'T1'  => $resproz.'%',
-    'T2'  => '<span style="color:'.$rescolor.'">'.$resproz.'%</span>',
-    'T3'  => '<span style="background-color:'.$resbcolor.'">'.$resproz.'%</span>',
-    'TB'  => '<span style="background-color:'.$resbcolor.'">'.$resproz.'%</span>',
-    'G1'  => '<img alt="'.$resproz.'%" title="'.$resproz.'%" src="'.g('lager/breit/lagerstand_'.$res16.'.gif').'">',
-    'G2'  => '<img alt="'.$resproz.'%" title="'.$resproz.'%" src="'.g('lager/schmal/lagerstand_'.$res16.'.gif').'">',
-    'G3'  => '<img alt="'.$resproz.'%" title="'.$resproz.'%" src="'.g('lager/blass/lagerstand_'.$res16.'.gif').'">',
-    'G4'  => '<img alt="'.$resproz.'%" title="'.$resproz.'%" src="'.g('lager/grau/lagerstand_'.$res16.'.gif').'">',
-    'G5'  => '<img alt="'.$resproz.'%" title="'.$resproz.'%" src="'.g('lager/normal/lagerstand_'.$res16.'.gif').'">',
-    'G6'  => '<img alt="'.$resproz.'%" title="'.$resproz.'%" src="'.g('lager/bubble/lagerstand_'.$res16.'.gif').'">',
-    'G7'  => '<img alt="'.$resproz.'%" title="'.$resproz.'%" src="'.g('lager/bubbletech/lagerstand_'.$res16.'.gif').'">',
-    'MX'  => number_format($resmax,0,',','.'),
-    'MAX' => number_format($resmax,0,',','.'),
-    'MK'  => number_format(round($resmax/1000),0,',','.').'k',
-    'MS'  => shortNumber($resmax),
-    'AX'  => number_format($resact,0,',','.'),
-    'ACT' => number_format($resact,0,',','.'),
-    'AK'  => number_format(round($resact/1000),0,',','.').'k',
-    'AS'  => shortNumber($resact),
-    'BR'  => '<br>',
-    'TAB' => '</td><td>',
-  );
-  
-  uksort($lagerstandcode, "drawressource_cmp");
-  $output=htmlentities($fmt);
-  $output=str_replace("  "," &nbsp;",$output); // PRE
-  foreach ($lagerstandcode as $key=>$value)
-  {
-    $output=str_replace($key,$value,$output);
-  }
-  $output='<td>'.$output.'</td>';
-  if (strpos($fmt,'HOR')===false)
-    $output='<tr>'.$output.'</tr>';
-  echo $output."\n";
+ if ($resmax>0)
+   $p=$resact/$resmax;
+ else
+   $p=0;
+ $resproz=round(100*$p);
+ $res16=round(16*$p);
+ $rescolor=getacolor($resproz,1.5,-60);
+ $resbcolor=getacolor($resproz,0.8,100);
+ $info = "$resname: $resact / $resmax ($resproz%)";
+ $lagerstandcode=array
+ (
 
-}
+   'JUSTIFY' => '',
+   'CENTER' => '',
+   'RIGHT' => '',
+   'LEFT' => '',
+
+   '[B]'  => '<b>',
+   '[/B]' => '</b>',
+   '[I]'  => '<i>',
+   '[/I]' => '</i>',
+   '[U]'  => '<u>',
+   '[/U]' => '</u>',
+   '[TT]'  => '<tt>',
+   '[/TT]' => '</tt>',
+   '[PRE]'  => '<pre>',
+   '[/PRE]' => '</pre>',
+
+   '[L]'  => '<div style="text-align: left;">',
+   '[R]'  => '<div style="text-align: right;">',
+   '[C]'  => '<div style="text-align: center;">',
+   '[/L]' => '</div>',
+   '[/R]' => '</div>',
+   '[/C]' => '</div>',
+
+   '[BIG]'  => '<span style="font-size: 14px;">',
+   '[/BIG]' => '</span>',
+   '[SMALL]'  => '<span style="font-size: 9px;">',
+   '[/SMALL]' => '</span>',
+
+   'PROZ'=> $resproz.'%',
+   'TCOL'=> '<span style="color:'.$rescolor.'">'.$resproz.'%</span>',
+   'VERT'=> '',
+   'SEP' => '</td><td style="border-left: 3px solid #d0d0d0;">',
+   'TAB' => '</td><td>',
+
+   'AXC' => '<span style="color:'.$rescolor.'">'.number_format($resact,0,',','.').'</span>',
+   'AKC' => '<span style="color:'.$rescolor.'">'.number_format(round($resact/100),0,',','.').'</span>',
+   'ASC' => '<span style="color:'.$rescolor.'">'.shortNumber($resact).'</span>',
+   'AXB' => '<span style="background-color:'.$rescolor.'">'.number_format($resact,0,',','.').'</span>',
+   'AKB' => '<span style="background-color:'.$rescolor.'">'.number_format(round($resact/100),0,',','.').'</span>',
+   'ASB' => '<span style="background-color:'.$rescolor.'">'.shortNumber($resact).'</span>',
+   'MXC' => '<span style="color:'.$rescolor.'">'.number_format($resmax,0,',','.').'</span>',
+   'MKC' => '<span style="color:'.$rescolor.'">'.number_format(round($resmax/100),0,',','.').'</span>',
+   'MSC' => '<span style="color:'.$rescolor.'">'.shortNumber($resmax).'</span>',
+   'MXB' => '<span style="background-color:'.$rescolor.'">'.number_format($resmax,0,',','.').'</span>',
+   'MKB' => '<span style="background-color:'.$rescolor.'">'.number_format(round($resmax/100),0,',','.').'</span>',
+   'MSB' => '<span style="background-color:'.$rescolor.'">'.shortNumber($resmax).'</span>',
+
+   'HOR' => '',
+   'VER' => '',
+   'MAX' => number_format($resmax,0,',','.'),
+   'ACT' => number_format($resact,0,',','.'),
+
+   'TC'  => '<span style="color:'.$rescolor.'">'.$resproz.'%</span>',
+   'HR' => '</td><td style="border-left: 1px solid #e0e0e0;">',
+   'RT'  => $resname,
+   'RN'  => $resname,
+   'RG'  => '<img alt="'.$info.'" title="'.$info.'" src="'.g($resimg).'">',
+   'RI'  => '<img alt="'.$info.'" title="'.$info.'" src="'.g($resimg).'">',
+   'T1'  => $resproz.'%',
+   'T2'  => '<span style="color:'.$rescolor.'">'.$resproz.'%</span>',
+   'T3'  => '<span style="background-color:'.$resbcolor.'">'.$resproz.'%</span>',
+   'TB'  => '<span style="background-color:'.$resbcolor.'">'.$resproz.'%</span>',
+   'G1'  => '<img alt="'.$resproz.'%" title="'.$resproz.'%" src="'.g('lager/breit/lagerstand_'.$res16.'.gif').'">',
+   'G2'  => '<img alt="'.$resproz.'%" title="'.$resproz.'%" src="'.g('lager/schmal/lagerstand_'.$res16.'.gif').'">',
+   'G3'  => '<img alt="'.$resproz.'%" title="'.$resproz.'%" src="'.g('lager/blass/lagerstand_'.$res16.'.gif').'">',
+   'G4'  => '<img alt="'.$resproz.'%" title="'.$resproz.'%" src="'.g('lager/grau/lagerstand_'.$res16.'.gif').'">',
+   'G5'  => '<img alt="'.$resproz.'%" title="'.$resproz.'%" src="'.g('lager/normal/lagerstand_'.$res16.'.gif').'">',
+   'G6'  => '<img alt="'.$resproz.'%" title="'.$resproz.'%" src="'.g('lager/bubble/lagerstand_'.$res16.'.gif').'">',
+   'G7'  => '<img alt="'.$resproz.'%" title="'.$resproz.'%" src="'.g('lager/bubbletech/lagerstand_'.$res16.'.gif').'">',
+   'MX'  => number_format($resmax,0,',','.'),
+   'MK'  => number_format(round($resmax/1000),0,',','.').'k',
+   'MS'  => shortNumber($resmax),
+   'AX'  => number_format($resact,0,',','.'),
+   'AK'  => number_format(round($resact/1000),0,',','.').'k',
+
+   'AS'  => shortNumber($resact),
+   'BR'  => '<br>',
+ );
+
+ uksort($lagerstandcode, "drawressource_cmp");
+ $output=htmlentities($fmt);
+ $output=str_replace("  "," &nbsp;",$output); // PRE
+ foreach ($lagerstandcode as $key=>$value)
+ {
+   $output=str_replace($key,$value,$output);
+ }
+ $output='<td>'.$output.'</td>';
+ if (strpos($fmt,'HOR')===false)
+   $output='<tr>'.$output.'</tr>';
+ echo $output."\n";
+} // drawressource() 
 
 //echoes a formated ($fmt) table with the ressources of the $user
 //showrealcontent - draw user content or testvalues to the the bars?

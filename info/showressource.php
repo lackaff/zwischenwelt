@@ -97,6 +97,8 @@ MXB   Maximal Exakt Hintergrundfarbe
 MKB   Maximal Kilo Hintergrundfarbe
 MSB   Maximal Short Hintergrundfarbe
 
+BBCode Tags: L R C BIG SMALL
+
 Beispiel: HOR RG RT BR G4 T1 BR XK/ZK
 </pre>
 
