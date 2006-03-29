@@ -1114,8 +1114,10 @@ function shortNumber($x){
 
 function drawressource($resname,$resimg,$resact,$resmax,$fmt)
 {
-  $resproz=round(100*$resact/$resmax);
-  $res16=round(16*$resact/$resmax);
+  if($resmax > 0)$p = $resact/$resmax;
+  else $p = 0;
+  $resproz = round(100*$p);
+  $res16=round(16*$p);
   $rescolor='#ff0000'; // hier ne Funktion hin! - Satte Farben
   $resbcolor='#ff9090'; // hier ne Funktion hin! - Dezente Farben
   $info = "$resname: $resact / $resmax ($resproz%)";
