@@ -132,6 +132,7 @@ $dev = sqlgetobject("SELECT * FROM `building` WHERE `type` = 10 LIMIT 1"); ?>
   '- ZW Wiki | <a href="http://zwischenwelt.org/wiki/?'+phpsid+'" target="_blank">Nachschlagewerk</a>',
   '- Admin fragen | <a href="info/msg.php?show=compose&to=Admin'+phpsid+'" target="info">Admin fragen</a>',
   '- Menu neuladen | <a href="compactmenu.php?sid='+phpsid+'">Menu neuladen</a>',
+  '- Kampfsimulator | <a href="info/kampfsim.php?sid='+phpsid+'" target=info>Kampfsimulator</a>',
   'Account',
   '- Notiz schreiben | <a href="info/note.php?'+phpsid+'" target="_blank">Notiz schreiben</a>',
   '- Einstellungen | <a href="info/profile.php?'+phpsid+'" target="info">Einstellungen</a>',
