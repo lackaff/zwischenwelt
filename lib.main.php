@@ -1051,7 +1051,9 @@ function calcFoodNeed($n,$dt){
 	return $n*$dt/24/60/60;
 }
 
-  function getacolor($position,$bright=1,$gamma=0,$min=0,$max=1)
+//generates a color
+//position 0-100
+  function getacolor($position,$bright=1,$gamma=0,$min=0,$max=100)
   {
     $colorset=array
     (
@@ -1118,8 +1120,8 @@ function drawressource($resname,$resimg,$resact,$resmax,$fmt)
   else $p = 0;
   $resproz = round(100*$p);
   $res16=round(16*$p);
-  $rescolor='#ff0000'; // hier ne Funktion hin! - Satte Farben
-  $resbcolor='#ff9090'; // hier ne Funktion hin! - Dezente Farben
+  $rescolor=getacolor($resproz,1.5,-60);//'#ff0000'; // hier ne Funktion hin! - Satte Farben
+  $resbcolor=getacolor($resproz,0.8,100);//'#ff9090'; // hier ne Funktion hin! - Dezente Farben
   $info = "$resname: $resact / $resmax ($resproz%)";
   $lagerstandcode=array
   (
@@ -1141,12 +1143,14 @@ function drawressource($resname,$resimg,$resact,$resmax,$fmt)
     'G3'  => '<img alt="'.$resproz.'%" title="'.$resproz.'%" src="'.g('lager/soft/lagerstand_'.$res16.'.gif').'">',
     'G4'  => '<img alt="'.$resproz.'%" title="'.$resproz.'%" src="'.g('lager/grau/lagerstand_'.$res16.'.gif').'">',
     'G5'  => '<img alt="'.$resproz.'%" title="'.$resproz.'%" src="'.g('lager/breituni/lagerstand_'.$res16.'.gif').'">',
-    'MX'  => ktrenner($resmax),
-    'MAX' => ktrenner($resmax),
-    'MK'  => shortNumber($resmax),
-    'AX'  => ktrenner($resact),
-    'ACT' => shortNumber($resact),
-    'AK'  => shortNumber($resact),
+    'MX'  => number_format($resmax,0,',','.'),
+    'MAX' => number_format($resmax,0,',','.'),
+    'MK'  => number_format(round($resmax/100),0,',','.').'k',
+    'MS'  => shortNumber($resmax),
+    'AX'  => number_format($resact,0,',','.'),
+    'ACT' => number_format($resact,0,',','.'),
+    'AK'  => number_format(round($resact/100),0,',','.').'k',
+    'AS'  => shortNumber($resact),
     'BR'  => '<br>',
     'TAB' => '</td><td>',
   );

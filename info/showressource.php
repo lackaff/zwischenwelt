@@ -38,6 +38,7 @@ $fmts = array(
     echo '<div style="background-color:'.$c.'"><tt>'.$i.' '.$c.'</tt></div>';
   }
 */
+  
 ?>
 
 <h1>Info</h1>
@@ -68,9 +69,11 @@ TAB   Tabulator, Ausrichten
 RN    Name der Ressource als Text (Alias: RT, falls ihr euch das besser merken könnt)
 RG    Grafik der Ressource (Alias: RI für Ressource Image)
 AX    Aktuell Exakt (Alias: ACT)
-AK    Aktuell gerundet - also 1k statt 1,000
+AK    Aktuell auf 1000 gerundet - also 1k statt 1,000
+AS    Aktuell gerundet - kurze Anzeige
 MX    Maximal Exakt (Alias: MAX)
-MK    Maximal gerundet - also 1k statt 1,000
+MK    Maximal auf 1000 gerundet - also 1k statt 1,000
+MS    Maximal gerundet - kurze Anzeige
 T1    Text mit % Zeichen  (Alias: PROZ)
 T2    Text mit % Zeichen mit Textfarbe (Alias: TCOL für Text Colored)
 T3    Text mit % Zeichen mit Hintergrundfarbe (Alias TB Text Background)

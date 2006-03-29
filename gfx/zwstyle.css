@@ -34,13 +34,18 @@ A {
 	FONT-FAMILY: monospace;
 	FONT-SIZE: 9pt;
 	FONT-WEIGHT: normal;
-	TEXT-DECORATION: underline;
+	TEXT-DECORATION: none;
+	font-style:italic;
 }
 A:hover {
-	COLOR: #00AA00; TEXT-DECORATION: underline
+	COLOR: blue; TEXT-DECORATION: underline
 }
 A:active {
 	TEXT-DECORATION: none
+}
+
+.tabs a {
+	background:none;
 }
 
 .picframe {
