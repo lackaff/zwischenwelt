@@ -1,6 +1,7 @@
 body {
   margin:2px;
   padding:0px;
+  background-color:white;
 }
 
 table.compactmenu span.notify#postnotify,

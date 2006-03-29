@@ -3,9 +3,6 @@ require_once("../lib.main.php");
 require_once("../lib.score.php");
 Lock();
 
-
-
-
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 transitional//EN"
    "http://www.w3.org/TR/html4/transitional.dtd">
@@ -28,6 +25,7 @@ $fmts = array(
 'HOR RT BR AK / MK',
 'HOR RG (PROZ) BR AK',
 'VERT RG RN G4 (PROZ) ACT / MAX',
+'HOR G2 RG AK TAB',
 );
 
 
@@ -81,6 +79,20 @@ G1    Füllicon, breit, knalliger Farbverlauf
 G2    Füllicon, halbbreit, knalliger Farbverlauf
 G3    Füllicon, halbbreit, dezenter Farbverlauf
 G4    Füllicon, halbbreit, grauer Balken
+HR    Horizontaler Trennstrich (richtet auch aus wie TAB)
+SEP   Horizontaler Trennstrich etwas breiter aber blasser (richtet auch aus wie TAB)
+AXC   Aktuell Exakt Textfarbe
+AKC   Aktuell Kilo Textfarbe
+ASC   Aktuell Short Textfarbe
+AXB   Aktuell Exakt Hintergrundfarbe
+AKB   Aktuell Kilo Hintergrundfarbe
+ASB   Aktuell Short Hintergrundfarbe
+MXC   Maximal Exakt Textfarbe
+MKC   Maximal Kilo Textfarbe
+MSC   Maximal Short Textfarbe
+MXB   Maximal Exakt Hintergrundfarbe
+MKB   Maximal Kilo Hintergrundfarbe
+MSB   Maximal Short Hintergrundfarbe
 
 Beispiel: HOR RG RT BR G4 T1 BR XK/ZK
 </pre>

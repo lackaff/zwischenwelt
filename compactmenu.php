@@ -20,7 +20,6 @@ if(empty($css))$css = $gMenuStyles["default"];
 <html>
   <head>
     <title>"compact menu" demo by Gor_de_Mar</title>
-    <link rel="stylesheet" type="text/css" href="<?=GetZWStylePath()?>">
     <script src="js/compactmenu.js"></script>
     <script src="js/compactmenusitemap.js.php?sid=<?=$_REQUEST["sid"]?>"></script>
     <script> 

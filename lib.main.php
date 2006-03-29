@@ -1114,6 +1114,17 @@ function shortNumber($x){
 	return ktrenner($x).$unit;
 }
 
+
+function drawressource_cmp($a, $b)
+{
+   $a = strlen($a);
+   $b = strlen($b);
+   if ($a == $b) {
+       return 0;
+   }
+   return ($a > $b) ? -1 : 1;
+}
+
 function drawressource($resname,$resimg,$resact,$resmax,$fmt)
 {
   if($resmax > 0)$p = $resact/$resmax;
@@ -1125,17 +1136,31 @@ function drawressource($resname,$resimg,$resact,$resmax,$fmt)
   $info = "$resname: $resact / $resmax ($resproz%)";
   $lagerstandcode=array
   (
+    'PROZ'=> $resproz.'%',
+    'TCOL'=> '<span style="color:'.$rescolor.'">'.$resproz.'%</span>',
+    'SEP' => '</td><td style="border-left: 3px solid #d0d0d0;">',
+    'AXC' => '<span style="color:'.$rescolor.'">'.number_format($resact,0,',','.').'</span>',
+    'AKC' => '<span style="color:'.$rescolor.'">'.number_format(round($resact/100),0,',','.').'</span>',
+    'ASC' => '<span style="color:'.$rescolor.'">'.shortNumber($resact).'</span>',
+    'AXB' => '<span style="background-color:'.$rescolor.'">'.number_format($resact,0,',','.').'</span>',
+    'AKB' => '<span style="background-color:'.$rescolor.'">'.number_format(round($resact/100),0,',','.').'</span>',
+    'ASB' => '<span style="background-color:'.$rescolor.'">'.shortNumber($resact).'</span>',
+    'MXC' => '<span style="color:'.$rescolor.'">'.number_format($resmax,0,',','.').'</span>',
+    'MKC' => '<span style="color:'.$rescolor.'">'.number_format(round($resmax/100),0,',','.').'</span>',
+    'MSC' => '<span style="color:'.$rescolor.'">'.shortNumber($resmax).'</span>',
+    'MXB' => '<span style="background-color:'.$rescolor.'">'.number_format($resmax,0,',','.').'</span>',
+    'MKB' => '<span style="background-color:'.$rescolor.'">'.number_format(round($resmax/100),0,',','.').'</span>',
+    'MSB' => '<span style="background-color:'.$rescolor.'">'.shortNumber($resmax).'</span>',
     'HOR' => '',
     'VERT'=> '',
     'VER' => '',
+    'HR' => '</td><td style="border-left: 1px solid #e0e0e0;">',
     'RT'  => $resname,
     'RN'  => $resname,
     'RG'  => '<img alt="'.$info.'" title="'.$info.'" src="'.g($resimg).'">',
     'RI'  => '<img alt="'.$info.'" title="'.$info.'" src="'.g($resimg).'">',
     'T1'  => $resproz.'%',
-    'PROZ'=> $resproz.'%',
     'T2'  => '<span style="color:'.$rescolor.'">'.$resproz.'%</span>',
-    'TCOL'=> '<span style="color:'.$rescolor.'">'.$resproz.'%</span>',
     'T3'  => '<span style="background-color:'.$resbcolor.'">'.$resproz.'%</span>',
     'TB'  => '<span style="background-color:'.$resbcolor.'">'.$resproz.'%</span>',
     'G1'  => '<img alt="'.$resproz.'%" title="'.$resproz.'%" src="'.g('lager/breit/lagerstand_'.$res16.'.gif').'">',
@@ -1154,6 +1179,8 @@ function drawressource($resname,$resimg,$resact,$resmax,$fmt)
     'BR'  => '<br>',
     'TAB' => '</td><td>',
   );
+  
+  uksort($lagerstandcode, "drawressource_cmp");
   $output=htmlentities($fmt);
   $output=str_replace("  "," &nbsp;",$output); // PRE
   foreach ($lagerstandcode as $key=>$value)

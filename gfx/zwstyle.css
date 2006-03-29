@@ -35,10 +35,10 @@ A {
 	FONT-SIZE: 9pt;
 	FONT-WEIGHT: normal;
 	TEXT-DECORATION: none;
-	font-style:italic;
 }
 A:hover {
-	COLOR: blue; TEXT-DECORATION: underline
+	COLOR: blue; 
+	background-color:#9090d0;
 }
 A:active {
 	TEXT-DECORATION: none
