@@ -1233,40 +1233,56 @@ function drawressource($resname,$resimg,$resact,$resmax,$fmt)
 
 //echoes a formated ($fmt) table with the ressources of the $user
 //showrealcontent - draw user content or testvalues to the the bars?
-function drawRessources($user,$fmt,$showrealcontent=true){
-	global $gRes;
-	$reslist = array();
-	foreach($gRes as $n=>$f) {
-		$o = false;
-		$o->cur = $user->$f;
-		$o->max = $user->{"max_".$f};
-		$o->name = $n;
-		$o->img = "res_$f.gif";
-		$o->imglink = false;
-		$reslist[] = $o;
-	}
-	if (1) {
-		$o = false;
-		$o->cur = $user->pop;
-		$o->max = $user->maxpop;
-		$o->name = "Bev&ouml;lkerung";
-		$o->img = "pop-r1.png";
-		$o->imglink = false;
-		$reslist[] = $o;
-	}
+function drawRessources($user,$fmt,$showrealcontent=true) 
+{ 
+ global $gRes; 
+ $reslist = array(); 
+ foreach($gRes as $n=>$f) 
+ { 
+   $o = false; 
+   $o->cur = $user->$f; 
+   $o->max = $user->{"max_".$f}; 
+   $o->name = $n; 
+   $o->img = "res_$f.gif"; 
+   $o->imglink = false; 
+   $reslist[] = $o; 
+ } 
+ if (1) 
+ { 
+   $o = false; 
+   $o->cur = $user->pop; 
+   $o->max = $user->maxpop; 
+   $o->name = "Bev&ouml;lkerung"; 
+   $o->img = "pop-r1.png"; 
+   $o->imglink = false; 
+   $reslist[] = $o; 
+ } 
 
-	echo '<table cellpadding="2" cellspacing="0" border="0" class="resinfo">';
-	if (strpos($fmt,'HOR')!==false) echo '<tr class="hor">';
-	$imax = sizeof($reslist)-1;
-	$i = 0;
-	foreach($reslist as $x){
-		if($showrealcontent)$cur = $x->cur;
-		else $cur = $x->max*$i/$imax;
-		drawressource($x->name,$x->img,$cur,$x->max,$fmt);
-		++$i;
-	}
-	if (strpos($fmt,'HOR')!==false) echo '</tr>';
-	echo "</table>";
-}
+ if (strpos($fmt,'JUSTIFY')!==false) 
+   echo '<table cellpadding="2" cellspacing="0" border="0" class="resinfo" width="100%">'; 
+ else 
+ if (strpos($fmt,'LEFT')!==false) 
+   echo '<table cellpadding="2" cellspacing="0" border="0" class="resinfo" align="left">'; 
+ else 
+ if (strpos($fmt,'RIGHT')!==false) 
+   echo '<table cellpadding="2" cellspacing="0" border="0" class="resinfo" align="right">'; 
+ else 
+ if (strpos($fmt,'CENTER')!==false) 
+   echo '<table cellpadding="2" cellspacing="0" border="0" class="resinfo" align="center">'; 
+ else 
+   echo '<table cellpadding="2" cellspacing="0" border="0" class="resinfo">'; 
+
+ if (strpos($fmt,'HOR')!==false) echo '<tr class="hor">'; 
+ $imax = sizeof($reslist)-1; 
+ $i = 0; 
+ foreach($reslist as $x){ 
+   if($showrealcontent)$cur = $x->cur; 
+   else $cur = $x->max*$i/$imax; 
+   drawressource($x->name,$x->img,$cur,$x->max,$fmt); 
+   ++$i; 
+ } 
+ if (strpos($fmt,'HOR')!==false) echo '</tr>'; 
+ echo "</table>"; 
+} // drawRessources()
 
 ?>
