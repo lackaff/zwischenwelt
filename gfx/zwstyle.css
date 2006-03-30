@@ -37,7 +37,7 @@ A {
 	TEXT-DECORATION: none;
 }
 A:hover {
-	background-color:#9090d0;
+	color:blue;
 }
 A:active {
 	TEXT-DECORATION: none
