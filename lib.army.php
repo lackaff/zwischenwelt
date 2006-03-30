@@ -849,6 +849,8 @@ class cArmy {
 		} else if($building){
 			//building and terrain, no override
 			$speed = max($t_speed,$b_speed);
+			if ($t_speed == 0) $speed = 0;
+			if ($b_speed == 0) $speed = 0;
 		} else {
 			//only terrain
 			$speed = $t_speed;
