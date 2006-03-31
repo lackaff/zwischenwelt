@@ -112,7 +112,7 @@ class cPath {
 		return $path;
 	}
 	
-	function FindPath($userid,$units,$srcx,$srcy,$dstx,$dsty){
+	function FindPath($userid,$units,$srcx,$srcy,$dstx,$dsty,$maxsteps=512){
 		$lOpen = array();
 		$lClose = array();
 
@@ -121,7 +121,9 @@ class cPath {
 		$lClose[$srcx."_".$srcy] = array("p"=>"","h"=>cPath::GetHeuristic($srcx,$srcy,$dstx,$dsty),"g"=>0);
 		//echo "[open]";
 		//print_r($lOpen);
-				
+		
+		$step = 0;
+		
 		while(sizeof($lOpen)>0){
 			//get best open point
 			$bestid = cPath::FindBest($lOpen);
@@ -149,6 +151,8 @@ class cPath {
 			$lClose[$bestid] = $best;
 
 			if($x == $dstx && $y == $dsty)break;
+			++$step;
+			if($step > $maxsteps)return array();
 		}
 		
 		//echo "[close]";
