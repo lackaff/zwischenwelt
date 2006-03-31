@@ -549,9 +549,10 @@ class cFight {
 			
 		if (intval($army->flags) & kArmyFlag_SiegePillage) {
 			if (!isset($army->units)) $army->units = cUnit::GetUnits($army->id);
-			$armyfull = max(0,cUnit::GetUnitsSum($army->units,"last") > cArmy::GetArmyTotalWeight($army));
+			$freeload = max(0,cUnit::GetUnitsSum($army->units,"last") - cArmy::GetArmyTotalWeight($army));
+			$armyfull = $freeload > 1;
 			
-			echo "armyfull = ".($armyfull?1:0)."<br>";
+			echo "armyfull = ".($armyfull?1:0).", freeload = $freeload<br>";
 			
 			// army is full, stop pillage-siege
 			if ($armyfull && (intval($army->flags) & kArmyFlag_StopSiegeWhenFull)) {
