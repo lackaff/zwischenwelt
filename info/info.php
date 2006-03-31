@@ -135,7 +135,7 @@ if (!isset($f_building) && !isset($f_army) && isset($f_do)) {
 			$castspelltype = false;
 			$tower = sqlgetobject("SELECT * FROM `building` WHERE `id` = ".intval($f_tower));
 			if ($tower->user != $gUser->id) break;
-			require_once("lib.spells.php");
+			require_once("../lib.spells.php");
 			foreach ($gSpellType as $spelltype){
 				if (isset($f_count[$spelltype->id]))
 				for ($i=0;$i<intval($f_count[$spelltype->id]);++$i) {

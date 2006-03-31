@@ -169,6 +169,46 @@ class cPath {
 		
 		return $path;
 	}
+	
+	//insert wps before prio wp at army
+	// used only by cPath::ArmyRecalcNextWP(), for the new-path-if-blocked behavior
+	function ArmyInsertWPBeforePrio($army,$priority,$wps){
+		//echo "ArmyInsertWPBeforePrio($army->id,$priority,".sizeof($wps).")<br>";
+		$size = sizeof($wps);
+		sql("UPDATE `waypoint` SET `priority`=`priority`+$size WHERE `army`=".intval($army->id)." AND `priority`>=".intval($priority));
+		$o = null;
+		$o->army = $army->id;
+		
+		foreach($wps as $wp){
+			$o->priority = $priority;
+			$o->x = $wp->x;
+			$o->y = $wp->y;
+			sql("INSERT INTO `waypoint` SET ".obj2sql($o));
+			//vardump($o);
+			++$priority;
+		}
+		
+		echo "$size wps added to army $army->name [$army->id]<br>";
+	}
+
+	//try to find a route from army to the next wp
+	// used only by cPath::ArmyRecalcNextWP(), for the new-path-if-blocked behavior
+	function ArmyRecalcNextWP($army,&$wps){
+		for($i=0;$i<sizeof($wps) && $wps[$i]->x == $army->x && $wps[$i]->y == $army->y;++$i);
+		if($i<sizeof($wps) && ($wps[$i]->x != $army->x || $wps[$i]->y != $army->y)){
+			if(empty($army))return array();
+			
+			$units = cUnit::GetUnits($army->id);
+			$sx = $army->x;$sy = $army->y;
+			$x = $wps[$i]->x;$y = $wps[$i]->y;
+			$prio = $wps[$i]->priority;
+			
+			$path = cPath::FindPath($army->user,$units,$sx,$sy,$x,$y);
+			
+			cPath::ArmyInsertWPBeforePrio($army,$prio,$path);
+			
+		} else sql("UPDATE `army` SET `idle`=0 WHERE `id`=".intval($army->id));
+	}
 }
 
 ?>
