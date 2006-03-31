@@ -550,7 +550,7 @@ class cFight {
 		if (intval($army->flags) & kArmyFlag_SiegePillage) {
 			if (!isset($army->units)) $army->units = cUnit::GetUnits($army->id);
 			$freeload = max(0,cUnit::GetUnitsSum($army->units,"last") - cArmy::GetArmyTotalWeight($army));
-			$armyfull = $freeload > 1;
+			$armyfull = $freeload < 1;
 			
 			echo "armyfull = ".($armyfull?1:0).", freeload = $freeload<br>";
 			
