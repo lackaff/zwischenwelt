@@ -286,4 +286,12 @@ function magictext($text) {
 	return $text;
 }
 
+function speedformat($speed)
+{
+  if ($speed==0) $speed=1; // division by zero
+  $fph=round(3600/$speed);
+  echo '<span title="entspricht '.$fph.' Feldern pro Stunde">';
+  echo '<img src="gfx/sanduhrklein.gif">&nbsp;'.$fph.'</span>';
+} // speedformat()
+
 ?>

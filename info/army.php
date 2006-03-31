@@ -797,12 +797,8 @@ class cInfoArmy extends cInfoBase {
 			<?php if($sum > kArmy_BigArmyGoSlowLimit) {?>
 				Geschwindigkeitsfaktor wegen Armeegrösse (<?=floor($sum)?>) : <?=round(pow(kArmy_BigArmyGoSlowFactorPer1000Units,($sum - kArmy_BigArmyGoSlowLimit) / 1000),2)?><br>
 			<?php } ?>
-			Armee Geschwindigkeit (soviele Sekunden muss sie pro feld mindestens warten): <?=ceil(cArmy::getArmySpeed($gArmy))?><br>
-			
-			
-			
-			
-			
+			Armee Geschwindigkeit (soviele Sekunden muss sie pro Feld mindestens warten): <?=ceil(cArmy::getArmySpeed($gArmy))?><br>
+			das entspricht etwa <?=speedformat(cArmy::getArmySpeed($gArmy))?> Felder/h<br>
 			
 			<?php /* ###### --Verhalten-- ###### */ ?>
 			<h3><?=cText::Wiki("ArmeeVerhalten")?>Verhalten</h3>
