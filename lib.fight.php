@@ -546,6 +546,20 @@ class cFight {
 		if (!$building) 
 			{ if ($debug) echo "StartSiege : no building<br>"; return false; }
 			
+			
+		if (intval($army->flags) & kArmyFlag_SiegePillage) {
+			if (!isset($army->units)) $army->units = cUnit::GetUnits($army->id);
+			$armyfull = max(0,cUnit::GetUnitsSum($army->units,"last") > cArmy::GetArmyTotalWeight($army));
+			
+			echo "armyfull = ".($armyfull?1:0)."<br>";
+			
+			// army is full, stop pillage-siege
+			if ($armyfull && (intval($army->flags) & kArmyFlag_StopSiegeWhenFull)) {
+				if ($debug) echo "StartSiege : full : abort<br>";
+				return false;
+			}
+		}
+			
 		// starting siege
 		if ($debug) echo "StartSiege : starting siege<br>";
 		$t = false;
