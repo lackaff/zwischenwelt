@@ -67,7 +67,16 @@ class cInfoHospital extends cInfoBuilding {
 						Redirect(query("admintechgroup.php?id=".mysql_insert_id()."&sid=?"));
 					break;
 					
-					default:
+					case "item":
+						$o="";
+						$o->name="new_item";
+						$o->descr="edit me";
+						sql("INSERT INTO `itemtype` SET ".obj2sql($o));
+						echo "item created .. please edit and refresh cached types<br>";
+						Redirect(query("adminitem.php?id=".mysql_insert_id()."&sid=?"));
+					break;
+
+				    default:
 					break;
 				}
 			break;
@@ -126,6 +135,7 @@ class cInfoHospital extends cInfoBuilding {
 			<li><a href="<?=Query("?sid=?&x=?&y=?&building=hospital&id=$gObject->id&do=create&create=unit")?>">Add a new Unit</a></li>
 			<li><a href="<?=Query("?sid=?&x=?&y=?&building=hospital&id=$gObject->id&do=create&create=technology")?>">Add a new Technology</a></li>
 			<li><a href="<?=Query("?sid=?&x=?&y=?&building=hospital&id=$gObject->id&do=create&create=technologygroup")?>">Add a new Technologygroup</a></li>
+			<li><a href="<?=Query("?sid=?&x=?&y=?&building=hospital&id=$gObject->id&do=create&create=item")?>">Add a new ItemType</a></li>
 		</ul>
 		
 		<ul>
