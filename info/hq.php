@@ -327,6 +327,8 @@ class cInfoHQ extends cInfoBuilding {
 			$tip[] = "Wenn deine Lager überlauffen, fliessen die Rohstoffe in die Weltbank, und werden als GildenPunkte angerechnet";
 		}
 		
+		$tip[] = "Gebäude können in einem Abstand von bis zu 2 Feldern zu eigenen Gebäuden gebaut werden.<br>";
+		
 		foreach ($minbtable as $o) {
 			$cb = CountUserBuildingType($gUser->id,$o[0]);
 			if (!$debug_show_all_tips && $cb >= $o[1]) continue;
