@@ -115,7 +115,7 @@ foreach($gAllUsers as $x) {
 			if ($gVerbose) echo "fertiggestellt : ".$gBuildingType[$o->type]->name."(".$o->x.",".$o->y.")<br>";
 			
 			$now = microtime_float();
-			CompleteBuild($o,($o->flags & kUserFlags_AutomaticUpgradeBuildingTo)>0);
+			CompleteBuild($o,($x->flags & kUserFlags_AutomaticUpgradeBuildingTo)>0);
 			echo "Profile CompleteBuild : ".sprintf("%0.3f",microtime_float()-$now)."<br>\n";
 		}
 	} else {
