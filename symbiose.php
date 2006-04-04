@@ -13,6 +13,6 @@ $uid = intval($f_uid);
 if($uid==kGuild_Weltbank_Founder){ // TODO : FIND OUT WHAT THIS IS FOR ??
 	sql("UPDATE `user` SET `lastlogin`=".time()." WHERE `id`=$uid");
 }
-sql("UPDATE `session` SET userid='$uid', `lastuse`=".time()." WHERE `sid`='$gSID' AND userid=".$gUser->id);
+sql("UPDATE `session` SET `usegfx`=0, `userid`='$uid', `lastuse`=".time()." WHERE `sid`='$gSID' AND userid=".$gUser->id);
 Redirect("main.php?sid=".$gSID);
 ?>
