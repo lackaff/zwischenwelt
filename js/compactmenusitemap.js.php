@@ -43,7 +43,7 @@ compactmenusitemap=new Array
   '- Haupthaus | <a target=info href="info/info.php?x=<?=$hq->x?>&y=<?=$hq->y?>selectedtab=1'+phpsid+'" title="HQ (<?=$hq->x?>,<?=$hq->y?>)">Haupthaus</a>', 
 //  '- Forschung | <a href="info/info.php?x=<?=$hq->x?>&y=<?=$hq->y?>&selectedtab=2'+phpsid+'" target="info">Forschung</a>',
   '- Produktion | <a href="info/info.php?x=<?=$hq->x?>&y=<?=$hq->y?>&selectedtab=3'+phpsid+'" target="info">Produktion</a>',
-//  '- Diplomatie | <a href="info/info.php?x=<?=$hq->x?>&y=<?=$hq->y?>&selectedtab=5'+phpsid+'" target="info">Diplomatie</a>',
+  '- Zauber | <a href="info/info.php?x=<?=$hq->x?>&y=<?=$hq->y?>&selectedtab=6'+phpsid+'" target="info">Zauber</a>',
   'Sprung',
   <?php
     foreach($gBuildingType as $id=>$obj)if($obj->flags & kBuildingTypeFlag_IsInQuickJump){
