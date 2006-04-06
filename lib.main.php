@@ -240,8 +240,15 @@ function NWSEReplace ($source,$nwse) {
 	return str_replace("%NWSE%",$nwse,$source);
 }
 
+$gBorderParamStack = array();
+
 // papyrus-border
-function ImgBorderStart($style="p1",$type="jpg",$bgcolor="#F9EDCD",$bgpic="",$tilesize=14,$bordersize=13,$rootpath="papyrus/") {?>
+function ImgBorderStart($style="p1",$type="jpg",$bgcolor="#F9EDCD",$bgpic="",$tilesize=14,$bordersize=13,$rootpath="papyrus/") {
+	global $gBorderParamStack;
+	$p = array("style"=>$style,"type"=>$type,"bgcolor"=>$bgcolor,
+			"bgpic"=>$bgpic,"tilesize"=>$tilesize,"bordersize"=>$bordersize,"rootpath"=>$rootpath);
+	array_push($gBorderParamStack,$p);
+?>
 	<table cellspacing="0" cellpadding="0" border=0>
 	<tr>
 		<td style="background:url(<?=g($rootpath."tl-".$style.".".$type)?>) no-repeat bottom right">
@@ -259,7 +266,17 @@ function ImgBorderStart($style="p1",$type="jpg",$bgcolor="#F9EDCD",$bgpic="",$ti
 }
 
 // papyrus-border
-function ImgBorderEnd($style="p1",$type="jpg",$bgcolor="#F9EDCD",$tilesize=14,$bordersize=15,$rootpath="papyrus/") {?>
+//all parameters are ignored, becase they come from the new stack
+function ImgBorderEnd($style="p1",$type="jpg",$bgcolor="#F9EDCD",$tilesize=14,$bordersize=15,$rootpath="papyrus/") {
+	global $gBorderParamStack;
+	$p = array_pop($gBorderParamStack);
+	$style = $p["style"];
+	$type = $p["type"];
+	$bgcolor = $p["bgcolor"];
+	$tilesize = $p["tilesize"];
+	$bordersize = $p["bordersize"];
+	$rootpath = $p["rootpath"];
+?>
 	</td>
 		<td style="background:url(<?=g($rootpath."r-".$style.".".$type)?>) repeat-y left"></td>
 	</tr>
