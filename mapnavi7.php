@@ -501,7 +501,7 @@ if ($gUser->admin) {
 }
 $content .= NaviTool(g("tool_crosshair.png"),kMapNaviTool_Center	,0,"Zentrieren");
 $content .= NaviTool(g("icon/info.png")		,kMapNaviTool_MultiTool	,0,"Armeen-Befehl"	,"navtoolicon"); 
-$content .= NaviTool(g("icon/guild-send.png")		,kMapNaviTool_Message	,0,"Nachticht schicken"	,"navtoolicon"); 
+$content .= NaviTool(g("icon/tool_msg.png")		,kMapNaviTool_Message	,0,"Nachticht schicken"	,"navtoolicon"); 
 $content .= "<br>";
 $content .= "<textarea class=\"notizblock\" name=\"notizblock\" rows=2 cols=40></textarea>";
 $content .= "</div>\n";
@@ -588,7 +588,7 @@ if ($gUser->admin) {
 	$gNaviToolTabs[] = array($head,$content);
 }
 
-$tabcorner = "<div class=\"mapnavi_curtool\"><img width=23 height=23 name=\"curtoolpic\" src=\"".g("tool_look.png")."\"></div>";
+$tabcorner = "<div class=\"mapnavi_curtool\"><img width=26 height=26 style=\"border: 1px solid #dddddd\" name=\"curtoolpic\" src=\"".g("tool_look.png")."\"></div>";
 
 echo "<table width=\"100%\" border=0 cellspacing=0 cellpadding=0><tr><td>\n"; // cage
 echo GenerateTabs("mapnavitools",$gNaviToolTabs,$tabcorner,"ToolTabChange");
