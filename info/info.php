@@ -96,6 +96,7 @@ if(isset($f_jumptoarmy)){
 $f_x = intval($f_x);
 $f_y = intval($f_y);
 $gDoReload = true;
+$xylimit = "`x` = ".$f_x." AND `y` = ".$f_y;
 
 if (!isset($f_building) && !isset($f_army) && isset($f_do)) {
 	rob_ob_start();
@@ -405,6 +406,17 @@ if (!isset($f_building) && !isset($f_army) && isset($f_do)) {
 	$info_message = rob_ob_end();
 }
 
+
+if($f_do == "sendmessage"){
+	$u = sqlgetone("SELECT `user` FROM `army` WHERE $xylimit");
+	if(!($u > 0))$u = sqlgetone("SELECT `user` FROM `building` WHERE $xylimit");
+	if($u > 0){
+		$u = sqlgetone("SELECT `name` FROM `user` WHERE `id`=".intval($u));
+		Redirect(Query("../info/msg.php?show=compose&to=$u&sid=?"));
+	}
+}
+
+
 $gInfoObjects = array();
 $gInfoBuildingScriptClassNames = array();
 
@@ -439,7 +451,6 @@ if (!empty($content)) RegisterInfoTab("info",$content,200);
 
 
 // now that the commands have had their chance to update stuff, get object data
-$xylimit = "`x` = ".$f_x." AND `y` = ".$f_y;
 $gMapBuilding = sqlgettable("SELECT * FROM `building` WHERE ".$xylimit);
 $gMapArmy = sqlgettable("SELECT * FROM `army` WHERE ".$xylimit,"id");
 $gMapCons = sqlgettable("SELECT * FROM `construction` WHERE ".$xylimit." AND `user` = ".$gUser->id);

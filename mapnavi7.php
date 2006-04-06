@@ -302,6 +302,9 @@ if ($gUser->admin && isset($f_regentypes)) {
 			case <?=kMapNaviTool_Clear?>:
 				urladd = "&do=adminclear";
 			break;
+			case <?=kMapNaviTool_Message?>:
+				urladd = "&do=sendmessage";
+			break;
 			case <?=kMapNaviTool_QuickMagic?>:
 				urladd = "&do=quickmagic&spellid="+curtoolparam;
 			break;
@@ -324,7 +327,7 @@ if ($gUser->admin && isset($f_regentypes)) {
 		// vermutlich weil die funktion ueber das map frame aufgerufen wird -> browserbug ?
 		var url = "<?=BASEURL?>info/info.php?x="+x+"&y="+y+urladd+"&sid=<?=$gSID?>";
 		//alert(url);
-		if (mytool == kMapNaviTool_Look || mytool == kMapNaviTool_QuickMagic) 
+		if (mytool == kMapNaviTool_Look || mytool == kMapNaviTool_QuickMagic || mytool == kMapNaviTool_Message) 
 				parent.info.location.href = url;
 		else {
 			<?php for ($i=0;$i<kDummyFrames;++$i) {?>
@@ -498,6 +501,7 @@ if ($gUser->admin) {
 }
 $content .= NaviTool(g("tool_crosshair.png"),kMapNaviTool_Center	,0,"Zentrieren");
 $content .= NaviTool(g("icon/info.png")		,kMapNaviTool_MultiTool	,0,"Armeen-Befehl"	,"navtoolicon"); 
+$content .= NaviTool(g("icon/guild-send.png")		,kMapNaviTool_Message	,0,"Nachticht schicken"	,"navtoolicon"); 
 $content .= "<br>";
 $content .= "<textarea class=\"notizblock\" name=\"notizblock\" rows=2 cols=40></textarea>";
 $content .= "</div>\n";
