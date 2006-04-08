@@ -473,13 +473,11 @@ class Hellhole_3 extends Hellhole_0 {
 	
 	function Think () {
 		global $gUnitType,$gRes2ItemType,$gRes,$gUser;
-		$min_runs_till_spread = 10;
-		$king_size_mult = 4;
 		
 		// need to collect at least this many ressources before spreading
 		$this->spread_min_respoints = max(
-			$gUnitType[$this->type]->last * $this->armysize * $min_runs_till_spread,
-			$gUnitType[$this->type2]->last * $this->armysize2 * $king_size_mult
+			$gUnitType[$this->type]->last * $this->armysize * kHellHoleParam_Ant_MinRunsTillSpread,
+			$gUnitType[$this->type2]->last * $this->armysize2 * kHellHoleParam_Ant_KingSizeMult
 			);
 		
 		$x = $this->x;
@@ -628,7 +626,7 @@ class Hellhole_3 extends Hellhole_0 {
 						
 					// create a king
 					$kingflags = kArmyFlag_AutoAttack | kArmyFlag_Wander;
-					$king = cArmy::SpawnArmy($x,$y,cUnit::Simple($this->type2,$this->armysize2 * $king_size_mult),
+					$king = cArmy::SpawnArmy($x,$y,cUnit::Simple($this->type2,$this->armysize2 * kHellHoleParam_Ant_KingSizeMult),
 										false,kArmyType_Normal,0,0,$this->id,false,$kingflags);
 					
 					if ($king) {

@@ -145,6 +145,97 @@ class Spell_Schatzsuche extends Spell {
 	function GetDifficulty ($spelltype,$mages,$userid) { return 5; }
 }
 
+// ameisenhügel + rohstoffe darauf + armeen drumrum
+// Level 1 : im Umkreis von 100 Feldern
+// Level 2 : im Umkreis von 200 Feldern
+// Level 3 : im Umkreis von 300 Feldern
+class Spell_Ameisensuche extends Spell {
+	// 3 zufällige grosse rohstoff-mengen die offen rumliegen zu entdecken
+	
+    function cmp_nest($a, $b) {
+        $a = $a->myrespoints;
+        $b = $b->myrespoints;
+		if ($a == $b) return 0;
+		return ($a > $b) ? -1 : 1; // > : descending
+    }
+	
+	function Birth ($success) {
+		if (!parent::Birth($success)) return false;
+		$r = 100*$this->level;
+		$x = $this->x;
+		$y = $this->y;
+		$xylimit =	"`x` >= (".($x-$r).") AND `y` >= (".($y-$r).") AND".
+					"`x` <= (".($x+$r).") AND `y` <= (".($y+$r).")";
+		$nests_pre = sqlgettable("SELECT * FROM `hellhole` WHERE `ai_type` = ".kHellholeType_AntNest." AND ".$xylimit);
+		$nests = array();
+		global $gRes2ItemType,$gUnitType;
+		$c_total = 0;
+		$c_queen = 0;
+		$spreadresmax = 0;
+		foreach ($nests_pre as $o) {
+			$x = $o->x;
+			$y = $o->y;
+			$o->building = sqlgetobject("SELECT * FROM `building` WHERE `x` = ".$o->x." AND `y` = ".$o->y);
+			
+			if (count($gRes2ItemType) > 0)
+					$myresitems = sqlgettable("SELECT * FROM `item` WHERE `x` = ".$o->x." AND `y` = ".$o->y." AND 
+									`type` IN (".implode(",",$gRes2ItemType).")");
+			else	$myresitems = array();
+			$myrespoints = 0;
+			foreach ($myresitems as $i) $myrespoints += $i->amount;
+			$o->myresitems = $myresitems;
+			$o->myrespoints = $myrespoints;
+			$o->a = $gUnitType[$o->type]->last;
+			$o->b = $gUnitType[$o->type2]->last;
+			$o->spread_min_respoints = max(
+				$gUnitType[$o->type]->last * $o->armysize * kHellHoleParam_Ant_MinRunsTillSpread,
+				$gUnitType[$o->type2]->last * $o->armysize2 * kHellHoleParam_Ant_KingSizeMult
+				);
+			$spreadresmax = max($spreadresmax,$o->spread_min_respoints);
+			$o->hasqueens = $o->myrespoints > $o->spread_min_respoints;
+			
+			++$c_total;
+			if ($o->hasqueens) ++$c_queen;
+		
+			$r = 1;
+			$xylimit =	"`x` >= (".($x-$r).") AND `y` >= (".($y-$r).") AND".
+						"`x` <= (".($x+$r).") AND `y` <= (".($y+$r).")";
+			$o->armies = sqlgettable("SELECT * FROM `army` WHERE `user` > 0 AND ".$xylimit);
+			$nests[] = $o;
+		}
+		usort($nests, array("Spell_Ameisensuche", "cmp_nest"));
+		?>
+		AmeisenHügel gesamt : <?=$c_total?>, davon <?=$c_queen?> mit Königinnen (min <?=kplaintrenner($spreadresmax)?> Res)
+		<table border=1 cellspacing=0 cellpadding=0>
+		<tr>
+			<th>AmeisenHügel</th>
+			<th>HP</th>
+			<th>Ressourcen</th>
+			<th>Königinnen</th>
+			<th>danebenstehende Armeen</th>
+		</tr>
+		<?php foreach ($nests as $o) {?>
+			<tr>
+				<td><?=opos2txt($o)?></td>
+				<td align="right"><?=intval($o->building->hp)?></td>
+				<td align="right"><?=kplaintrenner($o->myrespoints)?></td>
+				<td><?=($o->hasqueens)?"JA":"-"?></td>
+				<td nowrap align="right">
+					<?php foreach ($o->armies as $a) {?>
+					<a href="<?=Query("info.php?sid=?&x=".$a->x."&y=".$a->y)?>"><?=$a->name?></a> von <?=GetUserLink($a->user)?><br>
+					<?php } // endforeach?>
+				</td>
+			</tr>
+		<?php } // endforeach?>
+		</table>
+		<?php
+		//vardump2($nests);
+		//for ($i=0;$i<$c_res;++$i) echo "<img src='".g($gItemType[$res[$i]->type]->gfx)."'> ".$res[$i]->amount." bei ".opos2txt($res[$i])."<br>";
+		//for ($i=0;$i<$c_item;++$i) echo "<img src='".g($gItemType[$item[$i]->type]->gfx)."'> ".$item[$i]->amount." bei ".opos2txt($item[$i])."<br>";
+		return true;
+	}
+	function GetDifficulty ($spelltype,$mages,$userid) { return 5; }
+}
 
 // Armee für eine bestimmte zeit festhalten
 class Spell_Spinnennetz extends Spell_Cron {
