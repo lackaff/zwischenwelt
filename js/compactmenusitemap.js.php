@@ -113,6 +113,7 @@ $dev = sqlgetobject("SELECT * FROM `building` WHERE `type` = 10 LIMIT 1"); ?>
   'Umfrage | <a href="info/poll.php?'+phpsid+'" target="info"><span id="pollnotify">Umfragen</span></a>',
   '- offene Umfragen | <a href="info/poll.php?'+phpsid+'" target="info"><span id="pollnotify">offene Umfragen</span></a>',
   '- schon beantwortete Umfragen | <a href="info/poll.php?tab=1'+phpsid+'" target="info">schon beantwortete Umfragen</a>',
+  '- Archiv | <a href="work/polls.txt" target="_blank">Archiv</a>',
   'Stats | <a href="<?= sessionLink("stats/gen_pts.php")?>" title=stats target=info>Stats</a>',
   '- Spieler',
   '- - totale Punkte | <a href="stats/gen_pts.php?what=p'+phpsid+'" target="info">totale Punke</a>',
