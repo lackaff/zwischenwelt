@@ -209,7 +209,7 @@ function GetUserLink ($user,$guildinfo=true,$msglink=true,$specialcolor=false) {
 	$hq = sqlgetobject("SELECT * FROM `building` WHERE `type` = ".kBuilding_HQ." AND `user` = ".$user->id);
 	$guild = ($guildinfo && $user->guild)?sqlgetobject("SELECT * FROM `guild` WHERE `id` = ".$user->guild):false;
 	$res = "";
-	if ($msglink) $res .= '<a href="'.query("msg.php?show=compose&to=".urlencode($user->name)."&sid=?").'"><img border=0 src="'.g("icon/guild-send.png").'"></a> ';
+	if ($msglink) $res .= '<a href="'.query("../info/msg.php?show=compose&to=".urlencode($user->name)."&sid=?").'"><img border=0 src="'.g("icon/guild-send.png").'"></a> ';
 	if ($specialcolor)
 			$res .= '<a style="color:'.$specialcolor.'" href="'.query("../info/info.php?sid=?&x=".$hq->x."&y=".$hq->y).'">'.($user->name).'</a> ';
 	else	$res .= '<a href="'.query("../info/info.php?sid=?&x=".$hq->x."&y=".$hq->y).'">'.GetFOFtxt($gUser->id,$user->id,$user->name).'</a> ';

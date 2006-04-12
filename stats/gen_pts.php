@@ -75,12 +75,12 @@ foreach ($userlist as $user){
 	
 		<tr>
 		<td align=right><?=$i?></td>
-		<td align=left><?=$info.$name?></td>
+		<td align=left><?=$info?><?=GetUserLink($user,false,true,$online)?></td>
 		<td align=center>
 		<?php if($user->guild > 0){ ?>
 			<a href='<?=query("../info/viewguild.php?id=".$user->guild."&sid=?")?>'><?=$gGuilds[$user->guild]->name?></a>
 		<?php } ?>
-		</td><td align=center><?=$hqxy?></td><td align=right><?=ktrenner($user->pts,"#000000","#ff0000",11)?></td></tr>
+		</td><td align=center><?=opos2txt($hq)?></td><td align=right><?=ktrenner($user->pts,"#000000","#ff0000",11)?></td></tr>
 		<?$i++;
 	}
 }

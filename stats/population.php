@@ -50,13 +50,10 @@ ImgBorderStart();
 			?>
 			<tr>
 				<td align=right><?=$i++?></td>
-				<td valign="middle"><a style="color:<?=$online?>" href="<?=query("../info/msg.php?sid=?&show=new&to=".urlencode($u->name))?>"><?=$u->name?></a>&nbsp;<?=$orden?>
+				<td valign="middle"><?=GetUserLink($u,false,true,$online)?>&nbsp;<?=$orden?>
 				<?php if(isset($title))foreach($title as $x)echo "<img align=\"absmiddle\" src=\"".$x->image."\" alt=\"".$x->title."\">"; ?>
 				</td>
-				<td align=center>
-					<a href="<?=query("../info/info.php?sid=?&x=".$hq->x."&y=".$hq->y)?>">
-					<?=($hq?($hq->x."/".$hq->y):"")?></a>
-				</td>
+				<td align=center><?=($hq?opos2txt($hq):"")?></td>
 				<td align=center><?php if($u->guild > 0){ ?>
 			<a href='<?=query("../info/viewguild.php?id=".$u->guild."&sid=?")?>'><?=$gGuilds[$u->guild]->name?></a>
 		<?php } ?></td>
