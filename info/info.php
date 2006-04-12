@@ -567,6 +567,7 @@ if (!isset($f_blind)) {
 	<hr>
 	<form method="post" enctype="multipart/form-data"  target="_blank" action="<?=Query("../terraformpic.php?sid=?&x=?&y=?")?>">
 		Landschafts-import-Dialog für Bild <input name="bildup" type="file"> (nur PNG)
+		 um (Mitte:x,y)<input type="text" name="mid" value="<?=intval($f_x).",".intval($f_y)?>" style="width:80px">
 		<input type="submit" name="openimporter" value="oeffnen">
 	</form>
 	<a href="http://zwischenwelt.org/forum/index.php?t=msg&th=580">

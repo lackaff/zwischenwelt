@@ -44,6 +44,9 @@ if (isset($f_export)) {
 }
 
 if (isset($f_openimporter)) {
+	$mid = explode(",",trim($f_mid));
+	$f_x = intval($mid[0]);
+	$f_y = intval($mid[1]);
 	// $f_bildup
 	$picok = false;
 	$pictime = time();
@@ -315,6 +318,7 @@ if (isset($f_openimporter)) {
 	?>
 	<form method="post" enctype="multipart/form-data" action="<?=Query("?sid=?&x=?&y=?")?>">
 		Landschafts-Import-Dialog für Bild <input name="bildup" type="file"> (nur PNG)
+		 um (Mitte:x,y)<input type="text" name="mid" value="<?=intval($f_x).",".intval($f_y)?>" style="width:80px">
 		<input type="submit" name="openimporter" value="oeffnen">
 	</form>
 	<?php
