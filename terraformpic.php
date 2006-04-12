@@ -11,6 +11,8 @@ if (!($gUser && ($gUser->admin || intval($gUser->flags) & kUserFlags_TerraFormer
 if (isset($f_export)) {
 	$mid = explode(",",trim($f_mid));
 	$size = explode(",",trim($f_size));
+	$f_x = intval($mid[0]);
+	$f_y = intval($mid[1]);
 	$width = intval($size[0]);
 	$height = intval($size[1]);
 	$left = intval($mid[0])-floor($width/2);
