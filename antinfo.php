@@ -30,7 +30,7 @@ require_once("lib.main.php");
 	  </tr> 
 	  <tr> 
 		<td>Ameisenköniginnen</td> 
-		<td><units class="Ameisenköniginnen"><?=intval(sqlgetone("SELECT SUM(`amount`) FROM `unit` WHERE `type` = 55"))?></units></td> 
+		<td><units class="Ameisenköniginnen"><?=intval(sqlgetone("SELECT SUM(`amount`) FROM `unit` WHERE `type` = 54"))?></units></td> 
 		<td><troops class="Ameisenköniginnen"><?=intval(sqlgetone("SELECT COUNT(*) FROM `unit` WHERE `army` > 0 AND  `type` = 54"))?></troops></td> 
 	  </tr> 
 	  <tr> 
