@@ -3,7 +3,7 @@ require_once("lib.main.php");
 ?>
 <xml>
   <antinfo>
-    <timestamp format="Y-m-d H:i:s">2006-04-18 16:51:12</timestamp>
+    <timestamp format="Y-m-d H:i:s"><?=date("Y-m-d H:i:s")?></timestamp>
     <units type="AmeisenTruppenAnzahl"><?=intval(sqlgetone("SELECT COUNT(*) FROM `unit` WHERE `army` > 0 AND `type` = 55"))?></units>
     <units type="AmeisenKöniginnenTruppenAnzahl"><?=intval(sqlgetone("SELECT COUNT(*) FROM `unit` WHERE `army` > 0 AND  `type` = 54"))?></units>
     <units type="AmeisenEinheitenAnzahl"><?=intval(sqlgetone("SELECT SUM(`amount`) FROM `unit` WHERE `type` = 55"))?></units>
