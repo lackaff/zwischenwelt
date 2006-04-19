@@ -197,12 +197,16 @@ class cUnit {
 			$freelast = $o->amount * $gUnitType[$o->type]->last;
 			$mygive = array();
 			$totalmygive = 0;
+			
+			echo "GetUnitsTreasure(".$gUnitType[$o->type]->treasure.")<br>";
 			$treasure = explode(",",$gUnitType[$o->type]->treasure);
 			foreach ($treasure as $t) if ($t != "") {
 				list($itemtype,$amount) = explode(":",$t);
 				$w = max(1,$gItemType[$itemtype]->weight);
+				echo "itemtype=$itemtype  ,  amount=$amount , w=$w  firstchar=".($amount{0})."<br>";
 				if ($amount{0} == 't') { // total (for unittype) amount
 					$amount = intval(substr($amount,1));
+					echo "total amount = $amount<br>";
 					$res[$itemtype] = (isset($res[$itemtype])?$res[$itemtype]:0) + $amount;
 					$freelast -= $w * $amount;
 				} else { // relative(to other items) amount 
@@ -215,6 +219,7 @@ class cUnit {
 			foreach ($mygive as $itemtype => $amount)
 				$res[$itemtype] = (isset($res[$itemtype])?$res[$itemtype]:0) + $amount * $freelast / $totalmygive;
 		}
+		vardump2($res);
 		return $res;
 	}
 	

@@ -348,9 +348,11 @@ class cArmy {
 		if ($treasure) {
 			// todo : replace by real items, but i need to clean up the whole item code first...
 			global $gItemType2Res;
-			foreach ($treasure as $itemtype => $amount)
-				if (isset($gItemType2Res[$itemtype]))
+			foreach ($treasure as $itemtype => $amount) {
+				if (isset($gItemType2Res[$itemtype])) {
 					$army->{$gItemType2Res[$itemtype]} = $amount;
+				}
+			}
 		}
 		
 		// create and set units
@@ -358,6 +360,17 @@ class cArmy {
 		$army->id = mysql_insert_id();
 		$army->units = $units;
 		cUnit::SetUnits($army->units,$army->id);
+		
+		// give treasure to army (now also items)
+		if ($treasure) {
+			// todo : replace by real items, but i need to clean up the whole item code first...
+			global $gItemType2Res;
+			foreach ($treasure as $itemtype => $amount) {
+				if (!isset($gItemType2Res[$itemtype])) {
+					cItem::SpawnArmyItem($army,$itemtype,$amount);
+				}
+			}
+		}
 		
 		// update cron army cache
 		global $gAllArmys; 
