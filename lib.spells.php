@@ -168,7 +168,9 @@ class Spell {
 	}
 	
 	// no need to override this method in the actual spells, use Birth($success) instead
-	function Cast ($spelltype,$x,$y,$owner=0,$towerid=0) { // $owner=-1 means no res-cost
+	// $owner=-1 means no res-cost
+	// $successOverride=true means spell is forced to a normal success
+	function Cast ($spelltype,$x,$y,$owner=0,$towerid=0,$successOverride=false) {
 		global $gUser,$gRes;
 		if (is_object($owner)) $owner = $owner->id;
 		if ($owner == 0) $owner = $gUser->id;
@@ -187,7 +189,6 @@ class Spell {
 			}
 			
 			// check res
-			$costarr = array();
 			foreach($gRes as $n => $f) if ($user->$f < $spelltype->{"cost_$f"}) {
 				echo "nicht genug $n<br>";
 				return false;
@@ -220,9 +221,15 @@ class Spell {
 			}
 		}
 		
-		// throw the dice...
-		list($success,$penalty,$msg) = $this->GetRandomSuccess($spelltype,$mages,$owner);
+		if ($successOverride) {
+			// force a normal success
+			list($success,$penalty,$msg) = array( 1.0,1.0,"geschafft","#00AA00");
+		} else {
+			// throw the dice...
+			list($success,$penalty,$msg) = $this->GetRandomSuccess($spelltype,$mages,$owner);
+		}
 		
+		// res and mana cost
 		$this->PaySpell($spelltype,$towerid,$penalty,$owner);
 		
 		// start the spell
@@ -245,7 +252,7 @@ class Spell {
 			}
 		}
 		
-		// attempt to correct player position to hq (not really needed...?)
+		// attempt to correct player position to hq (needed to be able to ban evil spells like "pest" and "duerre" by casting ban on hq)
 		if ($spelltype->target == MTARGET_PLAYER && $this->targetuser) {
 			$hq = sqlgetobject("SELECT * FROM `building` WHERE `type` = ".kBuilding_HQ." AND `user` = ".intval($this->targetuser->id));
 			if ($hq) {
@@ -289,7 +296,7 @@ class Spell {
 	// determine spell radius
 	function GetRadius () { return 0; }
 	
-	// returns true if the target-user was able to counter the spell
+	// returns true if the target-user was able to counter the spell (NOT YET IMPLEMENTED)
 	function TryCounter ($userid) { return false; }
 }
 
