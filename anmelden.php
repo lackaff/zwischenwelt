@@ -2,6 +2,8 @@
 include("lib.php");
 include("lib.main.php");
 require_once("lib.message.php");
+if($f_a+$f_b==$f_aplusb)$spam = false;
+else $spam = true;
 
 $time = time() - 60*60*24*7;
 sql("DELETE FROM `pending` WHERE `time`<$time");
@@ -29,7 +31,7 @@ if(isset($f_selfcall))
 	if((strlen($f_pass1) >= 6) && ($f_pass1 == $f_pass2)) $f_pass = $f_pass1;
 	else $errstr .= 'Das Passwort muss mindestens 6 Zeichen lang sein und im Best&auml;tigungsfeld wiederholt werden.<br>';
 	
-	if ($errstr == '')
+	if ($errstr == '' && $spam == false)
 	{
 		$r = sql("SELECT `id` FROM `user` WHERE `name`='$f_name' OR `mail`='$f_mail'");
 		if(mysql_num_rows($r))
@@ -182,6 +184,20 @@ http://zwischenwelt.net-play.de/forum/phpBB2/index.php<br>
 			</select>
 		</td></tr>
 		<tr><td align="left" colspan="2"><textarea name="text" rows="3" cols="25">hier das sonstige hinschreiben</textarea></td></tr>
+		<tr>
+			<td>spamschutz</td>
+			<td>
+			<INPUT TYPE="text" NAME="a" ID="antispam_a" style="width:50px" value="<?=rand(1,100)?>">+
+			<INPUT TYPE="text" NAME="b" ID="antispam_b" style="width:50px" value="<?=rand(1,100)?>">=
+			<INPUT TYPE="text" NAME="aplusb" ID="antispam_aplusb" style="width:50px" value="???">
+			(einfach ignorieren)
+			</td>
+		</tr>
+		<SCRIPT LANGUAGE="JavaScript" type="text/javascript">
+		<!--
+			document.getElementById('antispam_aplusb').value = parseInt(document.getElementById('antispam_a').value) + parseInt(document.getElementById('antispam_b').value)
+		//-->
+		</SCRIPT>				
 		<tr><td align="left"></td><td align="right"><INPUT TYPE="submit" VALUE="anmelden"></td></tr>
 	</table>
 </FORM>
