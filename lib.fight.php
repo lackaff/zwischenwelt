@@ -8,6 +8,7 @@ class cFight {
 
 	//simply increase the amount of registered kills of one unittype of the user with userid
 	function AddUserkills($userid,$unittypeid,$kills){
+		if($unittypeid == 0 || $kills == 0)return;
 		echo "function AddUserkills($userid,$unittypeid,$kills)<br>\n";
 		$userid = (int)$userid;
 		$unittypeid = (int)$unittypeid;
