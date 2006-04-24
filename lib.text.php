@@ -272,6 +272,8 @@ function GetItemTypeLink ($type,$x,$y,$text=false,$user=false) {
 	return "$text";
 }
 
+//replaces plain text with sweet html sweeties
+//can replace (kUNITID) with the kill of the gUser
 function magictext($text) {
 	// positions
 	$text = ereg_replace("\\(([-+0-9]+),([-+0-9]+)\\)","<a target='map' href='".Query("../".kMapScript."?sid=?")."&x=\\1&y=\\2'>(\\1,\\2)</a>",$text);
@@ -283,6 +285,13 @@ function magictext($text) {
 	global $gUnitType;
 	foreach ($gUnitType as $o)
 		$text = str_replace("(u".$o->id.")",'<img src="'.g($o->gfx).'" alt=".">',$text);
+	// kills
+	global $gUser;
+	if($gUser->id>0){
+		$kills = sqlgettable("SELECT * FROM `userkills` WHERE `user`=".intval($gUser->id));
+		foreach ($kills as $o)
+			$text = str_replace("(k".$o->unittype.")",floor($o->kills),$text);
+	}
 	return $text;
 }
 

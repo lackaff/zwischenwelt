@@ -6,6 +6,24 @@ require_once("lib.spells.php");
 
 class cFight {
 
+	//simply increase the amount of registered kills of one unittype of the user with userid
+	function AddUserkills($userid,$unittypeid,$kills){
+		echo "function AddUserkills($userid,$unittypeid,$kills)<br>\n";
+		$userid = (int)$userid;
+		$unittypeid = (int)$unittypeid;
+		$kills = (float)$kills;
+		sql("update userkills set kills=kills+$kills where user=$userid and unittype=$unittypeid");
+		if(mysql_affected_rows()==0)
+			sql("insert into userkills set kills=$kills, user=$userid, unittype=$unittypeid");
+		echo "user $userid gets $kills\n";
+	}
+
+	//increase the kills for a user (userid), units is a list of killed unittypes
+	function AddUserkillsFromKilledUnits($userid,$units){
+		foreach($units as $x)
+			cFight::AddUserkills($userid,$x->type,$x->amount);
+	}
+
 	// $army must be object, replaces _ARMYNAME_ and _ARMYOWNERNAME_ in $why
 	function StopAllArmyFights ($army,$why) {
 		global $gNumber2ContainerType,$gContainerType2Number;
@@ -316,6 +334,8 @@ class cFight {
 			$defenderobj->vorher_units = $defenderobj->units;
 			$defenderobj->units = cUnit::GetUnitsAfterDamage($defenderobj->units,$dmg,$defenderobj->user);
 			$defenderobj->lost_units = cUnit::GetUnitsDiff($defenderobj->vorher_units,$defenderobj->units);
+			
+			cFight::AddUserkillsFromKilledUnits($attackerobj->user,$defenderobj->lost_units);
 			
 			if ($shooting->attackertype == kUnitContainer_Army)
 				cArmy::AddArmyFrags($attackerobj->id,cUnit::GetUnitsExp($defenderobj->lost_units));
@@ -876,6 +896,9 @@ class cFight {
 		$army1->lost_units = cUnit::GetUnitsDiff($army1->vorher_units,$army1->units);
 		$army2->lost_units = cUnit::GetUnitsDiff($army2->vorher_units,$army2->units);
 		
+		cFight::AddUserkillsFromKilledUnits($army1->user,$army2->lost_units);
+		cFight::AddUserkillsFromKilledUnits($army2->user,$army1->lost_units);
+
 		$army1->newfrags = cUnit::GetUnitsExp($army2->lost_units);
 		$army2->newfrags = cUnit::GetUnitsExp($army1->lost_units);
 		

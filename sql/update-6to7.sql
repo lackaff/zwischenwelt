@@ -19,3 +19,11 @@ ALTER TABLE `user` CHANGE `usegfxpath` `localstyles` TINYINT( 3 ) UNSIGNED DEFAU
 UPDATE `user` SET `localstyles` = 0;
 
 INSERT INTO `terraintype` VALUES (26, 'Nadelwald', '', 120, 0, '#2D6220', 'nadelwald/nadelwald-%NWSE%.png', '', 1, 1, 1, 2, '26', '', 0, 0);
+
+CREATE TABLE `userkills` (
+`user` INT UNSIGNED NOT NULL DEFAULT '0',
+`unittype` INT UNSIGNED NOT NULL DEFAULT '0',
+`kills` FLOAT NOT NULL DEFAULT '0',
+PRIMARY KEY ( `user` , `unittype` )
+) TYPE = MYISAM ;
+
