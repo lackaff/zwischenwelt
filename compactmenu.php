@@ -22,19 +22,6 @@ if(empty($css))$css = $gMenuStyles["default"];
     <title>"compact menu" demo by Gor_de_Mar</title>
     <script src="js/compactmenu.js"></script>
     <script src="js/compactmenusitemap.js.php?sid=<?=$_REQUEST["sid"]?>"></script>
-    <script> 
-     function displaymenunotify(id,type) 
-     { 
-       if (type=='reset') 
-         document.getElementById(id).className=''; 
-       else 
-       { 
-         cn=document.getElementById(id).className; 
-         if (cn.indexOf(type)==-1) 
-           document.getElementById(id).className+=' '+type; 
-       } 
-     } // displaymenunotify() 
-    </script>
     <link rel="stylesheet" href="css/compactmenuscale.css" type="text/css">
     <link rel="stylesheet" href="<?=$css?>" type="text/css">
   </head>

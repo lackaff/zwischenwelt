@@ -21,13 +21,28 @@ else $newpoll = false;
 
 ?>
 <script> 
+     function displaymenunotify(id,type) 
+     { 
+       if (!parent || !parent.menu || !parent.menu.document.getElementById(id))
+         window.setTimeout("displaymenunotify('"+id+"','"+type+"'),3000");
+       else
+       if (type=='reset') 
+         parent.menu.document.getElementById(id).className=''; 
+       else 
+       { 
+         cn=parent.menu.document.getElementById(id).className; 
+         if (cn.indexOf(type)==-1) 
+           parent.menu.document.getElementById(id).className+=' '+type; 
+       } 
+     } // displaymenunotify() 
+
 	<?php 
-	if($newpost)echo "parent.menu.displaymenunotify('postnotify','notify');\n";
-	else echo "parent.menu.displaymenunotify('postnotify','reset');\n";
-	if($newguild)echo "parent.menu.displaymenunotify('guildnotify','notify');\n";
-	else echo "parent.menu.displaymenunotify('guildnotify','reset');\n";
-	if($newpoll)echo "parent.menu.displaymenunotify('pollnotify','notify');\n";
-	else echo "parent.menu.displaymenunotify('pollnotify','reset');\n";
+	if($newpost)echo "displaymenunotify('postnotify','notify');\n";
+	else echo "displaymenunotify('postnotify','reset');\n";
+	if($newguild)echo "displaymenunotify('guildnotify','notify');\n";
+	else echo "displaymenunotify('guildnotify','reset');\n";
+	if($newpoll)echo "displaymenunotify('pollnotify','notify');\n";
+	else echo "displaymenunotify('pollnotify','reset');\n";
 	?>
 </script>
 <!-- <h1>Heute Abend findet wieder ein Chat statt. Mehr unter Umfrage oder Taverne</h1> --> 
