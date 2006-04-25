@@ -1006,7 +1006,7 @@ if (isset($f_blind)) { // blind modus im dummy frame, fuer schnellere map-click-
 
 <div id="dynamicinfomessage"></div>
 <?php /* info message */ ?>
-<?php if($info_message!="") {?><div><?=$info_message?></div><hr><?}?>
+<?php if($info_message!="") {?><div><?=message2paper($info_message)?></div><hr><?}?>
 
 <?php
 if ($gInfoTabsSelected == -1) $gInfoTabsSelected = count($gInfoTabs)-1;

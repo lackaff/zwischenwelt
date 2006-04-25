@@ -641,3 +641,107 @@ ul#mainnavi span#new, ul#mainnavi a#new {
   {
     text-align: center;
   }
+  
+  
+  
+  
+  
+  
+  
+table.zwpaper
+{
+  border: 0px;
+  empty-cells: show;
+  display: inline;
+}
+
+table.zwpaper td.tl1, table.zwpaper td.tr1,
+table.zwpaper td.cl1, table.zwpaper td.cr1,
+table.zwpaper td.bl1, table.zwpaper td.br1,
+table.zwpaper td.tl2, table.zwpaper td.tr2,
+table.zwpaper td.cl2, table.zwpaper td.cr2,
+table.zwpaper td.bl2, table.zwpaper td.br2,
+table.zwpaper td.tl3, table.zwpaper td.tr3,
+table.zwpaper td.cl3, table.zwpaper td.cr3,
+table.zwpaper td.bl3, table.zwpaper td.br3
+{
+ width: 20px;
+}
+
+table.zwpaper td.tl1, table.zwpaper td.tr1,
+table.zwpaper td.tc1, table.zwpaper td.bc1,
+table.zwpaper td.bl1, table.zwpaper td.br1,
+table.zwpaper td.tl2, table.zwpaper td.tr2,
+table.zwpaper td.tc2, table.zwpaper td.bc2,
+table.zwpaper td.bl2, table.zwpaper td.br2,
+table.zwpaper td.tl3, table.zwpaper td.tr3,
+table.zwpaper td.tc3, table.zwpaper td.bc3,
+table.zwpaper td.bl3, table.zwpaper td.br3
+{
+ height: 20px;
+}
+
+
+table.zwpaper td.tl1, table.zwpaper td.tl2, table.zwpaper td.tl3 { background-position: bottom right; }
+table.zwpaper td.tr1, table.zwpaper td.tr2, table.zwpaper td.tr3 { background-position: bottom left; }
+table.zwpaper td.tc1, table.zwpaper td.tc2, table.zwpaper td.tc3 { background-position: bottom left; }
+
+table.zwpaper td.cl1, table.zwpaper td.cl2, table.zwpaper td.cl3 { background-position: top right; }
+table.zwpaper td.cc1, table.zwpaper td.cc2, table.zwpaper td.cc3 { background-position: top left; }
+table.zwpaper td.cr1, table.zwpaper td.cr2, table.zwpaper td.cr3 { background-position: top left; }
+
+table.zwpaper td.bl1, table.zwpaper td.bl2, table.zwpaper td.bl3 { background-position: top right; }
+table.zwpaper td.br1, table.zwpaper td.br2, table.zwpaper td.br3 { background-position: top left; }
+table.zwpaper td.bc1, table.zwpaper td.bc2, table.zwpaper td.bc3 { background-position: top left; }
+
+
+table.zwpaper td.tl1 { background-image: url(paper/zwpaper1/images/tl.png); }
+table.zwpaper td.tc1 { background-image: url(paper/zwpaper1/images/t.png); }
+table.zwpaper td.tr1 { background-image: url(paper/zwpaper1/images/tr.png); }
+
+table.zwpaper td.cl1 { background-image: url(paper/zwpaper1/images/l.png); }
+table.zwpaper td.cc1 { background-image: url(paper/zwpaper1/images/c.png); }
+table.zwpaper td.cr1 { background-image: url(paper/zwpaper1/images/r.png); }
+
+table.zwpaper td.bl1 { background-image: url(paper/zwpaper1/images/bl.png); }
+table.zwpaper td.bc1 { background-image: url(paper/zwpaper1/images/b.png); }
+table.zwpaper td.br1 { background-image: url(paper/zwpaper1/images/br.png); }
+
+
+table.zwpaper td.tl2 { background-image: url(paper/zwpaper2/images/tl.png); }
+table.zwpaper td.tc2 { background-image: url(paper/zwpaper2/images/t.png); }
+table.zwpaper td.tr2 { background-image: url(paper/zwpaper2/images/tr.png); }
+
+table.zwpaper td.cl2 { background-image: url(paper/zwpaper2/images/l.png); }
+table.zwpaper td.cc2 { background-image: url(paper/zwpaper2/images/c.png); }
+table.zwpaper td.cr2 { background-image: url(paper/zwpaper2/images/r.png); }
+
+table.zwpaper td.bl2 { background-image: url(paper/zwpaper2/images/bl.png); }
+table.zwpaper td.bc2 { background-image: url(paper/zwpaper2/images/b.png); }
+table.zwpaper td.br2 { background-image: url(paper/zwpaper2/images/br.png); }
+
+
+table.zwpaper td.tl3 { background-image: url(paper/zwpaper3/images/tl.png); }
+table.zwpaper td.tc3 { background-image: url(paper/zwpaper3/images/t.png); }
+table.zwpaper td.tr3 { background-image: url(paper/zwpaper3/images/tr.png); }
+
+table.zwpaper td.cl3 { background-image: url(paper/zwpaper3/images/l.png); }
+table.zwpaper td.cc3 { background-image: url(paper/zwpaper3/images/c.png); }
+table.zwpaper td.cr3 { background-image: url(paper/zwpaper3/images/r.png); }
+
+
+table.zwpaper td.bl3 { background-image: url(paper/zwpaper3/images/bl.png); }
+table.zwpaper td.bc3 { background-image: url(paper/zwpaper3/images/b.png); }
+table.zwpaper td.br3 { background-image: url(paper/zwpaper3/images/br.png); }
+
+table.zwpaper td.cc1, table.zwpaper td.cc2, table.zwpaper td.cc3
+{
+  background-color: #f9f9f9;
+  padding: 5px;
+  font-family: "Times New Roman", serif;
+  font-size: 14px;
+  color: #908070;
+  vertical-align: top;
+}
+
+  

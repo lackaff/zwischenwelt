@@ -1302,4 +1302,27 @@ function drawRessources($user,$fmt,$showrealcontent=true)
  echo "</table>"; 
 } // drawRessources()
 
+function message2paper($message)
+{
+	?>
+	<table class="zwpaper" cellpadding="0" cellspacing="0" border="0">
+	<tr>
+	  <td class="tl<?php echo mt_rand(1,3); ?>"><img src="x.gif" width="20" height="20"></td>
+	  <td class="tc<?php echo mt_rand(1,3); ?>"></td>
+	  <td class="tr<?php echo mt_rand(1,3); ?>"></td>
+	</tr>
+	<tr>
+	  <td class="cl<?php echo mt_rand(1,3); ?>"></td>
+	  <td class="cc<?php echo mt_rand(1,3); ?>"><?php echo nl2br($message); ?></td>
+	  <td class="cr<?php echo mt_rand(1,3); ?>"></td>
+	</tr>
+	<tr>
+	  <td class="bl<?php echo mt_rand(1,3); ?>"></td>
+	  <td class="bc<?php echo mt_rand(1,3); ?>"></td>
+	  <td class="br<?php echo mt_rand(1,3); ?>"><img src="x.gif" width="20" height="20"></td>
+	</tr>
+	</table>
+	<?php
+} // message2paper()
+
 ?>
