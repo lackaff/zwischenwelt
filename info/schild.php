@@ -15,7 +15,7 @@ class cInfoSchild extends cInfoBuilding {
 			} 
 			$text = GetBParam($gObject->id,"text");
 		?>
-		<div><?php ImgBorderStart();?><pre><?=magictext(htmlspecialchars($text),$gObject->user)?></pre><?php ImgBorderEnd();?></div>
+		<div><?php ImgBorderStart();?><pre><?=cText::justifiedtext(magictext(htmlspecialchars($text),$gObject->user))?></pre><?php ImgBorderEnd();?></div>
 		<hr>
 		<?php
 		if($gUser->id == $gObject->user || $gUser->admin) {?>

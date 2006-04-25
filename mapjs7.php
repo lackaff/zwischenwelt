@@ -199,7 +199,7 @@ function MapLoad () {
 	foreach ($gBuildings as $o) {
 		switch ($o->type) { 
 			case kBuilding_Sign:
-				$text = trim(magictext(htmlspecialchars(GetBParam($o->id,"text")),$o->user));
+				$text = trim(cText::justifiedtext(magictext(htmlspecialchars(GetBParam($o->id,"text")),$o->user),30));
 				$text = "<pre>".$text."</pre>";
 				echo "gBuildingData[".$o->id."] = \"".strtr(addslashes($text),array("\n"=>"\\n","\r"=>""))."\";\n";
 			break;

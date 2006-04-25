@@ -3,6 +3,46 @@
 define("kHelpIcon",g('help2.png'));
 
 class cText {
+
+	/// by darian
+	function justifiedtext($text,$width=70)  { 
+	  $text=preg_replace("/[\t ]+/"," ",$text); 
+	  $text=preg_replace("/[\r\n]+/","\r\n\r\n",$text); 
+	  $text=trim($text); 
+	  $text=wordwrap($text,$width); 
+	  $text=preg_split("/[\r]?\n/",$text); 
+	  for ($i=count($text);$i>=0;$i--) 
+	  { 
+		$words=preg_split("/[ ]+/",$text[$i]); 
+		if ($text[$i+1]=='' || count($words)<2) 
+		{ 
+		  $text[$i]=implode(" ",$words); 
+		  continue; 
+		} 
+		$spaces=$width; 
+		foreach ($words as $word) 
+		  $spaces-=strlen(trim($word)); 
+	 
+		$each=$spaces/(count($words)-1)-0.0001; 
+		$rest=0; 
+	 
+		$line=""; 
+		foreach ($words as $word) 
+		{ 
+		  $rest+=$each; 
+		  $s=floor($rest); 
+		  $rest-=$s; 
+		  $spaces-=$s; 
+		  if ($spaces<=1 && $spaces>0) $line.=' '; 
+		  $line.=trim($word); 
+		  for ($s=$s;$s>0;$s--) $line.=' '; 
+		} 
+		$text[$i]=trim($line); 
+	  } 
+	  return implode("\r\n",$text); 
+	} // justifiedtext() 
+
+
 	// platziert ein kleines fragezeichen, das auf eine wikiseite zeigt
 	function Wiki ($topic,$typeid=0,$forceshow=false) {
 		global $gUser,$gUnitType,$gBuildingType,$gTechnologyType,$gTerrainType,$gItemType;
