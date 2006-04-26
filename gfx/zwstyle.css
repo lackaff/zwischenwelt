@@ -744,4 +744,18 @@ table.zwpaper td.cc1, table.zwpaper td.cc2, table.zwpaper td.cc3
   vertical-align: top;
 }
 
-  
+table.userkills {
+	border:solid #5e502d 1px;
+	padding:0px;
+}
+
+table.userkills th {
+	font-weight:bold;
+	background-color:#c6b695;
+	padding:2px;
+}
+
+table.userkills td {
+	padding:2px;
+	background-color:#f2e5c3;
+}
