@@ -315,7 +315,7 @@ function GetItemTypeLink ($type,$x,$y,$text=false,$user=false) {
 //replaces plain text with sweet html sweeties
 //can replace (kUNITID) with the kill of the gUser
 //userid is the "owner" of the text, used for kills on signs
-function magictext($text,$userid=0) {
+function magictext($text,$userid=-1) {
 	global $gUnitType;
 	global $gItemType;
 
@@ -323,24 +323,24 @@ function magictext($text,$userid=0) {
 	$text = ereg_replace("\\(([-+0-9]+),([-+0-9]+)\\)","<a target='map' href='".Query("../".kMapScript."?sid=?")."&x=\\1&y=\\2'>(\\1,\\2)</a>",$text);
 	// kills
 	$h = "";
-	if($userid>0){
+	if($userid>-1){
 		foreach ($gUnitType as $o){
 			$uid = $o->id;
 			$kills = sqlgetone("SELECT kills FROM `userkills` WHERE `unittype`=".intval($uid)." AND `user`=".intval($userid));
 			if(empty($kills))$kills = 0;
 			$kills = floor($kills);
 			$text = str_replace("(k$uid)",$kills,$text);
-			if($kills > 0)$h .= "(u$uid) $kills ".$o->name."\n";
+			if($kills > 0)$h .= "(u$uid) $kills ".$o->name;
 		}
 		//kill highscore
 		$text = str_replace("(highscore)",$h,$text);
 	}
 	// items
 	foreach ($gItemType as $o)
-		$text = str_replace("(i".$o->id.")",'<img src="'.g($o->gfx).'" alt=".">',$text);
+		$text = str_replace("(i".$o->id.")",'<img src="'.g($o->gfx).'" alt="'.$o->name.'">',$text);
 	// units
 	foreach ($gUnitType as $o)
-		$text = str_replace("(u".$o->id.")",'<img src="'.g($o->gfx).'" alt=".">',$text);
+		$text = str_replace("(u".$o->id.")",'<img src="'.g($o->gfx).'" alt="'.$o->name.'">',$text);
 	return $text;
 }
 
