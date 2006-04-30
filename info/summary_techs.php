@@ -13,7 +13,7 @@ profile_page_start("summary_techs.php");
 // if (isset($f_plan)) SetTechnologyUpgrades($f_techtype,$gObject->id,$f_upcount);
 if (isset($f_techs)) {
 	foreach ($f_plan as $typeid => $targetlevel) {
-		echo "plan typeid=$typeid targetlevel=$targetlevel<br>";
+		if ($debug) echo "plan typeid=$typeid targetlevel=$targetlevel<br>";
 		$typeid = intval($typeid);
 		if (!isset($gTechnologyType[$typeid])) continue;
 		$typeobj = $gTechnologyType[$typeid];
@@ -26,8 +26,9 @@ if (isset($f_techs)) {
 		
 		if ($debug) echo "plan $typeid : cl=$curlevel tl=$targetlevel tut=$tech->upgradetime tub=$tech->upgradebuilding<br>";
 		
-		if ($tech->upgradetime > 0) $found_id = $tech->upgradebuilding; // already running in building
-		else {
+		if ($tech->upgradetime > 0 && sqlgetone("SELECT 1 FROM `building` WHERE `id` = ".intval($tech->upgradebuilding))) {
+			$found_id = $tech->upgradebuilding; // already running in building
+		} else {
 			// not running, search for a good building (not busy, low level preferred, so higher techs are not blocked)
 			$cond = "`user` = ".intval($gUser->id)." AND `type` = ".$typeobj->buildingtype." AND `level` >= ".$typeobj->buildinglevel;
 			$buildings = sqlgettable("SELECT * FROM `building` WHERE ".$cond." ORDER BY `level` ASC");
@@ -47,7 +48,7 @@ if (isset($f_techs)) {
 		}
 		
 		$target_ups = max(0,$targetlevel - $curlevel);
-		echo "target_ups=$target_ups = max(0,$targetlevel - $curlevel)<br>";
+		if ($debug) echo "target_ups=$target_ups = max(0,$targetlevel - $curlevel)<br>";
 		if ($found_id) if ($debug) echo "SetTechnologyUpgrades($typeid,$found_id,".max(0,$targetlevel - $curlevel).");<br>";
 		if ($found_id) SetTechnologyUpgrades($typeid,$found_id,$target_ups);
 		else echo "ERROR : no building found, this should not happen, as requirements demand at least one building<br>";
