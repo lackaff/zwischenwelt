@@ -13,6 +13,7 @@ profile_page_start("summary_techs.php");
 // if (isset($f_plan)) SetTechnologyUpgrades($f_techtype,$gObject->id,$f_upcount);
 if (isset($f_techs)) {
 	foreach ($f_plan as $typeid => $targetlevel) {
+		echo "plan typeid=$typeid targetlevel=$targetlevel<br>";
 		$typeid = intval($typeid);
 		if (!isset($gTechnologyType[$typeid])) continue;
 		$typeobj = $gTechnologyType[$typeid];
@@ -46,6 +47,7 @@ if (isset($f_techs)) {
 		}
 		
 		$target_ups = max(0,$targetlevel - $curlevel);
+		echo "target_ups=$target_ups = max(0,$targetlevel - $curlevel)<br>";
 		if ($found_id) if ($debug) echo "SetTechnologyUpgrades($typeid,$found_id,".max(0,$targetlevel - $curlevel).");<br>";
 		if ($found_id) SetTechnologyUpgrades($typeid,$found_id,$target_ups);
 		else echo "ERROR : no building found, this should not happen, as requirements demand at least one building<br>";

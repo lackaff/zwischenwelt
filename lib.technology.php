@@ -147,20 +147,24 @@ Array
 
 function SetTechnologyUpgrades($typeid,$buildingid,$num) {
 	global $gTechnologyType;
+	echo " debuggin SetTechnologyUpgrades(typeid=$typeid,buildingid=$buildingid,num=$num)<br>";
 	$techtype =  $gTechnologyType[$typeid];
-	if (!$techtype) return;
+	if (!$techtype) { echo "no techtype id $typeid<br>"; return; }
 	$tech = GetTechnologyObject($techtype->id);
 	if ($tech->upgradetime > 0) $buildingid = $tech->upgradebuilding;
 
 	$building = sqlgetobject("SELECT * FROM `building` WHERE `id` = ".intval($buildingid));
-	if (!$building) return;
+	if (!$building) { echo "no building id $buildingid<br>"; return; }
 
-	if (intval($building->level) < intval($techtype->buildinglevel)) return;
-	if (!HasReq($techtype->req_geb,$techtype->req_tech,$building->user,$tech->level+1)) return;
+	if (intval($building->level) < intval($techtype->buildinglevel))  
+		{ echo "$building->level < $techtype->buildinglevel <br>"; return; }
+	if (!HasReq($techtype->req_geb,$techtype->req_tech,$building->user,$tech->level+1)) 
+		{ echo "not HasReq($techtype->req_geb,$techtype->req_tech,$building->user,$tech->level+1)<br>"; return;}
 
 	// if ($tech->upgradetime && $tech->upgrades > 0 && $tech->upgradebuilding != $building->id) return;
 	
 	$num = max(($tech->upgradetime == 0)?0:1,min($techtype->maxlevel-$tech->level,intval($num)));
+	echo " set num=$num = max(($tech->upgradetime == 0)?0:1,min($techtype->maxlevel-$tech->level,intval($num)))<br>";
 	//$num = max(($tech->upgradetime == 0)?0:1,intval($num)); // maxlevel limit aus ?
 	if ($num == 0) $buildingid = 0;
 	sql("UPDATE `technology` SET `upgrades` = ".$num." , `upgradebuilding` = ".intval($buildingid)." WHERE `id` = ".$tech->id);
