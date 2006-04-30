@@ -147,7 +147,7 @@ Array
 
 function SetTechnologyUpgrades($typeid,$buildingid,$num) {
 	global $gTechnologyType;
-	$debug = true;
+	$debug = false;
 	if ($debug) echo " debuggin SetTechnologyUpgrades(typeid=$typeid,buildingid=$buildingid,num=$num)<br>";
 	$techtype =  $gTechnologyType[$typeid];
 	if (!$techtype) { if ($debug) echo "no techtype id $typeid<br>"; return; }

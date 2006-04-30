@@ -22,7 +22,7 @@ if (isset($f_techs)) {
 		$found_id = 0;
 		$found_minplanned = 0;
 		$tech = GetTechnologyObject($typeid,$gUser->id);
-		$debug = true;
+		$debug = false;
 		
 		if ($debug) echo "plan $typeid : cl=$curlevel tl=$targetlevel tut=$tech->upgradetime tub=$tech->upgradebuilding<br>";
 		
