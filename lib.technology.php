@@ -152,7 +152,7 @@ function SetTechnologyUpgrades($typeid,$buildingid,$num) {
 	$techtype =  $gTechnologyType[$typeid];
 	if (!$techtype) { if ($debug) echo "no techtype id $typeid<br>"; return; }
 	$tech = GetTechnologyObject($techtype->id);
-	if ($tech->upgradetime > 0) $buildingid = $tech->upgradebuilding;
+	if ($tech->upgradetime > 0 && sqlgetone("SELECT 1 FROM `building` WHERE `id` = ".intval($tech->upgradebuilding))) $buildingid = $tech->upgradebuilding;
 
 	$building = sqlgetobject("SELECT * FROM `building` WHERE `id` = ".intval($buildingid));
 	if (!$building) { if ($debug) echo "no building id $buildingid<br>"; return; }
