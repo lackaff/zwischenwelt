@@ -10,12 +10,13 @@ class cFight {
 	function AddUserkills($userid,$unittypeid,$kills){
 		if($unittypeid == 0 || $kills == 0)return;
 		echo "function AddUserkills($userid,$unittypeid,$kills)<br>\n";
-		$userid = (int)$userid;
-		$unittypeid = (int)$unittypeid;
-		$kills = (float)$kills;
-		sql("update userkills set kills=kills+$kills where user=$userid and unittype=$unittypeid");
-		if(mysql_affected_rows()==0)
-			sql("insert into userkills set kills=$kills, user=$userid, unittype=$unittypeid");
+		$userid = intval($userid);
+		$unittypeid = intval($unittypeid);
+		$kills = floatval($kills);
+		
+		sql("UPDATE `userkills` SET `kills`=`kills`+$kills WHERE `user`=$userid AND `unittype`=$unittypeid");
+		if(mysql_affected_rows()<=0)
+			sql("REPLACE INTO `userkills` SET `kills`=$kills , `user`=$userid , `unittype`=$unittypeid");
 		echo "user $userid gets $kills\n";
 	}
 
