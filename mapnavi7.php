@@ -308,6 +308,9 @@ if ($gUser->admin && isset($f_regentypes)) {
 			case <?=kMapNaviTool_QuickMagic?>:
 				urladd = "&do=quickmagic&spellid="+curtoolparam;
 			break;
+			case <?=kMapNaviTool_MoveConstruct?>:
+				urladd = "&do=moveconstruct";
+			break;
 		}
 		
 		// add brush info to query
@@ -502,6 +505,7 @@ if ($gUser->admin) {
 $content .= NaviTool(g("tool_crosshair.png"),kMapNaviTool_Center	,0,"Zentrieren");
 $content .= NaviTool(g("icon/info.png")		,kMapNaviTool_MultiTool	,0,"Armeen-Befehl"	,"navtoolicon"); 
 $content .= NaviTool(g("icon/tool_msg.png")		,kMapNaviTool_Message	,0,"Nachticht schicken"	,"navtoolicon"); 
+$content .= NaviTool(g("icon/bauplan.png")		,kMapNaviTool_MoveConstruct	,0,"Bauplan nach vorne schieben"	,"navtoolicon"); 
 $content .= "<br>";
 $content .= "<textarea class=\"notizblock\" name=\"notizblock\" rows=2 cols=40></textarea>";
 $content .= "</div>\n";

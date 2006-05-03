@@ -29,6 +29,7 @@ define("kMapNaviTool_Clear"			,15); // admin only
 define("kMapNaviTool_QuickMagic"	,20);
 define("kMapNaviTool_MultiTool"		,30);
 define("kMapNaviTool_Message"		,31);
+define("kMapNaviTool_MoveConstruct"	,32);
 
 
 define("kAdminCanAccessMysql",true);

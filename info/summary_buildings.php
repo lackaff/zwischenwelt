@@ -7,6 +7,7 @@ require_once("../lib.spells.php");
 require_once("../lib.tabs.php");
 require_once("../lib.text.php");
 Lock();
+
 profile_page_start("summary_buildings.php");
 
 if (!isset($f_selbtype)) $f_selbtype = 0;
@@ -214,8 +215,7 @@ if (isset($f_listtype)) {
 			</tr>
 			<?php 
 			$arr = ($btype==0)?$buildinggroups2:$buildinggroups;
-			foreach ($arr as $o) if ($o->type == $btype || $btype == 0) {?>
-				<?php
+			foreach ($arr as $o) if ($o->type == $btype || $btype == 0) {
 				if ($btype!=0) $o->level_max = $o->level;
 				$maxplan = 		max($maxplan,	$o->planlevel);
 				if ($minplan < 0)	$minplan =	$o->planlevel;

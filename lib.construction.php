@@ -266,5 +266,14 @@ function GetConstructionProgress($building) {
 	return 1.0 - min(1.0,$timeleft / $buildtime);
 }
 
+// move construction to the front of the building-queue and adjust all priorities
+//if userid > 0 then only userid's constructions can be moved otherwise all
+function MoveContructionQueueFront($id,$userid=0){
+	$con = sqlgetobject("SELECT * FROM `construction` WHERE `id` = ".intval($id)." LIMIT 1");
+	if($con && ($userid == 0 || $userid == $con->user)) {
+		sql("UPDATE `construction` SET `priority` = `priority`+1 WHERE `user`=".$con->user." AND `priority`<".$con->priority);
+		sql("UPDATE `construction` SET `priority` = 1 WHERE `id`=".$con->id);
+	}
+}
 
 ?>

@@ -122,6 +122,11 @@ if (!isset($f_building) && !isset($f_army) && isset($f_do)) {
 			if (isset($f_delenemy)) SetFOF($gUser->id,intval($f_other),kFOF_Neutral); 
 			if (isset($f_addenemy)) SetFOF($gUser->id,intval($f_other),kFOF_Enemy); 
 		break;
+		case "moveconstruct":
+			MoveContructionQueueFront(
+				sqlgetone("SELECT `id` FROM `construction` WHERE `x`=$f_x AND `y`=$f_y"),
+				$gUser->id);
+		break;
 		case "quickmagic":
 		case "cast_spell":
 			if ($f_do == "quickmagic") {
@@ -351,11 +356,7 @@ if (!isset($f_building) && !isset($f_army) && isset($f_do)) {
 		case "cancelconstructionplan":
 			if (isset($f_buildnext)) {
 				// move construction to the front of the building-queue and adjust all priorities
-				$con = sqlgetobject("SELECT * FROM `construction` WHERE `id` = ".intval($f_id)." LIMIT 1");
-				if ($con && $gUser->id == $con->user) {
-					sql("UPDATE `construction` SET `priority` = `priority`+1 WHERE `user`=".$con->user." AND `priority`<".$con->priority);
-					sql("UPDATE `construction` SET `priority` = 1 WHERE `id`=".$con->id);
-				}
+				MoveContructionQueueFront($f_id,$gUser->id);
 			}
 			if (isset($f_cancelone)) {
 				$con = CancelConstruction(intval($f_id),$gUser->id);
