@@ -788,7 +788,7 @@ class cInfoBuilding extends cInfoBase {
 					</FORM>
 				<?php } ?>
 				</td></tr>
-				<tr><td>Restzeit</td><td><?=($remaining_time>0)?Duration2Text($remaining_time):"fertig, nurnoch aufräumen..."?> (<?=round(100*GetConstructionProgress($gObject))?>%)</td></tr>
+				<tr><td>Restzeit</td><td><?=($remaining_time>0)?Duration2Text($remaining_time):"fertig, nur noch aufräumen..."?> (<?=round(100*GetConstructionProgress($gObject))?>%)</td></tr>
 				</table>
 				<FORM METHOD=POST ACTION="<?=Query("?sid=?&x=?&y=?")?>">
 				<INPUT TYPE="hidden" NAME="do" VALUE="removebuilding">
