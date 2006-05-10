@@ -618,7 +618,9 @@ function CompileTerrain () {
 	// compile to terrainmap
 	for (y=-1;y<gCYPlusOne;++y)  for (x=-1;x<gCXPlusOne;++x) {
 		tile = gTerrainMap_raw[y+1][x+1];
-		gTerrainMap[y+1][x+1] = g_nwse(PosRandPath(tile.gfx,x,y,tile.randmax),tile.nwse);
+		//HACK: a small cornfield cropcricle hack (terraintype id = 8)
+		if(tile.terraintype == 8 && (gLeft+x)%11==0 && (gTop+y)%11==0)gTerrainMap[y+1][x+1] = g_nwse(PosRandPath("landschaft/cornfield-circle.png",x,y,tile.randmax),tile.nwse);
+		else gTerrainMap[y+1][x+1] = g_nwse(PosRandPath(tile.gfx,x,y,tile.randmax),tile.nwse);
 	}
 }
 
