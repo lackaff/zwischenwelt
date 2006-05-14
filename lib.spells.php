@@ -47,7 +47,18 @@ function GetPossibleSpells ($userid=0,$groupbytarget=false) {
 function GetSpellInstance ($spelltype,$o=false) {
 	global $gSpellType;
 	if (!is_object($spelltype)) $spelltype = $gSpellType[intval($spelltype)];
-	$class = "Spell_".strtr($spelltype->name,array("ä"=>"ae","ö"=>"oe","ü"=>"ue","-"=>"_"));
+	$class = "Spell_".strtr($spelltype->name,array("ä"=>"ae","ö"=>"oe","ü"=>"ue","-"=>"_","Ã¼"=>"ue","Ã¶"=>"oe"));
+	if (!class_exists($class)) {
+		?>
+		FEHLER !
+		Es gibt wohl ein Installationsproblem, es wurde versucht einen Zauberspruch names '<?=$class?>' zu laden, 
+		der dazugehörige PHP Code wurde aber nicht gefunden.<br>
+		Wenn in dem Namen merkwürdige Zeichen vorkommen, dann ist das wohl ein Problem mit Umlauten,Unicode,Collations oder sowas.<br>
+		Wenn man sich damit nicht mit MySQL Konfiguration und Administration auskennt, am besten von Hand in der Datenbank
+		in der Tabelle "spelltype" die Daten in der Spalte "name" korrigieren.
+		<?php
+		exit();
+	}
 	$spell = new $class();
 	if ($o) $spell->SetObject($o);
 	else { 

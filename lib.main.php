@@ -3,20 +3,74 @@
 require_once("lib.php");
 $gGlobal = sqlgettable("SELECT `name`,`value` FROM `global`","name","value");
 
+if (!defined("CHECK_ZW_CONFIG")) define("CHECK_ZW_CONFIG",true);
+if (CHECK_ZW_CONFIG) {
+	// check defines.mysql.php
+	$configwarnings = array();
+
+	/*
+	define("BASEPATH","/var/www/zw05/");
+	define("PHP_ERROR_LOG_MAIL","admin@main.blubber");
+	define("kGfxServerPath","http://localhost/zw05/gfx/");
+	define("kStyleServerPath","http://localhost/zw05/");
+	define("PAGELAYOUT",4);
+	define("BASEURL","http://localhost/zw05/");
+	*/
+	
+	if (substr(trim(BASEPATH),0,4) == "http") 
+		$configwarnings[] = "BASEPATH soll keine url sein, sondern ein lokaler pfad,".
+			"also z.b. sowas wie /var/www/zw unter linux oder C:/wwwroot/zw unter win";
+	
+	$slashend_constants = array("BASEPATH","kGfxServerPath","kStyleServerPath","BASEURL");
+	foreach ($slashend_constants as $con) {
+		$v = constant($con);
+		if (substr($v,strlen($v)-1) != "/") 
+			$configwarnings[] = "$con muss mit ein / am Ende haben";
+	}
+		
+	$http_constants = array("kGfxServerPath","kStyleServerPath","BASEURL");
+	foreach ($http_constants as $con) if (substr(constant($con),0,7) != "http://") 
+		$configwarnings[] = "$con sollte eine URL sein, also mit http:// anfangen , und im Browser aufrufbar sein";
+	
+	// check tmp
+	if (count($configwarnings) == 0) {
+		if (!file_exists(BASEPATH."tmp/")) {
+			$configwarnings[] = "Bitte ein 'tmp' verzeichnis unter BASEPATH anlegen";
+		}
+	}
+	
+	if (count($configwarnings) > 0) {
+		echo "Bitte dem Admin melden, dass die Konfiguration in 'defines.mysql.php' eventuell falsch ist<br>";
+		echo "Um diese Warnung hier zu ignorieren einfach define(\"CHECK_ZW_CONFIG\",false); in die defines.mysql.php eintragen<br>";
+		echo implode("<br>",$configwarnings);
+	}
+}
+
 
 //readout globals
 if (!isset($gTempTypeOverride)) {
 	$gTmpTypesOk = false;
 	if (!file_exists(kTypeCacheFile))
 		require_once("generate_types.php");
-	require_once(kTypeCacheFile);
-	if (!$gTmpTypesOk) {
-		?>
-		<?=kTypeCacheFile?> seems to be broken broken<br>
-		please call <a href="<?="generate_types.php"?>">generate_types.php</a> manually to locate the problem<br>
-		<?php
+	if (!file_exists(kTypeCacheFile)) {
+		echo "Beim erstellen der Typecache Datei ist ein Fehler aufgetreten.<br>";
+		echo "Dies könnte dadran liegen, dass der Webserver oder PHP keine Schreibrechte im BASEPATH/tmp Verzeichnis hat<br>";
+		echo "Die Rechte sind im moment auf '".get_readable_permission(BASEPATH."tmp/")."' eingestellt, sie sollten auf 'rwxrwxrwx' stehen<br>";
+		echo "Unter Linux kann man das mit dem Befehl 'chmod a+rwx tmp' erreichen<br>";
+		echo "Unter Win kann man vielleicht mit rechtsclick auf den Ordner Lese&Schreibrechte geben.<br>";
+		echo "Wenn man über ein FTP Programm zugriff hat, sollte man nach 'chmod' suchen, und da entweder alle rechte ankreuzen, oder auf 777 stellen.<br>";
+		echo "<hr>Wichtig ist auch dass die Mysql-Datenbank richtig aufgesetzt wurde (Siehe Anleitung in 'INSTALL') <br>";
 		exit();
-	}
+	} else {
+		require_once(kTypeCacheFile);
+		if (!$gTmpTypesOk) {
+			?>
+			<?=kTypeCacheFile?> scheint kaputt zu sein<br>
+			bitte <a href="<?="generate_types.php"?>">generate_types.php</a> im Browser aufrufen um den Fehler zu suchen<br>
+			<?php
+			exit();
+		}
+	} 
 }
 
 require_once("constants.php");
