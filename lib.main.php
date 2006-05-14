@@ -21,6 +21,28 @@ if (CHECK_ZW_CONFIG) {
 		$configwarnings[] = "BASEPATH soll keine url sein, sondern ein lokaler pfad,".
 			"also z.b. sowas wie /var/www/zw unter linux oder C:/wwwroot/zw unter win";
 	
+	if (!file_exists(BASEPATH)) {
+		$configwarnings[] = "BASEPATH ist nicht erreichbar, das sollte der lokale, absolute pfad zum spiele verzeichnis sein,".
+			"also z.b. sowas wie /var/www/zw unter linux oder C:/wwwroot/zw unter win";
+		
+		// suggestions 
+		$sug = "Vorschlag für den BASEPATH : ";
+		$configwarnings[] = $sug.$_SERVER[SCRIPT_FILENAME]." (ohne den php file am ende)";
+		$configwarnings[] = $sug.$_SERVER[PATH_TRANSLATED]." (ohne den php file am ende)";
+		$configwarnings[] = $sug.$_SERVER[DOCUMENT_ROOT].$_SERVER[PHP_SELF]." (ohne den php file am ende)";
+		$configwarnings[] = $sug.$_SERVER[DOCUMENT_ROOT].$_SERVER[SCRIPT_NAME]." (ohne den php file am ende)";
+			
+		/*
+		vardump2($_SERVER);
+		DOCUMENT_ROOT	string	/mnt/hda6/wwwroot
+		SCRIPT_FILENAME	string	/mnt/hda6/wwwroot/zw05/info/info.php
+		REQUEST_URI	string		/zw05/info/info.php?x=323&y=-19&sid=JDEkczJIeUtyQ3IkTjd4QVY0azgzVUNL
+		SCRIPT_NAME	string		/zw05/info/info.php
+		PATH_TRANSLATED	string	/mnt/hda6/wwwroot/zw05/info/info.php
+		PHP_SELF	string		/zw05/info/info.php
+		*/
+	}
+	
 	$slashend_constants = array("BASEPATH","kGfxServerPath","kStyleServerPath","BASEURL");
 	foreach ($slashend_constants as $con) {
 		$v = constant($con);

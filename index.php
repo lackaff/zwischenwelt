@@ -1,4 +1,14 @@
 <?php
+
+if (!file_exists("defines.mysql.php")) {
+	?>
+	Bitte den Installationsanweisungen in der Datei INSTALL folgen,<br>
+	und eine Kopie von defines.mysql.php.dist names defines.mysql.php anlegen.<br>
+	Dort müssen dann die Zugansdaten und Pfade eingetragen werden.
+	<?php 
+	exit();
+}
+
 include("lib.php");
 if(isset($f_sid))
 {

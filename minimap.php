@@ -226,6 +226,10 @@ if (!isset($f_x) && !isset($f_cross_x) && !isset($f_u)) {
 <HEAD>
 <TITLE>MiniMap</TITLE>
 <?php
+if (isset($f_clickimgmap_x)) {
+	$f_x = $f_clickimgmap_x;
+	$f_y = $f_clickimgmap_y;
+}
 if (isset($f_x) || isset($f_cross_x) || isset($f_u)) {
 	if (isset($f_mode) && $f_mode == "wp") {
 		$o = sqlgetobject("SELECT MIN(`x`) as minx,MIN(`y`) as miny FROM `waypoint` WHERE `army` = ".intval($f_army));
@@ -272,7 +276,7 @@ if (isset($f_x) || isset($f_cross_x) || isset($f_u)) {
 		</SCRIPT>
 		<?php }?>
 		<FORM METHOD=POST ACTION="<?=Query("?mode=?&army=?&sid=?&cx=?&cy=?")?>">
-		<input type="image" src="<?=$filename?>" style="position:absolute;left:0px;top:0px;">
+		<input type="image" src="<?=$filename?>" name="clickimgmap" style="position:absolute;left:0px;top:0px;">
 		<?php if (!isset($f_mode) || $f_mode != "wp") {?>
 			<input type="image" name="cross" src="gfx/minimapcross.gif" style="position:absolute;left:<?=intval($f_cx)-$left-kCrossHairOffset?>px;top:<?=intval($f_cy)-$top-kCrossHairOffset?>px;<?php if (0) echo "z-index:2;";?>">
 		<?php } // endif?>

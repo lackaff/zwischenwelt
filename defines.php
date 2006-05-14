@@ -17,7 +17,7 @@ ini_set('include_path', ".:".BASEPATH);
 #and this one for windows based sysmtes
 #ini_set('include_path', ".;".BASEPATH);
 
-define("kPathSwitchTesting",$_SERVER["SCRIPT_FILENAME"]." # ".$_SERVER["PATH_TRANSLATED"]." # ".$_SERVER["HTTP_HOST"]);
+define("kPathSwitchTesting",false); // $_SERVER["SCRIPT_FILENAME"]." # ".$_SERVER["PATH_TRANSLATED"]." # ".$_SERVER["HTTP_HOST"]);
 //define("kZWTestMode",$_SERVER["HTTP_HOST"]=="localhost" || $_SERVER["HTTP_HOST"]=="dev.zwischenwelt.net-play.de");
 define("kZWTestMode",false);
 define("kZWTestMode2",kZWTestMode);
