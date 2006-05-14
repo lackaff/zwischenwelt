@@ -222,7 +222,7 @@ class cFight {
 				continue;
 			}
 			if ($attackertype == kUnitContainer_Building) {
-				$dmg = cUnit::GetDistantDamage($attackerobj->units,$target->x-$x,$target->y-$y);
+				$dmg = ($ctype == kUnitContainer_Building) ? cUnit::GetUnitsRangedSiegeDamage($attackerobj->units,$target->x-$x,$target->y-$y) : cUnit::GetDistantDamage($attackerobj->units,$target->x-$x,$target->y-$y);
 			} else if ($attackertype == kUnitContainer_Army) {
 				$dmg = ($ctype == kUnitContainer_Building) ? cUnit::GetUnitsRangedSiegeDamage($attackerobj->units,$target->x-$x,$target->y-$y) : cUnit::GetDistantDamage($attackerobj->units,$target->x-$x,$target->y-$y);
 				
