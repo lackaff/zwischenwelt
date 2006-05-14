@@ -34,5 +34,6 @@ the next relase. so have fun with this.
 cron.php needs to be called every minute. You can use the script runcron.sh to do this (this works like
 a very stupid daemon process).
 
+setup.php runs some checks like correct mysql config. Simply run the file and see whats wrong.
 
  ~~ Zwischenwelt Team
