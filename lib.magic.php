@@ -26,7 +26,7 @@ function MagicListSortedTowers ($userid=0,$firstonly=false) {
 
 
 function GetMagicCastingBox ($x,$y) {
-	global $gRes,$gUser,$gBuildingType,$gTechnologyGroup,$gBuildingType,$gGlobal;
+	global $gRes,$gUser,$gBuildingType,$gTechnologyGroup,$gTechnologyType,$gBuildingType,$gGlobal,$gSpellType;
 	global $f_tower,$f_full_tower_list;
 	if (!isset($f_full_tower_list)) $f_full_tower_list = false;
 	
@@ -106,7 +106,7 @@ function GetMagicCastingBox ($x,$y) {
 			?>
 				<?php $infourl = Query("?sid=?&x=?&y=?&infospelltype=".$spelltype->id);?>
 				<tr>
-					<td nowrap><input type=text size=3 name="count[<?=$spelltype->id?>]" value="0">
+					<td nowrap><input class="digit" name="count[<?=$spelltype->id?>]" value="0">
 						<a href="javascript:spelladd(0,'[<?=$spelltype->id?>]')">0</a>
 						<a href="javascript:spelladd(1,'[<?=$spelltype->id?>]')">+1</a>
 						<a href="javascript:spelladd(5,'[<?=$spelltype->id?>]')">+5</a>
@@ -120,16 +120,46 @@ function GetMagicCastingBox ($x,$y) {
 					<td nowrap><?=cText::Wiki("spell",$spelltype->id)?><a href="<?=$infourl?>"><?=$spelltype->name?></a>
 						<?php if ($gUser->admin) {?>
 						<a href="<?=query("adminspell.php?sid=?&id=".$spelltype->id)?>"><img alt=Admin title=Admin src="<?=g("icon/admin.png")?>" border=0></a>
+						<a href="<?=query("?sid=?&x=?&y=?&do=admin_give_wonder&spelltype=".$spelltype->id)?>"><img alt=AddEinwegSpell title=AddEinwegSpell src="<?=g("icon/admin.png")?>" border=0></a>
 						<?php } // endif?>	
 					</td>
 					<?php foreach($gRes as $n=>$f) echo '<td align="right">'.(($spelltype->{"cost_".$f} > 0)?ktrenner($spelltype->{"cost_".$f}):"").'</td>'; ?>
 				</tr>
 			<?}
 		}?>
-		<tr><td colspan=14 align=left><INPUT TYPE="submit" NAME="cast" VALUE="Cast"></td></tr>
+		<tr><td colspan=14 align=left><INPUT TYPE="submit" id="mysubmit" NAME="cast" VALUE="Cast"></td></tr>
 		</FORM>
+		<script src="<?=BASEURL?>digitsaction.js"></script>
+		<script>
+		  defineDigitsAction('input','digit',10000,'mysubmit');
+		</script>
 	</table>
 	<?php ImgBorderEnd("s1","jpg","#ffffee",32,33); ?>
+	
+	
+	<?php $wonders = sqlgettable("SELECT * FROM `wonder` WHERE `user` = ".$gUser->id." ORDER BY `time`"); ?>
+	<?php if (count($wonders) > 0) {?>
+		<?php ImgBorderStart("s1","jpg","#ffffee","",32,33); ?>
+		<h4><?=cText::Wiki("Wunder",0,true)?>Wunder (<?=CountWonders()?>/<?=GetWonderCapacity()?>)  auf <?="(".$x."/".$y.")"?></h4>
+		<form method="post" action="<?=Query("?sid=?&x=?&y=?")?>">
+		<INPUT TYPE="hidden" NAME="do" VALUE="cast_wonder">
+		<table>
+		<?php foreach ($wonders as $o) {?>
+			<?php $spelltype = $gSpellType[$o->spelltype]; ?>
+			<?php $group = $spelltype->primetech ? $gTechnologyType[$spelltype->primetech]->group : 0; ?>
+			<?php $infourl = Query("?sid=?&x=?&y=?&infospelltype=".$spelltype->id);?>
+			<tr>
+				<td><input type="submit" name="cast[<?=$o->id?>]" value="wirken"></td>
+				<td><img src="<?=isset($gTechnologyGroup[$group])?g($gTechnologyGroup[$group]->gfx):g("res_mana.gif")?>"></td>
+				<td><a href="<?=$infourl?>"><img border=0 src="<?=g($spelltype->gfx)?>"></a></td>
+				<td><?=cText::Wiki("spell",$spelltype->id)?><a href="<?=$infourl?>"><?=$spelltype->name?></a></td>
+			</tr>
+		<?php } // endforeach?>
+		</table>
+		</form>
+		<?php ImgBorderEnd("s1","jpg","#ffffee",32,33); ?>
+	<?php } // endif?>
+	
 	<?php
 	PrintMagicHelp();
 	return rob_ob_end();

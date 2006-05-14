@@ -258,7 +258,7 @@ class cInfoHQ extends cInfoBuilding {
 			foreach($gBuildingType as $id=>$obj)if($obj->flags & kBuildingTypeFlag_IsInQuickJump){
 				$x = sqlgetobject("SELECT `x`,`y`,`level` FROM `building` WHERE `user`=".$gUser->id." AND `type`=".$obj->id." ORDER BY `level` DESC LIMIT 1");
 				if(!empty($x)){?>
-					<a target=info href="<?=SessionLink("info/info.php?x=".$x->x."&y=".$x->y)?>" title="<?=$obj->name?> (<?=$x->x?>,<?=$x->y?>)">
+					<a target=info href="<?=Query("?sid=?&x=".$x->x."&y=".$x->y)?>" title="<?=$obj->name?> (<?=$x->x?>,<?=$x->y?>)">
 						<img src="<?=GetBuildingPic($obj,false,$x->level)?>" border="0" title="<?=$obj->name?> (<?=$x->x?>,<?=$x->y?>)">
 					</a>
 				<?php }

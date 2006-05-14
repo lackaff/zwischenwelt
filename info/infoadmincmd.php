@@ -345,6 +345,9 @@ if (!isset($f_building) && !isset($f_army) && isset($f_do)) switch ($f_do) {
 			$hellhole->radius = 8; // monsters move within this radius
 			sql("INSERT INTO `hellhole` SET ".obj2sql($hellhole));
 		break;
+		case "admin_give_wonder":
+			GiveWonder(intval($f_spelltype));
+		break;
 		default :
 			echo "infocommand : unknown non-building command $f_do<br>";
 		break;

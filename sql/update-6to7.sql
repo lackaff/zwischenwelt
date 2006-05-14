@@ -27,3 +27,10 @@ CREATE TABLE `userkills` (
 PRIMARY KEY ( `user` , `unittype` )
 ) TYPE = MYISAM ;
 
+CREATE TABLE `wonder` (
+`id` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
+`user` INT UNSIGNED NOT NULL ,
+`spelltype` INT UNSIGNED NOT NULL ,
+`time` INT UNSIGNED NOT NULL ,
+PRIMARY KEY ( `id` )
+);

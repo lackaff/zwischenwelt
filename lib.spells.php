@@ -3,6 +3,28 @@ require_once("lib.main.php");
 require_once("lib.army.php");
 require_once("lib.technology.php");
 
+// einwegzauber = wonder, gibt dem spieler $ownerid einen einwegzauber vom typ $spelltypeid
+function GiveWonder		($spelltypeid,$userid=false) {
+	global $gUser; if ($userid === false) $userid = $gUser->id;
+	if (is_object($spelltypeid)) $spelltypeid = $spelltypeid->id;
+	sql("INSERT INTO `wonder` SET ".arr2sql(array("user"=>$userid,"spelltype"=>$spelltypeid,"time"=>time())));
+	DropOldWonders(CountWonders($userid)-GetWonderCapacity($userid),$userid);
+}
+
+function GetWonderCapacity ($userid=false) {
+	global $gUser; if ($userid === false) $userid = $gUser->id;
+	$tempellevels = intval(sqlgetone("SELECT SUM(`level`+1) FROM `building` WHERE `user` = ".intval($userid)." AND `type` = ".kBuilding_Temple));
+	return 10 + floor($tempellevels / 10.0);
+}
+function CountWonders ($userid=false) {
+	global $gUser; if ($userid === false) $userid = $gUser->id;
+	return intval(sqlgetone("SELECT COUNT(*) FROM `wonder` WHERE `user` = ".intval($userid)));
+}
+function DropOldWonders ($num,$userid=false) {
+	if ($num <= 0) return;
+	$old_wonder_id_list = sqlgetonetable("SELECT `id` FROM `wonder` WHERE `user` = ".intval($userid)." ORDER BY `time` LIMIT ".intval($num));
+	foreach ($old_wonder_id_list as $id) sql("DELETE FROM `wonder` WHERE `id` = ".$id);
+}
 
 // returns a twodimensional array with the spelltype-objects the user can cast, first-index : group, second-index : spelltype-id
 function GetPossibleSpells ($userid=0,$groupbytarget=false) {
@@ -170,7 +192,7 @@ class Spell {
 	// no need to override this method in the actual spells, use Birth($success) instead
 	// $owner=-1 means no res-cost
 	// $successOverride=true means spell is forced to a normal success
-	function Cast ($spelltype,$x,$y,$owner=0,$towerid=0,$successOverride=false) {
+	function Cast ($spelltype,$x,$y,$owner=0,$towerid=0,$successOverride=false,$nocost=false) {
 		global $gUser,$gRes;
 		if (is_object($owner)) $owner = $owner->id;
 		if ($owner == 0) $owner = $gUser->id;
@@ -181,17 +203,19 @@ class Spell {
 		if ($owner > 0) {
 			$user = sqlgetobject("SELECT * FROM `user` WHERE `id` = ".intval($owner));
 			
-			// check tech
-			// todo : replace last 0 by current spell-tech level ?
-			if (!HasReq($spelltype->req_building,$spelltype->req_tech,$owner)) {
-				echo "Technologie nicht erreicht<br>";
-				return false;
-			}
-			
-			// check res
-			foreach($gRes as $n => $f) if ($user->$f < $spelltype->{"cost_$f"}) {
-				echo "nicht genug $n<br>";
-				return false;
+			if (!$nocost) {
+				// check tech
+				// todo : replace last 0 by current spell-tech level ?
+				if (!HasReq($spelltype->req_building,$spelltype->req_tech,$owner)) {
+					echo "Technologie nicht erreicht<br>";
+					return false;
+				}
+				
+				// check res
+				foreach($gRes as $n => $f) if ($user->$f < $spelltype->{"cost_$f"}) {
+					echo "nicht genug $n<br>";
+					return false;
+				}
 			}
 		}
 		
@@ -230,7 +254,9 @@ class Spell {
 		}
 		
 		// res and mana cost
-		$this->PaySpell($spelltype,$towerid,$penalty,$owner);
+		if (!$nocost) {
+			$this->PaySpell($spelltype,$towerid,$penalty,$owner);
+		}
 		
 		// start the spell
 		$this->towerid = $towerid; // only available in birth()

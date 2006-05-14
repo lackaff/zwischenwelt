@@ -156,6 +156,19 @@ if (!isset($f_building) && !isset($f_army) && isset($f_do)) {
 			}
 			// TODO : terrain feedback
 		break;
+		case "cast_wonder":
+			foreach ($f_cast as $id => $ignore) {
+				$wonder = sqlgetobject("SELECT * FROM `wonder` WHERE `id` = ".intval($id));
+				if ($wonder && $wonder->user == $gUser->id) {
+					$spelltype = $gSpellType[$wonder->spelltype];
+					if (!$spelltype) continue; 
+					$newspell = GetSpellInstance($spelltype);
+					$r = $newspell->Cast($spelltype,$f_x,$f_y,-1,0,true,true);
+					// function Cast ($spelltype,$x,$y,$owner=0,$towerid=0,$successOverride=false,$nocost=false)
+					sql("DELETE FROM `wonder` WHERE `id` = ".intval($id)." LIMIT 1");
+				}
+			}
+		break;
 		case "delwaypoint":
 			require_once("../lib.army.php");
 			// only accessable from info.php - waypoint info, see "./info/info.php:326:" for the wp-cancelling used by jsmap

@@ -3,6 +3,17 @@
 	FONT-SIZE: 9pt;
 	FONT-WEIGHT: normal;
 }
+input.digit
+{
+  width: 50px;
+  border: 1px solid #909090;
+  background-color: #f9f9f9;
+  color: #000000;
+  font-family: courier new;
+  font-size: 12px;
+  margin-bottom: 2px;
+  text-align: right;
+}
 
 h1 {
 	font-size:10pt;
