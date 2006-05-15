@@ -619,8 +619,10 @@ function CompileTerrain () {
 	for (y=-1;y<gCYPlusOne;++y)  for (x=-1;x<gCXPlusOne;++x) {
 		tile = gTerrainMap_raw[y+1][x+1];
 		//HACK: a small cornfield cropcricle hack (terraintype id = 8)
-		if(tile.terraintype == 8 && (gLeft+x)%11==0 && (gTop+y)%11==0)gTerrainMap[y+1][x+1] = g_nwse(PosRandPath("landschaft/cornfield-circle.png",x,y,tile.randmax),tile.nwse);
-		else gTerrainMap[y+1][x+1] = g_nwse(PosRandPath(tile.gfx,x,y,tile.randmax),tile.nwse);
+		if(tile.terraintype == 8 && (gLeft+x)%11==0 && (gTop+y)%11==0)
+			gTerrainMap[y+1][x+1] = g_nwse(PosRandPath("landschaft/cornfield-circle.png",x,y,tile.randmax),tile.nwse);
+		else 
+			gTerrainMap[y+1][x+1] = g_nwse(PosRandPath(tile.gfx,x,y,tile.randmax),tile.nwse);
 	}
 }
 
@@ -810,7 +812,19 @@ function GetCellHTML (relx,rely) {
 		if (building.construction > 0 || !gBuildingType[building.type]) {
 			layers[layers.length] = g(kConstructionPic);
 		} else {
-			layers[layers.length] = GetBuildingPic(building,relx,rely);
+			
+			//handly %BUSY% replacement
+			var busy,busy_rnd;
+			if(building.user == kUserID){
+				if(gBusy[building.type])busy = gBusy[building.type];
+				else busy = 0;
+				busy_rnd = Math.round(Math.random()*100);
+				if(busy_rnd < busy)busy = 1;
+				else busy = 0;
+			} else busy = 0;
+			
+			layers[layers.length] = GetBuildingPic(building,relx,rely,busy);
+
 			if (building.user > 0 && gUsers[building.user] && gBuildingType[building.type].border && gMapMode!=kJSMapMode_Plan && gMapMode!=kJSMapMode_Bauzeit) 
 				backgroundcolor = gUsers[building.user].color;
 			if (gBuildingType[building.type] && (gBuildingType[building.type].flags & kBuildingTypeFlag_DrawMaxTypeOnTop)) {
@@ -1037,7 +1051,7 @@ function ShowMapTip(relx,rely) {
 	var building = GetBuilding(relx,rely);
 	if (building) {
 		if (gBuildingType[building.type]) {
-			tiptext += "<tr><td nowrap><img src=\""+GetBuildingPic(building,relx,rely)+"\"></td><td nowrap colspan=2 align=\"left\">";
+			tiptext += "<tr><td nowrap><img src=\""+GetBuildingPic(building,relx,rely,0)+"\"></td><td nowrap colspan=2 align=\"left\">";
 			tiptext += "<span>"+gBuildingType[building.type].name + " Stufe "+building.level + "</span><br>";
 			tiptext += "<span>"+"HP : "+building.hp+"/"+calcMaxBuildingHp(building.type,building.level) + "</span><br>";
 			if (building.user > 0 && gUsers[building.user]) tiptext += "<span>"+gUsers[building.user].name + "</span><br>";
@@ -1363,7 +1377,7 @@ function GetTerrainPic (relx,rely) {
 }
 
 // similar to the php function GetBuildingPic in lib.main.php
-function GetBuildingPic (building,relx,rely) {
+function GetBuildingPic (building,relx,rely,busy) {
 	var type = building.type;
 	if (!gBuildingType[type]) return ""; // broken types
 	var level = building.level;
@@ -1386,6 +1400,9 @@ function GetBuildingPic (building,relx,rely) {
 	// TODO: FIXME: HACK: (gates&portal)  also in mapstyle_buildings.php and GetBuildingCSS()
 	if (building.jsflags & kJSMapBuildingFlag_Open) 
 		gfx = gfx.split("-zu-").join("-offen-"); 
+	
+	//replace %BUSY%
+	gfx = gfx.split("%BUSY%").join(busy); 
 		
 	// HACK: special nwse for path,gates,bridge...  also in UpdateBuildingNWSE()
 	nwsecode = HackNWSE(type,nwsecode,relx,rely); // see mapjs7_globals.js.php

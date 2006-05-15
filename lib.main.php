@@ -1027,7 +1027,8 @@ function g($path,$nwse="ns",$level="0",$race="0",$moral="100",$random=0){
 		else $base = $gUser->gfxpath;
 	} else $base = kGfxServerPath;
 	//return str_replace("%M%",$moral,str_replace("%R%",$race,str_replace("%NWSE%",$nwse,str_replace("%L%",$level,$base.$path))));
-	return $base.str_replace("%M%",$moral,str_replace("%R%",$race,str_replace("%NWSE%",$nwse,str_replace("%L%",$level,str_replace("%RND%",$random,$path)))));
+	//%BUSY% is used for switching on and of the animation in the production buildings
+	return $base.str_replace("%M%",$moral,str_replace("%R%",$race,str_replace("%NWSE%",$nwse,str_replace("%L%",$level,str_replace("%RND%",$random,str_replace("%BUSY%","0",$path))))));
 }
 
 

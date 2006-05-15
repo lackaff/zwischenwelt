@@ -145,6 +145,7 @@ if($gUser && $gfxpackactive){
 kBaseJSMapVersion = <?=intval(kJSMapVersion)+intval($gGlobal["typecache_version_adder"])?>;
 kBaseUrl = "<?=BASEURL?>";
 kMapScript = "<?=kMapScript?>";
+kUserID = "<?=$gUser->id?>";
 gCX = <?=intval($gCX)?>;
 gCY = <?=intval($gCY)?>;
 gLeft = <?=$gLeft?>;
@@ -204,6 +205,28 @@ function MapLoad () {
 				echo "gBuildingData[".$o->id."] = \"".strtr(addslashes($text),array("\n"=>"\\n","\r"=>""))."\";\n";
 			break;
 		}
+	}
+
+	// building type busy changes
+	// contains a value between 0 and 100, if the random value 0-100 is below the value %BUSY% is 1 otherwise 0
+	// if of the array is the buildingtypeid, if not set %BUSY% is 0
+	$gBusy = array();
+	$slots = GetProductionSlots($gUser->id);
+	$totalworker = $gUser->pop;
+	foreach($gResFields  as $res){
+		$btype = $gGlobal["building_".$res];
+		$worker_100 = $gUser->{"worker_$res"};
+		$worker = round($totalworker * $worker_100 / 100);
+		if($slots[$res] > 0){
+			$usage = round(100*$worker/$slots[$res]);
+			$usage = min(100,max(0,$usage));
+		} else $usage = 0;
+			
+		$gBusy[$btype] = $usage;
+	}
+	echo "gBusy = new Array();\n";
+	foreach ($gBusy as $id=>$usage) {
+		echo "gBusy[$id] = $usage;\n";
 	}
 
 	// items
