@@ -7,8 +7,12 @@ include("header.php");
 <a href="http://zwischenwelt.org/cgi-bin/trac.cgi/zw/browser">SVN</a>
 (svn://zwischenwelt.org/zw/zw/trunk)<br>
 [ <a href="https://sourceforge.net/cvs/?group_id=138787">CVS</a> 
-(cvs -z3 -d:pserver:anonymous@cvs.sourceforge.net:/cvsroot/zwischenwelt co -P zw) ]<br>
+(cvs -z3 -d:pserver:anonymous@cvs.sourceforge.net:/cvsroot/zwischenwelt co -P zw) eine sehr sehr alte version ]<br>
 
+<p>
+<h1>.: 15.05.06 :.</h1>
+R7 freigegeben: leichtere Installation, mehr Inhalt, mehr Werkzeuge , Bugfixes und viele GUI Verbesserungen
+</p>
 <p>
 <h1>.: 23.02.06 :.</h1>
 R6 bugfix : die "db.sql" war kaputt, bitte diese hier verwenden : <a href="sql/db.sql">db.sql</a>
