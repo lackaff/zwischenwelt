@@ -1,0 +1,39 @@
+====================================================
+         Installation Zwischenwelt
+====================================================
+ok, entschuldigung für die schlechte installations anleitung und der generelle 
+mangel an doku. vielleicht gibts beim nächsten release mehr.
+unter http://zwischenwelt.org/wiki/ findet man einiges an infos
+und  unter http://zwischenwelt.org/forum/ is ein guter ort
+um hilfe zu finden.
+
+==[ anforderungen ]==
+*Webserver (ie. Apache) mit PHP4 support
+*MySql 4.0 (table LOCK support)
+*ein bischen festplattenspeicher
+*gute internetverbindung
+
+==[ installation ]==
+-alles in ein verzeichnis im wwwroot kopieren/entpacken
+-sql/db.sql (es enthält einen minimalen db dump mit dem admin user und der einsteiger gilde "weltbank")
+ in die db importieren
+-defines.mysql.php.dist in defines.mysql.php umbenennen
+ und anpassen. dort sich die basiseinstellungen abgelegt.
+-erstell ein verzeichmit "tmp" im BASEPATH, in welches der webserver schreiben kann
+-setz das admin passwort mit diesem query: UPDATE `user` SET `pass`=PASSWORD("your-admin-password")
+ das admin passwort aus db.sql für den user admin ist 'admin'
+-log dich mit dem usernamen admin und deinem neuen passwort ein
+ so nun kannst du deine eigenen zwischenwelt bauen
+-pwvergessen.php, impressum.php und anmelden.php (ie. mail) solltem an noch anpassen
+-nun kann man den webbrowser aufmachen und einen spieler account registrieren (php muß dazu via webserver mails schicken können)
+
+wenn das nicht klappt, dann am besten den fehler suchen :) und bescheid geben,
+damit wir den bugfix ins nächste release aufnehmen können.
+ach, setup.php führt einige checks aus, ie. richtige mysql config. einfach starten und sehen ob alles ok ist.
+
+!!! WICHTIG !!!
+cron.php muß jede minute gestartet werden. dafür kann man zb. das script runcron.sh in einer shell
+laufen lassen (arbeitet wie ein dummer dämon prozess).
+auch die cron.minimap.php sollte man einmal pro tag starten, damit die große minimap erzeugt werden kann
+
+ ~~ Zwischenwelt Team

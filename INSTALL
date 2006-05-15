@@ -6,34 +6,36 @@ the general lack of any documentation. maybe more next
 release. Under http://zwischenwelt.org/wiki/ you can
 get information (mostly german) and http://zwischenwelt.org/forum/
 is also a good place to get help (mostly german, but
-postings in english are wellcome).
+postings in english are welcome).
 
 ==[ requirements ]==
 *Webserver (ie. Apache) with PHP4 support
-*MySql 4.0
+*MySql 4.0 (table LOCK support)
 *some space on the harddisc
 *good internet connection
 
 ==[ installation ]==
 -put all this code somewhere in your wwwroot
--import db.sql (it contains a minimum db dump)
+-import sql/db.sql (it contains a minimum db dump)
  with the admin user and the newbie guild "weltbank"
 -rename the defines.mysql.php.dist to defines.mysql.php
  and change the basic settings like db access or gfx path
 -create a directory "tmp" in the BASEPATH of the game where the
  webserver can write files (chmod 777 tmp)
 -set admin user password with this query: UPDATE `user` SET `pass`=PASSWORD("your-admin-password")
+ the admin password in the db.sql is 'admin'
 -login with username Admin and your password an start creating the game
 -adjust pwvergessen.php and anmelden.php (ie. mail)
 -open your webbrowser and register an account (php needs to send a mail) for creating a normal
  player account
 
 if this does not work find the error and tell us :) that we can add the fix into
-the next relase. so have fun with this.
+the next relase. so have fun with this. 
+btw. setup.php runs some checks like correct mysql config. Simply run the file and see whats wrong.
 
+!!! IMPORTANT !!!
 cron.php needs to be called every minute. You can use the script runcron.sh to do this (this works like
 a very stupid daemon process).
-
-setup.php runs some checks like correct mysql config. Simply run the file and see whats wrong.
+also cron.minimap.php should be called once a day, to generate the big minimap
 
  ~~ Zwischenwelt Team
