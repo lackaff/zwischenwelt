@@ -267,11 +267,23 @@ define("kSpellType_FruchtbaresLand",1);
 define("kSpellType_Erzbaron",2);
 define("kSpellType_Zauberwald",3);
 define("kSpellType_Steinreich",4);
+define("kSpellType_Erdbeben",5);
 define("kSpellType_ArmeeDerToten",6);
+define("kSpellType_Strike",7);
 define("kSpellType_LoveAndJoy",8);
 define("kSpellType_Regen",9);
 define("kSpellType_Duerre",10);
 define("kSpellType_Pest",11);
+define("kSpellType_Portalstein",12);
+define("kSpellType_7MeilenStiefel",13);
+define("kSpellType_Steinschlag",14);
+define("kSpellType_Komet",15);
+define("kSpellType_Schatzsuche",16);
+define("kSpellType_Spinnennetz",17);
+define("kSpellType_Hoellenauge",19);
+define("kSpellType_Bann",20);
+define("kSpellType_Brandrodung",21);
+define("kSpellType_Ameisensuche",22);
 
 // army
 

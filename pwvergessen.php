@@ -2,6 +2,7 @@
 include("lib.php");
 include("lib.main.php");
 
+
 include("header.php"); ?>
 <span id=passwortvergessen><h1>Passwort vergessen</h1></span>
 <?php
@@ -19,8 +20,8 @@ if (isset($f_name)) {?>
 				"Sie haben ein neues Passwort fuer Zwischenwelt angefordert.\n".
 				"username : ".$u->name."\n".
 				"passwort : ".$newpass."\n".
-				"http://zwischenwelt.net-play.de/ \n".
-				"Ihr Zwischenwelt team","From: zwischenwelt@net-play.de\r\nReply-To: zwischenwelt@net-play.de\r\nX-Mailer: PHP/" . phpversion()); 
+				BASEURL." \n".
+				"Ihr Zwischenwelt team","From: ".ZW_MAIL_SENDER."\r\nReply-To: ".ZW_MAIL_SENDER."\r\nX-Mailer: PHP/" . phpversion()); 
 			?>
 			Sie haben Post ! Ihnen wurde ein neues Passwort zugeschickt.<br>
 			<a href="index.php">zur Startseite</a>

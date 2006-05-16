@@ -9,4 +9,7 @@ define("kGfxServerPath","http://localhost/gfx/");
 define("kStyleServerPath","http://localhost/");
 define("PAGELAYOUT",1);
 define("BASEURL","http://localhost/");
+define("ZW_MAIL_SENDER","zwischenwelt@net-play.de"); // anmelde und passwort vergessen mails haben diese addy als absender
+define("ZW_NEWREGISTRATION_NOTIFY",false); // wenn das hier auf nicht false gesetzt wird, wird an diese mail adresse eine nachricht geschickt, wenn sich ein neuer spieler anmeldet
+// define("ZW_NEWREGISTRATION_NOTIFY",ZW_MAIL_SENDER);
 ?>

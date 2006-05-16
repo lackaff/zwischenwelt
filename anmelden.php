@@ -5,6 +5,9 @@ require_once("lib.message.php");
 if($f_a+$f_b==$f_aplusb)$spam = false;
 else $spam = true;
 
+
+
+
 $time = time() - 60*60*24*7;
 sql("DELETE FROM `pending` WHERE `time`<$time");
 
@@ -59,8 +62,8 @@ if(isset($f_selfcall))
 				$newpending->from = $f_from;
 				$newpending->text = $f_text;
 				sql("INSERT INTO `pending` SET ".obj2sql($newpending)." , `pass`=PASSWORD('".addslashes($f_pass)."')");
-				mail($f_mail, "Zwischenwelt Registratur", "Um den Account freizuschalten bitte folgenden Link aufrufen: http://zwischenwelt.org/anmelden.php?key=$key","From: zwischenwelt@net-play.de\r\nReply-To: zwischenwelt@net-play.de\r\nX-Mailer: PHP/" . phpversion()); 
-				mail("zwischenwelt@net-play.de","neue Anmeldung","name=$f_name\nmail=$f_mail\nfrom=$f_from\ntext=$f_text","From: zwischenwelt@net-play.de\r\nReply-To: zwischenwelt@net-play.de\r\nX-Mailer: PHP/" . phpversion());
+				mail($f_mail, "Zwischenwelt Registratur", "Um den Account freizuschalten bitte folgenden Link aufrufen: ".BASEURL."anmelden.php?key=$key","From: ".ZW_MAIL_SENDER."\r\nReply-To: ".ZW_MAIL_SENDER."\r\nX-Mailer: PHP/" . phpversion()); 
+				if (ZW_NEWREGISTRATION_NOTIFY) mail(ZW_NEWREGISTRATION_NOTIFY,"neue Anmeldung","name=$f_name\nmail=$f_mail\nfrom=$f_from\ntext=$f_text","From: ".ZW_MAIL_SENDER."\r\nReply-To: ".ZW_MAIL_SENDER."\r\nX-Mailer: PHP/" . phpversion());
 				echo '<hr>Es hat geklappt, sie haben Post :).<hr><b style="color:red">Manchmal kann es mit dem Mails etwas dauern, also keine Panik.</b><hr>';
 				include("footer.php");
 				exit;

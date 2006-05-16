@@ -3,6 +3,8 @@
 //if ( extension_loaded('zlib') )ob_start('ob_gzhandler');
 
 require_once("defines.mysql.php");
+if (!defined("ZW_MAIL_SENDER")) define("ZW_MAIL_SENDER","zwischenwelt@net-play.de");
+if (!defined("ZW_NEWREGISTRATION_NOTIFY")) define("ZW_NEWREGISTRATION_NOTIFY",false);
 
 define("MYSQL_ERROR_LOG",BASEPATH."sqlerror.log");
 define("PHP_ERROR_LOG",BASEPATH."phperror.log");
