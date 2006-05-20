@@ -1,6 +1,7 @@
 <?php
 require("lib.php");
-$fp = fopen("map.dat","wb");
+$fp = fopen("tmp/map.dat","wb");
+if (!$fp) exit("konnte tmp/map.dat nicht zum schreiben oeffnen");
 
 /*
 function nwse2num ($nwse) {
