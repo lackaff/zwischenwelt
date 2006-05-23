@@ -195,7 +195,7 @@ else
 	<td valign=top>
 	 <form action="<?=Query("?sid=?")?>" method=post>
 	 <table>
-	    <tr><th colspan=2>Schreischachtel</th></tr>
+	    <tr><th colspan=2>Schreischachtel (<a href="<?=Query("guild_shoutbox.php?sid=?")?>">7 Tage Archiv</a>)</th></tr>
 
 	    <tr><td><?=$gUser->name?></td><td align="right"><input type="submit" name="send" value="senden"></td></tr>
 	    <tr><td colspan=2><textarea name="text" rows=1 cols=20 style="width:400px"></textarea></td></tr>
