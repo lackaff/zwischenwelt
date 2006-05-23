@@ -41,7 +41,7 @@ if(!empty($gGuild)){ ?>
     
     <?php
     $time = time();
-    $t = sqlgettable("SELECT * FROM `guild_msg` WHERE `guild`=".$gGuild->id." AND `time`>($time-(60*60*24*7)) ORDER BY `time`");
+    $t = sqlgettable("SELECT * FROM `guild_msg` WHERE `guild`=".$gGuild->id." AND `time`>($time-(60*60*24*7)) ORDER BY `time` DESC");
     foreach($t as $x) {
 	$u = sqlgetobject("SELECT * FROM `user` WHERE `id`=".$x->user);
     ?>
