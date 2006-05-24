@@ -41,9 +41,7 @@ if (0) {
 } else {
 
 	fwrite($fp,byte2(0).byte4(2).byte2(222)); 
-	
-	// TODO : FIXME : terrainsegmente..
-	
+		
 	// terrain
 	fwrite($fp,byte2(1).byte4(6*sqlgetone("SELECT COUNT(*) FROM `terrain`")));
 	$r = sql("SELECT `type`,`nwse`,`x`,`y` FROM `terrain`");
@@ -54,6 +52,16 @@ if (0) {
 	$r = sql("SELECT b.`type`,b.`nwse`,b.`level`,b.`user`,b.`x`,b.`y` FROM `building` b,`buildingtype` t
 		WHERE b.`type`=t.`id` AND t.`race`<=1");
 	while ($x = mysql_fetch_row($r)) fwrite($fp,byte1($x[0]).byte1($x[1]).byte1($x[2]).byte2($x[3]).byte2($x[4]).byte2($x[5]));
+	
+	// terrain4
+	fwrite($fp,byte2(3).byte4(sqlgetone("SELECT COUNT(*) FROM `terrainsegment4`")));
+	$r = sql("SELECT `type`,`x`,`y` FROM `terrainsegment4`");
+	while ($x = mysql_fetch_row($r)) fwrite($fp,byte1($x[0]).byte2($x[1]).byte2($x[2]));
+
+	// terrain64
+	fwrite($fp,byte2(4).byte4(sqlgetone("SELECT COUNT(*) FROM `terrainsegment64`")));
+	$r = sql("SELECT `type`,`x`,`y` FROM `terrainsegment64`");
+	while ($x = mysql_fetch_row($r)) fwrite($fp,byte1($x[0]).byte2($x[1]).byte2($x[2]));
 }
 
 fclose($fp);
