@@ -172,7 +172,7 @@ else
 	<?$a=getnewArticles(); foreach ($a as $o){
 		$neu="";
 		if($o->nc>0) $neu="<span style='color:#9d0000'>&nbsp;(".$o->nc." ".($o->nc>1?"neue Kommentare":"neuer Kommentar").")</span>";?>
-	<tr><td style="padding-left:10px;color:<?=($o->new?"red":"black")?>;"> * <?="<a href='".Query("guild_forum?sid=?&guild=".$o->guild."&article=".$o->id)."'>".substr($o->head,0,60).(strlen($o->head)>60?"...":"")?></a><?=$neu?></td></tr>
+	<tr><td style="padding-left:10px;color:<?=($o->new?"red":"black")?>;"> * <?="<a href='".Query("guild_forum.php?sid=?&guild=".$o->guild."&article=".$o->id)."'>".substr($o->head,0,60).(strlen($o->head)>60?"...":"")?></a><?=$neu?></td></tr>
 	<?}?>
 	<tr><td>&nbsp;</td></tr>
 	<tr><td>[<a href="<?=query("?sid=?&do=markallforumread")?>">alles gelesen markieren</a>]</td></tr>
