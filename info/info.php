@@ -983,6 +983,10 @@ if (!isset($f_blind)) {
 		document.getElementById('dynamicinfomessage').innerHTML = html + document.getElementById('dynamicinfomessage').innerHTML;
 	}
 	function OnInfoLoad () {
+		var verfall = 1000 * 60 * 60 * 24 * 365;
+		var jetzt = new Date();
+		var Auszeit = new Date(jetzt.getTime() + verfall);
+		document.cookie = "activeinfotabuid" + "=" + <?=$gUser->id?> + "; expires=" + Auszeit.toGMTString() + ";";
 		<?php foreach ($gJSCommands as $cmd) echo $cmd."\n";?>
 	}
 	function WPMap (army) {
@@ -1001,6 +1005,7 @@ if (!isset($f_blind)) {
 		document.cookie = "activeinfotab" + "=" + tabum + "; expires=" + Auszeit.toGMTString() + ";";
 		document.cookie = "activeinfotabx" + "=" + <?=intval($f_x)?> + "; expires=" + Auszeit.toGMTString() + ";";
 		document.cookie = "activeinfotaby" + "=" + <?=intval($f_y)?> + "; expires=" + Auszeit.toGMTString() + ";";
+		document.cookie = "activeinfotabuid" + "=" + <?=$gUser->id?> + "; expires=" + Auszeit.toGMTString() + ";";
 	}
 //-->
 </SCRIPT>
@@ -1023,6 +1028,23 @@ if (isset($f_blind)) { // blind modus im dummy frame, fuer schnellere map-click-
 <?php if($info_message!="") {?><div><?=message2paper($info_message)?></div><hr><?}?>
 
 <?php
+// multitrap
+//if (isset($_COOKIE["activeinfotabuid"])) echo "<hr>tabtrap=".$_COOKIE["activeinfotabuid"];
+if (isset($_COOKIE["activeinfotabuid"]) && $_COOKIE["activeinfotabuid"] != $gUser->id) {
+	echo "<hr>tabtraptriggered";
+	$a = $_COOKIE["activeinfotabuid"];
+	$b = $gUser->id;
+	$auser = sqlgetobject("SELECT * FROM `user` WHERE `id` = ".intval($a));
+	if ($auser && !$auser->admin && !$gUser->admin) { // admin-symbiose nicht reporten
+		// TODO : write to mysql
+		$fp = fopen(BASEPATH."/tmp/uidmismatch.txt","a");
+		if ($fp) {
+			fwrite($fp,date("H:i d-m-Y").": uid=$a,uid=$b\n");
+			fclose($fp);
+		}
+	}
+}
+
 if ($gInfoTabsSelected == -1) $gInfoTabsSelected = count($gInfoTabs)-1;
 if(isset($f_selectedtab)){
 	$gInfoTabsSelected = intval($f_selectedtab);
