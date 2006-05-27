@@ -1031,7 +1031,7 @@ if (isset($f_blind)) { // blind modus im dummy frame, fuer schnellere map-click-
 // multitrap
 //if (isset($_COOKIE["activeinfotabuid"])) echo "<hr>tabtrap=".$_COOKIE["activeinfotabuid"];
 if (isset($_COOKIE["activeinfotabuid"]) && $_COOKIE["activeinfotabuid"] != $gUser->id) {
-	echo "<hr>tabtraptriggered";
+	//echo "<hr>tabtraptriggered";
 	$a = $_COOKIE["activeinfotabuid"];
 	$b = $gUser->id;
 	$auser = sqlgetobject("SELECT * FROM `user` WHERE `id` = ".intval($a));
