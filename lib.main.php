@@ -82,7 +82,8 @@ if (ZW_ENABLE_CALLLOG) {
 	$calllog = false;
 	$calllog->script = $_SERVER["SCRIPT_NAME"];
 	if (strpos($calllog->script,kMapScript) === false) { // dont log maplook
-	if (strpos($calllog->script,"cron.php") === false) { // dont log cron.php
+	if (strpos($calllog->script,"cron.php") === false) { // dont log cron.php and minicron.php
+	if (strpos($calllog->script,"log.php") === false) { // dont log log.php (logframe with auto-refresh)
 		$calllog->query = str_replace("sid=".$gSID,"",$_SERVER["QUERY_STRING"]);
 		if (strpos($calllog->script,"info.php") === false || $calllog->query != "x=".$_REQUEST["x"]."&y=".$_REQUEST["y"]."&") { // dont log look-tool
 			$calllog->time = time();
