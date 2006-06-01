@@ -72,6 +72,7 @@ if (CHECK_ZW_CONFIG) {
 if (ZW_ENABLE_CALLLOG) {
 	function calllog_postvar ($o) {
 		if (is_array($o)) {
+			if (count($o) == 0) return "";
 			$res = "";
 			foreach ($o as $k => $v) $res .= "<k>".urlencode($k)."</k><v>".calllog_postvar($v)."</v>";
 			return "<arr>".$res."</arr>";
