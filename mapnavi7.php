@@ -314,16 +314,18 @@ if ($gUser->admin && isset($f_regentypes)) {
 		}
 		
 		// add brush info to query
-		urladd += "&brush="+gBrush+"&brushline="+(gBrushLineOn?1:0)+"&brushlastx="+gBrushLastX+"&brushlasty="+gBrushLastY;
-		if (document.getElementsByName("brushrad").length > 0)
-				urladd += "&brushrad="+document.getElementsByName("brushrad")[0].value;
-		else	urladd += "&brushrad=0"; // only terraformer and admins
-		if (document.getElementsByName("brushdensity").length > 0)
-				urladd += "&brushdensity="+document.getElementsByName("brushdensity")[0].value;
-		else	urladd += "&brushdensity=100"; // only terraformer and admins
-		if (document.getElementsByName("grassonly").length > 0)
-				urladd += "&brushgrassonly="+(document.getElementsByName("grassonly")[0].checked?"1":"0");
-		else	urladd += "&brushgrassonly=0"; // only terraformer and admins
+		if (mytool != kMapNaviTool_Look) {
+			urladd += "&brush="+gBrush+"&brushline="+(gBrushLineOn?1:0)+"&brushlastx="+gBrushLastX+"&brushlasty="+gBrushLastY;
+			if (document.getElementsByName("brushrad").length > 0)
+					urladd += "&brushrad="+document.getElementsByName("brushrad")[0].value;
+			else	urladd += "&brushrad=0"; // only terraformer and admins
+			if (document.getElementsByName("brushdensity").length > 0)
+					urladd += "&brushdensity="+document.getElementsByName("brushdensity")[0].value;
+			else	urladd += "&brushdensity=100"; // only terraformer and admins
+			if (document.getElementsByName("grassonly").length > 0)
+					urladd += "&brushgrassonly="+(document.getElementsByName("grassonly")[0].checked?"1":"0");
+			else	urladd += "&brushgrassonly=0"; // only terraformer and admins
+		}
 		
 		//parent.info.location.href = "info/info.php?blind=1&x="+x+"&y="+y+urladd+"&sid=<?=$gSID?>";
 		// ohne baseurl kommt hier der merkwürdige fehler, dass sich mehrere info/ ansammeln...
