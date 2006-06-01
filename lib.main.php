@@ -69,6 +69,20 @@ if (CHECK_ZW_CONFIG) {
 }
 
 
+if (ZW_ENABLE_CALLLOG) {
+	$calllog = false;
+	$calllog->script = $_SERVER["SCRIPT_NAME"];
+	if (strpos($calllog->script,kMapScript) === false) {
+		$calllog->time = time();
+		$calllog->user = $gUser->id;
+		$calllog->ip = $_SERVER["REMOTE_ADDR"];
+		$calllog->query = str_replace("sid=".$gSID,"",$_SERVER["QUERY_STRING"]);
+		$calllog->post = "";
+		foreach ($_POST as $k => $v) $calllog->post .= "&".urlencode($k)."=".urlencode($v);
+		sql("INSERT DELAYED INTO ".ZW_LOGDB_PREFIX."`calllog` SET ".obj2sql($calllog));
+	}
+}
+
 //readout globals
 if (!isset($gTempTypeOverride)) {
 	$gTmpTypesOk = false;

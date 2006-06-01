@@ -3,8 +3,10 @@
 //if ( extension_loaded('zlib') )ob_start('ob_gzhandler');
 
 require_once("defines.mysql.php");
+if (!defined("ZW_LOGDB_PREFIX")) define("ZW_LOGDB_PREFIX",""); // can be something like "`zwlog`."  used as in  "SELECT * FROM ".ZW_LOGDB_PREFIX."`calllog` WHERE ..."
 if (!defined("ZW_MAIL_SENDER")) define("ZW_MAIL_SENDER","zwischenwelt@net-play.de");
 if (!defined("ZW_NEWREGISTRATION_NOTIFY")) define("ZW_NEWREGISTRATION_NOTIFY",false);
+if (!defined("ZW_ENABLE_CALLLOG")) define("ZW_ENABLE_CALLLOG",true); // logs every page-call with parameters
 
 define("MYSQL_ERROR_LOG",BASEPATH."sqlerror.log");
 define("PHP_ERROR_LOG",BASEPATH."phperror.log");
