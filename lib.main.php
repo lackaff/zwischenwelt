@@ -859,86 +859,92 @@ $gLoopProfiler_LastFlushTime = 0;
 
 // call bevore start and after end
 function LoopProfiler_flush ($echo=false) {
-	global $gLoopProfiler,$gLastLoopProfilerName,$gSqlQueries;
-	global $gLoopProfiler_LastQuerries,$gLoopProfiler_LastTime,$gLoopProfiler_LastFlushTime;
-	$now = microtime_float();
-	LoopProfiler_endlast($now);
-	
-	if ($echo) echo "\nLoopProfiler_flush : totaltime = ".sprintf("%0.3f",$now - $gLoopProfiler_LastFlushTime)."<br>\n";
-	foreach ($gLoopProfiler as $name => $o) {
-		if ($echo) {
-			// echo report
-			echo "\nLoopProfiler:".$name.":";
-			echo "\n totaltime=".sprintf("%0.3f",$o->totaltime).";";
-			echo "\n maxtime=".sprintf("%0.6f",$o->maxtime).";";
-			echo "\n avgtime=".sprintf("%0.6f",(($o->count>0)?($o->totaltime/$o->count):0)).";";
-			echo "\n querries=".$o->querries.";";
-			echo "\n count=".$o->count.";";
-			echo "<br>";
+	if (ZW_ENABLE_PROFILING) {
+		global $gLoopProfiler,$gLastLoopProfilerName,$gSqlQueries;
+		global $gLoopProfiler_LastQuerries,$gLoopProfiler_LastTime,$gLoopProfiler_LastFlushTime;
+		$now = microtime_float();
+		LoopProfiler_endlast($now);
+		
+		if ($echo) echo "\nLoopProfiler_flush : totaltime = ".sprintf("%0.3f",$now - $gLoopProfiler_LastFlushTime)."<br>\n";
+		foreach ($gLoopProfiler as $name => $o) {
+			if ($echo) {
+				// echo report
+				echo "\nLoopProfiler:".$name.":";
+				echo "\n totaltime=".sprintf("%0.3f",$o->totaltime).";";
+				echo "\n maxtime=".sprintf("%0.6f",$o->maxtime).";";
+				echo "\n avgtime=".sprintf("%0.6f",(($o->count>0)?($o->totaltime/$o->count):0)).";";
+				echo "\n querries=".$o->querries.";";
+				echo "\n count=".$o->count.";";
+				echo "<br>";
+			}
+			// enter into db
+			$q = $o->querries;
+			$p = sqlgetobject("SELECT * FROM `profile` WHERE `page`='".addslashes($name)."'");
+			if ($p) {
+				$p->max = max($o->maxtime,$p->max);
+				$p->sqlmax = max($q,$p->sqlmax);
+				//$p->memmax = max(memory_get_usage(),isset($p->memmax)?$p->memmax:0);
+				//$p->mem = (isset($p->mem)?$p->mem:0) + memory_get_usage();
+				$p->sql += $q;
+				$p->hits += $o->count;
+				$p->time += $o->totaltime;
+				sql("UPDATE `profile` SET ".obj2sql($p)." WHERE `page`='".addslashes($name)."'");
+			} else {
+				$p->max = $o->maxtime;
+				$p->sqlmax = $q;
+				$p->sql = $q;
+				//$p->mem = memory_get_usage();
+				//$p->memmax = memory_get_usage();
+				$p->hits = $o->count;
+				$p->time = $o->totaltime;
+				$p->page = $name;
+				sql("INSERT INTO `profile` SET ".obj2sql($p));
+			}
 		}
-		// enter into db
-		$q = $o->querries;
-		$p = sqlgetobject("SELECT * FROM `profile` WHERE `page`='".addslashes($name)."'");
-		if ($p) {
-			$p->max = max($o->maxtime,$p->max);
-			$p->sqlmax = max($q,$p->sqlmax);
-			//$p->memmax = max(memory_get_usage(),isset($p->memmax)?$p->memmax:0);
-			//$p->mem = (isset($p->mem)?$p->mem:0) + memory_get_usage();
-			$p->sql += $q;
-			$p->hits += $o->count;
-			$p->time += $o->totaltime;
-			sql("UPDATE `profile` SET ".obj2sql($p)." WHERE `page`='".addslashes($name)."'");
-		} else {
-			$p->max = $o->maxtime;
-			$p->sqlmax = $q;
-			$p->sql = $q;
-			//$p->mem = memory_get_usage();
-			//$p->memmax = memory_get_usage();
-			$p->hits = $o->count;
-			$p->time = $o->totaltime;
-			$p->page = $name;
-			sql("INSERT INTO `profile` SET ".obj2sql($p));
-		}
+		$gLoopProfiler = array();
+		$gLastLoopProfilerName = false;
+		$gLoopProfiler_LastQuerries = $gSqlQueries;
+		$gLoopProfiler_LastTime = $now;
+		$gLoopProfiler_LastFlushTime = $now;
 	}
-	$gLoopProfiler = array();
-	$gLastLoopProfilerName = false;
-	$gLoopProfiler_LastQuerries = $gSqlQueries;
-	$gLoopProfiler_LastTime = $now;
-	$gLoopProfiler_LastFlushTime = $now;
 }
 
 // no need to call me directly, completes last loopprofiler entry
 function LoopProfiler_endlast ($now) {
-	global $gLoopProfiler,$gLastLoopProfilerName,$gSqlQueries,$gLoopProfiler_LastQuerries,$gLoopProfiler_LastTime;
-	if ($gLastLoopProfilerName) {
-		if (!isset($gLoopProfiler[$gLastLoopProfilerName])) {
-			// create new entry
-			$gLoopProfiler[$gLastLoopProfilerName] = false;
-			$o =& $gLoopProfiler[$gLastLoopProfilerName];
-			$o->totaltime = 0; 
-			$o->maxtime = 0; 
-			$o->querries = 0; 
-			$o->count = 0;
-		} else {
-			// update existing entry
-			$o =& $gLoopProfiler[$gLastLoopProfilerName];
-			$dt = $now - $gLoopProfiler_LastTime;
-			$o->totaltime += $dt; 
-			$o->maxtime = max($o->maxtime,$dt); 
-			$o->querries += $gSqlQueries - $gLoopProfiler_LastQuerries; 
-			$o->count++;
+	if (ZW_ENABLE_PROFILING) {
+		global $gLoopProfiler,$gLastLoopProfilerName,$gSqlQueries,$gLoopProfiler_LastQuerries,$gLoopProfiler_LastTime;
+		if ($gLastLoopProfilerName) {
+			if (!isset($gLoopProfiler[$gLastLoopProfilerName])) {
+				// create new entry
+				$gLoopProfiler[$gLastLoopProfilerName] = false;
+				$o =& $gLoopProfiler[$gLastLoopProfilerName];
+				$o->totaltime = 0; 
+				$o->maxtime = 0; 
+				$o->querries = 0; 
+				$o->count = 0;
+			} else {
+				// update existing entry
+				$o =& $gLoopProfiler[$gLastLoopProfilerName];
+				$dt = $now - $gLoopProfiler_LastTime;
+				$o->totaltime += $dt; 
+				$o->maxtime = max($o->maxtime,$dt); 
+				$o->querries += $gSqlQueries - $gLoopProfiler_LastQuerries; 
+				$o->count++;
+			}
 		}
+		$gLoopProfiler_LastQuerries = $gSqlQueries;
+		$gLoopProfiler_LastTime = $now;
 	}
-	$gLoopProfiler_LastQuerries = $gSqlQueries;
-	$gLoopProfiler_LastTime = $now;
 }
 
 // call me before each section
 function LoopProfiler ($name) {
-	global $gLastLoopProfilerName;
-	$now = microtime_float();
-	LoopProfiler_endlast($now);
-	$gLastLoopProfilerName = $name;
+	if (ZW_ENABLE_PROFILING) {
+		global $gLastLoopProfilerName;
+		$now = microtime_float();
+		LoopProfiler_endlast($now);
+		$gLastLoopProfilerName = $name;
+	}
 }
 
 
@@ -948,12 +954,14 @@ $gProfilPageMysql = 0;
 
 //for profiling complete pages
 function profile_page_start($page,$echo=false){
-	global $gSqlQueries,$gProfilPageMysql, $gProfilPagePage, $gProfilPageTime;
-	if ($gProfilPagePage != "") profile_page_end();
-	
-	$gProfilPageMysql = $gSqlQueries;
-	$gProfilPageTime = microtime_float();
-	$gProfilPagePage = $page;
+	if (ZW_ENABLE_PROFILING) {
+		global $gSqlQueries,$gProfilPageMysql, $gProfilPagePage, $gProfilPageTime;
+		if ($gProfilPagePage != "") profile_page_end();
+		
+		$gProfilPageMysql = $gSqlQueries;
+		$gProfilPageTime = microtime_float();
+		$gProfilPagePage = $page;
+	}
 	if ($echo)
 		echo "------------------<br>$page<br>-------------------<br>";
 }
@@ -966,34 +974,36 @@ if (!function_exists("memory_get_usage")) {
 
 // profiler
 function profile_page_end() {
-	global $gProfilPageMysql,$gSqlQueries,$gProfilPagePage, $gProfilPageTime;
-	if ($gProfilPagePage == "") return;
-	
-	$t = microtime_float();
-	$dt = $t - $gProfilPageTime;
-	$p = sqlgetobject("SELECT * FROM `profile` WHERE `page`='".addslashes($gProfilPagePage)."'");
-	$q = $gSqlQueries-$gProfilPageMysql;
-	if($p){
-		$p->max = max($dt,$p->max);
-		$p->sqlmax = max($q,$p->sqlmax);
-		$p->memmax = max(memory_get_usage(),isset($p->memmax)?$p->memmax:0);
-		$p->mem = (isset($p->mem)?$p->mem:0) + memory_get_usage();
-		$p->sql += $q;
-		$p->hits++;
-		$p->time += $dt;
-		sql("UPDATE `profile` SET ".obj2sql($p)." WHERE `page`='".addslashes($gProfilPagePage)."'");
-	} else {
-		$p->max = $dt;
-		$p->sqlmax = $q;
-		$p->sql = $q;
-		$p->mem = memory_get_usage();
-		$p->memmax = memory_get_usage();
-		$p->hits = 1;
-		$p->time = $dt;
-		$p->page = $gProfilPagePage;
-		sql("INSERT INTO `profile` SET ".obj2sql($p));
+	if (ZW_ENABLE_PROFILING) {
+		global $gProfilPageMysql,$gSqlQueries,$gProfilPagePage, $gProfilPageTime;
+		if ($gProfilPagePage == "") return;
+		
+		$t = microtime_float();
+		$dt = $t - $gProfilPageTime;
+		$p = sqlgetobject("SELECT * FROM `profile` WHERE `page`='".addslashes($gProfilPagePage)."'");
+		$q = $gSqlQueries-$gProfilPageMysql;
+		if($p){
+			$p->max = max($dt,$p->max);
+			$p->sqlmax = max($q,$p->sqlmax);
+			$p->memmax = max(memory_get_usage(),isset($p->memmax)?$p->memmax:0);
+			$p->mem = (isset($p->mem)?$p->mem:0) + memory_get_usage();
+			$p->sql += $q;
+			$p->hits++;
+			$p->time += $dt;
+			sql("UPDATE `profile` SET ".obj2sql($p)." WHERE `page`='".addslashes($gProfilPagePage)."'");
+		} else {
+			$p->max = $dt;
+			$p->sqlmax = $q;
+			$p->sql = $q;
+			$p->mem = memory_get_usage();
+			$p->memmax = memory_get_usage();
+			$p->hits = 1;
+			$p->time = $dt;
+			$p->page = $gProfilPagePage;
+			sql("INSERT INTO `profile` SET ".obj2sql($p));
+		}
+		$gProfilPagePage = "";
 	}
-	$gProfilPagePage = "";
 }
 
 

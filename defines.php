@@ -7,6 +7,7 @@ if (!defined("ZW_LOGDB_PREFIX")) define("ZW_LOGDB_PREFIX",""); // can be somethi
 if (!defined("ZW_MAIL_SENDER")) define("ZW_MAIL_SENDER","zwischenwelt@net-play.de");
 if (!defined("ZW_NEWREGISTRATION_NOTIFY")) define("ZW_NEWREGISTRATION_NOTIFY",false);
 if (!defined("ZW_ENABLE_CALLLOG")) define("ZW_ENABLE_CALLLOG",true); // logs every page-call with parameters
+if (!defined("ZW_ENABLE_PROFILING")) define("ZW_ENABLE_PROFILING",false); // time and memory usage profiling, disable for better performance
 
 define("MYSQL_ERROR_LOG",BASEPATH."sqlerror.log");
 define("PHP_ERROR_LOG",BASEPATH."phperror.log");
@@ -35,7 +36,7 @@ define("kTransCP","transcp.gif");
 define("kStats_dtime",60*60*12);
 
 
-define("kProfileArmyLoop",true);
+define("kProfileArmyLoop",false); // see also ZW_ENABLE_PROFILING
 define("kMapTileSize",25);
 define("kMapScript","mapjs7.php");
 define("kMapNaviScript","mapnavi7.php");
