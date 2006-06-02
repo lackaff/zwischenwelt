@@ -95,6 +95,7 @@ if (ZW_ENABLE_CALLLOG) {
 		}
 	}
 	}
+	}
 }
 
 //readout globals
