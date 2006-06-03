@@ -501,7 +501,7 @@ class Spell_Instant_Damage extends Spell {
 			
 			// todo : der ganze lock block dient nur dem armee-beschädigen, die teile kommen aus dem cron fight, KAPSEL MICH !
 			TablesLock();
-			$debug = true;
+			$debug = false;
 			$army->units = cUnit::GetUnits($army->id);
 			$army->vorher_units = $army->units;
 			if ($debug) echo "dmg=$dmg<br>";
