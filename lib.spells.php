@@ -508,6 +508,9 @@ class Spell_Instant_Damage extends Spell {
 			$army->units = cUnit::GetUnitsAfterDamage($army->units,$dmg,$army->user);
 			echo "units_nachher:";vardump2($army->units);
 			$army->lost_units = cUnit::GetUnitsDiff($army->vorher_units,$army->units);
+			echo "units_after_diff:";vardump2($army->units);
+			echo "vorherunits_after_diff:";vardump2($army->vorher_units);
+			echo "lostunits_after_diff:";vardump2($army->lost_units);
 			foreach ($army->lost_units as $o)
 				$spellreport .= "<img src='".g($gUnitType[$o->type]->gfx)."'>".floor($o->amount)."<br>\n";
 			// TODO : terrainkills stimmt hier nicht so richtig, z.b. wenn kein terrain da ist, TODO : einheitliche damage funktion
