@@ -506,10 +506,11 @@ class Spell_Instant_Damage extends Spell {
 			echo "dmg=$dmg<br>";
 			echo "units_vorher:";vardump2($army->units);
 			$army->units = cUnit::GetUnitsAfterDamage($army->units,$dmg,$army->user);
-			echo "units_nachher:";vardump2($army->units);
+			echo "vorherunits_before_diff:";vardump2($army->vorher_units);
+			echo "units_before_diff:";vardump2($army->units);
 			$army->lost_units = cUnit::GetUnitsDiff($army->vorher_units,$army->units);
-			echo "units_after_diff:";vardump2($army->units);
 			echo "vorherunits_after_diff:";vardump2($army->vorher_units);
+			echo "units_after_diff:";vardump2($army->units);
 			echo "lostunits_after_diff:";vardump2($army->lost_units);
 			foreach ($army->lost_units as $o)
 				$spellreport .= "<img src='".g($gUnitType[$o->type]->gfx)."'>".floor($o->amount)."<br>\n";
