@@ -501,23 +501,24 @@ class Spell_Instant_Damage extends Spell {
 			
 			// todo : der ganze lock block dient nur dem armee-beschädigen, die teile kommen aus dem cron fight, KAPSEL MICH !
 			TablesLock();
+			$debug = false;
 			$army->units = cUnit::GetUnits($army->id);
 			$army->vorher_units = $army->units;
-			echo "dmg=$dmg<br>";
-			echo "units_vorher:";vardump2($army->units);
+			if ($debug) echo "dmg=$dmg<br>";
+			if ($debug) { echo "units_vorher:";vardump2($army->units);}
 			$army->units = cUnit::GetUnitsAfterDamage($army->units,$dmg,$army->user);
-			echo "vorherunits_before_diff:";vardump2($army->vorher_units);
-			echo "units_before_diff:";vardump2($army->units);
+			if ($debug) { echo "vorherunits_before_diff:";vardump2($army->vorher_units);}
+			if ($debug) { echo "units_before_diff:";vardump2($army->units);}
 			$army->lost_units = cUnit::GetUnitsDiff($army->vorher_units,$army->units);
-			echo "vorherunits_after_diff:";vardump2($army->vorher_units);
-			echo "units_after_diff:";vardump2($army->units);
-			echo "lostunits_after_diff:";vardump2($army->lost_units);
+			if ($debug) { echo "vorherunits_after_diff:";vardump2($army->vorher_units);}
+			if ($debug) { echo "units_after_diff:";vardump2($army->units);}
+			if ($debug) { echo "lostunits_after_diff:";vardump2($army->lost_units);}
 			foreach ($army->lost_units as $o)
 				$spellreport .= "<img src='".g($gUnitType[$o->type]->gfx)."'>".floor($o->amount)."<br>\n";
 			// TODO : terrainkills stimmt hier nicht so richtig, z.b. wenn kein terrain da ist, TODO : einheitliche damage funktion
 			sql("UPDATE `terrain` SET `kills`=`kills`+".round(abs(cUnit::GetUnitsSum($army->lost_units)))." WHERE `x`=".$army->x." AND `y`=".$army->y);
 			$army->size = cUnit::GetUnitsSum($army->units);
-			echo "army :";vardump2($army);
+			if ($debug) { echo "army :";vardump2($army);}
 			if ($army->size >= 1.0) {
 					cUnit::SetUnits($army->units,$army->id);
 			} else { 
