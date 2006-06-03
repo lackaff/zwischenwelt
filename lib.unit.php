@@ -81,16 +81,7 @@ class cUnit {
 	function GetUnitsSum ($units,$type_mult=false) {
 		$sum = 0;
 		global $gUnitType;
-		echo "GetUnitsSum vardump2<br>";
-		vardump2($units);
 		foreach ($units as $o) {
-			echo "GetUnitsSum : sum=$sum += ";
-			echo "".($o->amount)." * ";
-			if ($type_mult) {
-				echo "[$type_mult]";
-				echo $gUnitType[$o->type]->$type_mult;
-			}
-			echo "<br>";
 			$sum += $o->amount * ($type_mult ? $gUnitType[$o->type]->$type_mult : 1.0);
 		}
 		return $sum;
@@ -357,13 +348,18 @@ class cUnit {
 		global $gUnitType;
 		usort($units,"cmpUnit");
 		$res = array();
+		echo "GetUnitsAfterDamage: dmg=$damage units_vorher_sorted:";vardump2($units);
 		foreach ($units as $o) {
 			if ($damage > 0) {
 				$v = $mod_v * ($gUnitType[$o->type]->v + cUnit::GetUnitBonus($o->type,$uid,"v"));
+				echo "unit type ".$o->type." mod_v=$mod_v unitv=".$gUnitType[$o->type]->v." bonusv=".cUnit::GetUnitBonus($o->type,$uid,"v")." totalv=".$v."<br>";
 				if ($damage > $v * $o->amount) {
 					// unit type is completely annihalated, go to next
 					$damage -= $v * $o->amount;
+					
+					echo "annihalated : $damage > $v * $o->amount, dmg_left=$damage<br>";
 				} else {
+					echo "survived : $damage / $v = ".($damage / $v)." lost<br>";
 					// unit type is only damaged, n
 					$o->amount -= $damage / $v;
 					$damage = 0; // no more damage
