@@ -26,7 +26,8 @@ class cUnit {
 		// $gAllArmyUnits[$enemy->id] = $enemy->units; // TODO : update cache ??
 		sql("DELETE FROM `unit` WHERE `$container_type` = ".intval($container_id));
 		$units = cUnit::GroupUnits($units);
-		foreach ($units as $o) if ($o->amount > 0) {
+		foreach ($units as $o2) if ($o2->amount > 0) {
+			$o = copyobj($o2);
 			$o->army = 0;
 			$o->building = 0;
 			$o->transport = 0;
@@ -39,7 +40,8 @@ class cUnit {
 	// groups together equal unittype-spell-user combos, so you can simply push new units onto the array, even works with negative amounts
 	function GroupUnits ($units) {
 		$res = array();
-		foreach ($units as $add) if ($add->amount != 0) {
+		foreach ($units as $add2) if ($add2->amount != 0) {
+			$add = copyobj($add2);
 			$found = false;
 			foreach ($res as $key => $o) 
 				if ($o->type == $add->type && $o->spell == $add->spell && $o->user == $add->user) 
@@ -419,7 +421,8 @@ class cUnit {
 		
 		// train
 		$res = array();
-		foreach ($units as $o) {
+		foreach ($units as $o2) {
+			$o = copyobj($o2);
 			if ($gUnitType[$o->type]->elite) {
 				$train = $exp * 0.4 * $o->amount / $untrained_total;
 				$o->amount -= $train;
@@ -438,7 +441,8 @@ class cUnit {
 	function CaptureShips ($transport,$lostunits) {
 		// capture
 		$captured = array();
-		foreach ($lostunits as $lost) {
+		foreach ($lostunits as $lost2) {
+			$lost = copyobj($lost2);
 			$lost->amount *= 0.25;
 			$captured[] = $lost->amount;
 		}
@@ -446,7 +450,8 @@ class cUnit {
 		global $gUnitType;
 		$newtransport = array();
 		$dyingpirates = 10;
-		foreach ($transport as $o) {
+		foreach ($transport as $o2) {
+			$o = copyobj($o2);
 			if ($dyingpirates > 0 && $gUnitType[$o->type]->eff_capture > 0) {
 				if ($o->amount <= $dyingpirates) {
 					// completely annihalated
