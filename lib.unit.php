@@ -349,19 +349,22 @@ class cUnit {
 		usort($units,"cmpUnit");
 		$res = array();
 		$debug = false;
-		if ($debug) echo "GetUnitsAfterDamage: dmg=$damage units_vorher_sorted:";vardump2($units);
+		if ($debug) {echo "GetUnitsAfterDamage: dmg=$damage units_vorher_sorted:";vardump2($units);}
 		foreach ($units as $o) {
 			if ($damage > 0) {
 				$v = $mod_v * ($gUnitType[$o->type]->v + cUnit::GetUnitBonus($o->type,$uid,"v"));
 				if ($debug) echo "unit type ".$o->type." mod_v=$mod_v unitv=".$gUnitType[$o->type]->v." bonusv=".cUnit::GetUnitBonus($o->type,$uid,"v")." totalv=".$v."<br>";
 				if ($damage > $v * $o->amount) {
 					// unit type is completely annihalated, go to next
+					// TODO : this is not PHP5 compatible
 					$damage -= $v * $o->amount;
+					
 					
 					if ($debug) echo "annihalated : $damage > $v * $o->amount, dmg_left=$damage<br>";
 				} else {
 					if ($debug) echo "survived : $damage / $v = ".($damage / $v)." lost<br>";
 					// unit type is only damaged, n
+					// TODO : this is not PHP5 compatible
 					$o->amount -= $damage / $v;
 					$damage = 0; // no more damage
 					$res[] = $o;
@@ -379,8 +382,9 @@ class cUnit {
 	
 	// if neg, negative amounts are returned, otherwise they are clamped to zero
 	function GetUnitsDiff ($before,$after,$neg=false) {
+		// TODO : this is function not PHP5 compatible
 		$diff = array();
-		$debug = true;
+		$debug = false;
 		foreach ($before as $lost) if ($lost->amount > 0) {
 			global $gUnitType;
 			if ($debug) echo "diffing $lost->amount ".$gUnitType[$lost->type]->name." : <br>";
@@ -389,7 +393,9 @@ class cUnit {
 					(!isset($lost->spell) || !isset($o->spell) || $lost->spell == $o->spell) && 
 					(!isset($lost->user) || !isset($o->user) || $lost->user == $o->user)) {
 					if ($debug) echo "left : ".$o->amount." of $o->user / $lost->user , $o->spell / $lost->spell<br>";
+					// TODO : this is not PHP5 compatible
 					$lost->amount -= $o->amount;
+					// TODO : this is not PHP5 compatible
 					if (!$neg && $lost->amount < 0) $lost->amount = 0; // clamp
 				}
 			if ($debug) echo "diff = ".$lost->amount."<br>";
