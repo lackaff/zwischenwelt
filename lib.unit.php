@@ -81,8 +81,14 @@ class cUnit {
 	function GetUnitsSum ($units,$type_mult=false) {
 		$sum = 0;
 		global $gUnitType;
+		echo "GetUnitsSum vardump2<br>";
+		vardump2($units);
 		foreach ($units as $o) {
-			echo "GetUnitsSum : sum=$sum += ".($o->amount)." * ".$gUnitType[$o->type]->$type_mult." [$type_mult]<br>";
+			echo "GetUnitsSum : sum=$sum += ";
+			echo "".($o->amount)." * ";
+			echo "[$type_mult]";
+			echo $gUnitType[$o->type]->$type_mult;
+			echo "<br>";
 			$sum += $o->amount * ($type_mult ? $gUnitType[$o->type]->$type_mult : 1.0);
 		}
 		return $sum;
