@@ -350,7 +350,8 @@ class cUnit {
 		$res = array();
 		$debug = false;
 		if ($debug) {echo "GetUnitsAfterDamage: dmg=$damage units_vorher_sorted:";vardump2($units);}
-		foreach ($units as $o) {
+		foreach ($units as $o2) {
+			$o = copyobj($o2);
 			if ($damage > 0) {
 				$v = $mod_v * ($gUnitType[$o->type]->v + cUnit::GetUnitBonus($o->type,$uid,"v"));
 				if ($debug) echo "unit type ".$o->type." mod_v=$mod_v unitv=".$gUnitType[$o->type]->v." bonusv=".cUnit::GetUnitBonus($o->type,$uid,"v")." totalv=".$v."<br>";
@@ -385,10 +386,12 @@ class cUnit {
 		// TODO : this is function not PHP5 compatible
 		$diff = array();
 		$debug = false;
-		foreach ($before as $lost) if ($lost->amount > 0) {
+		foreach ($before as $lost2) if ($lost2->amount > 0) {
+			$lost = copyobj($lost2);
 			global $gUnitType;
 			if ($debug) echo "diffing $lost->amount ".$gUnitType[$lost->type]->name." : <br>";
-			foreach ($after as $o) 
+			foreach ($after as $o2) {
+				$o = copyobj($o2);
 				if ($lost->type == $o->type && 
 					(!isset($lost->spell) || !isset($o->spell) || $lost->spell == $o->spell) && 
 					(!isset($lost->user) || !isset($o->user) || $lost->user == $o->user)) {
@@ -398,6 +401,7 @@ class cUnit {
 					// TODO : this is not PHP5 compatible
 					if (!$neg && $lost->amount < 0) $lost->amount = 0; // clamp
 				}
+			}
 			if ($debug) echo "diff = ".$lost->amount."<br>";
 			$diff[] = $lost;
 		}

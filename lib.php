@@ -333,6 +333,14 @@ function obj2array ($obj)
 function obj2arr ($obj)
 { return get_object_vars($obj); }
 
+
+function copyobj ($obj) { 
+	$arr = get_object_vars($obj); 
+	$res = false;
+	foreach ($arr as $k => $v) $res->$k = $v;
+	return $res;
+}
+
 // generate save xml attribute from object
 function obj2attr ($obj)
 {
