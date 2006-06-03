@@ -503,6 +503,7 @@ class Spell_Instant_Damage extends Spell {
 			TablesLock();
 			$army->units = cUnit::GetUnits($army->id);
 			$army->vorher_units = $army->units;
+			echo "dmg=$dmg<br>";
 			$army->units = cUnit::GetUnitsAfterDamage($army->units,$dmg,$army->user);
 			$army->lost_units = cUnit::GetUnitsDiff($army->vorher_units,$army->units);
 			foreach ($army->lost_units as $o)
@@ -510,9 +511,10 @@ class Spell_Instant_Damage extends Spell {
 			// TODO : terrainkills stimmt hier nicht so richtig, z.b. wenn kein terrain da ist, TODO : einheitliche damage funktion
 			sql("UPDATE `terrain` SET `kills`=`kills`+".round(abs(cUnit::GetUnitsSum($army->lost_units)))." WHERE `x`=".$army->x." AND `y`=".$army->y);
 			$army->size = cUnit::GetUnitsSum($army->units);
-			if ($army->size >= 1.0) 
+			vardump2($army);
+			if ($army->size >= 1.0) {
 					cUnit::SetUnits($army->units,$army->id);
-			else { 
+			} else { 
 				cArmy::DeleteArmy($army,false,$this->report_dead_why);
 				$spellreport .= "Die Armee wurde VERNICHTET !<br>\n";
 			}

@@ -86,7 +86,7 @@ if (ZW_ENABLE_CALLLOG) {
 	if (strpos($calllog->script,"cron.php") === false) { // dont log cron.php and minicron.php
 	if (strpos($calllog->script,"log.php") === false) { // dont log log.php (logframe with auto-refresh)
 		$calllog->query = str_replace("sid=".$gSID,"",$_SERVER["QUERY_STRING"]);
-		if (strpos($calllog->script,"info.php") === false || $calllog->query != "x=".$_REQUEST["x"]."&y=".$_REQUEST["y"]."&") { // dont log look-tool
+		if (strpos($calllog->script,"info.php") === false || count($_POST) > 0 || $calllog->query != "x=".$_REQUEST["x"]."&y=".$_REQUEST["y"]."&") { // dont log look-tool
 			$calllog->time = time();
 			$calllog->user = $gUser->id;
 			$calllog->ip = $_SERVER["REMOTE_ADDR"];
