@@ -86,8 +86,10 @@ class cUnit {
 		foreach ($units as $o) {
 			echo "GetUnitsSum : sum=$sum += ";
 			echo "".($o->amount)." * ";
-			echo "[$type_mult]";
-			echo $gUnitType[$o->type]->$type_mult;
+			if ($type_mult) {
+				echo "[$type_mult]";
+				echo $gUnitType[$o->type]->$type_mult;
+			}
 			echo "<br>";
 			$sum += $o->amount * ($type_mult ? $gUnitType[$o->type]->$type_mult : 1.0);
 		}

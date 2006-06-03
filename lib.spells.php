@@ -502,6 +502,7 @@ class Spell_Instant_Damage extends Spell {
 			// todo : der ganze lock block dient nur dem armee-beschädigen, die teile kommen aus dem cron fight, KAPSEL MICH !
 			TablesLock();
 			$army->units = cUnit::GetUnits($army->id);
+			echo "units:";vardump2($army->units);
 			$army->vorher_units = $army->units;
 			echo "dmg=$dmg<br>";
 			$army->units = cUnit::GetUnitsAfterDamage($army->units,$dmg,$army->user);
@@ -511,7 +512,7 @@ class Spell_Instant_Damage extends Spell {
 			// TODO : terrainkills stimmt hier nicht so richtig, z.b. wenn kein terrain da ist, TODO : einheitliche damage funktion
 			sql("UPDATE `terrain` SET `kills`=`kills`+".round(abs(cUnit::GetUnitsSum($army->lost_units)))." WHERE `x`=".$army->x." AND `y`=".$army->y);
 			$army->size = cUnit::GetUnitsSum($army->units);
-			vardump2($army);
+			echo "army :";vardump2($army);
 			if ($army->size >= 1.0) {
 					cUnit::SetUnits($army->units,$army->id);
 			} else { 
