@@ -637,7 +637,7 @@ function UpdateSession ($sid)
 	if (!$fastsession)
 		sql("DELETE FROM `session` WHERE `lastuse` < ".(time()-kSessionTimeout));
 
-	$gSessionObj = sqlgetobject("SELECT * FROM `session` WHERE `sid` = '".addslashes($sid)."'");
+	$gSessionObj = sqlgetobject("SELECT * FROM `session` WHERE `sid` = '".addslashes($sid)."' AND `lastuse` > ".(time()-kSessionTimeout));
 	if (!$gSessionObj)
 		exit(error("no session found (timeout), please log in again"));
 	$gUser = sqlgetobject("SELECT * FROM `user` WHERE `id` = '".$gSessionObj->userid."'");
