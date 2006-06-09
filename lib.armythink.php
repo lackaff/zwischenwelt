@@ -14,11 +14,10 @@ function ArmyThinkTimeShift ($armyid,$dur) {
 
 
 function InitArmyThink () {
-	global $gAllHellholes,$gAllArmys,$gAllArmyUnits,$gAllActions,$gAllPillages,$gAllSieges,$gAllFights,$gAllUsers,$gArmyShootings;
+	global $gAllHellholes,$gAllArmyUnits,$gAllActions,$gAllPillages,$gAllSieges,$gAllFights,$gAllUsers,$gArmyShootings;
 	global $gContainerType2Number;
 	if (!isset($gAllUsers)) $gAllUsers = sqlgettable("SELECT * FROM `user` ORDER BY `id`","id");
 	$gAllHellholes = sqlgettable("SELECT * FROM `hellhole`","id"); // used for caching army positions in GetPosSpeed() -> update moved armys in this array !!
-	$gAllArmys = sqlgettable("SELECT * FROM `army`","id"); // used for caching army positions in GetPosSpeed() -> update moved armys in this array !!
 	$gAllArmyUnits = sqlgetgrouptable("SELECT * FROM `unit` WHERE `army` > 0","army"); // not ordered
 	$gAllActions = sqlgetgrouptable("SELECT * FROM `armyaction` ORDER BY `orderval` ASC","army");
 	$gAllPillages = sqlgettable("SELECT `army` FROM `pillage` GROUP BY `army`","army");
@@ -51,7 +50,7 @@ InitArmyThink();
 
 function ArmyThink ($army,$debug=false) {
 	if (kProfileArmyLoop) LoopProfiler("armyloop:startthink");
-	global $gAllHellholes,$gAllArmys,$gAllArmyUnits,$gAllActions,$gAllPillages,$gAllSieges,$gAllFights;
+	global $gAllHellholes,$gAllArmyUnits,$gAllActions,$gAllPillages,$gAllSieges,$gAllFights;
 	global $gTerrainType,$gRes,$gRes2ItemType,$gBuildingType,$gBodenSchatzBuildings;
 	if ($debug) echo "thinking army $army->name ($army->x,$army->y)<br>";
 	if (isset($gAllPillages[$army->id]))	{ if ($debug) echo "army is pillaging<br>"; return; }
@@ -177,7 +176,7 @@ function ArmyThink ($army,$debug=false) {
 	if (($army->flags & kArmyFlag_AutoAttack)) foreach ($enemies as $enemy) if (cFight::FightPossible($army,$enemy,$debug)) {
 		if (kProfileArmyLoop) LoopProfiler("armyloop:AutoAttack");
 		if ($debug) echo "AutoAttack army: $enemy->x,$enemy->y<br>";
-		if (TryExecArmyAction($army,ARMY_ACTION_ATTACK,$enemy->id,0,0,0,$debug)) return;
+		if (TryExecArmyAction($army,ARMY_ACTION_ATTACK,$enemy,0,0,0,$debug)) return;
 	}
 	
 	// AutoAttackRangeMonster
@@ -262,7 +261,7 @@ function ArmyThink ($army,$debug=false) {
 			if ($building->construction > 0 || $building->type != kBuilding_Silo) continue;
 			if ($army->user != $building->user && GetFOF($army->user,$building->user) != kFOF_Friend) continue;
 			if ($debug) echo "AutoDeposit buildingid:$building->id<br>";
-			if (TryExecArmyAction($army,ARMY_ACTION_DEPOSIT,$building->x,$building->y,-1,0,$debug)) {
+			if (TryExecArmyAction($army,ARMY_ACTION_DEPOSIT,$building->x,$building->y,-1,0,$debug,$building)) {
 				sql("UPDATE `army` SET `flags` = `flags` | ".kArmyFlag_BuildingWait." WHERE `id` = ".$army->id);
 				return;
 			}
@@ -420,7 +419,7 @@ function ArmyThink ($army,$debug=false) {
 					// attack-blocking
 					if ($blockingarmy->user != $army->user) { // don't attack own armies
 						if ($debug) echo "army tries to attack blocking army<br>";
-						if (TryExecArmyAction($army,ARMY_ACTION_ATTACK,$blockingarmy->id,0,0,0,$debug)) return;
+						if (TryExecArmyAction($army,ARMY_ACTION_ATTACK,$blockingarmy,0,0,0,$debug)) return;
 					}
 				} 
 			}
@@ -437,14 +436,12 @@ function ArmyThink ($army,$debug=false) {
 		} else if ($army->idle >= $speed && $speed > 0) {
 			if (kProfileArmyLoop) LoopProfiler("armyloop:moveok");
 			if ($debug) echo "army moves<br>";
-			//armee bewegt sich ,update $gAllArmys cache
+			//armee bewegt sich
 			$army->x = $pos[0];
 			$army->y = $pos[1];
-			$gAllArmys[$army->id]->x = $pos[0];
-			$gAllArmys[$army->id]->y = $pos[1];
 			$army->flags = $army->flags & (~kArmyFlag_AutoPillageOff); // don't pillage again and again, even if not moving
-			sql("UPDATE `army` SET `flags` = ".$army->flags." , `nextactiontime` = ".($time+$speed)." , `idle`=0,`x` = ".$pos[0]." , `y` = ".$pos[1]." WHERE `id` = ".$army->id);
-			cArmy::AddSteps($pos[0],$pos[1],$army->size);
+			sql("UPDATE `army` SET `flags` = ".$army->flags." , `nextactiontime` = ".($time+$speed)." , `idle`=0,`x` = ".$pos[0]." , `y` = ".$pos[1]." WHERE `id` = ".$army->id." LIMIT 1");
+			//cArmy::AddSteps($pos[0],$pos[1],$army->size); // disabled for performance
 			QuestTrigger_ArmyMove($army,$pos[0],$pos[1]);
 		} else if ($debug) echo "army must wait (idle=".$army->idle.",speed=".$speed.")<br>";
 	}
@@ -463,13 +460,16 @@ function ArmyThink ($army,$debug=false) {
 
 	
 	
-function TryExecArmyAction ($army,$cmd,$param1,$param2,$param3,$actid,$debug=false) {
-	global $gAllHellholes,$gAllArmys,$gAllArmyUnits,$gAllActions,$gAllPillages,$gAllSieges,$gAllFights;
+function TryExecArmyAction ($army,$cmd,$param1,$param2,$param3,$actid,$debug=false,$directobject=false) {
+	global $gAllHellholes,$gAllArmyUnits,$gAllActions,$gAllPillages,$gAllSieges,$gAllFights;
 	$action_complete = false;
 	
 	switch($cmd) {
 		case ARMY_ACTION_ATTACK:
-			$enemy = $gAllArmys[$param1];
+			if (is_object($param1)) 
+					$enemy = $param1;
+			else	$enemy = sqlgetobject("SELECT * FROM `army` WHERE `id` = ".intval($param1));
+			
 			if ($enemy) $enemy->units = $gAllArmyUnits[$enemy->id];
 			if (cFight::StartFight($army,$enemy,$debug)) {
 				$gAllFights[] = $army->id;
@@ -496,7 +496,9 @@ function TryExecArmyAction ($army,$cmd,$param1,$param2,$param3,$actid,$debug=fal
 					${$f} = ($param3 == -1 || (intval($param3) & $b)) ? max(0,$army->{$f}) : 0 ; 
 					$b = $b << 1; 
 				}
-				$building = sqlgetobject("SELECT * FROM `building` WHERE `x` = ".intval($param1)." AND `y` = ".intval($param2));
+				if ($directobject) 
+						$building = $directobject;
+				else	$building = sqlgetobject("SELECT * FROM `building` WHERE `x` = ".intval($param1)." AND `y` = ".intval($param2));
 				if (!$building) { $action_complete = true; break; }
 				cArmy::ArmyGetRes($army->id,$building->user,-$lumber,-$stone,-$food,-$metal,-$runes);
 				$action_complete = true;

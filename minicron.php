@@ -36,10 +36,9 @@ require_once("lib.armythink.php"); // warning ! generates big globals, called he
 
 if (kProfileArmyLoop) LoopProfiler_flush();
 
-				
-			
 $c = 0;
-foreach ($gAllArmys as $army) if ($army) {
+$r = sql("SELECT * FROM `army`");
+if ($r !== true && $r !== false) { while ($army = mysql_fetch_object($r)) { echo "army ".(++$c)."<br>";
 	//if ($c++ > 100) break;
 	if (kProfileArmyLoop) LoopProfiler("armyloop:init");
 	if (!isset($gAllArmyUnits[$army->id])) warning("Army $army->id ($army->x,$army->y) has no units ??<br>");
@@ -83,6 +82,8 @@ foreach ($gAllArmys as $army) if ($army) {
 	if ($army->nextactiontime > $time) continue;
 	
 	ArmyThink($army);
+}
+mysql_free_result($r);
 }
 
 if (kProfileArmyLoop) LoopProfiler_flush(true); // report profiling

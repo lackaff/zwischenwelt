@@ -372,9 +372,6 @@ class cArmy {
 			}
 		}
 		
-		// update cron army cache
-		global $gAllArmys; 
-		if (isset($gAllArmys)) $gAllArmys[$army->id] = $army;
 		return $army;
 	}
 	
@@ -383,10 +380,6 @@ class cArmy {
 		if (!is_object($army)) $army = sqlgetobject("SELECT * FROM `army` WHERE `id` = ".intval($army));
 		if (!$army) { TablesUnlock(); return; }
 		$armyid = intval($army->id);
-		
-		// delete army from cache
-		global $gAllArmys;
-		if (isset($gAllArmys)) unset($gAllArmys[$armyid]);
 			
 		cItem::dropAll($armyid);
 		if (!$no_resdrop) {
@@ -795,7 +788,6 @@ class cArmy {
 	
 	// $userid for BuildingOpenForUser()
 	// $units for GetUnitsMovableMask()
-	// uses $gAllArmys cache if available (cron/minicron)
 	// $building = -1 : if building has already been read out, it can be passed here, used in ArmyThink
 	function GetPosSpeed ($x,$y,$userid=0,$units=false,$armyblock=true,$building=-1) {
 		global $gTerrainType,$gBuildingType;
@@ -840,14 +832,7 @@ class cArmy {
 		
 		// check army
 		if ($armyblock) {
-			// use cron army cache if available
-			global $gAllArmys;
-			if (isset($gAllArmys)) foreach ($gAllArmys as $o) {
-				if ($o->x == $x && $o->y == $y) {
-					if ($debug) echo "GetPosSpeed(),army=0<br>\n";
-					return 0;
-				}
-			} else if (sqlgetone("SELECT 1 FROM `army` WHERE ".$xycondition." LIMIT 1"))  {
+			if (sqlgetone("SELECT 1 FROM `army` WHERE ".$xycondition." LIMIT 1"))  {
 				if ($debug) echo "GetPosSpeed(),army=0<br>\n";
 				return 0;
 			}
