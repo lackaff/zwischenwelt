@@ -36,7 +36,7 @@ define("kTransCP","transcp.gif");
 define("kStats_dtime",60*60*12);
 
 
-define("kProfileArmyLoop",false); // see also ZW_ENABLE_PROFILING
+define("kProfileArmyLoop",ZW_ENABLE_PROFILING); // see also ZW_ENABLE_PROFILING
 define("kMapTileSize",25);
 define("kMapScript","mapjs7.php");
 define("kMapNaviScript","mapnavi7.php");
