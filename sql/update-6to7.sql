@@ -63,3 +63,4 @@ ALTER TABLE `buildingtype` ADD `fire_prob` SMALLINT UNSIGNED NOT NULL DEFAULT '0
 ALTER TABLE `terraintype` ADD `fire_prob` SMALLINT UNSIGNED NOT NULL DEFAULT '0';
 ALTER TABLE `terraintype` ADD `fire_burnout_type` INT UNSIGNED NOT NULL DEFAULT '0';
 ALTER TABLE `user` ADD `buildings_on_fire` INT UNSIGNED NOT NULL DEFAULT '0';
+ALTER TABLE `fire` ADD INDEX ( `created` );
