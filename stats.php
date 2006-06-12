@@ -86,6 +86,14 @@ $o->f1 = $gGlobal["stats_trade_sum"];
 SetGlobal("stats_trade_sum",0);
 sql("INSERT INTO `stats` SET ".obj2sql($o));
 
+//environment
+$o = null;
+$o->time = $time;
+$o->type = kStats_SysInfo_Environment;
+$o->i1 = sqlgetone("SELECT COUNT(1) FROM `fire`");
+sql("INSERT INTO `stats` SET ".obj2sql($o));
+
+
 //--------------------------------
 //user stats----------------------
 //--------------------------------

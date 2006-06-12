@@ -4,6 +4,7 @@ require_once("lib.main.php");
 require_once("lib.map.php");
 require_once("lib.army.php");
 require_once("lib.unit.php");
+require_once("lib.weather.php");
 Lock();
 
 $gCX = isset($f_cx)?(min(200,max(0,intval($f_cx)))|1):11;
@@ -158,6 +159,15 @@ gGFXBase = "<?=$gGFXBase?>";
 gBig = <?=(isset($f_big) && $f_big)?1:0?>;
 gMapMode = <?=isset($f_mode)?intval($f_mode):kJSMapMode_Normal?>;
 gSlowMap = <?=(intval($gUser->flags) & kUserFlags_SlowMap)?1:0?>;
+gWeatherGfx = "<?=g($gWeatherGfx[$gWeather])?>";
+gOverlay = new Array();
+<?php
+//gather overlay images
+//fire
+$t = sqlgettable("SELECT * FROM `fire` WHERE $xylimit");
+foreach($t as $x){?>
+gOverlay["<?=($x->x)-$gLeft?>-<?=($x->y)-$gTop?>"] = "fire";
+<?php } ?>
 
 function MapLoad () {
 	<?php

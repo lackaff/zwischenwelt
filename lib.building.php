@@ -48,7 +48,7 @@ class cBuilding {
 			`defender` = ".$building->id." AND `defendertype` = ".$gContainerType2Number[kUnitContainer_Building]." LIMIT 1"))
 			$building->jsflags |= kJSMapBuildingFlag_BeingShot;
 			
-		return obj2jsparams($building,"x,y,type,user,level,hp,construction,jsflags,unitstxt,id",$quote); // end
+		return obj2jsparams($building,"x,y,type,user,level,hp,construction,jsflags,unitstxt,id,burning_since",$quote); // end
 	}
 	
 	function CanControllBuilding ($building,$user) {

@@ -13,6 +13,8 @@ kConstructionPlanPic = "<?=kConstructionPlanPic?>";
 kConstructionPic = "<?=kConstructionPic?>";
 kTransCP = "<?=kTransCP?>"; // transparent construction plan
 kBASEURL = "<?=BASEURL?>";
+gOverlayGfx = new Array();
+gOverlayGfx["fire"] = "overlay/fire.gif";
 
 <?php 
 PrintPHPConstantsToJS("kNWSE_");

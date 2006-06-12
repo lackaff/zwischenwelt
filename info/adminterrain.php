@@ -23,7 +23,12 @@ foreach($gTerrainType as $x)
 $connectto_building = array();
 foreach($gBuildingType as $x)
 	$connectto_building[$x->id] = "<img src=\"".g($x->gfx)."\" alt=\" $x->name\" title=\" $x->name\" border=0>";
-	
+
+$terrains = array(0=>"keines");
+foreach($gTerrainType as $x)
+	$terrains[$x->id] = "<img src=\"".g($x->gfx)."\" alt=\" $x->name [$x->id]\" title=\" $x->name [$x->id]\" border=0>";
+
+
 $form = new cTableEditForm("?sid=?&id=$f_id","TerrainType $f_id editieren",
 	new cTableEditCols(array(
 		new cTableEditRows(array(
@@ -37,10 +42,13 @@ $form = new cTableEditForm("?sid=?&id=$f_id","TerrainType $f_id editieren",
 			new cTableEditTextField("terraintype","id",$f_id,"Mod A","mod_a"),
 			new cTableEditTextField("terraintype","id",$f_id,"Mod V","mod_v"),
 			new cTableEditTextField("terraintype","id",$f_id,"Mod F","mod_f"),
-			new cTableEditFlagField("terraintype","id",$f_id,"Begehbarkeiten","movable_flag",$flags)
+			new cTableEditTextField("terraintype","id",$f_id,"Brennbarkeit (0-100)","fire_prob"),
+			new cTableEditFlagField("terraintype","id",$f_id,"Begehbarkeiten","movable_flag",$flags),
+		    new cTableEditFlagField("terraintype","id",$f_id,"Flags","flags",$gTerrainTypeFlagNames),
 		)),
 		new cTableEditListFlagField("terraintype","id",$f_id,"verbindet sich mit Terrain","connectto_terrain",$connectto_terrain),
-		new cTableEditListFlagField("terraintype","id",$f_id,"verbindet sich mit Building","connectto_building",$connectto_building)
+		new cTableEditListFlagField("terraintype","id",$f_id,"verbindet sich mit Building","connectto_building",$connectto_building),
+		new cTableEditRadioField("terraintype","id",$f_id,"Verbrennt zu","fire_burnout_type",$terrains),
 	))
 	,"terraintype","id",$f_id,Query("listall.php?sid=?")
 );

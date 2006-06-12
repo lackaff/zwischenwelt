@@ -96,6 +96,7 @@ define("kStats_SysInfo_Trade",5);
 define("kStats_SysInfo_Chat",6);
 define("kStats_SysInfo_Magic",7);
 define("kStats_SysInfo_Activity",8);
+define("kStats_SysInfo_Environment",9);
 
 define("kFOF_Neutral",0);
 define("kFOF_Friend",1);
@@ -587,6 +588,7 @@ define("kBuildingTypeFlag_OthersCanSeeUnits",	1<<6); // 32 used for cannon tower
 define("kBuildingTypeFlag_DrawMaxTypeOnTop",	1<<7); // 64 used for cannon towers, draw maximal unit type on top
 define("kBuildingTypeFlag_Bodenschatz",			1<<8); // 128 not yet used -> $gBodenSchatzBuildings
 define("kBuildingTypeFlag_IsInQuickJump",			1<<9); // apears in the quickjump bar
+define("kBuildingTypeFlag_CanBurn",			1<<10); // building can burn
 $gBuildingTypeFlagNames = array(
 	kBuildingTypeFlag_BuildDistSource => 	"BuildDistSource (Abstand zu diesen typen bestimmt den bauzeit faktor)",
 	kBuildingTypeFlag_Speedy => 			"Speedy (newbee Faktor betrifft diese gebäude)",
@@ -598,9 +600,15 @@ $gBuildingTypeFlagNames = array(
 	kBuildingTypeFlag_DrawMaxTypeOnTop => 	"Haupt-EinheitenTyp wird über das Gebäudebild gezeichnet (Kanonen-Turm)",
 	kBuildingTypeFlag_Bodenschatz => 		"Bodenschatz",
 	kBuildingTypeFlag_IsInQuickJump => 		"im Schnellsprung?",
+	kBuildingTypeFlag_CanBurn => 		"kann brennen?",
 );
 
- // TODO : unhardcode : set flags in db and empty these lists
+define("kTerrainTypeFlag_CanBurn",		1<<0); // Terrain can burn
+$gTerrainTypeFlagNames = array(
+	kTerrainTypeFlag_CanBurn => 		"kann brennen?",
+);
+
+// TODO : unhardcode : set flags in db and empty these lists
 $gFlaggedBuildingTypes = array();
 $gFlaggedBuildingTypes[kBuildingTypeFlag_BuildDistSource] = array(0=>kBuilding_HQ,kBuilding_Silo,kBuilding_Harbor);
 $gFlaggedBuildingTypes[kBuildingTypeFlag_Speedy] = array(0=>6,7,8,9,11,12,13,14,15,16,20,22,23);
@@ -724,5 +732,16 @@ $gMenuStyles = array(
 "zw6big" => "css/zw6big.css",
 "default" => "css/classicbig.css",
 );
+
+define("kFireSpreadProbability",100);	//value between 0 and 100, 0 meens no spread, higher values increase spreadrate
+define("kFireSpreadTimeout",10);	//seconds until next firespread check is done
+define("kFireDamageTimeout",10);	//fire damage timeout in seconds
+define("kFireDamage",50*(kFireDamageTimeout/60));	//damage caused to buildings per timeout
+define("kFireLivetime",10*60);	//how long does a fire burn?
+define("kFireRegenLoeschRadius",5);	//the regen spell removes fire fields around its casting position
+define("kFireWaterLoeschRadius",5);	//the range a well/waterfield increase the putout probability
+define("kFireWaterBuildingTypeSelect",implode(",",array(kBuilding_Brunnen))); //list of building types counting as water fields	
+define("kFireWaterTerrainTypeSelect",implode(",",array(kTerrain_Sea,kTerrain_River,kTerrain_DeepSea))); //list of terrain types counting as water fields	
+
 
 ?>

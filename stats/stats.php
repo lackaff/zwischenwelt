@@ -57,6 +57,7 @@ include("../stats/header.php");
 			<td><?=sqlgetone("SELECT MIN(`y`) FROM `building`")?> bis 
 				<?=sqlgetone("SELECT MAX(`y`) FROM `building`")?></td></tr>
 		<tr><td align="left" nowrap>cron dTime</td><td><?=sprintf("%0.3f",$gGlobal["crontime"])?></td></tr>
+		<tr><td align="left" nowrap>Feuer</td><td><?=sqlgetone("SELECT COUNT(*) FROM `fire`")?></td></tr>
 		<?php foreach ($gUnitType as $unittype) {?>
 		<tr><td align="left" nowrap><img class="picframe" align="middle" src="<?=g($unittype->gfx)?>"> <?=$unittype->name?></td><td align="right">
 			<?=kplaintrenner(intval(sqlgetone("SELECT sum( u.amount ) FROM unit u WHERE u.type=".$unittype->id)));?></td></tr>
@@ -183,6 +184,32 @@ include("../stats/header.php");
 	<img src="../plot.php?title=<?=$title[$i]?>&x=<?=implode(",",$x)?>&y=<?=implode(",",$y[$i])?>">
 	<?php ImgBorderEnd(); } ?>
 
+	<?php
+	$t = sqlgettable("SELECT * FROM `stats` WHERE `type`=".kStats_SysInfo_Environment." AND `time`+60*60*24*7*4>".time()." ORDER BY `time`");
+
+	$x = Array();
+	$y = Array();
+	$title = Array();
+	
+	foreach($t as $o)
+	{
+		//$x[] = $o->time /60 /60 /24;
+		$x[] = date("G\h_j.n.y",$o->time);
+		$y[1][] = $o->i1;
+		/*
+		$y[2][] = $o->i2;
+		$y[3][] = $o->i3;
+		$y[4][] = $o->f1;
+		$y[5][] = $o->i2 / $o->i3;
+		*/
+	}
+
+	$title[1] = "Umgebung: Feuer";
+
+	for($i=1;$i<=1;++$i){ ImgBorderStart(); ?>
+	<b><?=$title[$i]?></b><br>
+	<img src="../plot.php?title=<?=$title[$i]?>&x=<?=implode(",",$x)?>&y=<?=implode(",",$y[$i])?>">
+	<?php ImgBorderEnd(); } ?>
 
 	</td>
 </tr>

@@ -770,3 +770,11 @@ table.userkills td {
 	padding:2px;
 	background-color:#f2e5c3;
 }
+
+.info_warning {
+	margin:4px;
+	padding:5px;
+	border:solid red 2px;
+	background-color:#ffcbcb;
+	color:black;
+}

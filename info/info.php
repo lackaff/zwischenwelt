@@ -761,7 +761,13 @@ if (!isset($f_blind)) if ($gUser->admin) {
 	rob_ob_start();
 	?>
 	<?php if (count($gPHP_Errors) > 0) { echo "<h3>PHP-ERRORS</h3>";vardump2($gPHP_Errors); }?>
-	<br><br><hr>
+	<hr>
+	<form method="post" action="<?=Query("?sid=?&x=?&y=?")?>">
+		<input type="hidden" name="do" value="admin_fieldcommand">
+		<input type="submit" name="fire_seton" value="anzuenden">
+		<input type="submit" name="fire_putout" value="loeschen">
+	</form>
+    <hr>
 	<?php if ($gSqlLastNonSelectQuery) {?>
 	Last Non Select Query : <?=$gSqlLastNonSelectQuery?> <br>
 	<?php } // endif?>
@@ -969,6 +975,25 @@ if (!isset($f_blind)) {
 	if (!empty($content)) RegisterInfoTab("Information",$content,100);
 }
 
+// show warnings on a field, ie fire
+if (!isset($f_blind)) {
+		$warnings = array();
+		
+		//check if there is fire on the field
+		$o = sqlgetobject("SELECT * FROM `fire` WHERE `x`=".intval($f_x)." AND `y`=".intval($f_y)." LIMIT 1");
+		if(mysql_affected_rows() == 1){
+				$warnings[] = "<img src=\"".g("overlay/fire.gif")."\" alt=\"Feuer\" title=\"Feuer\">Hier brennt es!!!!";
+		}
+
+		//show warnings in a seperate tab, if there are some
+		if(sizeof($warnings)>0){
+				rob_ob_start();
+				foreach($warnings as $l)echo "<p>$l</p>";
+				$content = rob_ob_end();
+				$warningpic = "<img class=\"info_terrainpic\" alt=\"Warnungen\" title=\"Warnungen\" src=\"".g("icon/info.png")."\">";
+				if (!empty($content)) RegisterInfoTab($warningpic." Warnungen",$content);
+		}
+}
 
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 transitional//EN"

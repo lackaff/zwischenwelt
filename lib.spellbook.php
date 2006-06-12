@@ -104,7 +104,11 @@ class Spell_Pest extends Spell_Production {
 class Spell_Regen extends Spell_Cron {
 	function Birth ($success) {
 		if (!parent::Birth($success)) return false;
-		$spellreport = "Es fängt an zu regnen<br>";
+
+		//put out fires in the rain cast area
+		FirePutOut($this->cast_x,$this->cast_y,kFireRegenLoeschRadius);
+		
+		$spellreport = "Es fängt an zu regnen.<br>";
 		echo $spellreport;
 		sendMessage($this->target,0,"Regen",$spellreport,kMsgTypeReport,FALSE);
 		$this->Cron(60);

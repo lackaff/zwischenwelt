@@ -311,6 +311,7 @@ function jsParseBuildings () {
 		res.jsflags = arr[7];	
 		res.units = ParseTypeAmountList(arr[8]);		
 		res.id = arr[9];		
+		res.burning_since = arr[10];		
 		gBuildingsCache[res.y-gTop+1][res.x-gLeft+1] = res;
 	}
 }
@@ -727,6 +728,7 @@ function CreateMap() {
 	gMapHTML = "";
 	
 	gMapHTML += "<div class=\"tabcorner\">";
+	gMapHTML += 	"<span><img src=\""+gWeatherGfx+"\" name=\"Wetter\" title=\"Wetter\" border=0 width=17 height=17></span>";
 	gMapHTML += 	"<span>"+gMapModiHelp+"</span>";
 	//gMapHTML += "<a href=\"javascript:void(alert('Map-Version="+kCoreJSMapVersion+",PathCode="+gPathDetected+"'))\">v</a>";
 	gMapHTML += "<a href=\"javascript:navrel(0,0,1)\"><img alt=\"reload\" title=\"reload\" border=0 src=\""+g("icon/reload.png")+"\"></a>";
@@ -877,6 +879,10 @@ function GetCellHTML (relx,rely) {
 			layers[layers.length] = g2(gUnitType[unittype].gfx,nwsecode);
 		if (army.user > 0 && gUsers[army.user]) backgroundcolor = gUsers[army.user].color;
 	}
+	
+	//set overlays
+	var k = ""+relx+"-"+rely;
+	if(gOverlay[k])layers[layers.length] = g(gOverlayGfx[gOverlay[k]]);
 	
 	var i,bg,res = "";
 	for (i in layers) {

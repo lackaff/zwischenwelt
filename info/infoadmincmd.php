@@ -4,6 +4,14 @@ require_once("../lib.main.php");
 // included only if user is admin or terraformer, saves a lot of parsing for normal users
 
 if (!isset($f_building) && !isset($f_army) && isset($f_do)) switch ($f_do) {
+		case "admin_fieldcommand": 
+				if (!$gUser->admin) break;
+				$x = intval($f_x);
+				$y = intval($f_y);
+				//todo: update map
+				if(isset($f_fire_seton))FireSetOn($x,$y);
+				if(isset($f_fire_putout))FirePutOut($x,$y);
+		break;
 		case "admin_maptemplate": 
 			if (!$gUser->admin) break;
 			if (isset($f_del)) sql("DELETE FROM `maptemplate` WHERE `id` = ".intval($f_maptemplate));

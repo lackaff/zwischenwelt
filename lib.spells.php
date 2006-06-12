@@ -273,7 +273,9 @@ class Spell {
 		$this->towerid = $towerid; // only available in birth()
 		$this->mages = $mages; // only available in birth()
 		$this->x = $x;
+		$this->cast_x = $x;	// only available in birth()
 		$this->y = $y;
+		$this->cast_y = $y;	// only available in birth()
 		$this->type = $spelltype->id;
 		$this->targettype = $spelltype->target;
 		$this->owner = $owner;

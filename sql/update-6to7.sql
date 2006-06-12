@@ -34,3 +34,32 @@ CREATE TABLE `wonder` (
 `time` INT UNSIGNED NOT NULL ,
 PRIMARY KEY ( `id` )
 );
+
+CREATE TABLE `calllog` (
+  `id` int(10) unsigned NOT NULL,
+  `time` int(10) unsigned NOT NULL default '0',
+  `user` int(10) unsigned NOT NULL default '0',
+  `ip` varchar(15) NOT NULL default '',
+  `script` varchar(255) NOT NULL default '',
+  `query` text NOT NULL,
+  `post` text NOT NULL,
+  PRIMARY KEY  (`id`)
+) TYPE=MyISAM;
+
+CREATE TABLE `fire` (
+`x` INT NOT NULL ,
+`y` INT NOT NULL ,
+`nextdamage` INT UNSIGNED NOT NULL DEFAULT '0',
+`nextspread` INT UNSIGNED NOT NULL DEFAULT '0',
+PRIMARY KEY ( `x` , `y` ) ,
+INDEX ( `nextdamage` , `nextspread` )
+) TYPE = MYISAM ;
+ALTER TABLE `fire` ADD `created` INT UNSIGNED NOT NULL DEFAULT '0';
+ALTER TABLE `fire` ADD `putoutprob` SMALLINT UNSIGNED NOT NULL DEFAULT '0';
+
+ALTER TABLE `terraintype` ADD `flags` INT UNSIGNED NOT NULL DEFAULT '0';
+
+ALTER TABLE `buildingtype` ADD `fire_prob` SMALLINT UNSIGNED NOT NULL DEFAULT '0';
+ALTER TABLE `terraintype` ADD `fire_prob` SMALLINT UNSIGNED NOT NULL DEFAULT '0';
+ALTER TABLE `terraintype` ADD `fire_burnout_type` INT UNSIGNED NOT NULL DEFAULT '0';
+ALTER TABLE `user` ADD `buildings_on_fire` INT UNSIGNED NOT NULL DEFAULT '0';

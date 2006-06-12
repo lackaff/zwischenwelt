@@ -58,6 +58,85 @@ echo "dtime = $dtime<br><br>";
 
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+profile_page_start("cron.php - fire",true);
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+//fire spreading neighbours
+$n = array();
+$n[] = array("x"=>-1,	"y"=>0);
+$n[] = array("x"=>+1,	"y"=>0);
+$n[] = array("y"=>-1,	"x"=>0);
+$n[] = array("y"=>+1,	"x"=>0);
+
+//delete old fires, those fields count as totaly burned down
+$t = sqlgettable("SELECT * FROM `fire` WHERE `created`<".time()."-".kFireLivetime);
+foreach($t as $x)FirePutOutBurnedDown($x->x,$x->y);
+echo "deleted ".mysql_affected_rows()." fires<br>\n";
+
+//reads out the fire fields that cause damage and do it, hahahaha
+$f = sqlgettable("SELECT * FROM `fire` WHERE `nextdamage`<".time());
+foreach($f as $x){
+		echo "fire at ($x->x,$x->y) cause damage<br>\n";
+		sql("UPDATE `building` SET `hp`=`hp`-".kFireDamage." WHERE `x`=$x->x AND `y`=$x->y");
+		if(mysql_affected_rows() > 0){
+				echo "building gets ".kFireDamage." damage<br>\n";
+				sql("UPDATE `fire` SET `nextdamage`=".(time()+kFireDamageTimeout)." WHERE `x`=$x->x AND `y`=$x->y");
+				$b = sqlgetobject("SELECT * FROM `building` WHERE `x`=$x->x AND `y`=$x->y");
+				if($b->hp <= 0){
+						//destroy burned down buildings
+						cBuilding::removeBuilding($b,$b->user);
+						echo "building destroyed<br>\n";
+						FirePutOut($x->x,$x->y);
+				}
+		}
+}
+//fire spread  and putout handling
+$f = sqlgettable("SELECT * FROM `fire` WHERE `nextspread`<".time());
+foreach($f as $x){
+		//random outout check
+		echo "fire at ($x->x,$x->y) put out?<br>\n";
+		$r = rand(0,100);
+		if($r < $x->putoutprob){
+				echo "***** oki this fire was put out<br>\n";
+				FirePutOut($x->x,$x->y);
+				continue;
+		}
+		
+		//random spread check
+		echo "fire at ($x->x,$x->y) tries to spread<br>\n";
+		shuffle($n);
+		foreach($n as $y){
+				$r = rand(0,100);
+				if($r < kFireSpreadProbability){
+						$r = rand(0,100);
+						//oki this fire spreads
+						$px = (int)($y["x"] + $x->x);
+						$py = (int)($y["y"] + $x->y);
+						
+						$spread = false;
+						//is there a burnable building?
+						$b = sqlgetone("SELECT `type` FROM `building` WHERE `x`=$px AND `y`=$py LIMIT 1");
+						if(empty($b)){
+								//echo "check terrain<br>\n";
+								//no building, so check the terrain
+								$t = cMap::StaticGetTerrainAtPos($px,$py);
+								if($gTerrainType[$t]->flags & kTerrainTypeFlag_CanBurn && $r < $gTerrainType[$t]->fire_prob)$spread = true;
+						} else {
+								//echo "check building<br>\n";
+								//check the building burnable flag
+								if($gBuildingType[$b]->flags & kBuildingTypeFlag_CanBurn && $r < $gBuildingType[$b]->fire_prob)$spread = true;
+						}
+						if($spread){
+								echo "***** fire at ($x->x,$x->y) spreads to ($px,$py)<br>\n";
+								FireSetOn($px,$py);
+						}
+				}
+		}
+		//set time for next spread test
+		//sql("UPDATE `fire` SET `nextspread`=".(time()+kFireSpreadCheckTimeout)." WHERE `x`=$x->x AND y=$x->y");
+}
+
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 profile_page_start("cron.php - bier",true);
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 

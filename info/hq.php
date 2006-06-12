@@ -236,6 +236,15 @@ class cInfoHQ extends cInfoBuilding {
 		</tr>
 		</table>
 		
+		<?php
+		if($gUser->buildings_on_fire > 0){
+				//infobox if the user has burning buildings
+				?>
+				<div class="info_warning"><?=$gUser->buildings_on_fire?> Geb&auml;ude stehen in Flammen.</div>
+				<?php
+		}
+		?>
+		
 		
 		<h1>Schnellsprung</h1>
 		<?php if (1) {
