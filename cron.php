@@ -218,11 +218,16 @@ unset($cons);
 profile_page_start("cron.php - think buildings",true);
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-$typelist = array_merge($gFlaggedBuildingTypes[kBuildingTypeFlag_CanShootArmy],$gFlaggedBuildingTypes[kBuildingTypeFlag_CanShootBuilding]);
-if (count($typelist) > 0) {
-	$buildings = sqlgettable("SELECT * FROM `building` WHERE `type` IN (".implode(",",$typelist).")");
-	foreach ($buildings as $o) {
-		cBuilding::Think($o);
+$time = time();
+if (!isset($gGlobal["nextbuildingthink"]) || $time >= $gGlobal["nextbuildingthink"]) {
+	SetGlobal("nextbuildingthink",$time + 60*6); // next think in 5 minutes
+	echo "step<br>";
+	$typelist = array_merge($gFlaggedBuildingTypes[kBuildingTypeFlag_CanShootArmy],$gFlaggedBuildingTypes[kBuildingTypeFlag_CanShootBuilding]);
+	if (count($typelist) > 0) {
+		$buildings = sqlgettable("SELECT * FROM `building` WHERE `type` IN (".implode(",",$typelist).")");
+		foreach ($buildings as $o) {
+			cBuilding::Think($o);
+		}
 	}
 }
 
