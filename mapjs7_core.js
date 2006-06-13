@@ -728,7 +728,7 @@ function CreateMap() {
 	gMapHTML = "";
 	
 	gMapHTML += "<div class=\"tabcorner\">";
-	gMapHTML += 	"<span><img src=\""+gWeatherGfx+"\" name=\"Wetter\" title=\"Wetter\" border=0 width=17 height=17></span>";
+	gMapHTML += 	"<span><img src=\""+gWeatherGfx+"\" name=\"Wetter\" title=\"Wetter\" border=0></span>";
 	gMapHTML += 	"<span>"+gMapModiHelp+"</span>";
 	//gMapHTML += "<a href=\"javascript:void(alert('Map-Version="+kCoreJSMapVersion+",PathCode="+gPathDetected+"'))\">v</a>";
 	gMapHTML += "<a href=\"javascript:navrel(0,0,1)\"><img alt=\"reload\" title=\"reload\" border=0 src=\""+g("icon/reload.png")+"\"></a>";
