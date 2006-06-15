@@ -98,6 +98,7 @@ class cInfoTempel extends cInfoBuilding {
           //oki there is something to sacrifice
           if($sum>0){
             $x = floor($sum * 0.8 * $moral_good);
+			if ($x > $sum) $x = $sum; // sonst kann man sich unendlich rohstoffe machen
               
             sql("UPDATE `user` SET ".implode(",",$set)." WHERE `id`=".$gUser->id." AND ".implode(" AND ",$where));
             $type = rand(1,16);
