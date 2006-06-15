@@ -1,0 +1,62 @@
+table.compactmenu tr.t td.l { background-image: url(sunbig/trl.png); background-position: bottom left; background-repeat: repeat-x; }
+table.compactmenu tr.t td.c { background-image: url(sunbig/trrr.png); background-position: bottom left; background-repeat: repeat-x; }
+table.compactmenu tr.t td.r { background-image: url(sunbig/trr.png); background-position: bottom right; background-repeat: repeat-x; }
+
+table.compactmenu tr.m td.l { background-image: url(sunbig/l.png); }
+table.compactmenu tr.m td.c { background-image: url(sunbig/c.png); }
+table.compactmenu tr.m td.r { background-image: url(sunbig/r.png); }
+
+table.compactmenu tr.b td.l { background-image: url(sunbig/brl.png); background-position: top left; background-repeat: repeat-x; }
+table.compactmenu tr.b td.c { background-image: url(sunbig/brrr.png); background-position: top left; background-repeat: repeat-x; }
+table.compactmenu tr.b td.r { background-image: url(sunbig/brr.png); background-position: top right; background-repeat: repeat-x; }
+
+table.compactmenu tr.t td.c table tr.s td.onin   { background-image: url(sunbig/t1in.png); }
+table.compactmenu tr.t td.c table tr.s td.on     { background-image: url(sunbig/t1.png); }
+table.compactmenu tr.t td.c table tr.s td.onout  { background-image: url(sunbig/t1out.png); }
+
+table.compactmenu tr.t td.c table tr.s td.offin  { background-image: url(sunbig/t0in.png); }
+table.compactmenu tr.t td.c table tr.s td.off    { background-image: url(sunbig/t0.png); }
+table.compactmenu tr.t td.c table tr.s td.offout { background-image: url(sunbig/t0out.png); }
+
+table.compactmenu tr.t td.c table tr.r td.onin   { background-image: url(sunbig/tr1in.png); }
+table.compactmenu tr.t td.c table tr.r td.on     { background-image: url(sunbig/tr1.png); }
+table.compactmenu tr.t td.c table tr.r td.onout  { background-image: url(sunbig/tr1out.png); }
+
+table.compactmenu tr.t td.c table tr.r td.offin  { background-image: url(sunbig/tr0in.png); }
+table.compactmenu tr.t td.c table tr.r td.off    { background-image: url(sunbig/tr0.png); }
+table.compactmenu tr.t td.c table tr.r td.offout { background-image: url(sunbig/tr0out.png); }
+
+table.compactmenu tr.b td.c table tr.s td.onin   { background-image: url(sunbig/b1in.png); }
+table.compactmenu tr.b td.c table tr.s td.on     { background-image: url(sunbig/b1.png); }
+table.compactmenu tr.b td.c table tr.s td.onout  { background-image: url(sunbig/b1out.png); }
+
+table.compactmenu tr.b td.c table tr.s td.offin  { background-image: url(sunbig/b0in.png); }
+table.compactmenu tr.b td.c table tr.s td.off    { background-image: url(sunbig/b0.png); }
+table.compactmenu tr.b td.c table tr.s td.offout { background-image: url(sunbig/b0out.png); }
+
+table.compactmenu tr.b td.c table tr.r td.onin   { background-image: url(sunbig/br1in.png); }
+table.compactmenu tr.b td.c table tr.r td.on     { background-image: url(sunbig/br1.png); }
+table.compactmenu tr.b td.c table tr.r td.onout  { background-image: url(sunbig/br1out.png); }
+
+table.compactmenu tr.b td.c table tr.r td.offin  { background-image: url(sunbig/br0in.png); }
+table.compactmenu tr.b td.c table tr.r td.off    { background-image: url(sunbig/br0.png); }
+table.compactmenu tr.b td.c table tr.r td.offout { background-image: url(sunbig/br0out.png); }
+
+table.compactmenu tr.m td.c table td.onin   { background-image: url(sunbig/bullet.png); }
+table.compactmenu tr.m td.c table td.offin  { background-image: url(sunbig/bullet.png); }
+
+table.compactmenu tr.t td.c table td.off a         { color: #606030; }
+table.compactmenu tr.b td.c table td.off a         { color: #606030; }
+table.compactmenu tr.t td.c table td.off div       { color: #606030; }
+table.compactmenu tr.b td.c table td.off div       { color: #606030; }
+
+table.compactmenu tr.t td.c table td.on a          { color: #000000; }
+table.compactmenu tr.t td.c table td.on div        { color: #000000; }
+table.compactmenu tr.t td.c table td.off a:hover   { color: #000000; }
+table.compactmenu tr.t td.c table td.off div:hover { color: #000000; }
+table.compactmenu tr.m td.c table td a             { color: #000000; }
+table.compactmenu tr.m td.c table td div           { color: #000000; }
+table.compactmenu tr.b td.c table td.on a          { color: #000000; }
+table.compactmenu tr.b td.c table td.off a:hover   { color: #000000; }
+table.compactmenu tr.b td.c table td.on div        { color: #000000; }
+table.compactmenu tr.b td.c table td.off div:hover { color: #000000; }
