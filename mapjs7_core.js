@@ -728,7 +728,7 @@ function CreateMap() {
 	gMapHTML = "";
 	
 	gMapHTML += "<div class=\"tabcorner\">";
-	gMapHTML += 	"<span><img src=\""+gWeatherGfx+"\" name=\"Wetter\" title=\"Wetter\" border=0></span>";
+	gMapHTML += 	"<span><img src=\""+gWeatherGfx+"\" name=\""+gWeatherType+"\" title=\""+gWeatherType+"\" border=0></span>";
 	gMapHTML += 	"<span>"+gMapModiHelp+"</span>";
 	//gMapHTML += "<a href=\"javascript:void(alert('Map-Version="+kCoreJSMapVersion+",PathCode="+gPathDetected+"'))\">v</a>";
 	gMapHTML += "<a href=\"javascript:navrel(0,0,1)\"><img alt=\"reload\" title=\"reload\" border=0 src=\""+g("icon/reload.png")+"\"></a>";
@@ -834,6 +834,9 @@ function GetCellHTML (relx,rely) {
 				var unittype = GetMaxUnitType(building.units);
 				if (gUnitType[unittype]) layers[layers.length] = g2(gUnitType[unittype].gfx,0);
 			}
+			
+			//is the building on fire, if so show the fire overlay
+			if(building.burning_since > 0)layers[layers.length] = g("overlay/fire.gif");
 		}
 		if (gMapMode==kJSMapMode_HP) {
 			backgroundcolor = GradientRYG(GetFraction(building.hp,calcMaxBuildingHp(building.type,building.level)));

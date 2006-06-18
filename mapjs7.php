@@ -160,6 +160,7 @@ gBig = <?=(isset($f_big) && $f_big)?1:0?>;
 gMapMode = <?=isset($f_mode)?intval($f_mode):kJSMapMode_Normal?>;
 gSlowMap = <?=(intval($gUser->flags) & kUserFlags_SlowMap)?1:0?>;
 gWeatherGfx = "<?=g($gWeatherGfx[$gWeather])?>";
+gWeatherType = "<?=$gWeatherType[$gWeather]?>";
 gOverlay = new Array();
 <?php
 //gather overlay images

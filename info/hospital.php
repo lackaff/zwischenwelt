@@ -10,11 +10,21 @@ class cInfoHospital extends cInfoBuilding {
 		global $gUser;
 		global $gObject;
 		global $gGlobal;
+		global $gWeatherType;
+		global $gWeather;
 		
 		if (!isset($f_do) || !$this->cancontroll($gUser->id)) return;
 
 		switch ($f_do) {
 			case "sqlbookmark": break; // handled below
+			case "setweather":
+				$weather = (int)$f_weather;
+				if(!empty($gWeatherType[$weather])){
+					SetGlobal("weather",$weather);
+					$gWeather = $weather;
+					$gGlobal["weather"] = $weather;
+				}
+				break;
 			case "create":
 				if(!isset($f_create))return;
 				switch ($f_create){
@@ -112,6 +122,8 @@ class cInfoHospital extends cInfoBuilding {
 		global $gTechnologyType;
 		global $gTechnologyGroup;
 		global $gGlobal;
+		global $gWeatherType;
+		global $gWeather;
 		
 		if ($gUser->admin){ ?>
 		<ul>
@@ -136,6 +148,17 @@ class cInfoHospital extends cInfoBuilding {
 			<li><a href="<?=Query("?sid=?&x=?&y=?&building=hospital&id=$gObject->id&do=create&create=technology")?>">Add a new Technology</a></li>
 			<li><a href="<?=Query("?sid=?&x=?&y=?&building=hospital&id=$gObject->id&do=create&create=technologygroup")?>">Add a new Technologygroup</a></li>
 			<li><a href="<?=Query("?sid=?&x=?&y=?&building=hospital&id=$gObject->id&do=create&create=item")?>">Add a new ItemType</a></li>
+		</ul>
+		
+		<ul>
+			<form method="post" action="<?=Query("?sid=?&x=?&y=?&building=hospital&id=$gObject->id")?>">
+				Wetter auf
+				<input type=hidden name=do value=setweather>
+				<select name=weather size=1>
+					<?php foreach($gWeatherType as $id=>$name){?><option value="<?=$id?>" <?php if($gWeather==$id)echo "selected";?>><?=$name?></option><?php } ?>
+				</select>
+				<input type=submit value="setzen">
+			</form>
 		</ul>
 		
 		<ul>

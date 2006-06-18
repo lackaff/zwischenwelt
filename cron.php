@@ -403,9 +403,10 @@ TablesUnlock();
 if (($gGlobal["ticks"] % 30) == 0 || empty($gGlobal["weather"])){  // TODO : unhardcode
 	profile_page_start("cron.php - weather",true);
 	SetGlobal("weather",GetWeather($gWeatherUrl));
-	sql("DELETE FROM `item` WHERE `amount` = 0");
 }
 
+//remove zero items
+if (($gGlobal["ticks"] % 30) == 0)sql("DELETE FROM `item` WHERE `amount` = 0");
 
 $gSupportslotsFrequency = 5*60; // TODO : unhardcode  5 hours makes it less probable to fall together with 6h backup
  
