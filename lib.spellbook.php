@@ -704,6 +704,38 @@ class Spell_Brandrodung extends Spell {
 	}
 }
 
+//********************[ Spell_WaldAnpflanzen ]*************************************************
+//Create a forest; If it fails, creates a swamp;
+//If succeeds superior, creates a fully grown forest
+//*********************************************************************************************
+
+$gWaldAnpflanzReplaceableTerrain = array(kTerrain_Grass, kTerrain_Flowers, kTerrain_TreeStumps, kTerrain_Field, kTerrain_Rubble);
+
+class Spell_WaldAnpflanzen extends Spell {
+	function Birth ($success) { // $success < 0 -> patzer, $success == 0 -> normal failure
+		global $gWaldAnpflanzReplaceableTerrain;
+		$o = sqlgetobject("SELECT * FROM `building` WHERE `x`=".intval($this->x)." AND `y`=".intval($this->y));
+		if ($o) { echo "kann nicht auf Gebäude gesprochen werden"; return false; }
+		$ter = cMap::StaticGetTerrainAtPos($this->x,$this->y);
+		if (!in_array($ter, $gWaldAnpflanzReplaceableTerrain)) { echo "kann nicht auf diesem Terrain gesprochen werden werden"; return false; }
+		
+		if ($success < 0) {
+			//Create a swamp
+			sql("REPLACE INTO `terrain` SET `type` = ".kTerrain_Swamp." , `x` = ".intval($this->x).", `y` = ".intval($this->y));
+		}
+		if (!parent::Birth($success)) return false;
+		if ($success > 1)
+				sql("REPLACE INTO `terrain` SET `type` = ".kTerrain_Forest." 	  , `x` = ".intval($this->x).", `y` = ".intval($this->y));
+		else 	sql("REPLACE INTO `terrain` SET `type` = ".kTerrain_YoungForest." , `x` = ".intval($this->x).", `y` = ".intval($this->y));
+	}
+	// high difficulty is bad (less than 11 does not create patzer
+	function GetDifficulty ($spelltype,$mages,$userid) {
+		return 12;
+	}
+}
+
+
+
 //********************[ Spell_ArmeeDerToten ]****************************************************
 //a dangerous spell to summon evil creatures from beneath
 //*********************************************************************************************
