@@ -735,6 +735,27 @@ class Spell_WaldAnpflanzen extends Spell {
 }
 
 
+//********************[ Spell_Brandbaender ]*************************************************
+//sets a fire on the target field, on failure your magic tower will burn
+//*********************************************************************************************
+
+class Spell_Brandbaender extends Spell {
+	function Birth ($success) { // $success < 0 -> patzer, $success == 0 -> normal failure
+		if ($success < 0) {
+			//ups, your tower burns
+			$o = sqlgetobject("SELECT * FROM `building` WHERE `id`=".intval($this->towerid));
+			FireSetOn($o->x,$o->y);
+		}
+		
+		if (!parent::Birth($success)) return false;
+		
+		if($success > 0)FireSetOn($this->x,$this->y);
+	}
+	// high difficulty is bad (less than 11 does not create patzer
+	function GetDifficulty ($spelltype,$mages,$userid) {
+		return 14;
+	}
+}
 
 //********************[ Spell_ArmeeDerToten ]****************************************************
 //a dangerous spell to summon evil creatures from beneath
