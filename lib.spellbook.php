@@ -753,7 +753,7 @@ class Spell_Brandbaender extends Spell {
 	}
 	// high difficulty is bad (less than 11 does not create patzer
 	function GetDifficulty ($spelltype,$mages,$userid) {
-		return 14;
+		return 12;
 	}
 }
 
