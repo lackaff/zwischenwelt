@@ -46,7 +46,7 @@ if($f_mode == "plot"){
 		
 		$ps = array();
 		$number = 0;
-		foreach($ids as $is){
+		foreach($ids as $id){
 				$name = sqlgetone("SELECT `name` FROM `user` WHERE `id`=".intval($id));
 				$ps[] = "\"$tmp-$number.dat\" using 1:2 title '$name'";
 				++$number;
