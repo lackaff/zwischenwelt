@@ -22,6 +22,8 @@ if($f_mode == "plot"){
 		$ids = explode(",",$f_ids);
 		$number = 0;
 		foreach($ids as $id){
+				if(!is_numeric($id))$id = sqlgetone("SELECT `id` FROM `user` WHERE `name`='".addslashes($id)."'");
+
 				$dat = "#time number\n";
 				
 				$f = fopen($tmp."-$number.dat","w");
@@ -45,7 +47,8 @@ if($f_mode == "plot"){
 		$ps = array();
 		$number = 0;
 		foreach($ids as $is){
-				$ps[] = "\"$tmp-$number.dat\" using 1:2 title '$id'";
+				$name = sqlgetone("SELECT `name` FROM `user` WHERE `id`=".intval($id));
+				$ps[] = "\"$tmp-$number.dat\" using 1:2 title '$name'";
 				++$number;
 		}
 		$plot .= "plot ".implode(", ",$ps);
