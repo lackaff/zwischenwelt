@@ -279,6 +279,17 @@ function getMapAtPosition($x,$y,$dx,$dy,$onlyterrain=false){
 }
 
 class cMap {
+		//checks if there is no building at the position and the terrain is the default (id=1) terrain (mostly grass)
+		function StaticIsFieldEmpty($x,$y){
+				$x = (int)$x;$y = (int)$y;
+				$b = sqlgetone("SELECT COUNT(*) FROM `building` WHERE `x`=$x AND `y`=$y");
+				$t = cMap::StaticGetTerrainAtPos($x,$y);
+				$e = ($t == kTerrain_Grass) && ($b == 0);
+				//if($e)$ee = "true"; else $ee = "false";
+				//echo "[x=$x y=$y t=$t b=$b e=$ee]";
+				return $e;
+		}
+	
 	function StaticGetTerrainAtPos ($x,$y) {
 		$x = intval($x); $y = intval($y);
 		$type = sqlgetone("SELECT `type` FROM `terrain` WHERE `x` = ".$x." AND `y` = ".$y." LIMIT 1");
@@ -380,5 +391,43 @@ class cMap {
 		return $nwse;
 	}
 }
+
+
+//moves the complete base of the player with id (all buildings) to
+//a new position (old hq -> new hq)
+//only if there is only grass at the new position
+//true if the move was successfull
+function MovePlayerBase($id,$x,$y){
+		$x = (int)$x;$y = (int)$y;$id = (int)$id;
+		
+		$user = sqlgetobject("SELECT * FROM `user` WHERE `id`=$id LIMIT 1");
+		$hq = sqlgetobject("SELECT * FROM `building` WHERE `user`=$id AND `type`=".kBuilding_HQ." LIMIT 1");
+		if(empty($user) || empty($hq))return false;
+		
+		//position delta vector
+		$dx = $x - $hq->x;
+		$dy = $y - $hq->y;
+		echo "[dx=$dx dy=$dy]";
+		
+		$ok = true;
+		
+		//is the new space empty?
+		$lb = sqlgettable("SELECT * FROM `building` WHERE `user`=$id");
+		foreach($lb as $b){
+				$nx = $dx + $b->x;
+				$ny = $dy + $b->y;
+				if(!cMap::StaticIsFieldEmpty($nx,$ny)){
+						$ok = false;
+						echo "[ ($nx,$ny) is not empty]";
+				}
+		}
+		
+		//oki the move all buildings
+		if($ok){
+				sql("UPDATE `building` SET `x`=`x`+($dx),`y`=`y`+($dy) WHERE `user`=$id");
+				return true;
+		} else return false;
+}
+
 
 ?>

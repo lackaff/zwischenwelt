@@ -17,6 +17,12 @@ class cInfoHospital extends cInfoBuilding {
 
 		switch ($f_do) {
 			case "sqlbookmark": break; // handled below
+			case "moveplayer":
+				$f_move_id = (int)$f_move_id;
+				$f_move_x = (int)$f_move_x;
+				$f_move_y = (int)$f_move_y;
+				MovePlayerBase($f_move_id, $f_move_x, $f_move_y);
+			break;
 			case "setweather":
 				$weather = (int)$f_weather;
 				if(!empty($gWeatherType[$weather])){
@@ -150,7 +156,16 @@ class cInfoHospital extends cInfoBuilding {
 			<li><a href="<?=Query("?sid=?&x=?&y=?&building=hospital&id=$gObject->id&do=create&create=item")?>">Add a new ItemType</a></li>
 		</ul>
 		
-		<ul>
+		<p>
+				<form method="post" action="<?=Query("?sid=?&x=?&y=?&building=hospital&id=$gObject->id")?>">
+						<input type=hidden name=do value=moveplayer>
+						Der Spieler mit ID <input type=text name=move_id size=6> wird mit seiner ganzen Basis<br>
+						nach X=<input type=text name=move_x size=6> und Y=<input type=text name=move_y size=6>
+						<input type=submit value=verschoben> (Koordinaten des Haupthauses)
+				</form>
+		</p>
+		
+		<p>
 			<form method="post" action="<?=Query("?sid=?&x=?&y=?&building=hospital&id=$gObject->id")?>">
 				Wetter auf
 				<input type=hidden name=do value=setweather>
@@ -159,7 +174,7 @@ class cInfoHospital extends cInfoBuilding {
 				</select>
 				<input type=submit value="setzen">
 			</form>
-		</ul>
+		</p>
 		
 		<ul>
 			<li><a href="<?=Query("?sid=?&x=?&y=?&building=hospital&id=$gObject->id&do=switchupdate")?>">Switch liveupdatestatus* (currently: <?=($gGlobal['liveupdate']==1?"on":"off")?>)</a></li>
