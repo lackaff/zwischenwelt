@@ -153,7 +153,8 @@ function callcmp ($uid1,$uid2,$showdetails=false) {
 	$mycmp->score = $mycmp->c_shortwait; 
 	
 	// wenn beide gleichzeitig unabhaengig voneinander online sind (überlappung=overlap), ist es unwahrscheinlicher, aber hier von hand untersuchen
-	if ($mycmp->c_overlap > 0)  $mycmp->score *= 0.2; 
+	//if ($mycmp->c_overlap > 0)  $mycmp->score *= 0.2; 
+	if ($mycmp->c_overlap > 0)  $mycmp->score = 1; 
 	
 	// gleiche ip gehabt -> multi oder nur wg/familie?
 	$mycmp->score += $mycmp->c_sameip * 0.2;
