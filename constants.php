@@ -194,7 +194,7 @@ $gUserFlagNames = array(
 	kUserFlags_ShowMaxRes					=> "Lagerkapazität anzeigen (obsolete, da man nun das komplette Format einstellen kann)",
 	kUserFlags_NoTabs							=> "Tabs Deaktivieren (bei Abstürzen im IE)",
 	kUserFlags_SlowMap						=> "Karte langsam aufbauen (hilft gegen 'Script-abbrechen?'-Warnungen)",
-	kUserFlags_SendIgmPerMail			=> "InGame Nachrichten auch per Mail verschicken?",
+	kUserFlags_SendIgmPerMail			=> "InGame Nachrichten auch per Mail empfangen?",
 );
 $gUserFlag_AdminSet = array( kUserFlags_TerraFormer, kUserFlags_BugOperator, kUserFlags_DropDownMenu);
 
