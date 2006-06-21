@@ -180,6 +180,7 @@ define("kUserFlags_DontShowNoobTip",			(1<<7));
 define("kUserFlags_ShowMaxRes",					(1<<8));
 define("kUserFlags_NoTabs",						(1<<9));
 define("kUserFlags_SlowMap",					(1<<10));
+define("kUserFlags_SendIgmPerMail",			(1<<11));
 $gUserFlagNames = array(
 	kUserFlags_TerraFormer					=> "TerraFormer",
 	kUserFlags_BugOperator					=> "BugOperator",
@@ -191,8 +192,9 @@ $gUserFlagNames = array(
 	kUserFlags_AutomaticUpgradeBuildingTo	=> "bei neuen Gebäuden automatisch Upgrades planen",
 	kUserFlags_DontShowNoobTip				=> "NoobTips ausblenden",
 	kUserFlags_ShowMaxRes					=> "Lagerkapazität anzeigen (obsolete, da man nun das komplette Format einstellen kann)",
-	kUserFlags_NoTabs						=> "Tabs Deaktivieren (bei Abstürzen im IE)",
+	kUserFlags_NoTabs							=> "Tabs Deaktivieren (bei Abstürzen im IE)",
 	kUserFlags_SlowMap						=> "Karte langsam aufbauen (hilft gegen 'Script-abbrechen?'-Warnungen)",
+	kUserFlags_SendIgmPerMail			=> "InGame Nachrichten auch per Mail verschicken?",
 );
 $gUserFlag_AdminSet = array( kUserFlags_TerraFormer, kUserFlags_BugOperator, kUserFlags_DropDownMenu);
 

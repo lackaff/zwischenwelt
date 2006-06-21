@@ -48,6 +48,17 @@ function sendMessage($to,$from,$subject,$text,$type=0,$tosent=TRUE)
 			break;
 		}
 		sql("INSERT INTO `message` SET ".obj2sql($msg));
+		//send igm via mail
+		if($msg->to > 0){
+			$u = sqlgetobject("SELECT * FROM `user` WHERE `id`=".intval($msg->to)." LIMIT 1");
+			$f = sqlgetobject("SELECT * FROM `user` WHERE `id`=".intval($msg->from)." LIMIT 1");
+			if(empty($f))$u->name = "Server";
+			if(!empty($u) && $u->flags & kUserFlags_SendIgmPerMail>0 && !empty($u->mail)){
+				//this user wants igms per mail and has set a mail addy
+				mail($u->mail, "[ZW IGM] $msg->subject von $f->name", "$f->name hat Ihnen folgende Nachricht geschickt\n\n   ~~~\n\n$msg->text","From: ".ZW_MAIL_SENDER."\r\nReply-To: ".ZW_MAIL_SENDER."\r\nX-Mailer: PHP/" . phpversion()); 
+			}
+		}
+		//store in send folder
 		if($tosent){
 			if($from!=0)
 				$msg->folder=sqlgetone("SELECT `id` FROM `message_folder` WHERE `parent`=0 AND `type`=".kFolderTypeSent." AND `user`=".$msg->from);
