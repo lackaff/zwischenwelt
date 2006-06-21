@@ -55,7 +55,7 @@ function sendMessage($to,$from,$subject,$text,$type=0,$tosent=TRUE)
 			if(empty($f))$u->name = "Server";
 			if(!empty($u) && $u->flags & kUserFlags_SendIgmPerMail>0 && !empty($u->mail)){
 				//this user wants igms per mail and has set a mail addy
-				mail($u->mail, "[ZW IGM] $msg->subject von $f->name", "$f->name hat Ihnen folgende Nachricht geschickt\n\n   ~~~\n\n$msg->text","From: ".ZW_MAIL_SENDER."\r\nReply-To: ".ZW_MAIL_SENDER."\r\nX-Mailer: PHP/" . phpversion()); 
+				mail($u->mail, "[ZW IGM] $msg->subject von $f->name", "$f->name hat Ihnen folgende Nachricht geschickt\n\n   ~~~\n\n".strip_tags($msg->text),"From: ".ZW_MAIL_SENDER."\r\nReply-To: ".ZW_MAIL_SENDER."\r\nX-Mailer: PHP/" . phpversion()); 
 			}
 		}
 		//store in send folder
