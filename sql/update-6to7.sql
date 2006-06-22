@@ -36,7 +36,7 @@ PRIMARY KEY ( `id` )
 );
 
 CREATE TABLE `calllog` (
-  `id` int(10) unsigned NOT NULL,
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `time` int(10) unsigned NOT NULL default '0',
   `user` int(10) unsigned NOT NULL default '0',
   `ip` varchar(15) NOT NULL default '',
