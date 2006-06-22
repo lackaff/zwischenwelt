@@ -41,6 +41,7 @@ if($f_mode == "plot"){
 		set output \"| convert - $tmp.png\"
 		set grid
 		set size 1,0.7
+		set pointsize 2.0
 		set xdata time
 		set timefmt \"%s\"\n";
 		
@@ -48,7 +49,7 @@ if($f_mode == "plot"){
 		$number = 0;
 		foreach($ids as $id){
 				$name = sqlgetone("SELECT `name` FROM `user` WHERE `id`=".intval($id));
-				$ps[] = "\"$tmp-$number.dat\" using 1:2 title '$name'";
+				$ps[] = "\"$tmp-$number.dat\" using 1:2 title '$name' with points";
 				++$number;
 		}
 		$plot .= "plot ".implode(", ",$ps);
@@ -61,7 +62,7 @@ if($f_mode == "plot"){
 		//$s = 'echo \'set terminal postscript eps noenhanced color solid defaultplex "Verdana" 36\'"\n"\'set output "| convert - '.$tmp.'"\'"\nplot sin(x)" | gnuplot';
 		$s = "gnuplot < $tmp.plot";
 		exec($s);
-		passthru("cat $tmp.png");
+		passthru("rm $tmp*.dat && rm $tmp*.plot && cat $tmp.png");
 } else {
 		?>
 		<form method=post action=?>
