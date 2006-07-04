@@ -1,3 +1,33 @@
+Sun, 18 Jun 2006 11:49:33 +0200
+11. Spiegelein, Spieglein, welches ist das schönste Bild? (gute Bilder werden auch eingebaut, wenn Sie nicht gewinnen)		
+		http://zwischenwelt.org/~hagish/contest/conshar.png	1	
+		http://zwischenwelt.org/~hagish/contest/darian.png		26	
+		http://zwischenwelt.org/~hagish/contest/flyer.gif		14	
+		http://zwischenwelt.org/~hagish/contest/ishka.gif		67	
+		http://zwischenwelt.org/~hagish/contest/kazoitez.gif		22	
+		http://zwischenwelt.org/~hagish/contest/magnus.gif		1	
+		http://zwischenwelt.org/~hagish/contest/panra.gif		18	
+		http://zwischenwelt.org/~hagish/contest/schnitter.png	12	
+
+
+Tue, 11 Apr 2006 11:38:26 +0200
+9. Besteht Interesse daran das neue Menu persönlich anpassen zu können (welche Links wo erscheinen)? (vgl. Ressourcenanzeige)	
+	Ja klar, dann kann ich endlich mein Wunschmenu haben	105	
+	Nein, sowas brauche ist nicht, bin mit der Struktur der Menupunkte zufrieden	58	
+	Mir egal	34	
+	HILFE, bei mir geht das neue Menu sowieso nicht!	11	
+
+
+Thu, 18 May 2006 17:45:12 +0200
+10. Es gibt eine Grafiker-Contest, alle die Lust haben Grafiken für Zwischenwelt zu machen, sind herzlich eingeladen teilzunehmen, AbgabeTermin ist 6.6.06, danach werden die Gewinner bestimmt, Einzelheiten gibts im Forum unter : aus der Zwischenwelt / Grafiker-contest	
+	ich werd gewinnen	10	
+	ich werd mitmachen	3	
+	weiss noch nicht	35	
+	keine lust	59	
+	ich kann nicht pixeln (siehe Hilfe:Pixeln)	61	
+	ich benutzte einen text-only-browser	8	
+
+
 Tue, 28 Mar 2006 00:52:39 +0200
 8. Wie findest du das neue Menu?	sehr gut!	62	
 	der Funktionsumfang ist sehr gut, aber das Aussehen gefät mir nicht	54	
