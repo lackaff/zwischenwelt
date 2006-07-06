@@ -81,6 +81,9 @@ $form = new cTableEditForm("?sid=?&id=$f_id","BuildingType $f_id editieren",
 				new cTableEditTextField("buildingtype","id",$f_id,"Mod V","mod_v"),
 				new cTableEditTextField("buildingtype","id",$f_id,"Mod F","mod_f"),
 			    new cTableEditTextField("buildingtype","id",$f_id,"Brennbarkeit (0-100)","fire_prob"),
+			    new cTableEditTextField("buildingtype","id",$f_id,"Maximales GFX Level","maxgfxlevel"),
+			    new cTableEditTextField("buildingtype","id",$f_id,"maxrandcenter","maxrandcenter"),
+			    new cTableEditTextField("buildingtype","id",$f_id,"maxrandborder","maxrandborder"),
 				
 				new cTableEditRadioField("buildingtype","id",$f_id,"Rasse","race",$races)
 			)),
