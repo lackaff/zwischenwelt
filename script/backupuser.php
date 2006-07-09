@@ -7,7 +7,7 @@ function TableToSqlQuery($table,$tablename){
 	$tablename = mysql_escape_string ($tablename);
 	$s = "";
 	foreach($table as $x){
-		$s .= "INSERT INTO `$tablename` WHERE ";
+		$s .= "INSERT INTO `$tablename` SET ";
 		$l = array();
 		foreach($x as $n=>$v){
 			$n = mysql_escape_string($n);
