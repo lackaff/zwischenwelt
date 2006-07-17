@@ -954,7 +954,7 @@ function GetToolActionInfo (relx,rely) {
 	if (curtool == kMapNaviTool_WP) {
 		var activearmy = GetActiveArmy();
 		if (activearmy) 
-			return "WP für "+activearmy.name+" setzten";
+			return "WP für "+activearmy.name+" setzen";
 	}
 	if (curtool == kMapNaviTool_MultiTool) {
 		// flostre multitool
@@ -971,7 +971,7 @@ function GetToolActionInfo (relx,rely) {
 			return "WP löschen";
 		} else {
 			var activearmy = GetActiveArmy();
-			return "WP für "+activearmy.name+" setzten";
+			return "WP für "+activearmy.name+" setzen";
 		}
 	}
 	return false;

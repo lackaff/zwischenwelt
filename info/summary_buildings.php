@@ -166,7 +166,7 @@ if (isset($f_listtype)) {
 			<th colspan=6 align="left">Summe:</th>
 			<th align="right">
 				<a href="javascript:planall('planner_',<?=$countplanner?>,'plansetvalue')">
-				<img border=0 src="<?=g("scroll/n.png")?>" alt="alle setzten" title="alle setzten"></a>
+				<img border=0 src="<?=g("scroll/n.png")?>" alt="alle setzen" title="alle setzen"></a>
 				<input align="right"  type="text" id="plansetvalue" name="plansetvalue" value="<?=$minplan?>" style="width:40px">
 			</th>
 			<th align="right"><?=$maxlevel?></th>
@@ -280,7 +280,7 @@ if (isset($f_listtype)) {
 					<th align="right">
 						<?php if ($btype!=0) {?>
 							<a href="javascript:planall('planner_<?=$btype?>_',<?=$countplanner?>,'plansetvalue_<?=$btype?>')">
-							<img border=0 src="<?=g("scroll/n.png")?>" alt="alle setzten" title="alle setzten"></a>
+							<img border=0 src="<?=g("scroll/n.png")?>" alt="alle setzen" title="alle setzen"></a>
 							<input align="right"  type="text" id="plansetvalue_<?=$btype?>" name="plansetvalue_<?=$btype?>" value="<?=$minplan?>" style="width:40px">
 						<?php } else if (0) { // ?>
 							max:<?=$maxplan?>

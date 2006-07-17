@@ -185,7 +185,7 @@ if (isset($f_techs)) {
 				<th colspan=7 align="left">&nbsp;</th>
 				<th align="right">
 					<a href="javascript:planall('planner_<?=$btype?>_',<?=$countplanner?>,'plansetvalue<?=$btype?>')">
-					<img border=0 src="<?=g("scroll/n.png")?>" alt="alle setzten" title="alle setzten"></a>
+					<img border=0 src="<?=g("scroll/n.png")?>" alt="alle setzen" title="alle setzen"></a>
 					<input align="right"  type="text" id="plansetvalue<?=$btype?>" name="plansetvalue<?=$btype?>" value="0" style="width:40px">
 				</th>
 			</tr>

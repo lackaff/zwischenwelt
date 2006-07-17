@@ -95,7 +95,7 @@ if (isset($f_openimporter)) {
 		echo "width=$width, height=$height, type=$type, attr=($attr)<br>";
 		echo "totalcolors=$totalcolors<br>";
 		?>
-		Terrain setzten :
+		Terrain setzen :
 		<form method="post" action="<?=Query("?sid=?&x=?&y=?")?>">
 		<input type="hidden" name="pictime" value="<?=$pictime?>">
 		<table>
