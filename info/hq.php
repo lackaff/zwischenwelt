@@ -564,7 +564,7 @@ class cInfoHQ extends cInfoBuilding {
 		<input type="submit" value="verteilung speichern">
 		</form>
 		
-		<h4>Ressourcen Verbrauch durch Bewohner pro Stunde:</h4>
+		<h4>Ressourcenverbrauch durch Bewohner pro Stunde:</h4>
 		
 		<?=kplaintrenner(round($gUser->pop))?> Bewohner verbrauchen <?=kplaintrenner(round(calcFoodNeed($gUser->pop,60*60),1))?> Nahrung / Stunde
 		
@@ -579,12 +579,12 @@ class cInfoHQ extends cInfoBuilding {
 		}
 		?>
 		<?php if ($eatsum > 0) {?>
-		<h4>Ressourcen Verbrauch durch Truppen pro Stunde:</h4>
+		<h4>Ressourcenverbrauch durch Truppen pro Stunde:</h4>
 		<?=kplaintrenner(round($unitsum))?> Einheiten verbrauchen <?=kplaintrenner(round($eatsum))?> Nahrung / Stunde
 		<?php } // endif?>
 		
 		<?php if ($gUser->worker_runes > 0) {?>
-		<h4>Ressourcen Verbrauch durch Runen Produktion pro Stunde:</h4>
+		<h4>Ressourcenverbrauch durch Runen Produktion pro Stunde:</h4>
 		<?$pf = GetProductionFaktoren($gUser->id);
 		$rpfs = $pf['runes']/(2+getTechnologyLevel($gUser->id,kTech_EffRunen)*0.2);?>
 			<?=isset($gGlobal['lc_prod_runes'])?round($rpfs*$gUser->worker_runes*$gUser->pop/100*$gGlobal['lc_prod_runes']):0?> Holz / 
@@ -594,7 +594,7 @@ class cInfoHQ extends cInfoBuilding {
 		<?php } // endif?>
 				
 		<?php if ($gUser->worker_repair > 0) {?>
-		<h4>Ressourcen Verbrauch durch Reparieren von Gebäuden pro Stunde:</h4>
+		<h4>Ressourcenverbrauch durch Reparieren von Gebäuden pro Stunde:</h4>
 		<?
 		$x = sqlgetobject("SELECT `user`.`id` as `id`, COUNT( * ) as `broken`,`user`.`pop` as `pop`,`user`.`worker_repair` as `worker_repair`
 	FROM `user`, `building`, `buildingtype`
