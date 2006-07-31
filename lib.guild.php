@@ -5,10 +5,11 @@ define("kViewAdmin",2);
 define("kSiloGet",3);
 define("kSiloGive",5);
 define("kGuildCommander",7);
-define("kGuildAdmin",23);
 define("kSendGuildMsg",11);
 define("kSetMsgOfTheDay",13);
-define("kGuildBursar",27);
+define("kGuildAdmin",23);
+define("kGuildBursar",29);
+// 2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97, 101, ...
 
 //user leaves guild, only possible if he is not the founder, or let user leave guild (if $id is given)
 function leaveGuild($id=0)
