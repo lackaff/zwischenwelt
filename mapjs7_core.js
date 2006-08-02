@@ -737,6 +737,7 @@ function CreateMap() {
 	if (!gBig)	gMapHTML += "<a href=\"javascript:OpenMap(3)\"><img alt=\"minimap\" title=\"minimap\" border=0 src=\""+g("icon/minimap.png")+"\"></a>";
 	if (!gBig)	gMapHTML += "<a href=\"javascript:OpenMap(4)\"><img alt=\"creepmap\" title=\"creepmap\" border=0 src=\""+g("icon/creepmap.png")+"\"></a>";
 	if (!gBig)	gMapHTML += "<a href=\"javascript:OpenMap(5)\"><img alt=\"diplomap\" title=\"diplomap\" border=0 src=\""+g("icon/diplomap.png")+"\"></a>";
+	if (!gBig)	gMapHTML += "<a href=\"javascript:OpenMap(6)\"><img alt=\"testmap\" title=\"testmap\" border=0 src=\""+g("icon/testmap.png")+"\"></a>";
 	gMapHTML += "</div>";
 	gMapHTML += "<ul>";
 	gMapHTML += 	"<li class=\""+(gMapMode==kJSMapMode_Normal?	"activetab":"inactivetab")+"\"><span class=\"tabhead\"><img border=0 src=\"gfx/1px.gif\" width=1 height=18><a href=\"javascript:SetMapMode(kJSMapMode_Normal)\">Normal</a></span></li>";
@@ -779,6 +780,8 @@ function OpenMap (type) {
 		window.open("minimap.php?mode=creep&sid="+gSID+"&cx="+x+"&cy="+y,"CreepMap","location=no,menubar=no,toolbar=no,status=no,resizable=yes,scrollbars=yes");
 	} else if (type == 5) { //diplomap
 		window.open("minimap.php?mode=guild&diplomap=1&sid="+gSID+"&cx="+x+"&cy="+y,"DiploMap","location=no,menubar=no,toolbar=no,status=no,resizable=yes,scrollbars=yes");
+	} else if (type == 6) { //testmap
+		window.open("map.php?sid="+gSID+"&x="+x+"&y="+y,"TestMap","location=no,menubar=no,toolbar=no,status=no,resizable=no,scrollbars=no,width=600,height=600");
 	} else if (type == 100) { //hugemap
 		if (!confirm("Sicher ? Die HugeMap ist riesig und hat 200*200 felder, die BigMap 50*50...")) return;
 		window.open("<?=kMapScript?>?sid="+gSID+"&cx=200&cy=200&big=1&x="+x+"&y="+y,"HugeMap");
