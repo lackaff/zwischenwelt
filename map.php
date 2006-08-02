@@ -1,3 +1,4 @@
+<?php require_once("lib.php"); ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
 <head>
@@ -142,7 +143,7 @@ function AddSegments(map, dx, dy) {
 }
 
 function ReloadSegment(map,segment){
-	segment.div.innerHTML = 'loading...';
+	segment.div.innerHTML = '<img width=270 height=270 src="gfx/map_loading.png">';
 	segment.loading = true;
 	LoadSegment(map,segment.segx,segment.segy);
 }
@@ -295,12 +296,15 @@ div {
 	<div style="position:absolute;left:0px;top:600px;width:2000px;height:1000px;background-color:gray;z-index:1;"></div>
 </body>
 
+<?php
+if(isset($f_x))$segx = round(((int)$f_x)/10); else $segx = 0;
+if(isset($f_y))$segy = round(((int)$f_y)/10); else $segy = 0;
+?>
 <script type="text/javascript">
 <!--
 var map = document.getElementById("map");
-PrepareMap(800,600,0,0,map,27,10,0,0);
+PrepareMap(800,600,0,0,map,27,10,<?=$segx?>,<?=$segy?>);
 //window.setTimeout("loadSegment(map,10,10)", 1000);
 //-->
 </script>
-
 </html>
