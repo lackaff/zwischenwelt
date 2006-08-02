@@ -128,7 +128,7 @@ function AddSegments(map, dx, dy) {
 			segment.div.style.position = 'absolute';
 			segment.div.style.top = (segment.dy)+'px';
 			segment.div.style.left = (segment.dx)+'px';
-			segment.div.style.border = 'dotted black 1px';
+			segment.div.style.border = 'dotted black 0px';
 
 			//alert(c+" "+r+" "+segment.dx+" "+segment.dy+" "+segment.div.style.left+" "+segment.div.style.top+" "+dim.left+" "+dim.top);
 			
@@ -291,13 +291,15 @@ div {
 
 </head>
 <body>
-        <div id="map" class="map" style="position:absolute;left:0px;top:0px;width:800px;height:600px;">
+        <div id="map" class="map">
 		<div class="pane"></div>
-		<div class="mouse" style="border:dotted red 1px"></div>
+		<div class="mouse" style="border:dotted red 0px"></div>
 		<p class="status"></p>
         </div>
+<!--
 	<div style="position:absolute;left:800px;top:0px;width:800px;height:600px;background-color:gray;z-index:1;"></div>
 	<div style="position:absolute;left:0px;top:600px;width:2000px;height:1000px;background-color:gray;z-index:1;"></div>
+-->
 </body>
 
 <?php
@@ -306,8 +308,10 @@ if(isset($f_y))$segy = round(((int)$f_y)/10); else $segy = 0;
 ?>
 <script type="text/javascript">
 <!--
+var w = window.innerWidth;
+var h = window.innerHeight;
 var map = document.getElementById("map");
-PrepareMap(800,600,0,0,map,27,10,<?=$segx?>,<?=$segy?>);
+PrepareMap(w,h,0,0,map,27,10,<?=$segx?>,<?=$segy?>);
 //window.setTimeout("loadSegment(map,10,10)", 1000);
 //-->
 </script>
