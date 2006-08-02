@@ -9,6 +9,7 @@
 <script type="text/javascript">
 <!--
 
+//returns a ajax object to do a remote request
 function InitAjaxObject() {
 	var A;
 	
@@ -32,6 +33,8 @@ function InitAjaxObject() {
 	return A;
 }
 
+//requests the given url. callback gets called after a sucessfull finished call
+//callback(response_text);
 function MakeRequest(url,callback) {
 	var http_request = InitAjaxObject();
 	
@@ -48,7 +51,15 @@ function MakeRequest(url,callback) {
 	http_request.send(null);
 }
 
-//PrepareMap(400,300,200,200,map,27,10,0,0);
+//init the map
+//	width	width in pixel, override div#map values
+//	height	height in pixel, override div#map values
+//	top		position, override div#map values
+//	left		position, override div#map values
+//	tileSize	size of a quadratic tile in px
+//	segmentSize	size of a quadratic segment in tiles
+//	segx		left/top segment coordinates of the map
+//	segy		left/top segment coordinates of the map
 function PrepareMap(width, height, top, left, map, tileSize, segmentSize, segx, segy) {
 	for(var child = map.firstChild; child; child = child.nextSibling) {
 		if(child.className == 'pane') {
@@ -94,6 +105,8 @@ function PrepareMap(width, height, top, left, map, tileSize, segmentSize, segx, 
 	AddSegments(map, -width/2, -height/2);
 }
 
+//returns a reference to the segment with the given segment coordinates, or null on error
+//but this should never happen
 function GetSegment(map, segx, segy) {
 	for(var i = 0; i < map.segments.length; ++i) {
 		var segment = map.segments[i];
@@ -103,6 +116,7 @@ function GetSegment(map, segx, segy) {
 	return null;
 }
 
+//creates the segments with the given delta position (dx|dy), used during map init
 function AddSegments(map, dx, dy) {
 	var mouse = map.mouse;
 	var pane = map.pane;
@@ -142,6 +156,7 @@ function AddSegments(map, dx, dy) {
 	}
 }
 
+//triggers reload of the given segment (forced, even if the segment is still loading something)
 function ReloadSegment(map,segment){
 	var dim = map.dimensions;
 	var segwpx = dim.segw*dim.tilew;
@@ -151,6 +166,8 @@ function ReloadSegment(map,segment){
 	LoadSegment(map,segment.segx,segment.segy);
 }
 
+//moves (delta position (dx|dy) ) and updates the map
+//UpadteMap(map,0,0) is used to reload and reposition segments if they are outside
 function UpdateMap(map, dx, dy) {
 	var dim = map.dimensions;
 	var segwpx = dim.segw*dim.tilew;
@@ -189,6 +206,7 @@ function UpdateMap(map, dx, dy) {
 	}
 }
 
+//mouse move event, moves the map
 function MoveMouse(event)
 {
 	var map = this.map;
@@ -206,6 +224,7 @@ function MoveMouse(event)
 	PrintStatus(map, 'mouse at: '+x+', '+y+' ('+dx+'|'+dy+')');
 }
 
+//mouse press event, starts movement mode
 function PressMouse(event)
 {
 	var map = this.map;
@@ -225,6 +244,7 @@ function PressMouse(event)
 	PrintStatus(map, 'mouse pressed at '+x+','+y);
 }
 
+//mouse release event, finishes movement mode
 function ReleaseMouse(event)
 {
 	var ev = GetEvent(event);
@@ -240,10 +260,12 @@ function ReleaseMouse(event)
 	PrintStatus(map, 'mouse dragged from '+map.mouseStart.x+', '+map.mouseStart.y+' to '+x+','+y);
 }
 
+//shows a line for debugging purpose
 function PrintStatus(map, message) {
 	map.status.innerHTML = message;
 }
 
+//returns the window event
 function GetEvent(event)
 {
 	if(event == undefined) {
@@ -253,6 +275,9 @@ function GetEvent(event)
 	return event;
 }
 
+//loads a segment, a segment with the segment coordinates x,y (segment.segx==x ...)
+//must exist
+//	x,y	segment position on the real map
 function LoadSegment(map, x, y) {
 	var w = map.dimensions.segw;
 	var h = map.dimensions.segh;
