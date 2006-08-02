@@ -1,0 +1,116 @@
+body
+{
+  margin-top: 100px;
+  background-color: #ffffff;
+}
+table.segment
+{
+  background-color: #66aa55;
+  border: 0px solid #000000;
+  empty-cells: show;
+}
+table.segment th
+{
+  text-align: center;
+  vertical-align: middle;
+  background-color: #66aa55;
+  color: #000000;
+  font-family: arial;
+  font-size: 9px;
+  font-weight: normal;
+  padding: 0px;
+  width: 25px;
+  height: 25px;
+}
+table.segment td
+{
+  width: 27px;
+  height: 27px;
+  text-align: center;
+  vertical-align: middle;
+  padding: 0px;
+}
+table.segment td div
+{
+  width: 27px;
+  height: 27px;
+  padding: 0px;
+  background-position: 0px 0px;
+  background-repeat: no-repeat;
+  text-align: center;
+  vertical-align: middle;
+}
+table.segment td div.t
+{
+  width: 27px;
+  height: 27px;
+  border: 1px solid #66aa55;
+}
+table.segment td div.b,
+table.segment td div.u,
+table.segment td div.a,
+table.segment td div.i
+{
+  width: 25px;
+  height: 25px;
+}
+table.segment td div.i
+{
+  background-position: center center;
+}
+table.segment td div.e
+{
+  border: 1px solid orange;
+}
+table.segment td div.f
+{
+  border: 1px solid blue;
+}
+table.segment td div.o
+{
+  border: 1px solid yellow;
+}
+
+table.no_t td div.t
+{
+  background-image: none !important;
+}
+table.no_b td div.b,
+table.no_u td div.u,
+table.no_i td div.i,
+table.no_e td div.e,
+table.no_f td div.f,
+table.no_o td div.o
+{
+  background-image: none !important;
+  border: none !important;
+}
+
+
+/*
+  firefox hack,
+  weil border nur beim ff aussen die Tabellenzelle rangelegt wird
+  und nicht innen anliegt wie beim IE und Opera
+*/
+head~body table.segment td div.t
+{
+  width: 25px;
+  height: 25px;
+}
+head~body table.segment td div.b,
+head~body table.segment td div.u,
+head~body table.segment td div.a,
+head~body table.segment td div.i
+{
+  width: 23px;
+  height: 23px;
+}
+
+table.segment td div.here
+{
+  border: 1px solid yellow !important;
+}
+label:hover
+{
+  text-decoration: underline;
+}
