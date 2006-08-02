@@ -68,8 +68,8 @@ function PrepareMap(width, height, top, left, map, tileSize, segmentSize, segx, 
 		'segw': segmentSize, 'segh': segmentSize,
 		'tilew': tileSize, 'tileh': tileSize,
 		'segx': segx, 'segy': segy,
-		'rows': Math.ceil(height / (segmentSize*tileSize)) + 2,
-		'cols': Math.ceil(width / (segmentSize*tileSize)) + 2
+		'rows': Math.round(height / (segmentSize*tileSize)) + 2,
+		'cols': Math.round(width / (segmentSize*tileSize)) + 2
 	};
 
 	map.pane.style.width = width+'px';
@@ -128,7 +128,7 @@ function AddSegments(map, dx, dy) {
 			segment.div.style.position = 'absolute';
 			segment.div.style.top = (segment.dy)+'px';
 			segment.div.style.left = (segment.dx)+'px';
-			segment.div.style.border = '0px';
+			segment.div.style.border = 'dotted black 1px';
 
 			//alert(c+" "+r+" "+segment.dx+" "+segment.dy+" "+segment.div.style.left+" "+segment.div.style.top+" "+dim.left+" "+dim.top);
 			
@@ -143,7 +143,10 @@ function AddSegments(map, dx, dy) {
 }
 
 function ReloadSegment(map,segment){
-	segment.div.innerHTML = '<img width=270 height=270 src="gfx/map_loading.png">';
+	var dim = map.dimensions;
+	var segwpx = dim.segw*dim.tilew;
+	var seghpx = dim.segh*dim.tileh;
+	segment.div.innerHTML = '<img width='+segwpx+' height='+seghpx+' src="gfx/map_loading.png">';
 	segment.loading = true;
 	LoadSegment(map,segment.segx,segment.segy);
 }
@@ -152,8 +155,8 @@ function UpdateMap(map, dx, dy) {
 	var dim = map.dimensions;
 	var segwpx = dim.segw*dim.tilew;
 	var seghpx = dim.segh*dim.tileh;
-	var tresholdw = segwpx/3;
-	var tresholdh = seghpx/3;
+	var tresholdw = segwpx*0.66;
+	var tresholdh = seghpx*0.66;
 	
 	for(var i = 0; i < map.segments.length; ++i) {
 		var segment = map.segments[i];
@@ -290,7 +293,7 @@ div {
 <body>
         <div id="map" class="map" style="position:absolute;left:0px;top:0px;width:800px;height:600px;">
 		<div class="pane"></div>
-		<div class="mouse" style="border:dotted black 1px"></div>
+		<div class="mouse" style="border:dotted red 1px"></div>
 		<p class="status"></p>
         </div>
 	<div style="position:absolute;left:800px;top:0px;width:800px;height:600px;background-color:gray;z-index:1;"></div>
