@@ -264,6 +264,7 @@ function LoadSegment(map, x, y) {
 		var segment = GetSegment(map,x,y);
 		segment.div.innerHTML = response;
 		segment.loading = false;
+		UpdateMap(map,0,0);
 	});
 }
 
