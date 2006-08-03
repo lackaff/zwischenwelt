@@ -1199,8 +1199,8 @@ function calcFoodNeed($n,$dt){
     );
     ksort($colorset);
     $position=round($position);
-    if ($position<min) $position=$min;
-    if (position>$max) $position=$max;
+    if ($position<$min) $position=$min;
+    if ($position>$max) $position=$max;
     if (!$colorset[$position])
     {
       $knownpos=array_keys($colorset);
