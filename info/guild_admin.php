@@ -62,6 +62,16 @@ if($gUser->guild > 0){
 				}
 			break;
 			
+			case "setallright":
+				if(HasGuildRight($gUser,kGuildRight_GuildAdmin)){
+					$status=0;
+					foreach ($gRight as $r){
+						if(isset($_POST["ri_overwrite_".$r["right"]]))$status+=$r["right"];
+					}
+					sql("UPDATE `user` SET `guildstatus`=".$status." WHERE `guild`=".$gGuild->id);
+				}
+			break;
+
 			case "setmsgoftheday":
 				if(HasGuildRight($gUser,kGuildRight_SetMsgOfTheDay))
 					sql("UPDATE `guild` SET `message`='".addslashes($f_message)."' WHERE `id`=".$gGuild->id);
@@ -186,16 +196,41 @@ if(HasGuildRight($gUser,kGuildRight_GuildAdmin)){
 			</form>
 	</table>
 	<p>Standardrechte f&uuml;r neue Mitglieder:
-	<table><tr><?foreach ($gRight as $r){?>
-				<th><img src="<?=g($r["gfx"])?>" title="<?=$r["desc"]?>"></th>
-			<?}?><th></th></tr>
-		<form method="post" action="<?=Query("?sid=?")?>">
-		<input type=hidden name="do" value="setstdright"><tr>
+	<table>
+		<tr>
 		<?foreach ($gRight as $r){?>
+			<th><img src="<?=g($r["gfx"])?>" title="<?=$r["desc"]?>"></th>
+			<?}?>
+			<th></th>
+		</tr>
+		<tr>
+			<form method="post" action="<?=Query("?sid=?")?>">
+			<input type=hidden name="do" value="setstdright"><tr>
+			<?foreach ($gRight as $r){?>
 				<td><input type="checkbox" name="ri_<?="std_".$r["right"]?>" value="<?=$r["right"]?>" <?=(($gGuild->stdstatus & $r["right"]) > 0?"checked":"")?>></td>
 			<?}?><td><input type=submit name=savestdrights value=Save></td></tr>
-	</form>
+			</form>
+		</tr>
 	</table>
+	</p>
+	<p>Rechte f&uuml;r alle Mitglieder überschreiben:
+	<table>
+		<tr>
+		<?foreach ($gRight as $r){?>
+			<th><img src="<?=g($r["gfx"])?>" title="<?=$r["desc"]?>"></th>
+			<?}?>
+			<th></th>
+		</tr>
+		<tr>
+			<form method="post" action="<?=Query("?sid=?")?>">
+			<input type=hidden name="do" value="setallright"><tr>
+			<?foreach ($gRight as $r){?>
+				<td><input type="checkbox" name="ri_overwrite_<?=$r["right"]?>" value="<?=$r["right"]?>"></td>
+			<?}?><td><input type=submit name=setallright value=Save></td></tr>
+			</form>
+		</tr>
+	</table>
+	</p>
 	<?
 	ImgBorderEnd("s1","jpg","ffffee",32,33);
 } ?>
