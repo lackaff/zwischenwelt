@@ -1,15 +1,30 @@
 <?php
 
 require_once("lib.tabs.php");
-define("kViewAdmin",2);
-define("kSiloGet",3);
-define("kSiloGive",5);
-define("kGuildCommander",7);
-define("kSendGuildMsg",11);
-define("kSetMsgOfTheDay",13);
-define("kGuildAdmin",23);
-define("kGuildBursar",29);
-// 2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97, 101, ...
+define("kGuildRight_GuildAdmin"			,1);	//this user can do everything in the guild
+define("kGuildRight_SiloGet"				,2);
+define("kGuildRight_SiloGive"				,4);
+define("kGuildRight_GuildCommander"		,8);
+define("kGuildRight_SendGuildMsg"			,16);
+define("kGuildRight_SetMsgOfTheDay"		,32);
+define("kGuildRight_GuildBursar"			,64);
+
+$gRight = array(
+	array("right"=>kGuildRight_GuildAdmin,		"desc"=>"Das Mitglied ist Gildeadmin","gfx"=>"icon/guild-admin.png"),
+	array("right"=>kGuildRight_SiloGet,			"desc"=>"Das Mitglied kann Rohstoffe aus dem Gildelager nehmen","gfx"=>"icon/guild-out.png"),
+	array("right"=>kGuildRight_SiloGive,			"desc"=>"Das Mitglied kann Rohstoffe in die Gildelager einzahlen","gfx"=>"icon/guild-in.png"),
+	array("right"=>kGuildRight_GuildCommander,	"desc"=>"Das Mitglied ist Gilde-Komandeur","gfx"=>"icon/guild-gc.png"),
+	array("right"=>kGuildRight_SendGuildMsg,		"desc"=>"Das Mitglied darf Gildenachrichten verschicken","gfx"=>"icon/guild-send.png"),
+	array("right"=>kGuildRight_SetMsgOfTheDay,	"desc"=>"Das Mitglied darf MessageOfTheDay Texte setzen","gfx"=>"icon/guild-message.png"),
+	array("right"=>kGuildRight_GuildBursar,		"desc"=>"Mitglied ist Schatzmeister","gfx"=>"icon/guild-schatz.png"),
+);
+
+//checks if the user (userobject with guildstatus) has the given guildright
+function HasGuildRight($user,$right){
+	$id = sqlgetone("SELECT `id` FROM `guild` WHERE `founder`=".intval($user->id)." LIMIT 1");
+	if(!empty($id))return true;
+	else return (($user->guildstatus & kGuildRight_GuildAdmin) > 0) || (($user->guildstatus & $right) > 0);
+}
 
 //user leaves guild, only possible if he is not the founder, or let user leave guild (if $id is given)
 function leaveGuild($id=0)
@@ -24,7 +39,7 @@ function leaveGuild($id=0)
 	{
 		$founder = sqlgetone("SELECT `founder` FROM `guild` WHERE `id`=".$guild);
 		if($founder != $gUser->id){
-			sql("UPDATE `user` SET `guild`=0,`guildstatus`=1 WHERE `id`=".$gUser->id);
+			sql("UPDATE `user` SET `guild`=0,`guildstatus`=0 WHERE `id`=".$gUser->id);
 			setGPLimit($gUser->id,0);
 		}
 		if($guild==kGuild_Weltbank){
@@ -156,9 +171,9 @@ function getFromGuild($user,$guild,$lumber,$stone,$food,$metal,$runes = 0)
 	$guild = sqlgetobject("SELECT * FROM `guild` WHERE `id`=".intval($guild));
 	
 	if($user && $guild && $user->guild == $guild->id) {
-		if ($user->guildstatus%kSiloGet!=0) // user kann nicht abheben
+		if (!HasGuildRight($user,kSiloGet)) // user kann nicht abheben
 			foreach($gRes as $n=>$f) if($$f > 0) $$f = 0;
-		if ($user->guildstatus%kSiloGive!=0) // user kann nicht einzahlen
+		if (!HasGuildRight($user,kSiloGet)) // user kann nicht einzahlen
 			foreach($gRes as $n=>$f) if($$f < 0) $$f = 0;
 		
 		// limit by available ressources and max capacity
@@ -202,7 +217,7 @@ function getGuildCommander($guild=0){
 	if(empty($guild))return array();
 	$c= sqlgettable("SELECT * FROM `user` WHERE  `guild`=".$guild->id);
 	foreach ($c as $o)
-		if(!empty($o->guildstatus))if($o->guildstatus%kGuildCommander==0)$t[]=$o->id;
+		if(HasGuildRight($o,kGuildCommander))$t[]=$o->id;
 	return $t;
 }
 
@@ -257,6 +272,7 @@ function gForumDelC($user,$id){
 	return FALSE;
 }
 
+/*
 //right as int , user as id or object
 function guildRight($right,$user=0){
 	global $gUser,$gGuild;
@@ -269,19 +285,22 @@ function guildRight($right,$user=0){
 	if((intval($user->guildstatus)%$right)==0 || $user->id==$gGuild->founder)return TRUE;
 	else return FALSE;
 }
+*/
 
-
+/*
 //array of int-rights as arg
 function setGuildRights($rights,$id){
 	global $gUser;
 	if(!guildRight(kGuildAdmin,$gUser)) return FALSE;
-	$status=0;
+	$status = 0;
 	foreach ($rights as $r)
-		$status*=$r;
-	sql("UPDATE `user` SET `guildstatus`=$r WHERE `id`=".$id);
+		$status= $status | $r;
+	sql("UPDATE `user` SET `guildstatus`=`guildstatus` | $r WHERE `id`=".$id);
 	return TRUE;
 }
+*/
 
+/*
 //array of int-rights as arg $user as id or object
 function removeGuildRights($rights,$user){
 	global $gUser;
@@ -289,26 +308,31 @@ function removeGuildRights($rights,$user){
 	if(!is_object($user))$user=sqlgetobject("SELECT * FROM `user` WHERE `id`=".intval($user));
 	if(!is_object($user))return FALSE;
 	foreach($rights as $r){
-		if($user->guildstatus%$r==0)$user->guildstatus/=$r;
+		$user->guildstatus = $user->guildstatus & ~$r;
+		//if($user->guildstatus%$r==0)$user->guildstatus/=$r;
 	}
 	sql("UPDATE `user` SET `guildstatus`=".$user->guildstatus." WHERE `id`=".$user->id);
 	return TRUE;
 }
+*/
 
+/*
 //int-right as arg, userid or object
 function addGuildRight($right,$user){
 	global $gUser;
 	if(guildRight(kGuildAdmin,$gUser)) return FALSE;
 	if(!is_object($user))$user=sqlgetobject("SELECT * FROM `user` WHERE `id`=".intval($user));
 	if(!is_object($user))return FALSE;
-	if($user->guildstatus!=0 && $user->guildstatus%$right!=0)
-		sql("UPDATE `user` SET `guildstatus`=`guildstatus`*$r WHERE `id`=".$user->id);
-	else if($user->guildstatus==0)
-		sql("UPDATE `user` SET `guildstatus`=$r WHERE `id`=".$user->id);
-	else
+	//if($user->guildstatus!=0 && $user->guildstatus%$right!=0)
+	//	sql("UPDATE `user` SET `guildstatus`=`guildstatus`*$r WHERE `id`=".$user->id);
+	//else if($user->guildstatus==0)
+		sql("UPDATE `user` SET `guildstatus`=`guildstatus` | $r WHERE `id`=".$user->id);
+	//else
 		return TRUE;
 }
+*/
 
+/*
 //int-right as arg, userid or object
 function delGuildRight($right,$user){
 	if(guildRight(kGuildAdmin,$gUser)) return FALSE;
@@ -317,6 +341,7 @@ function delGuildRight($right,$user){
 		if($user->guildstatus!=0 && $user->guildstatus%$right!=0)
 		sql("UPDATE `user` SET `guildstatus`=`guildstatus`/$r WHERE `id`=".$user->id);
 }
+*/
 
 function getGPLimit($id){
 	$id = intval($id);

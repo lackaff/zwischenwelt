@@ -115,7 +115,6 @@ else
 {//gilde vorhanden ------------------------------------------------------------
 ?>
 <h4>Gilde '<?=$gGuild->name?>'</h4>
-<?php $gRight = sqlgettable("SELECT * FROM `guild_right` ORDER BY `right` ASC","right"); ?>
 <form method="post" action="<?=Query("guild.php?sid=?")?>">
 	<div style="padding-top:20px;padding-left:0;padding-right:0;padding-bottom:0;">
 	<table>

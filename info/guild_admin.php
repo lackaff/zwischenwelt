@@ -5,19 +5,17 @@ require_once("../lib.guild.php");
 Lock();
 
 //ist der user in einer gilde?
-if($gUser->guild > 0)
-{//gilde vorhanden ------------------------------------------------------------
+if($gUser->guild > 0){
+//gilde vorhanden ------------------------------------------------------------
 	//print_r($_POST);
 
 	$gGuild = sqlgetobject("SELECT g.*,u.`name` as `foundername` FROM `guild` g,`user` u WHERE u.`id`=g.`founder` AND g.`id`=".$gUser->guild);
-	$gRight = sqlgettable("SELECT * FROM `guild_right` ORDER BY `right` ASC","right");
-
 	$members = sqlgettable("SELECT * FROM `user` WHERE `guild`=".$gGuild->id." ORDER BY `general_pts`+`army_pts` DESC");
 
 	if(!empty($f_do)){
 		switch ($f_do){
 			case "killguild":
-				if($f_sure == 1 && ($gGuild->founder == $gUser->id || ($gUser->guildstatus%kGuildAdmin)==0)){
+				if($f_sure == 1 && HasGuildRight($gUser,kGuildRight_GuildAdmin)){
 					TablesLock();
 					$g = intval($gUser->guild);
 					sql("DELETE FROM `guild` WHERE `id`=$g");
@@ -33,15 +31,16 @@ if($gUser->guild > 0)
 				}
 			break;
 			case "setright":
-				if($gGuild->founder == $gUser->id || ($gUser->guildstatus%kGuildAdmin)==0)
+				if(HasGuildRight($gUser,kGuildRight_GuildAdmin))
 					foreach($members as $user){
 						//delete users
 						if(!empty($f_deluser[$user->id]) && $user->guild == $gGuild->id)leaveGuild($user->id);
 						//set right
-						$status=1;
+						$status=0;
 						foreach ($gRight as $r){
-							if(isset($_POST["ri_".$user->id."_".$r->right]))$status*=$r->right;
+							if(isset($_POST["ri_".$user->id."_".$r["right"]]))$status+=$r["right"];
 						}
+						
 						sql("UPDATE `user` SET `guildstatus`=".$status." WHERE `guild`=$gGuild->id AND `id`=".$user->id);
 						//update me for runntime issue
 						if($user->id==$gUser->id)$gUser->guildstatus=$status;
@@ -49,27 +48,27 @@ if($gUser->guild > 0)
 			break;
 			
 			case "savesettings":
-				if($gGuild->founder == $gUser->id || $gUser->guildstatus%kGuildAdmin==0)
+				if(HasGuildRight($gUser,kGuildRight_GuildAdmin))
 					sql("UPDATE `guild` SET `internprofile`='".addslashes($f_internprofile)."', `profile`='".addslashes($f_profile)."', `forumurl`='".addslashes($f_forumurl)."', `gfx`='".addslashes($f_gfxurl)."', `name` = '".addslashes($f_changedguildname)."',`color` = '".addslashes($f_color)."' WHERE `id` = ".$gGuild->id." LIMIT 1");
 			break;
 			
 			case "setstdright":
-				if($gGuild->founder == $gUser->id || $gUser->guildstatus%kGuildAdmin==0){
-					$status=1;
+				if(HasGuildRight($gUser,kGuildRight_GuildAdmin)){
+					$status=0;
 					foreach ($gRight as $r){
-						if(isset($_POST["ri_std_".$r->right]))$status*=$r->right;
+						if(isset($_POST["ri_std_".$r["right"]]))$status+=$r["right"];
 					}
 					sql("UPDATE `guild` SET `stdstatus`=".$status." WHERE `id`=".$gGuild->id);
 				}
 			break;
 			
 			case "setmsgoftheday":
-				if($gGuild->founder == $gUser->id || $gUser->guildstatus%kGuildAdmin==0 || $gUser->guildstatus%kSetMsgOfTheDay==0)
+				if(HasGuildRight($gUser,kGuildRight_SetMsgOfTheDay))
 					sql("UPDATE `guild` SET `message`='".addslashes($f_message)."' WHERE `id`=".$gGuild->id);
 			break;
 			
 			case "decide":
-				if(isset($f_decide) && isset($f_reaction) && ($gGuild->founder == $gUser->id || ($gUser->guildstatus%kGuildAdmin)==0))
+				if(isset($f_decide) && isset($f_reaction) && HasGuildRight($gUser,kGuildRight_GuildAdmin))
 				{
 					$f_user = intval($f_user);
 					if($f_reaction == "accept")$ok = true;
@@ -79,25 +78,25 @@ if($gUser->guild > 0)
 			break;
 			
 			case "setlimit":
-				if($gGuild->founder == $gUser->id || ($gUser->guildstatus%kGuildAdmin)==0 || ($gUser->guildstatus%kGuildBursar)==0)
+				if($gGuild->founder == $gUser->id || HasGuildRight($gUser,kGuildRight_GuildBursar))
 					foreach ($members as $o){
 						setGPLimit($o->id,$_POST['limit_'.$o->id]);
 					}
 			break;
 			
 			case "setstdlimit":
-				if($gGuild->founder == $gUser->id || ($gUser->guildstatus%kGuildAdmin)==0 || ($gUser->guildstatus%kGuildBursar)==0)
+				if($gGuild->founder == $gUser->id || HasGuildRight($gUser,kGuildRight_GuildBursar))
 					setStdGPLimit($gGuild->id,$f_stdlimit);
 			break;
 			
 			case "settakealllimit":
-				if($gGuild->founder == $gUser->id || ($gUser->guildstatus%kGuildAdmin)==0 || ($gUser->guildstatus%kGuildBursar)==0)
+				if($gGuild->founder == $gUser->id || HasGuildRight($gUser,kGuildRight_GuildBursar))
 					setTakeAllLimit($gGuild->id,$f_takealllimit);
 			break;
 			
 			case "sendgm":
 				if(empty($f_subject) || empty($f_text))break;
-				if($gUser->guildstatus%kSendGuildMsg==0 || $gUser->guildstatus%kGuildAdmin==0 || $gUser->id==$gGuild->founder){
+				if(HasGuildRight($gUser,kGuildRight_SendGuildMsg)){
 					require_once("../lib.message.php");
 					$tosent=TRUE;
 					foreach ($members as $o){
@@ -139,19 +138,23 @@ if($gUser->guild == 0)
 ?>
 	Sie befinden sich in keiner Gilde!
 <?php
-}
-else
-{//gilde vorhanden ------------------------------------------------------------
+} else {
+//gilde vorhanden ------------------------------------------------------------
 ?>
 <center>
 <table>
 <tr><td valign="top" align="center">
 <?
-if($gGuild->founder == $gUser->id || ($gUser->guildstatus%kGuildAdmin)==0){ 
+if(HasGuildRight($gUser,kGuildRight_GuildAdmin)){ 
 	ImgBorderStart("s1","jpg","#ffffee",32,33); ?>
-	<table><tr><?foreach ($gRight as $key=>$r){?>
-				<th><img src="<?=g($r->gfx)?>" title="<?=$r->desc?>"></th>
-			<?}?><th></th><th><img src="<?=g("del.png")?>" title="user aus der gilde entfernen"></th><th></th><th>Mitglieder</th></tr>
+	<table>
+		<tr><?foreach ($gRight as $r){?>
+				<th><img src="<?=g($r["gfx"])?>" title="<?=$r["desc"]?>"></th>
+			<?}?>
+			<th></th>
+			<th><img src="<?=g("del.png")?>" title="user aus der gilde entfernen"></th>
+			<th></th><th>Mitglieder</th>
+		</tr>
 		<form method="post" action="<?=Query("?sid=?")?>">
 		<input type=hidden name=do value=setright>
 		<?foreach($members as $u){
@@ -169,7 +172,7 @@ if($gGuild->founder == $gUser->id || ($gUser->guildstatus%kGuildAdmin)==0){
 			$hq=sqlgetobject("SELECT `id`,`x`,`y` FROM `building` WHERE `user`=".$u->id." AND `type`=1");?>
 			<tr>
 			<?foreach ($gRight as $r){?>
-				<td><input type="checkbox" name="ri_<?=$u->id."_".$r->right?>" value="<?=$r->right?>" <?=($u->guildstatus%$r->right==0?"checked":"")?>></td>
+				<td><input type="checkbox" name="ri_<?=$u->id."_".$r["right"]?>" value="<?=$r["right"]?>" <?=(($u->guildstatus & $r["right"]) > 0?"checked":"")?>></td>
 			<?}?>
 			<td>&nbsp;</td><td><input type=checkbox name="deluser[<?=$u->id?>]" value=1></td>
 			<td style="background-color:<?$u->color?>">&nbsp;</td>
@@ -183,13 +186,13 @@ if($gGuild->founder == $gUser->id || ($gUser->guildstatus%kGuildAdmin)==0){
 			</form>
 	</table>
 	<p>Standardrechte f&uuml;r neue Mitglieder:
-	<table><tr><?foreach ($gRight as $key=>$r){?>
-				<th><img src="<?=g($r->gfx)?>" title="<?=$r->desc?>"></th>
+	<table><tr><?foreach ($gRight as $r){?>
+				<th><img src="<?=g($r["gfx"])?>" title="<?=$r["desc"]?>"></th>
 			<?}?><th></th></tr>
 		<form method="post" action="<?=Query("?sid=?")?>">
 		<input type=hidden name="do" value="setstdright"><tr>
 		<?foreach ($gRight as $r){?>
-				<td><input type="checkbox" name="ri_<?="std_".$r->right?>" value="<?=$r->right?>" <?=($gGuild->stdstatus%$r->right==0?"checked":"")?>></td>
+				<td><input type="checkbox" name="ri_<?="std_".$r["right"]?>" value="<?=$r["right"]?>" <?=(($gGuild->stdstatus & $r["right"]) > 0?"checked":"")?>></td>
 			<?}?><td><input type=submit name=savestdrights value=Save></td></tr>
 	</form>
 	</table>
@@ -202,9 +205,8 @@ if($gGuild->founder == $gUser->id || ($gUser->guildstatus%kGuildAdmin)==0){
 </center>
 <br>
 <div align=left>
-<?php if($gGuild->founder == $gUser->id || ($gUser->guildstatus%kGuildAdmin)==0 || ($gUser->guildstatus%kSetMsgOfTheDay)==0){ ?>
-		<table>
-			<?if($gGuild->founder == $gUser->id || ($gUser->guildstatus%kGuildAdmin)==0){?>
+	<table>
+		<?if(HasGuildRight($gUser,kGuildRight_GuildAdmin)){?>
 			<form method="post" action="<?=Query("?sid=?")?>">
 			<input type=hidden name=do value=savesettings>
 			<tr><th>Gildenname</th><td><INPUT type="text" size="30" name="changedguildname" VALUE="<?=htmlspecialchars($gGuild->name)?>"></td>
@@ -218,55 +220,58 @@ if($gGuild->founder == $gUser->id || ($gUser->guildstatus%kGuildAdmin)==0){
 			<tr><td colspan=2 align=left><input type="submit" name="saveguildname" value="speichern"></td></tr>
 			</form>
 			<tr><td colspan=2>&nbsp;</td></tr>
-			<tr><td colspan=2>&nbsp;</td></tr><?}?>
-			<tr><td colspan=2><table border=0 cellspacing=0 cellpadding=0><?}?>
-			<form method="post" action="<?=Query("?sid=?")?>"><input type=hidden name=do value=setmsgoftheday>
-			<tr><td>MessageOfTheDay:&nbsp;</td><td><?=($gUser->guildstatus%kSetMsgOfTheDay==0?"<input type=text size=50 name=message value='".$gGuild->message."'>":htmlspecialchars($gGuild->message))?></td><td><?=($gUser->guildstatus%kSetMsgOfTheDay==0?"<input type=submit name=set_message value='Set'>":"")?></td></tr>
-			</form>
-			</table></td></tr><?if($gGuild->founder == $gUser->id || ($gUser->guildstatus%kGuildAdmin)==0){?>
-			<form method="post" action="<?=Query("?sid=?")?>">
-			</table></td></tr>
 			<tr><td colspan=2>&nbsp;</td></tr>
-			<tr><td colspan=2>&nbsp;</td></tr>
-			<tr><td colspan=2>
-				<table border="0"><tr><th align="left" colspan="3">Bewerbungen</th></tr>
-				<?php
-				$bewerber = sqlgettable("SELECT u.`guildpoints`,u.`general_pts`+u.`army_pts` AS `punkte`,u.`id`,u.`name`,u.`color`,r.`time`,r.`comment` FROM `user` u,`guild_request` r WHERE r.`guild`=".$gGuild->id." AND u.`id`=r.`user` ORDER BY r.`time` ASC");
-				foreach($bewerber as $u){
-					$hq=sqlgetobject("SELECT `id`,`x`,`y` FROM `building` WHERE `user`=".$u->id." AND `type`=1");
-					$hqxy="(<a href='".query("../info/info.php?sid=?&x=".$hq->x."&y=".$hq->y)."'>".$hq->x."/".$hq->y."</a>)";
-					$name="<a href='".query("../info/msg.php?sid=?&show=compose&to=".urlencode($u->name))."' >".$u->name."</a>";
-					?><form method="post" action="<?=Query("?sid=?")?>">
-					<input type="hidden" name="do" value="decide">
-					<tr>
-						<td align="left" valign="top">
-							<span style="background-color:<?=$u->color?>">&nbsp;</span>&nbsp;'<?=$name.'  ('.ktrenner($u->guildpoints).' GP, '.$u->punkte.' Punkte, auf '.$hqxy.') am '.date("D, j. M G:i",$u->time)?>
-						</td>
-					</tr>
-					<tr>
-						<td colspan="3"><i><?=nl2br($u->comment)?></i></td>
-					</tr>
-					<tr>
-						<td align="left" valign="top">
-							<input type="radio" name="reaction" value="accept"> annehmen 
-							<input type="radio" name="reaction" value="reject"> ablehnen
-						</td>
-					</tr>
-					<tr valign="top">
-						<td align="left">
-							<input type="hidden" name="user" value="<?=$u->id?>"><input type="submit" name="decide" value="entscheiden">
-						</td>
-					</tr>
-					</form>
-				<?}?>
-				</table>
-			</td></tr>
-			<?php } ?>
-		</table>
-		<hr>
-	</div>
+			<tr><td colspan=2><table border=0 cellspacing=0 cellpadding=0>
+		<?}?>
+		<form method="post" action="<?=Query("?sid=?")?>"><input type=hidden name=do value=setmsgoftheday>
+		<tr><td>MessageOfTheDay:&nbsp;</td>
+		<td><?=(HasGuildRight($gUser,kGuildRight_SetMsgOfTheDay)?"<input type=text size=50 name=message value='".$gGuild->message."'>":htmlspecialchars($gGuild->message))?></td>
+		<td><?=(HasGuildRight($gUser,kGuildRight_SetMsgOfTheDay)?"<input type=submit name=set_message value='Set'>":"")?></td></tr>
+		</form>
+		</table></td></tr><?if(HasGuildRight($gUser,kGuildRight_GuildAdmin)){?>
+		<form method="post" action="<?=Query("?sid=?")?>">
+		</table></td></tr>
+		<tr><td colspan=2>&nbsp;</td></tr>
+		<tr><td colspan=2>&nbsp;</td></tr>
+		<tr><td colspan=2>
+			<table border="0"><tr><th align="left" colspan="3">Bewerbungen</th></tr>
+			<?php
+			$bewerber = sqlgettable("SELECT u.`guildpoints`,u.`general_pts`+u.`army_pts` AS `punkte`,u.`id`,u.`name`,u.`color`,r.`time`,r.`comment` FROM `user` u,`guild_request` r WHERE r.`guild`=".$gGuild->id." AND u.`id`=r.`user` ORDER BY r.`time` ASC");
+			foreach($bewerber as $u){
+				$hq=sqlgetobject("SELECT `id`,`x`,`y` FROM `building` WHERE `user`=".$u->id." AND `type`=1");
+				$hqxy="(<a href='".query("../info/info.php?sid=?&x=".$hq->x."&y=".$hq->y)."'>".$hq->x."/".$hq->y."</a>)";
+				$name="<a href='".query("../info/msg.php?sid=?&show=compose&to=".urlencode($u->name))."' >".$u->name."</a>";
+				?><form method="post" action="<?=Query("?sid=?")?>">
+				<input type="hidden" name="do" value="decide">
+				<tr>
+					<td align="left" valign="top">
+						<span style="background-color:<?=$u->color?>">&nbsp;</span>&nbsp;'<?=$name.'  ('.ktrenner($u->guildpoints).' GP, '.$u->punkte.' Punkte, auf '.$hqxy.') am '.date("D, j. M G:i",$u->time)?>
+					</td>
+				</tr>
+				<tr>
+					<td colspan="3"><i><?=nl2br($u->comment)?></i></td>
+				</tr>
+				<tr>
+					<td align="left" valign="top">
+						<input type="radio" name="reaction" value="accept"> annehmen 
+						<input type="radio" name="reaction" value="reject"> ablehnen
+					</td>
+				</tr>
+				<tr valign="top">
+					<td align="left">
+						<input type="hidden" name="user" value="<?=$u->id?>"><input type="submit" name="decide" value="entscheiden">
+					</td>
+				</tr>
+				</form>
+			<?}?>
+			</table>
+		</td></tr>
+		<?php } ?>
+	</table>
+	<hr>
+</div>
 
-<? if($gUser->guildstatus%kGuildBursar==0){
+<? if(HasGuildRight($gUser,kGuildRight_GuildBursar)){
 ImgBorderStart();?>
 <table border=0 cellspacing=1 cellpadding=0>
 <tr><td colspan=3><h4>Minuspunktelimits</h4>
@@ -304,7 +309,7 @@ ImgBorderStart();?>
 
 <?ImgBorderEnd();
 }
-if($gUser->guildstatus%kGuildBursar!=0){
+if(HasGuildRight($gUser,kGuildRight_GuildBursar)){
 ImgBorderStart();?>
 <h4>Minuspunktelimits</h4>
 (Limit als Zahl angeben, 0 für unbeschränkt)
@@ -321,7 +326,7 @@ ImgBorderStart();?>
 </form>
 <?ImgBorderEnd();
 }
-if($gUser->guildstatus%kSendGuildMsg==0 || $gUser->guildstatus%kGuildAdmin==0 || $gUser->id==$gGuild->founder){
+if(HasGuildRight($gUser,kGuildRight_SendGuildMsg)){
 ImgBorderStart("s2","jpg","#ffffee","bg-s2",32,33);?>
 <form action="<?=query("?sid=?")?>" method="post">
 <input type=hidden name=do value=sendgm>
@@ -338,12 +343,14 @@ ImgBorderStart("s2","jpg","#ffffee","bg-s2",32,33);?>
 ImgBorderEnd("s2","jpg","#ffffee",32,33);}
 ?>
 
+<?php if(HasGuildRight($gUser,kGuildRight_GuildAdmin)) { ?>
 <form method=post action="<?=query("?sid=?");?>">
 <input type="hidden" name="do" value="killguild">
 	<div style="padding:2px;border:solid red 2px;">
 	<input type=checkbox name=sure value=1> Diese Gilde <input type=submit value="löschen">
 	</div>
 </form>
+<?php } ?>
 
 <?php } ?>
 

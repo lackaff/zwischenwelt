@@ -122,27 +122,25 @@ if($gUser->guild==0){?>
 </p>
 <?}
 else{
-$gRight = sqlgettable("SELECT * FROM `guild_right` ORDER BY `right` ASC","right");
 require_once("../lib.guild.php");
 ?>
 <table cellspacing=4 cellpadding=1>
-<tr><th style="border-bottom:1px solid grey;">Status</th><th style="border-bottom:1px solid grey;">Minuspunktelimit</th></tr>
-<td align=left valign=middle><?
-if(sqlgetone("SELECT `founder` FROM `guild` WHERE `id`=".$gUser->guild)!=$gUser->id){
-		if($gUser->guildstatus!=1 && $gUser->guildstatus!=0){
-			foreach($gRight as $r){
-			if($gUser->guildstatus%$r->right==0){
-				?><img src="<?=g($r->gfx)?>" title="<?=$r->desc?>">&nbsp;<?
-			}
-		}
-	}else{
-	?><img src="<?=g("tool_cancel.png")?>" title="hat keine Rechte"><?
-	}
-}else{
-	?><center><img src="<?=g("icon/guild-founder.png")?>" title="Gildegründer"></center><?
-}
-?>&nbsp;</td><td align=right><?=ktrenner((-1)*getGPLimit($gUser->id),"#4444cc","#aa5555")?>
-</table><br>
+<tr>
+	<th style="border-bottom:1px solid grey;">Rechte</th>
+	<th style="border-bottom:1px solid grey;">Minuspunktelimit</th>
+</tr>
+<tr>
+	<td align=left valign=middle><?
+	foreach($gRight as $r){
+		if(HasGuildRight($gUser,$r["right"])){ ?>
+			<img src="<?=g($r["gfx"])?>" title="<?=$r["desc"]?>">&nbsp;
+		<? } 
+	} ?>
+	</td>
+	<td align=right><?=ktrenner((-1)*getGPLimit($gUser->id),"#4444cc","#aa5555")?></td>
+</tr>
+</table>
+<br>
 <center><span style="font-size:14px;font-weight:bold;">Nachricht des Tages</span><br>
 <?ImgBorderStart();?>
 <span style="font-size:12px;font-style:italic;"><?=sqlgetone("SELECT `message` FROM `guild` WHERE `id`=".$gUser->guild)?></span>

@@ -49,7 +49,7 @@ if ($gUser->admin && isset($f_regentypes)) {
 		if ($guild == 0 || $guild == kGuild_Weltbank) return false;
 		$res = array();
 		$res["Mitglieder"] = sqlgettable("SELECT * FROM `user` WHERE `guild` = ".$guild." ORDER BY `name`","id","name");
-		$isgc = (intval($gUser->guildstatus) % kGuildCommander) == 0;
+		$isgc = HasGuildRight($gUser,kGuildRight_GuildCommander);
 		if ($isgc) {
 			foreach ($gArmyType as $o) {
 				$gildenarmeen = sqlgettable("SELECT `army`.*,`user`.`name` as `username` FROM `army`,`user` WHERE 

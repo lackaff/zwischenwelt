@@ -44,8 +44,6 @@ else
 {//gilde vorhanden ------------------------------------------------------------
 ?>
 <h4>Gilde '<?=$gGuild->name?>'</h4>
-<?php $gRight = sqlgettable("SELECT * FROM `guild_right` ORDER BY `right` ASC","right"); ?>
-	
 	<table width=100% border=0>
 	
 	<tr><td colspan=2 valign="top" width=100%><center>
@@ -70,21 +68,13 @@ else
 			}
 			?>
 			<tr>
-			<td align=left valign=middle><?
-			if($gGuild->founder!=$u->id){
-				if($u->guildstatus!=1 && $u->guildstatus!=0){
-					foreach($gRight as $r){
-						if($u->guildstatus%$r->right==0){
-							?><img src="<?=g($r->gfx)?>" title="<?=$r->desc?>">&nbsp;<?
-						}
+			<td align=left valign=middle>
+				<? foreach($gRight as $r){
+					if(HasGuildRight($u,$r["right"])){
+						?><img src="<?=g($r["gfx"])?>" title="<?=$r["desc"]?>">&nbsp;<?
 					}
-				}else{
-					?><img src="<?=g("tool_cancel.png")?>" title="hat keine Rechte"><?
-				}
-			}else{
-				?><center><img src="<?=g("icon/guild-founder.png")?>" title="Gildegründer"></center><?
-			}
-			?>&nbsp;</td>
+				} ?>
+			</td>
 			<td style="background-color:<?=$u->color?>">&nbsp;</td>
 			<td><?=GetUserLink($u,false,true,$online)." ".$dead?></td>
 			<td align=center><?=opos2txt($hq)?></td>

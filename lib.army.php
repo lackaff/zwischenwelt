@@ -144,7 +144,7 @@ class cArmy {
 		if ($army->user == $user->id) return true;
 		if (!(intval($army->flags) & kArmyFlag_GuildCommand)) return false;
 		$ownerguild = sqlgetone("SELECT `guild` FROM `user` WHERE `id`=".$army->user);
-		return $user->guild == $ownerguild && (intval($user->guildstatus) % kGuildCommander) == 0;
+		return $user->guild == $ownerguild && HasGuildRight($user,kGuildRight_GuildCommander);
 	}
 	
 	// army must also be controllable, and portal must be open for user, not checked in here
@@ -166,7 +166,7 @@ class cArmy {
 		if ($user === false) $user = $gUser;
 		if (!is_object($user)) $user = sqlgetobject("SELECT * FROM `user` WHERE `id`=".intval($user));
 		if (!$user) return array();
-		$isgc = (intval($user->guildstatus) % kGuildCommander) == 0;
+		$isgc = HasGuildRight($user,kGuildRight_GuildCommander);
 		if ($isgc) 
 				return sqlgettable("SELECT `army`.*,`user`.`name` as `username` FROM `army`,`user` WHERE 
 					`army`.`user` = `user`.`id` AND
@@ -208,7 +208,7 @@ class cArmy {
 				$user=sqlgetobject("SELECT `guildstatus`,`id`,`guild` FROM `user` WHERE `id`=$user");
 		}
 		if (empty($user) || $user==0 || !is_object($user)) return array();
-		if (($user->guildstatus%kGuildCommander)==0) {
+		if (HasGuildRight($user,kGuildRight_GuildCommander)) {
 			$r1 = sqlgettable("SELECT a.*,u.name as owner FROM `army` a,`user` u 
 				WHERE u.`id`=a.`user` AND a.`user`=".$user->id." AND !(a.`flags`& ".kArmyFlag_GuildCommand.")"." ORDER BY `type`,`name`");
 			$r2 = sqlgettable("SELECT a.*,u.`name` as owner FROM `army` a,`user` u 
@@ -226,7 +226,7 @@ class cArmy {
 			//echo "<hr>2";vardump2($r);
 		}
 		if($ext==TRUE)
-			if($user->guildstatus%kGuildCommander != 0 ) {
+			if(HasGuildRight($user,kGuildRight_GuildCommander)) {
 				$r2 = sqlgettable("SELECT a.*,u.`name` as owner FROM `user` u,`army` a WHERE u.`id`=a.`user` 
 				AND a.`flags`&".kArmyFlag_GuildCommand." AND a.`user`=".$user->id." ORDER BY `type`,`name`","id");
 				$r = array_merge2($r,$r2);
@@ -502,7 +502,7 @@ class cArmy {
 					$$f = max(0,min(floor($$f),floor($user->{$f})));
 				else if($$f < 0) {
 					$capacity = floor(max(0,$user->{"max_$f"}-$user->{$f}));
-					if ($user->guildstatus%kSiloGive==0)
+					if (HasGuildRight($user,kGuildRight_SiloGive))
 						$capacity += floor(max(0,$guild->{"max_$f"}-$guild->{$f}));
 					$$f = -max(0,min(-$$f,$capacity,$army->$f));
 				}

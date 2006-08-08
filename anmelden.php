@@ -107,8 +107,7 @@ else if(isset($f_key))
 			sql("INSERT INTO `fudforum`.`fud26_users` SET ".obj2sql($fu));
 		}*/
 		
-		// TODO : unhardcode
-		$newuser->guildstatus=15; // einzahlen und abheben
+		$newuser->guildstatus = sqlgetone("SELECT `stdstatus` FROM `guild` WHERE `id`=".intval(kGuild_Weltbank));
 		sql("INSERT INTO `user` SET ".obj2sql($newuser));
 		$newuserid = mysql_insert_id();
 
