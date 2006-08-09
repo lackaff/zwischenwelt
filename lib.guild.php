@@ -171,9 +171,9 @@ function getFromGuild($user,$guild,$lumber,$stone,$food,$metal,$runes = 0)
 	$guild = sqlgetobject("SELECT * FROM `guild` WHERE `id`=".intval($guild));
 	
 	if($user && $guild && $user->guild == $guild->id) {
-		if (!HasGuildRight($user,kSiloGet)) // user kann nicht abheben
+		if (!HasGuildRight($user,kGuildRight_SiloGet)) // user kann nicht abheben
 			foreach($gRes as $n=>$f) if($$f > 0) $$f = 0;
-		if (!HasGuildRight($user,kSiloGet)) // user kann nicht einzahlen
+		if (!HasGuildRight($user,kGuildRight_SiloGet)) // user kann nicht einzahlen
 			foreach($gRes as $n=>$f) if($$f < 0) $$f = 0;
 		
 		// limit by available ressources and max capacity
@@ -217,7 +217,7 @@ function getGuildCommander($guild=0){
 	if(empty($guild))return array();
 	$c= sqlgettable("SELECT * FROM `user` WHERE  `guild`=".$guild->id);
 	foreach ($c as $o)
-		if(HasGuildRight($o,kGuildCommander))$t[]=$o->id;
+		if(HasGuildRight($o,kGuildRight_GuildCommander))$t[]=$o->id;
 	return $t;
 }
 
