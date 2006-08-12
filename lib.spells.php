@@ -484,7 +484,7 @@ class Spell_Instant_Damage extends Spell {
 	
 		// create terrain
 		if ($this->terrain_change) {
-			$changeable_terrain = array(kTerrain_Swamp,kTerrain_YoungForest,kTerrain_TreeStumps,kTerrain_Forest,kTerrain_Grass,kTerrain_Field,kTerrain_Flowers);
+			$changeable_terrain = array(kTerrain_Swamp,kTerrain_YoungForest,kTerrain_TreeStumps,kTerrain_Forest,kTerrain_Grass,kTerrain_Field,kTerrain_Flowers,kTerrain_Hole);
 			$terraintype = cMap::StaticGetTerrainAtPos($this->x,$this->y);
 			if (in_array($terraintype,$changeable_terrain)) {
 				sql("REPLACE INTO `terrain` SET ".arr2sql(array("type"=>$this->terrain_change,"x"=>$this->x,"y"=>$this->y)));

@@ -717,7 +717,7 @@ class Spell_WaldAnpflanzen extends Spell {
 		$o = sqlgetobject("SELECT * FROM `building` WHERE `x`=".intval($this->x)." AND `y`=".intval($this->y));
 		if ($o) { echo "kann nicht auf Gebäude gesprochen werden"; return false; }
 		$ter = cMap::StaticGetTerrainAtPos($this->x,$this->y);
-		if (!in_array($ter, $gWaldAnpflanzReplaceableTerrain)) { echo "kann nicht auf diesem Terrain gesprochen werden werden"; return false; }
+		if (!in_array($ter, $gWaldAnpflanzReplaceableTerrain)) { echo "kann nicht auf diesem Terrain gesprochen werden"; return false; }
 		
 		if ($success < 0) {
 			//Create a swamp

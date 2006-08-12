@@ -1,6 +1,7 @@
 <?php
 
 require_once("lib.tabs.php");
+
 define("kGuildRight_GuildAdmin"			,1);	//this user can do everything in the guild
 define("kGuildRight_SiloGet"				,2);
 define("kGuildRight_SiloGive"				,4);
