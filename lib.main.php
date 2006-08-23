@@ -490,6 +490,14 @@ function LogMe($user,$topic,$type,$i1,$i2,$i3,$s1,$s2,$bStackMessages=true)
 	sql("INSERT INTO `newlog` SET ".obj2sql($o));
 }
 
+
+// short version of the GuildLogMe function
+function GuildLogMeShort($x,$y,$user1,$user2,$trigger,$what){
+	$guild1 = sqlgetone("SELECT `guild` FROM `user` WHERE `id` = ".intval($user1));
+	$guild2 = sqlgetone("SELECT `guild` FROM `user` WHERE `id` = ".intval($user2));
+	GuildLogMe($x,$y,$user1,$user2,$guild1,$guild2,$trigger,$what);
+}
+
 // guildlog, visible in guild and guildlog window, see info/guildlog.php
 //writes a log entry
 function GuildLogMe($x,$y,$user1,$user2,$guild1,$guild2,$trigger,$what)

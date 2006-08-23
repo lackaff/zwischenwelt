@@ -50,8 +50,10 @@ class Spell_Duerre extends Spell_Production {
 		// send message to victim
 		$spellreport = "Eine Dürre plagt das Land, die Nahrungsproduktion ist starkt gesunken.<br>\n";
 		$owneruser = sqlgetobject("SELECT `id`,`name` FROM `user` WHERE `id` = ".intval($this->owner));
-		if ($owneruser)
+		if ($owneruser){
 			$spellreport .= "Eure Magier konnten ".($owneruser->name)." als Verursacher identifizieren.<br>\n";
+        } else $owneruser->id = 0;
+        GuildLogMeShort($this->x,$this->y,$owneruser->id,$this->target,"Zauber",($this->spelltype->name)." wurde gezaubert");
 		sendMessage($this->target,0,"Dürre",$spellreport,kMsgTypeReport,FALSE);
 		
 		return true;
@@ -72,8 +74,10 @@ class Spell_Pest extends Spell_Production {
 		// send message to victim
 		$spellreport = "Der schwarze Tod kriecht durch die Gassen,<br> grosse Teile der Bevölkerung sterben.<br>\n";
 		$owneruser = sqlgetobject("SELECT `id`,`name` FROM `user` WHERE `id` = ".intval($this->owner));
-		if ($owneruser)
+		if ($owneruser){
 			$spellreport .= "Eure Magier konnten ".($owneruser->name)." als Verursacher identifizieren.<br>\n";
+        } else $owneruser->id = 0;
+        GuildLogMeShort($this->x,$this->y,$owneruser->id,$this->target,"Zauber",($this->spelltype->name)." wurde gezaubert");
 		sendMessage($this->target,0,"Pest",$spellreport,kMsgTypeReport,FALSE);
 		
 		return true;
@@ -260,9 +264,11 @@ class Spell_Spinnennetz extends Spell_Cron {
 			$spellreport = "Unsere Armee $army->name sind bei ($army->x,$army->y) in ein riesiges Spinnennetz geraten.<br>\n";
 			$spellreport .= "Vorraussichtliche Dauer der Bewegungsunfähigkeit : ".Duration2Text($this->lasts-time())."<br>\n";
 			$owneruser = sqlgetobject("SELECT `id`,`name` FROM `user` WHERE `id` = ".intval($this->owner));
-			if ($owneruser)
+			if ($owneruser){
 				$spellreport .= "Eure Magier konnten ".($owneruser->name)." als Verursacher identifizieren.<br>\n";
-			sendMessage($victim_user->id,0,"Spinnennetz bei ($army->x,$army->y)",$spellreport,kMsgTypeReport,FALSE);
+			} else $owneruser->id = 0;
+            GuildLogMeShort($this->x,$this->y,$owneruser->id,$victim_user->id,"Zauber",($this->spelltype->name)." wurde gezaubert");
+            sendMessage($victim_user->id,0,"Spinnennetz bei ($army->x,$army->y)",$spellreport,kMsgTypeReport,FALSE);
 		} else {
 			echo "Die Armee $army->name wurde gefangen<br>";
 			echo "Vorraussichtliche Dauer der Bewegungsunfähigkeit : ".Duration2Text($this->lasts-time())."<br>\n";
@@ -417,8 +423,10 @@ class Spell_Bann extends Spell {
 				// send message to victim
 				$spellreport = "In unserem Turm bei ($building->x,$building->y) wurde $dmg Mana gebannt !<br>\n";
 				$owneruser = sqlgetobject("SELECT `id`,`name` FROM `user` WHERE `id` = ".intval($this->owner));
-				if ($owneruser)
+				if ($owneruser){
 					$spellreport .= "Eure Magier konnten ".($owneruser->name)." als Verursacher identifizieren.<br>\n";
+                } else $owneruser->id = 0;
+                GuildLogMeShort($this->x,$this->y,$owneruser->id,$this->target,"Zauber",($this->spelltype->name)." wurde gezaubert");
 				sendMessage($this->target,0,"Bann (Turm,$building->x,$building->y)",$spellreport,kMsgTypeReport,FALSE);
 			} else if (count($killed) == 0) {
 				echo "hier ist kein Mana, und auch kein Zauber, den man bannen könnte<br>";
@@ -559,13 +567,15 @@ class Spell_Erdbeben extends Spell_Once_Per_User {
 		$owneruser = sqlgetobject("SELECT `id`,`name` FROM `user` WHERE `id` = ".intval($this->owner));
 		if ($owneruser)
 			$msg .= "Eure Magier konnten ".($owneruser->name)." als Verursacher identifizieren.<br>\n";
-		
+		else $owneruser->id = 0;
+        
 		foreach ($aff_users as $uid => $num) {
 			$mymsg = $msg;
 			$mymsg .= "Von unseren Gebäuden befinden sich $num im Wirkungsbereich.<br>\n";
 			sendMessage($uid,0,$topic,$mymsg,kMsgTypeReport,FALSE);
 			LogMe($uid,NEWLOG_TOPIC_MAGIC,NEWLOG_MAGIC_DAMAGE_TARGET,$this->x,$this->y,$this->target,$this->spelltype->name,$this->owner);
-		}
+            GuildLogMeShort($this->x,$this->y,$owneruser->id,$uid,"Zauber",($this->spelltype->name)." wurde gezaubert");
+   		}
 		
 		if (count($aff_buildings) == 0) {
 			echo "Kein Gebäude beschädigt<br>";
@@ -670,9 +680,11 @@ class Spell_Strike extends Spell {
 				$msg = "Ein Strike hat Ihr Gebäude bei ($this->x,$this->y) beschädigt.<br>\n";
 				$msg .= $spellreport;
 				$owneruser = sqlgetobject("SELECT `id`,`name` FROM `user` WHERE `id` = ".intval($this->owner));
-				if ($owneruser)
+				if ($owneruser){
 					$msg .= "Eure Magier konnten ".($owneruser->name)." als Verursacher identifizieren.<br>\n";
-				
+                } else $owneruser->id = 0;
+                GuildLogMeShort($this->x,$this->y,$owneruser->id,$o->user,"Zauber",($this->spelltype->name)." wurde gezaubert");
+                
 				sendMessage($o->user,0,$topic,$msg,kMsgTypeReport,FALSE);
 				LogMe($o->user,NEWLOG_TOPIC_MAGIC,NEWLOG_MAGIC_DAMAGE_TARGET,$this->x,$this->y,$this->target,$this->spelltype->name,$this->owner);
 			}
@@ -745,11 +757,30 @@ class Spell_Brandbaender extends Spell {
 			//ups, your tower burns
 			$o = sqlgetobject("SELECT * FROM `building` WHERE `id`=".intval($this->towerid));
 			FireSetOn($o->x,$o->y);
+            echo "Ups, da ist was schief gelaufen. Ihr Turm bei ($o->x,$o->y) steht nun in Flammen.";
 		}
 		
 		if (!parent::Birth($success)) return false;
 		
-		if($success > 0)FireSetOn($this->x,$this->y);
+        $o = sqlgetobject("SELECT * FROM `building` WHERE `x`=".intval($this->x)." AND `y`=".intval($this->y));
+        // send message to victim
+        if ($o && $o->user) {
+            $topic = "Brandbaender auf ($this->x,$this->y)";
+            $msg = "Brandbaender hat Ihr Gebäude bei ($this->x,$this->y) in Flammen aufgehen lassen.<br>\n";
+            $owneruser = sqlgetobject("SELECT `id`,`name` FROM `user` WHERE `id` = ".intval($this->owner));
+            if ($owneruser){
+                $msg .= "Eure Magier konnten ".($owneruser->name)." als Verursacher identifizieren.<br>\n";
+            } else $owneruser->id = 0;
+
+            GuildLogMeShort($this->x,$this->y,$owneruser->id,$o->user,"Zauber",($this->spelltype->name)." wurde gezaubert");
+            sendMessage($o->user,0,$topic,$msg,kMsgTypeReport,FALSE);
+            LogMe($o->user,NEWLOG_TOPIC_MAGIC,NEWLOG_MAGIC_DAMAGE_TARGET,$this->x,$this->y,$this->target,$this->spelltype->name,$this->owner);
+        }
+
+        if($success > 0){
+            FireSetOn($this->x,$this->y);
+            echo "($this->x,$this->y) steht nun in Flammen.";
+        }
 	}
 	// high difficulty is bad (less than 11 does not create patzer
 	function GetDifficulty ($spelltype,$mages,$userid) {
