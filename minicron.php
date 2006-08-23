@@ -27,7 +27,7 @@ if($dtime < 0)$dtime = 0;
 
 echo "dtime = $dtime<br><br>";
 
-
+if (1) {
 // TODO : tables lock needed ? hunger/starvation-damage, shootings..
 
 //sql("DELETE FROM `unit` WHERE `amount` < 1.0"); 
@@ -35,6 +35,7 @@ sql("UPDATE `army` SET `idle`=`idle`+$dtime"); // call before including lib.army
 require_once("lib.armythink.php"); // warning ! generates big globals, called here, so idletime add is in $gAllArmys
 
 if (kProfileArmyLoop) LoopProfiler_flush();
+
 
 $c = 0;
 $r = sql("SELECT * FROM `army`");
@@ -86,7 +87,11 @@ if ($r !== true && $r !== false) { while ($army = mysql_fetch_object($r)) { echo
 mysql_free_result($r);
 }
 
+
+
 if (kProfileArmyLoop) LoopProfiler_flush(true); // report profiling
+
+} // perfomance tes} // perfomance testt
 ?>
 
 <?php

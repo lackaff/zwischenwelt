@@ -634,8 +634,10 @@ function UpdateSession ($sid)
 	
 	$ip = $_SERVER["REMOTE_ADDR"];
 	$fastsession = defined("kFastSession");
-	if (!$fastsession)
-		sql("DELETE FROM `session` WHERE `lastuse` < ".(time()-kSessionTimeout));
+	
+	//todo: uncommented due to multi hunting
+	//if (!$fastsession)
+	//	sql("DELETE FROM `session` WHERE `lastuse` < ".(time()-kSessionTimeout));
 
 	$gSessionObj = sqlgetobject("SELECT * FROM `session` WHERE `sid` = '".addslashes($sid)."' AND `lastuse` > ".(time()-kSessionTimeout));
 	if (!$gSessionObj)

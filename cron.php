@@ -61,6 +61,21 @@ echo "dtime = $dtime<br><br>";
 profile_page_start("cron.php - fire",true);
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+//recalc file count
+//TODO remove me cause i am a ugly quickfix
+$t_fires = sqlgettable("SELECT COUNT( * ) AS `count` , b.`user`
+FROM `fire` f, `building` b
+WHERE f.`x` = b.`x`
+AND f.`y` = b.`y`
+GROUP BY b.`user`");
+
+sql("UPDATE `user` SET `buildings_on_fire`=0");
+foreach($t_fires as $x){
+      	echo "player $x->user has $x->count fires<br>\n";
+	sql("UPDATE `user` SET `buildings_on_fire`=$x->count WHERE `id`=$x->user");
+}
+$t_fires = null;
+	    
 //fire spreading neighbours
 $n = array();
 $n[] = array("x"=>-1,	"y"=>0);

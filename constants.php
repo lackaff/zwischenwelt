@@ -739,10 +739,10 @@ $gMenuStyles = array(
 define("kFireSpreadProbability",100);	//value between 0 and 100, 0 meens no spread, higher values increase spreadrate
 define("kFireSpreadTimeout",10);	//seconds until next firespread check is done
 define("kFireDamageTimeout",10);	//fire damage timeout in seconds
-define("kFireDamage",50*(kFireDamageTimeout/60));	//damage caused to buildings per timeout
+define("kFireDamage",1*(kFireDamageTimeout/60));	//damage caused to buildings per timeout
 define("kFireLivetime",10*60);	//how long does a fire burn?
-define("kFireRegenLoeschRadius",5);	//the regen spell removes fire fields around its casting position
-define("kFireWaterLoeschRadius",5);	//the range a well/waterfield increase the putout probability
+define("kFireRegenLoeschRadius",8);	//the regen spell removes fire fields around its casting position
+define("kFireWaterLoeschRadius",8);	//the range a well/waterfield increase the putout probability
 define("kFireWaterBuildingTypeSelect",implode(",",array(kBuilding_Brunnen))); //list of building types counting as water fields	
 define("kFireWaterTerrainTypeSelect",implode(",",array(kTerrain_Sea,kTerrain_River,kTerrain_DeepSea))); //list of terrain types counting as water fields	
 

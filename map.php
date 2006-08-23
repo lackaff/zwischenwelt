@@ -35,7 +35,7 @@ function InitAjaxObject() {
 
 //requests the given url. callback gets called after a sucessfull finished call
 //callback(response_text);
-function MakeRequest(url,callback) {
+function MakeRequest(url,callback_ok,callback_error) {
 	var http_request = InitAjaxObject();
 	
 	if (!http_request)return false;
@@ -43,7 +43,9 @@ function MakeRequest(url,callback) {
 	http_request.onreadystatechange = function() {
 		if (http_request.readyState == 4) {
 			if (http_request.status == 200) {
-				callback(http_request.responseText);
+				callback_ok(http_request.responseText);
+			} else {
+				callback_error(http_request.responseText);
 			}
 		}
 	};
@@ -281,18 +283,26 @@ function GetEvent(event)
 function LoadSegment(map, x, y) {
 	var w = map.dimensions.segw;
 	var h = map.dimensions.segh;
-	var url = 'ajax_map.php?x='+x+'&y='+y+'&w='+w+'&h='+h;
+	var url_static = 'tmp/ajaxmap/seg_'+x+'_'+y+'.html';
+	var url_dynamic = 'ajax_map.php?x='+x+'&y='+y+'&w='+w+'&h='+h;
 	var segment = GetSegment(map,x,y);
 	
 	//segment.div.innerHTML = "<img src=\""+url+"\">";
 	//segment.loading = false;
 	//return;
 	
-	MakeRequest(url,function(response) {
+	MakeRequest(url_static,function(response) {
 		var segment = GetSegment(map,x,y);
 		segment.div.innerHTML = response;
 		segment.loading = false;
 		UpdateMap(map,0,0);
+	},function(response){
+		MakeRequest(url_dynamic,function(response) {
+			var segment = GetSegment(map,x,y);
+			segment.div.innerHTML = response;
+			segment.loading = false;
+			UpdateMap(map,0,0);
+		},function(response){});
 	});
 }
 

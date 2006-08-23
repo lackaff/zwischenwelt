@@ -1470,7 +1470,7 @@ function FireGetFieldPutOutProb($x,$y){
 		$prob += $t*15;
 		$prob += $b*2;
 		
-		return min($prob,100);
+		return max(50,min($prob,100));
 }
 
 //stets fire on a given field

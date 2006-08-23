@@ -322,7 +322,7 @@ function magictext($text,$userid=-1) {
 	// positions
 	$text = ereg_replace("\\(([-+0-9]+),([-+0-9]+)\\)","<a target='map' href='".Query("../".kMapScript."?sid=?")."&x=\\1&y=\\2'>(\\1,\\2)</a>",$text);
 	// kills
-	$h = "";
+	$h = "<table class=userkills><tr><th colspan=3>Highscore</th></tr>";
 	if($userid>-1){
 		foreach ($gUnitType as $o){
 			$uid = $o->id;
@@ -330,8 +330,9 @@ function magictext($text,$userid=-1) {
 			if(empty($kills))$kills = 0;
 			$kills = floor($kills);
 			$text = str_replace("(k$uid)",$kills,$text);
-			if($kills > 0)$h .= "(u$uid) $kills ".$o->name;
+			if($kills > 0)$h .= "<tr><td>(u$uid)</td><td>$kills</td><td>".$o->name."</td></tr>";
 		}
+		$h .= "</table>";
 		//kill highscore
 		$text = str_replace("(highscore)",$h,$text);
 	}
@@ -349,7 +350,7 @@ function speedformat($speed)
   if ($speed==0) $speed=1; // division by zero
   $fph=round(3600/$speed);
   echo '<span title="entspricht '.$fph.' Feldern pro Stunde">';
-  echo '<img src="gfx/sanduhrklein.gif">&nbsp;'.$fph.'</span>';
+  echo '<img src="'.g("sanduhrklein.gif").'">&nbsp;'.$fph.'</span>';
 } // speedformat()
 
 ?>

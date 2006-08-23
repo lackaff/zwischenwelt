@@ -356,6 +356,7 @@ class cMap {
 	}
 
 	function getBuildingAt($x,$y){
+		if(empty($this->building))return null;
 		foreach($this->building as $o)if($o->x == $x && $o->y == $y)return $o;
 		return null;
 	}
