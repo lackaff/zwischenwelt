@@ -46,7 +46,7 @@ if(!empty($gGuild)){ ?>
 	$u = sqlgetobject("SELECT * FROM `user` WHERE `id`=".$x->user);
     ?>
     <tr><td style="background-color:#cfcfcf"><?=$u->name?></td><td style="background-color:#cfcfcf" align="right"><?=date("d.m H:i",$x->time)?></td></tr>
-    <tr><td colspan=2><?=nl2br(htmlspecialchars($x->text))?></td></tr>
+    <tr><td colspan=2><?=magictext(nl2br(htmlspecialchars($x->text)))?></td></tr>
     <?php } ?>
 </table>
 
