@@ -636,8 +636,8 @@ function UpdateSession ($sid)
 	$fastsession = defined("kFastSession");
 	
 	//todo: uncommented due to multi hunting
-	//if (!$fastsession)
-	//	sql("DELETE FROM `session` WHERE `lastuse` < ".(time()-kSessionTimeout));
+	if (!$fastsession)
+		sql("DELETE FROM `session` WHERE `lastuse` < ".(time()-kSessionTimeout));
 
 	$gSessionObj = sqlgetobject("SELECT * FROM `session` WHERE `sid` = '".addslashes($sid)."' AND `lastuse` > ".(time()-kSessionTimeout));
 	if (!$gSessionObj)
