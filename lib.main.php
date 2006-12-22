@@ -1461,7 +1461,7 @@ function FirePutOut($x,$y,$radius=0){
 				//decrease user count of burning buildings
 				sql("UPDATE `user` SET `buildings_on_fire`=`buildings_on_fire`-1 WHERE `id`=".intval($id)." LIMIT 1");
 		}
-		sql("DELETE FROM `fire` WHERE `id` = ".$o->id);
+		sql("DELETE FROM `fire` WHERE `x` =".$x." AND `y` = ".$y." LIMIT 1");
 	}
 }
 
