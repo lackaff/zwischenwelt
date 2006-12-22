@@ -60,7 +60,7 @@ echo "dtime = $dtime<br><br>";
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 profile_page_start("cron.php - fire",true);
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
+if (true) {
 
 	    
 //fire spreading neighbours
@@ -137,7 +137,7 @@ foreach($f as $x){
 				}
 		}
 }
-
+}
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 profile_page_start("cron.php - bier",true);
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -220,6 +220,7 @@ unset($cons);
 profile_page_start("cron.php - think buildings",true);
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+if (true) {
 $time = time();
 if (!isset($gGlobal["nextbuildingthink"]) || $time >= $gGlobal["nextbuildingthink"]) {
 	SetGlobal("nextbuildingthink",$time + 60*6); // next think in 5 minutes
@@ -231,6 +232,7 @@ if (!isset($gGlobal["nextbuildingthink"]) || $time >= $gGlobal["nextbuildingthin
 			cBuilding::Think($o);
 		}
 	}
+}
 }
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -664,6 +666,7 @@ profile_page_start("cron.php - army_move",true);
 
 $old_time = $time;
 $old_dtime = $dtime;
+$gMiniCronFromCron = true;
 include("minicron.php");
 $time = $old_time;
 $dtime = $old_dtime;
@@ -716,13 +719,13 @@ unset($fights);
 
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-profile_page_start("cron.php - actions",true);
+profile_page_start("cron.php - actions part1",true);
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 
 
 $i_bsteps = kZWTestMode ? kZWTestMode_BuildingActionSteps : 1;
-for ($kbstep=0;$kbstep<$i_bsteps;$kbstep++) {
+//for ($kbstep=0;$kbstep<$i_bsteps;$kbstep++) {
 
 	// process running actions
 	$running_actions = sqlgettable("SELECT * FROM `action` WHERE `starttime` > 0 GROUP BY `building`");
@@ -757,7 +760,9 @@ for ($kbstep=0;$kbstep<$i_bsteps;$kbstep++) {
 		}
 	}
 	unset($running_actions);
-	
+
+profile_page_start("cron.php - actions part2",true);
+
 	// start action where building has nothing to do
 	$waiting_actions = sqlgettable("SELECT *,MAX(`starttime`) as `maxstarttime` FROM `action` GROUP BY `building`");
 	foreach ($waiting_actions as $action) if ($action->maxstarttime == 0) {
@@ -791,7 +796,7 @@ for ($kbstep=0;$kbstep<$i_bsteps;$kbstep++) {
 		//echo "action ".$action->id." in building ".$action->building." started<br>";
 	}
 	unset($waiting_actions);
-}
+//}
 
 
 
