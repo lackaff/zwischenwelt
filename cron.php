@@ -131,11 +131,11 @@ foreach($f as $x){
 						if($spread){
 								echo "***** fire at ($x->x,$x->y) spreads to ($px,$py)<br>\n";
 								FireSetOn($px,$py);
+								//set time for next spread test
+								sql("UPDATE `fire` SET `nextspread`=".(time()+kFireSpreadTimeout)." WHERE `x`=$x->x AND y=$x->y");
 						}
 				}
 		}
-		//set time for next spread test
-		//sql("UPDATE `fire` SET `nextspread`=".(time()+kFireSpreadCheckTimeout)." WHERE `x`=$x->x AND y=$x->y");
 }
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

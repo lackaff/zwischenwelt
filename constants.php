@@ -737,8 +737,8 @@ $gMenuStyles = array(
 );
 
 define("kFireSpreadProbability",100);	//value between 0 and 100, 0 meens no spread, higher values increase spreadrate
-define("kFireSpreadTimeout",10);	//seconds until next firespread check is done
-define("kFireDamageTimeout",10);	//fire damage timeout in seconds
+define("kFireSpreadTimeout",5*60);	//seconds until next firespread check is done
+define("kFireDamageTimeout",5*60);	//fire damage timeout in seconds
 define("kFireDamage",1*(kFireDamageTimeout/60));	//damage caused to buildings per timeout
 define("kFireLivetime",10*60);	//how long does a fire burn?
 define("kFireRegenLoeschRadius",8);	//the regen spell removes fire fields around its casting position
