@@ -1451,17 +1451,18 @@ function message2paper($message)
 
 //puts out all firefields with radius(x>=xpos-r && x<=xpos-r and ...) around the given position
 function FirePutOut($x,$y,$radius=0){
-		$x = (int)$x;$y = (int)$y;$radius = (int)$radius;
-		$t = sqlgettable("SELECT * FROM `fire` WHERE `x`>=$x-$radius AND `x`<=$x+$radius AND `y`>=$y-$radius AND `y`<=$y+$radius");
-		foreach($t as $o){
-				//is there a building?
-				$id = sqlgetone("SELECT `user` FROM `building` WHERE `x`=$o->x AND `y`=$o->y LIMIT 1");
-				if($id>0){
-						//decrease user count of burning buildings
-						sql("UPDATE `user` SET `buildings_on_fire`=`buildings_on_fire`-1 WHERE `id`=".intval($id)." LIMIT 1");
-				}
+	$x = (int)$x;$y = (int)$y;$radius = (int)$radius;
+	$t = sqlgettable("SELECT * FROM `fire` WHERE `x`>=".($x-$radius)." AND `x`<=".($x+$radius).
+										   " AND `y`>=".($y-$radius)." AND `y`<=".($y+$radius));
+	foreach($t as $o){
+		//is there a building?
+		$id = sqlgetone("SELECT `user` FROM `building` WHERE `x`=$o->x AND `y`=$o->y LIMIT 1");
+		if($id>0){
+				//decrease user count of burning buildings
+				sql("UPDATE `user` SET `buildings_on_fire`=`buildings_on_fire`-1 WHERE `id`=".intval($id)." LIMIT 1");
 		}
-		sql("DELETE FROM `fire` WHERE `x`>=$x-$radius AND `x`<=$x+$radius AND `y`>=$y-$radius AND `y`<=$y+$radius");
+		sql("DELETE FROM `fire` WHERE `id` = ".$o->id);
+	}
 }
 
 //calculates the probability that the fire puts out
@@ -1470,6 +1471,7 @@ function FireGetFieldPutOutProb($x,$y){
 		$x = (int)$x;$y = (int)$y;
 		$prob = 0;
 
+		//todo: at the moment terrainsegment* data will be ignored on terrain checks
 		//todo: at the moment terrainsegment* data will be ignored on terrain checks
 		$radius = kFireWaterLoeschRadius;
 		$t = sqlgetone("SELECT COUNT(*) FROM `terrain` WHERE `x`>=$x-$radius AND `x`<=$x+$radius AND `y`>=$y-$radius AND `y`<=$y+$radius AND `type` in (".kFireWaterTerrainTypeSelect.")"); 
@@ -1485,9 +1487,9 @@ function FireGetFieldPutOutProb($x,$y){
 function FireSetOn($x,$y){
 		$x = (int)$x;$y = (int)$y;
 		//echo "[FireSetOn($x,$y)]";
-		$o = sqlgetone("SELECT COUNT(*) FROM `fire` WHERE `x`=$x AND `y`=$y LIMIT 1");
+		$o = sqlgetone("SELECT 1 FROM `fire` WHERE `x`=$x AND `y`=$y LIMIT 1");
 		//echo "[o=$o]";
-		if($o == 0){
+		if(intval($o) == 0){
 				//echo "[FireSetOn burn!!!]";
 				//create fire
 				$o = null;
@@ -1521,9 +1523,9 @@ function FirePutOutBurnedDown($x,$y){
 		global $gTerrainType;
 		FirePutOut($x->x,$x->y);
 		//is there a building?
-		$b = sqlgetone("SELECT COUNT(*) FROM `building` WHERE `x`=$x AND `y`=$y LIMIT 1");
+		$b = sqlgetone("SELECT 1 FROM `building` WHERE `x`=$x AND `y`=$y LIMIT 1");
 		//should the terrain transform into a burned down terrain? (only if there is not building)
-		if($b == 0){
+		if (intval($b) == 0) {
 				$t = cMap::StaticGetTerrainAtPos($x->x,$x->y);
 				$t = $gTerrainType[$t]->fire_burnout_type;
 				if($t > 0)setTerrain($x->x,$x->y,$t);

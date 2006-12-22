@@ -61,20 +61,7 @@ echo "dtime = $dtime<br><br>";
 profile_page_start("cron.php - fire",true);
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-//recalc file count
-//TODO remove me cause i am a ugly quickfix
-$t_fires = sqlgettable("SELECT COUNT( * ) AS `count` , b.`user`
-FROM `fire` f, `building` b
-WHERE f.`x` = b.`x`
-AND f.`y` = b.`y`
-GROUP BY b.`user`");
 
-sql("UPDATE `user` SET `buildings_on_fire`=0");
-foreach($t_fires as $x){
-      	echo "player $x->user has $x->count fires<br>\n";
-	sql("UPDATE `user` SET `buildings_on_fire`=$x->count WHERE `id`=$x->user");
-}
-$t_fires = null;
 	    
 //fire spreading neighbours
 $n = array();
@@ -91,11 +78,11 @@ echo "deleted ".mysql_affected_rows()." fires<br>\n";
 //reads out the fire fields that cause damage and do it, hahahaha
 $f = sqlgettable("SELECT * FROM `fire` WHERE `nextdamage`<".time());
 foreach($f as $x){
+		sql("UPDATE `fire` SET `nextdamage`=".(time()+kFireDamageTimeout)." WHERE `x`=$x->x AND `y`=$x->y");
 		echo "fire at ($x->x,$x->y) cause damage<br>\n";
 		sql("UPDATE `building` SET `hp`=`hp`-".kFireDamage." WHERE `x`=$x->x AND `y`=$x->y");
 		if(mysql_affected_rows() > 0){
 				echo "building gets ".kFireDamage." damage<br>\n";
-				sql("UPDATE `fire` SET `nextdamage`=".(time()+kFireDamageTimeout)." WHERE `x`=$x->x AND `y`=$x->y");
 				$b = sqlgetobject("SELECT * FROM `building` WHERE `x`=$x->x AND `y`=$x->y");
 				if($b->hp <= 0){
 						//destroy burned down buildings
@@ -1049,6 +1036,26 @@ if($dt <= 0)
 	sql("UPDATE `global` SET `value`=".(time()+kStats_dtime)." WHERE `name`='stats_nexttime' LIMIT 1");
 	echo "done\n\n";
 	profile_page_end();
+	
+	
+	//TODO remove me cause i am a ugly quickfix
+	if (1) {
+		profile_page_start("cron.php - firecount workaround",true);
+		//recalc fire count
+		$t_fires = sqlgettable("SELECT COUNT( * ) AS `count` , b.`user`
+		FROM `fire` f, `building` b
+		WHERE f.`x` = b.`x`
+		AND f.`y` = b.`y`
+		GROUP BY b.`user`");
+
+		sql("UPDATE `user` SET `buildings_on_fire`=0");
+		foreach($t_fires as $x){
+				echo "player $x->user has $x->count fires<br>\n";
+			sql("UPDATE `user` SET `buildings_on_fire`=$x->count WHERE `id`=$x->user");
+		}
+		unset($t_fires);
+		profile_page_end();
+	}
 }
 else echo $dt."sec left to net stats collection.\n\n";
 ?>
