@@ -1499,7 +1499,7 @@ function FireSetOn($x,$y){
 				$o->x = $x;
 				$o->y = $y;
 				$o->putoutprob = FireGetFieldPutOutProb($x,$y);
-				sql("INSERT INTO `fire` SET ".obj2sql($o));
+				sql("REPLACE INTO `fire` SET ".obj2sql($o));
 				//is there a building?
 				$user = sqlgetone("SELECT `user` FROM `building` WHERE `x`=$x AND `y`=$y LIMIT 1");
 				if($user>0){
