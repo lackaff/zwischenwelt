@@ -1521,14 +1521,18 @@ function FireSetOn($x,$y){
 //handle all stuff that need to be done after a field completly burned down
 function FirePutOutBurnedDown($x,$y){
 		global $gTerrainType;
-		FirePutOut($x->x,$x->y);
+		$x = (int)$x;
+		$y = (int)$y;
+
+		FirePutOut($x,$y);
 		//is there a building?
 		$b = sqlgetone("SELECT 1 FROM `building` WHERE `x`=$x AND `y`=$y LIMIT 1");
 		//should the terrain transform into a burned down terrain? (only if there is not building)
 		if (intval($b) == 0) {
-				$t = cMap::StaticGetTerrainAtPos($x->x,$x->y);
+				$t = cMap::StaticGetTerrainAtPos($x,$y);
 				$t = $gTerrainType[$t]->fire_burnout_type;
-				if($t > 0)setTerrain($x->x,$x->y,$t);
+				//echo "[FirePutOutBurnedDown($x,$y) to $t]\n";
+				if($t > 0)setTerrain($x,$y,$t);
 		}
 }
 
