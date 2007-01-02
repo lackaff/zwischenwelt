@@ -1461,7 +1461,7 @@ function FirePutOut($x,$y,$radius=0){
 				//decrease user count of burning buildings
 				sql("UPDATE `user` SET `buildings_on_fire`=`buildings_on_fire`-1 WHERE `id`=".intval($id)." LIMIT 1");
 		}
-		sql("DELETE FROM `fire` WHERE `x` =".$x." AND `y` = ".$y." LIMIT 1");
+		sql("DELETE FROM `fire` WHERE `x` =".$o->x." AND `y` = ".$o->y." LIMIT 1");
 	}
 }
 
@@ -1480,7 +1480,7 @@ function FireGetFieldPutOutProb($x,$y){
 		$prob += $t*15;
 		$prob += $b*2;
 		
-		return max(50,min($prob,100));
+		return max(25,min($prob,100));
 }
 
 //stets fire on a given field
