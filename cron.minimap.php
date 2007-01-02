@@ -32,7 +32,7 @@ SetGlobal("minimap_right",$right);
 SetGlobal("minimap_top",$top);
 SetGlobal("minimap_bottom",$bottom);
 
-$modes = array("user","creep","guild");
+$modes = array("user","creep","guild","fire");
 // $modes = array(0=>"user"); // TODO : REMOVE ME, only while optimizing/debugging
 foreach($modes as $mode){
 	$global = GetMiniMapGlobal($mode);

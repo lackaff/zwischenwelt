@@ -13,6 +13,7 @@ function GetFOFminimap	($masteruser,$otheruser) {
 function GetMiniMapFile ($mode,$time) {
 	switch($mode) {
 		case "guild":	return "tmp/pngmap-guild_$time.png";
+		case "fire":	return "tmp/pngmap-fire_$time.png";
 		case "creep":	return "tmp/pngmapcreep_$time.png";
 		case "wp":		return "tmp/pngmap_$time.png";
 		case "wpout":	return "tmp/wpout_$time.png";
@@ -22,6 +23,7 @@ function GetMiniMapFile ($mode,$time) {
 }
 function GetMiniMapGlobal($mode) {
 	switch($mode) {
+		case "fire":	return "lastpngmap-fire";
 		case "guild":	return "lastpngmap-guild";
 		case "creep":	return "lastpngmapcreep";
 		case "wp":		return "lastpngmap";
@@ -210,9 +212,36 @@ function renderMinimap($top,$left,$bottom,$right,$filename,$mode="normal",$segme
 		mysql_free_result($r);
 	}
 	
+	if($mode == "fire"){
+		// grayscale the image
+		for($x=$left;$x<$right;++$x)
+		for($y=$top;$y<$bottom;++$y){
+			$rgb = imagecolorat($im, $x - $left, $y - $top);
+			$red  = ($rgb >> 16) & 0xFF;
+			$green = ($rgb >> 8)  & 0xFF;
+			$blue  = $rgb & 0xFF;
+			$gray = round(.299*$red + .587*$green + .114*$blue);
+			//echo "[r=$red g=$green b=$blue gray=$gray]\n";
+			$color = imagecolorallocate($im, $gray, $gray, $gray);
+			imagesetpixel($im,$x - $left,$y - $top,$color);
+		}
+		
+		// calc max fire age
+		$fire_created = sqlgetone("SELECT MIN(`created`) FROM `fire`");
+		$t = time();
+		$fire_max_age = $t - $fire_created;
+		
+		$r = sql("SELECT * FROM `fire` ".$condxy);
+		while ($x = mysql_fetch_object($r)) {
+			$fire_age = $t - $x->created;
+			$c = round(255 * $fire_age / $fire_max_age);
+			$color = imagecolorallocate($im, 255, $c, 255);
+			imagesetpixel($im,$x->x-$left,$x->y-$top,$color);
+		}
+                mysql_free_result($r);
+	}
 	
-	
-	if ($mode != "terraformexport") {
+	if ($mode != "terraformexport" && $mode != "fire") {
 		// armeen
 		$r = sql("SELECT `x`,`y` FROM `army` ".$condxy);
 		//echo "draw armies<br>\n";
@@ -227,7 +256,7 @@ function renderMinimap($top,$left,$bottom,$right,$filename,$mode="normal",$segme
 	}
 	
 	
-	if ($mode != "terraformexport") {
+	if ($mode != "terraformexport" && $mode != "fire") {
 		// portale
 		//echo "draw portals<br>\n";
 		//$portallist = sqlgettable("SELECT `x`,`y` FROM `building` WHERE `type` = ".kBuilding_Portal." AND $left<=`x` AND `x`<=($right) AND $top<=`y` AND `y`<=($bottom)");
