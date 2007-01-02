@@ -239,8 +239,10 @@ class cInfoHQ extends cInfoBuilding {
 		<?php
 		if($gUser->buildings_on_fire > 0){
 				//infobox if the user has burning buildings
+				$o = sqlgetobject("SELECT f.x,f.y FROM `fire` f,`building` b WHERE b.user=".($gUser->id)." AND f.x=b.x AND f.y=b.y LIMIT 1");
 				?>
-				<div class="info_warning"><?=$gUser->buildings_on_fire?> Geb&auml;ude stehen in Flammen.</div>
+				<div class="info_warning"><?=$gUser->buildings_on_fire?> Geb&auml;ude stehen in Flammen 
+				<a href="<?=Query("?sid=?&x=".$o->x."&y=".$o->y)?>" target=info>(<?=$o->x?>,<?=$o->y?>)</a>.</div>
 				<?php
 		}
 		?>
