@@ -1,4 +1,6 @@
 <?php
+//exit(0);
+if (true) {
 if (!isset($gMiniCronFromCron) || !$gMiniCronFromCron) exit(0);
 
 require_once("cronlib.php");
@@ -99,4 +101,6 @@ if (kProfileArmyLoop) LoopProfiler_flush(true); // report profiling
 	if(!isset($lock) && $mlock)
 		if(file_exists("/tmp/zw-cron.lock"))
 			shell_exec("rm -f /tmp/zw-cron.lock");
+
+}
 ?>
