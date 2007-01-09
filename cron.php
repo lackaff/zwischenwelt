@@ -761,6 +761,7 @@ $i_bsteps = kZWTestMode ? kZWTestMode_BuildingActionSteps : 1;
 	unset($running_actions);
 
 profile_page_start("cron.php - actions part2",true);
+$gAvailableUnitTypesByUser = array();
 
 	// start action where building has nothing to do
 	$waiting_actions = sqlgettable("SELECT *,MAX(`starttime`) as `maxstarttime` FROM `action` GROUP BY `building`");
@@ -768,8 +769,24 @@ profile_page_start("cron.php - actions part2",true);
 		$unittype = $gUnitType[$action->param1];
 		$actionuserid = intval(sqlgetone("SELECT `user` FROM `building` WHERE `id` = ".intval($action->building)));
 		
+		$availableUnitTypes = false;
+		if (isset($gAvailableUnitTypesByUser[$actionuserid])) {
+			$availableUnitTypes = $gAvailableUnitTypesByUser[$actionuserid];
+		} else {
+			$availableUnitTypes = array();
+			$gAvailableUnitTypesByUser[$actionuserid] = $availableUnitTypes;
+		}
+		
+		$available = false;
+		if (isset($availableUnitTypes[$unittype->id])) {
+			$available = $availableUnitTypes[$unittype->id];
+		} else {
+			$available = HasReq($unittype->req_geb,$unittype->req_tech_a.",".$unittype->req_tech_v,$actionuserid);
+			$gAvailableUnitTypesByUser[$actionuserid][$unittype->id] = $available;
+		}
+		
 		// only build if the technological requirements are met
-		if (!HasReq($unittype->req_geb,$unittype->req_tech_a.",".$unittype->req_tech_v,$actionuserid)) {
+		if (!$available) {
 			sql("DELETE FROM `action` WHERE `id` = ".$action->id);
 			continue;
 		}
