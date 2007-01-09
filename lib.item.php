@@ -155,7 +155,7 @@ class cItem {
 		
 		$item->amount -= $takeamount;
 		if ($item->amount >= 1.0)
-				sql("UPDATE `item` SET `amount` = `amount` - ".$takeamount." WHERE `amount` >= $takeamount AND `id` = ".$item->id);
+				sql("UPDATE `item` SET `amount` = `amount` - ".$takeamount." WHERE `amount` >= $takeamount AND `id` = ".$item->id); // TODO : check for rounding error !
 		else	sql("DELETE FROM `item` WHERE `id` = ".$item->id);
 		
 		if (mysql_affected_rows() <= 0) echo "nicht mehr genug vom item da<br>";
@@ -223,9 +223,10 @@ class cItem {
 		if (!is_object($army)) $army = sqlgetobject("SELECT * FROM `army` WHERE `id`=".intval($army));
 		$items = sqlgettable("SELECT * FROM `item` WHERE `x`=".$army->x." AND `y`=".$army->y." AND `army` = 0 AND `building` = 0");
 		foreach ($items as $item) {
-			cItem::pickupItem($item,$army);
-			$army = sqlgetobject("SELECT * FROM `army` WHERE `id`=".$army->id);
+			if (cItem::pickupItem($item,$army))
+				$army = sqlgetobject("SELECT * FROM `army` WHERE `id`=".$army->id);
 		}
+		return $army;
 	}
 	
 	function getArmyItemsWeight ($armyid) {

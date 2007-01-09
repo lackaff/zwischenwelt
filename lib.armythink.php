@@ -256,7 +256,7 @@ function ArmyThink ($army,$debug=false) {
 	// AutoDeposit
 	if (($army->flags & kArmyFlag_AutoDeposit) && !($army->flags & kArmyFlag_BuildingWait)) {
 		if (kProfileArmyLoop) LoopProfiler("armyloop:AutoDeposit");
-		if (count($nearbuildings) > 0 && ($army->flags & kArmyFlag_AlwaysCollectItems)) cItem::pickupall($army);
+		if (count($nearbuildings) > 0 && ($army->flags & kArmyFlag_AlwaysCollectItems)) $army = cItem::pickupall($army);
 		foreach ($nearbuildings as $building) {
 			if ($building->construction > 0 || $building->type != kBuilding_Silo) continue;
 			if ($army->user != $building->user && GetFOF($army->user,$building->user) != kFOF_Friend) continue;
