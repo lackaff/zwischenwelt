@@ -73,7 +73,6 @@ $n[] = array("y"=>+1,	"x"=>0);
 //delete old fires, those fields count as totaly burned down
 $t = sqlgettable("SELECT * FROM `fire` WHERE `created`<".time()."-".kFireLivetime);
 foreach($t as $x)FirePutOutBurnedDown($x->x,$x->y);
-echo "deleted ".mysql_affected_rows()." fires<br>\n";
 
 //reads out the fire fields that cause damage and do it, hahahaha
 $f = sqlgettable("SELECT * FROM `fire` WHERE `nextdamage`<".time());
@@ -88,7 +87,7 @@ foreach($f as $x){
 						//destroy burned down buildings
 						cBuilding::removeBuilding($b,$b->user);
 						echo "building destroyed<br>\n";
-						FirePutOut($x->x,$x->y);
+						FirePutOutObj($x);
 				}
 		}
 }
@@ -100,7 +99,7 @@ foreach($f as $x){
 		$r = rand(0,100);
 		if($r < $x->putoutprob){
 				echo "***** oki this fire was put out<br>\n";
-				FirePutOut($x->x,$x->y);
+				FirePutOutObj($x);
 				continue;
 		}
 		
@@ -223,7 +222,7 @@ profile_page_start("cron.php - think buildings",true);
 if (true) {
 $time = time();
 if (!isset($gGlobal["nextbuildingthink"]) || $time >= $gGlobal["nextbuildingthink"]) {
-	SetGlobal("nextbuildingthink",$time + 60*6); // next think in 5 minutes
+	SetGlobal("nextbuildingthink",$time + 60*11); // next think in 5 minutes
 	echo "step<br>";
 	$typelist = array_merge($gFlaggedBuildingTypes[kBuildingTypeFlag_CanShootArmy],$gFlaggedBuildingTypes[kBuildingTypeFlag_CanShootBuilding]);
 	if (count($typelist) > 0) {

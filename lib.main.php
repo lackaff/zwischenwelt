@@ -1450,18 +1450,25 @@ function message2paper($message)
 } // message2paper()
 
 //puts out all firefields with radius(x>=xpos-r && x<=xpos-r and ...) around the given position
+function FirePutOutObj ($o) {
+	//is there a building?
+	$id = sqlgetone("SELECT `user` FROM `building` WHERE `x`=$o->x AND `y`=$o->y LIMIT 1");
+	if($id>0){
+			//decrease user count of burning buildings
+			sql("UPDATE `user` SET `buildings_on_fire`=`buildings_on_fire`-1 WHERE `id`=".intval($id)." LIMIT 1");
+	}
+	sql("DELETE FROM `fire` WHERE `x` =".$o->x." AND `y` = ".$o->y." LIMIT 1");
+}
+
 function FirePutOut($x,$y,$radius=0){
 	$x = (int)$x;$y = (int)$y;$radius = (int)$radius;
-	$t = sqlgettable("SELECT * FROM `fire` WHERE `x`>=".($x-$radius)." AND `x`<=".($x+$radius).
-										   " AND `y`>=".($y-$radius)." AND `y`<=".($y+$radius));
-	foreach($t as $o){
-		//is there a building?
-		$id = sqlgetone("SELECT `user` FROM `building` WHERE `x`=$o->x AND `y`=$o->y LIMIT 1");
-		if($id>0){
-				//decrease user count of burning buildings
-				sql("UPDATE `user` SET `buildings_on_fire`=`buildings_on_fire`-1 WHERE `id`=".intval($id)." LIMIT 1");
-		}
-		sql("DELETE FROM `fire` WHERE `x` =".$o->x." AND `y` = ".$o->y." LIMIT 1");
+	if ($radius == 0) {
+		$o = sqlgetobject("SELECT * FROM `fire` WHERE `x` = ".$x." AND `y` = ".$y);
+		FirePutOutObj($o);
+	} else {
+		$t = sqlgettable("SELECT * FROM `fire` WHERE `x`>=".($x-$radius)." AND `x`<=".($x+$radius).
+											   " AND `y`>=".($y-$radius)." AND `y`<=".($y+$radius));
+		foreach($t as $o) FirePutOutObj($o);
 	}
 }
 

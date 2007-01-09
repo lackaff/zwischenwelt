@@ -1,4 +1,5 @@
 <?php
+if (!isset($gMiniCronFromCron) || !$gMiniCronFromCron) exit(0);
 
 require_once("cronlib.php");
 require_once("lib.quest.php");
