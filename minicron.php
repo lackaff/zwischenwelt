@@ -42,7 +42,7 @@ if (kProfileArmyLoop) LoopProfiler_flush();
 
 $c = 0;
 $r = sql("SELECT * FROM `army`");
-if ($r !== true && $r !== false) { while ($army = mysql_fetch_object($r)) { echo "army ".(++$c)."<br>";
+if ($r !== true && $r !== false) { while ($army = mysql_fetch_object($r)) { //echo "army ".(++$c)."<br>";
 	//if ($c++ > 100) break;
 	if (kProfileArmyLoop) LoopProfiler("armyloop:init");
 	if (!isset($gAllArmyUnits[$army->id])) warning("Army $army->id ($army->x,$army->y) has no units ??<br>");
