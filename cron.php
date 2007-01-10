@@ -37,9 +37,6 @@ require_once("lib.score.php");
 require_once("lib.hook.php");
 
 
-//TODO: remove this ugly hack, not more than 255 upgrades should be plannable
-sql("UPDATE building SET upgrades=255 WHERE upgrades>255");
-
 // wichtige GLOBALS INITIALISIEREN!!! nix loeschen es sei denn ihr seid euch _WIRKLICH_ sicher
 $gTechnologyLevelsOfAllUsers = sqlgetgrouptable("SELECT `user`,`type`,`level` FROM `technology`","user","type","level");
 $gVerbose = false; // if false, echo only segments
