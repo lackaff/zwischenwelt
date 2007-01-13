@@ -1000,7 +1000,7 @@ if (!isset($f_blind)) {
    "http://www.w3.org/TR/html4/transitional.dtd">
 <html>
 <head>
-<script src="<?=BASEURL?>startgauges.js">
+<script src="<?=BASEURL?>startgauges.js" type="text/javascript"></script>
 <link rel="stylesheet" type="text/css" href="<?=BASEURL?>startgauges.css">
 <link rel="stylesheet" type="text/css" href="<?=GetZWStylePath()?>">
 <title>Zwischenwelt - info</title>
