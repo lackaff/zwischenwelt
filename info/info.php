@@ -1094,9 +1094,10 @@ $h = 12; $m = 0; $month = 1;$day = 1;$year = 2007;
 $timesincelasttick = time() - $gGlobal["lasttick"];
 $timesincelastbackup = (time() - mktime($h,$m,0,$month,$day,$year)) % $backupintervall;
 $lastcronduration = intval($gGlobal["lastcronduration"]);
+$normalcronduration = max(60,$lastcronduration);
 ?>
 <!-- lastcronduration=<?=$lastcronduration?> -->
-<div class="gaugelabel">cron:</div><div class="gauge" id="gauge_cron_cron"   title="60x6:<?=max(0,min(60,$timesincelasttick))?>of60need<?=max(0,min(60,$lastcronduration))?>:1"></div>
+<div class="gaugelabel">cron:</div><div class="gauge" id="gauge_cron_cron"   title="60x6:<?=max(0,min($normalcronduration,$timesincelasttick))?>of<?=$normalcronduration?>need<?=max(0,$lastcronduration)?>:1"></div>
 <div class="gaugelabel">backup:</div><div class="gauge" id="gauge_cron_backup"   title="60x6:<?=max(0,min($backupintervall,$timesincelastbackup))?>of<?=$backupintervall?>need0:1"></div>
 
 </body>
