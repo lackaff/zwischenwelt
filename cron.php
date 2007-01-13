@@ -1083,6 +1083,6 @@ else echo $dt."sec left to net stats collection.\n\n";
 	if($lock)
 		shell_exec("rm -f /tmp/zw-cron.lock");
 
-SetGlobal("lastcronduration",time() - $lasttick);
+SetGlobal("lastcronduration",time() - $time);
 echo "<br>\n... cron finished";
 ?>
