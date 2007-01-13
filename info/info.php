@@ -1087,8 +1087,11 @@ if ($gUser->admin) echo "took ".sprintf("%0.3f",$diff)." seconds";
 ?>
 
 <div class="gaugelabel">cron:</div><div class="gauge" id="gauge_cron_cron"   title="60x6:<?=max(0,min(60,time() - $gGlobal["lasttick"]))?>of60:1"></div>
+
+<?php if (0) {?>
 <?php $backupintervall = 3600 * 6; ?>
 <div class="gaugelabel">backup:</div><div class="gauge" id="gauge_cron_backup"   title="60x6:<?=max(0,min($backupintervall,time() % $backupintervall))?>of<?=$backupintervall?>:1"></div>
+<?php }?>
 
 </body>
 </html>
