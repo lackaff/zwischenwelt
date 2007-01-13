@@ -1086,7 +1086,6 @@ $diff = microtime_float()-$infostarttime;
 if ($gUser->admin) echo "took ".sprintf("%0.3f",$diff)." seconds";
 ?>
 
-test : <?=$gGlobal["lasttick"]?>,<?=time()?>,<?=time() - $gGlobal["lasttick"]?><br>
 <div class="gaugelabel">cron:</div><div class="gauge" id="gauge_cron_basic"   title="60x6:<?=max(0,min(60,time() - $gGlobal["lasttick"]))?>of60:1"></div>
 
 </body>
