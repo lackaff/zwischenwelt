@@ -1015,7 +1015,7 @@ if (!isset($f_blind)) {
 		var Auszeit = new Date(jetzt.getTime() + verfall);
 		document.cookie = "activeinfotabuid" + "=" + <?=$gUser->id?> + "; expires=" + Auszeit.toGMTString() + ";";
 		<?php foreach ($gJSCommands as $cmd) echo $cmd."\n";?>
-		startGauges()
+		startGauges();
 	}
 	function WPMap (army) {
 		var x = parent.map.getx();
