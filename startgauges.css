@@ -19,20 +19,34 @@ div.gaugeon
 {
 	float: left;
 	display: block;
-	background-color: #e0e0e0;
+	background-color: #fafafa;
 	border: 1px solid #666666;
 	margin: 1px;
 	margin-right: 6px;
-	padding: 1px;
+	overflow: hidden;
+	position:relative;
+	line-height: 1px;
 }
 div.gaugeon span.gaugeondone
 {
+	position: absolute;
+	top: 1px;
+	left: 1px;
 	display: block;
 	float: left;
-	background-color: #6666ff;
-	border: 1px solid #0000ff;
-	border-top: 1px solid #b0b0ff;
+	background-color: #669066;
+	border: 1px solid #669066;
+	border-top: 1px solid #b0d0b0;
 	border-bottom: 1px solid #000000;
-	margin-bottom: 1px;
-	width: 0px;
+	line-height: 1px;
+}
+div.gaugeon span.gaugeondonehot
+{
+	background-color: #ff6666;
+	border: 1px solid #ff0000;
+	border-top: 1px solid #ffb0b0;
+}
+div.gaugeonbusy
+{
+	background-color: #f9f0f0;
 }
