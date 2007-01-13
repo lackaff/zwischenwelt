@@ -28,9 +28,10 @@ function startGauges()
 			div_done.id=div.id+'_done';
 			div.appendChild(div_done);
 
+			var sleep = 1;
 			if (navigator.userAgent.indexOf('MSIE')>=0)
 			{
-				var sleep=max/w*pix;
+				//var sleep=max/w*pix;
 				runGauge(div_done.id,pos,max,sleep,w+2,hot);
 				div_done.style.width='0px';
 				div.style.height=(h+0).toString()+'px';
@@ -42,7 +43,7 @@ function startGauges()
 			}
 			else
 			{
-				var sleep=max/(w-5)*pix;
+				//var sleep=max/(w-5)*pix;
 				runGauge(div_done.id,pos,max,sleep,w-5,hot);
 				div_done.style.width='0px';
 				div.style.height=(h-2).toString()+'px';
@@ -61,7 +62,7 @@ function runGauge(div_done_id,pos,max,step,width,hot)
 	pos+=step;
 	while (pos<0) pos+=max;
 	while (pos>=max) pos-=max;
-	var x=Math.floor(width/max*pos);
+	var x=Math.floor((0.0 + width)*((0.0 + pos)/(0.0 + max)));
 	var h=div_done.style.height;
 	if (pos<hot) 
 	{
