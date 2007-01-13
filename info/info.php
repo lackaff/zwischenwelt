@@ -1000,6 +1000,8 @@ if (!isset($f_blind)) {
    "http://www.w3.org/TR/html4/transitional.dtd">
 <html>
 <head>
+<script src="<?=BASEURL?>startgauges.js">
+<link rel="stylesheet" type="text/css" href="<?=BASEURL?>startgauges.css">
 <link rel="stylesheet" type="text/css" href="<?=GetZWStylePath()?>">
 <title>Zwischenwelt - info</title>
 <SCRIPT LANGUAGE="JavaScript" type="text/javascript">
@@ -1013,6 +1015,7 @@ if (!isset($f_blind)) {
 		var Auszeit = new Date(jetzt.getTime() + verfall);
 		document.cookie = "activeinfotabuid" + "=" + <?=$gUser->id?> + "; expires=" + Auszeit.toGMTString() + ";";
 		<?php foreach ($gJSCommands as $cmd) echo $cmd."\n";?>
+		startGauges()
 	}
 	function WPMap (army) {
 		var x = parent.map.getx();
@@ -1082,6 +1085,8 @@ echo GenerateTabs("infotabs",$gInfoTabs,$gInfoTabsCorner,"ActivateInfoTab",$gInf
 $diff = microtime_float()-$infostarttime;
 if ($gUser->admin) echo "took ".sprintf("%0.3f",$diff)." seconds";
 ?>
+
+<div class="gaugelabel">cron:</div><div class="gauge" id="gauge_cron_basic"   title="60x6:1of60:1"></div>
 
 </body>
 </html>

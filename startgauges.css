@@ -1,0 +1,38 @@
+div.gaugeblock
+{
+	clear: both;
+	height: 20px;
+}
+div.gaugelabel
+{
+	width: auto;
+	float: left;
+	text align: right;
+	font-family: arial;
+	font-size: 9px;
+}
+div.gauge
+{
+	display: none;
+}
+div.gaugeon
+{
+	float: left;
+	display: block;
+	background-color: #e0e0e0;
+	border: 1px solid #666666;
+	margin: 1px;
+	margin-right: 6px;
+	padding: 1px;
+}
+div.gaugeon span.gaugeondone
+{
+	display: block;
+	float: left;
+	background-color: #6666ff;
+	border: 1px solid #0000ff;
+	border-top: 1px solid #b0b0ff;
+	border-bottom: 1px solid #000000;
+	margin-bottom: 1px;
+	width: 0px;
+}
