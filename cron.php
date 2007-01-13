@@ -42,6 +42,7 @@ $gTechnologyLevelsOfAllUsers = sqlgetgrouptable("SELECT `user`,`type`,`level` FR
 $gVerbose = false; // if false, echo only segments
 
 $time = time();
+$gThiscronStartTime = $time;
 $lasttick = $gGlobal["lasttick"];
 $dtime = $time - $lasttick;
 if($dtime < 0)$dtime = 0;
@@ -1083,6 +1084,6 @@ else echo $dt."sec left to net stats collection.\n\n";
 	if($lock)
 		shell_exec("rm -f /tmp/zw-cron.lock");
 
-SetGlobal("lastcronduration",time() - $time);
+SetGlobal("lastcronduration",time() - $gThiscronStartTime);
 echo "<br>\n... cron finished";
 ?>
