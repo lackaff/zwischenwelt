@@ -5,6 +5,7 @@
 </head>
 <body>
 <?php
+//exit(0);
 //$gSQL_NOT_FATAL = true; 
 $lock = FALSE;
 if($lock){
@@ -69,7 +70,7 @@ if(true){
 	if(empty($seemonsteramount))$seemonsteramount = 0;
 	
 	$spawnpos = sqlgetobject("SELECT `x`,`y` FROM `terrain` WHERE `type` IN $watertypeids ORDER BY RAND() LIMIT 1");
-	echo "[players=$players seemonsteramount=$seemonsteramount x=$spawnpos->x y=$>y]<br>\n";
+	echo "[players=$players seemonsteramount=$seemonsteramount x=$spawnpos->x y=$->y]<br>\n";
 	// should i spawn monsters, master?
 	if($seemonsteramount < ($players * $seemonsterunits_per_player)){
 		echo "from the deep they shall come!<br>\n";
