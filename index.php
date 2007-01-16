@@ -27,10 +27,17 @@ Wegen eines Fehlers im alten Forum gibt es nun ein neues.
 Man muss sich wieder bei dem neuen neu anmelden.
 </span><hr>
 -->
-Das Browsergame Zwischenwelt ist eine Kreuzung aus Civilisation, Master of Magic und SimCity.
-Mitlerweile sind wir über das Alpha Stadium weit hinaus und man kann schon einiges machen:
-Forschen, Gebäude bauen, Armeen kommandieren, Zauber sprechen, Handel betreiben oder einfach nur Creepen.<br>
-Aber am besten einfach anmelden und testen.<br>
+Das Browsergame <b>Zwischenwelt</b> ist eine Kreuzung aus Civilisation, Master of Magic und SimCity.<br>
+Hier ein paar Features: 
+<ul>
+<li>Forschen</li>
+<li>Gebäude bauen</li>
+<li>Armeen kommandieren</li>
+<li>Zauber sprechen</li>
+<li>Handeln oder einfach nur Monster jagen</li>
+</ul>
+<br>
+Aber am besten einfach [<a href="anmelden.php">anmelden</a>] und testen.<br>
 <br>
 Screenshots gibts [<a href="http://zwischenwelt.org/screenshot/">hier</a>].<br>
 Falls Sie Graphiken oder &auml;hnliches beisteuern wollen, k&ouml;nnen Sie das [<a href="upload.php">hier</a>].<br>

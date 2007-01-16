@@ -1,6 +1,6 @@
 <html>
 <head>
-<!-- <meta http-equiv="refresh" content="60; URL=cron.php"> -->
+<meta http-equiv="refresh" content="60; URL=cron.php">
 <!-- ... andere Angaben im Dateikopf ... -->
 </head>
 <body>
@@ -46,14 +46,48 @@ $gThiscronStartTime = $time;
 $lasttick = $gGlobal["lasttick"];
 $dtime = $time - $lasttick;
 if($dtime < 0)$dtime = 0;
-sql("UPDATE `global` SET `value`=$time WHERE `name`='lasttick'");
+sql("UPDATE `global` SET `value`=$time WHERE `name`='lasttick' LIMIT 1");
 
 $gGlobal["ticks"]++;
 if($gGlobal["ticks"] > 30000)$gGlobal["ticks"] = 0; // todo : unhardcode
-sql("UPDATE `global` SET `value`=".intval($gGlobal["ticks"])." WHERE `name`='ticks'");
+sql("UPDATE `global` SET `value`=".intval($gGlobal["ticks"])." WHERE `name`='ticks' LIMIT 1");
 
 echo "dtime = $dtime<br><br>";
 
+
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+profile_page_start("cron.php - seemonster spawnen",true);
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+if(true){
+	$players = sqlgetone("SELECT COUNT(*) FROM `user` LIMIT 1");
+	// TODO unhardcode me
+	$seemonsterids = "(59,60,61,62,63)";
+	$watertypeids = "(2,6,18)";
+	$seemonsterunits_per_player = 1000;
+	
+	$seemonsteramount = sqlgetone("SELECT SUM(`amount`) FROM `unit` WHERE `type` IN $seemonsterids LIMIT 1");
+	if(empty($seemonsteramount))$seemonsteramount = 0;
+	
+	$spawnpos = sqlgetobject("SELECT `x`,`y` FROM `terrain` WHERE `type` IN $watertypeids ORDER BY RAND() LIMIT 1");
+	echo "[players=$players seemonsteramount=$seemonsteramount x=$spawnpos->x y=$>y]<br>\n";
+	// should i spawn monsters, master?
+	if($seemonsteramount < ($players * $seemonsterunits_per_player)){
+		echo "from the deep they shall come!<br>\n";
+		
+		// randomly select type
+		$spawntype = 59 + rand(0,4);
+		// and amount
+		$spawncount = rand($seemonsterunits_per_player / 2, $seemonsterunits_per_player);
+		
+		$flags = kArmyFlag_Wander | kArmyFlag_RunToEnemy | kArmyFlag_AutoAttack;
+		
+		$newmonster = cArmy::SpawnArmy($spawnpos->x,$spawnpos->y,cUnit::Simple($spawntype,$spawncount),
+			false,kArmyType_Normal,0,0,0,true,$flags);
+		if ($newmonster) echo "Spawned $spawncount ".$gUnitType[$spawntype]->name." at $newmonster->x,$newmonster->y <br>";
+		else echo "spawn of $spawncount ".$gUnitType[$spawntype]->name." failed<br>";
+
+	}
+}
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 profile_page_start("cron.php - fire",true);

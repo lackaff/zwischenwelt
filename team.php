@@ -49,20 +49,20 @@ include("header.php");
 * felix + jan
 * cairon
 * großkonsul
-* sturnine
-* KiliK
+* saturnine
 * n3
 * blackvelvet
 * nhin
 * benus
+* ray
+* Ishka (für seine Hilfe in ML)
 * den griechen neben der uni und der sushi mensch
-* real life
 * alle geeks und anime freaks auf der erdenscheibe
 * das internet, weil wir alle nun so toll vernetzt sind
 * gott, dafür daß er kaffee und tee gemacht hat
 * hetzner.de (weil sie das beste Rechenzentrum der Welt sind)
-* dJ SoNiC
-* ray
-* Ishka (für seine Hilfe in ML)
+* slayradio.org (weil das der beste Sender der Welt ist)
+* real life
+* ach ja und spielt nicht so viel WoW
 </pre>
 <?php include("footer.php"); ?>
