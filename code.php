@@ -10,6 +10,10 @@ include("header.php");
 (cvs -z3 -d:pserver:anonymous@cvs.sourceforge.net:/cvsroot/zwischenwelt co -P zw) eine sehr sehr alte version ]<br>
 
 <p>
+<h1>.: 29.08.06 :.</h1>
+R8 freigegeben: Feuer und noch mehr, nun steht der groﬂe rewrite an
+</p>
+<p>
 <h1>.: 15.05.06 :.</h1>
 R7 freigegeben: leichtere Installation, mehr Inhalt, mehr Werkzeuge , Bugfixes und viele GUI Verbesserungen
 </p>

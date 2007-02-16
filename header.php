@@ -73,6 +73,7 @@ else {
 	<table cellpadding=2 cellspacing=2>
 		<?php if (!isset($_REQUEST["nobuttons"])) {?>
 		<tr><td><img border=0 src="images/too_cool_badge.png"></td></tr>
+		<tr><td><SCRIPT type='text/javascript' language='JavaScript' src='http://www.ohloh.net/projects/4385;badge_js'></SCRIPT></td></tr>
 		<tr><td><a href="http://www.galaxy-news.de/?page=charts&op=vote&game_id=411" target="_blank"><img src="images/gvote.gif" border="0"></a></td></tr>
 		<tr><td><a href="http://www.mozilla.org/products/firefox/" target="_blank"><img border=0 src="images/firefox.png"></a></td></tr>
 		<tr><td><a href="http://www.fleischwolf.org/toolkit/" target="_blank"><img src="images/bgtoolkit.gif" border="0"></a></td></tr>
