@@ -1,4 +1,4 @@
-<?php
+<?php if (0) exit("WARTUNGSARBEITEN, BITTE SPAETER NOCHMAL VERSUCHEN"); 
 
 if (!file_exists("defines.mysql.php")) {
 	?>
@@ -21,6 +21,7 @@ include("header.php");
 $liveupdate=intval(sqlgetone("SELECT `value` FROM `global` WHERE `name`='liveupdate'"));
 ?>
 <div id=info><?=($liveupdate==1?"<center style='color:red;font-size:13px;'>Wegen eines LIVE-UPDATES ist ein Login derzeit leider nicht möglich,<br>wir versuchen die Arbeiten so schnell wie möglich abzuschliessen<br><br>vielen Dank für euer Verständnis<br>das zwischenwelt-team<br>&nbsp;<br></center>":"")?>
+
 <!--
 <hr><span style="font-weight:bold;font-size:12px;padding:5px;margin:5px;color:red">
 Wegen eines Fehlers im alten Forum gibt es nun ein neues.
@@ -70,6 +71,12 @@ So sicher ist also der InternetExplorer, hier der Inhalt Ihrer Zwischenablage :
 </SCRIPT>
 </pre>
 <?php }?>
+
+<hr>
+<b><a style="color:blue;" href="http://zwischenwelt.org/forum/index.php?t=msg&th=1&start=0">
+Aktuelle Neuigkeiten sind immer am Ende dieses Threads hier im Forum zu finden.
+</a></b>
+<hr>
 
 <span id=changelog><h1>ChangeLog</h1></span>
 <div class="changelog">

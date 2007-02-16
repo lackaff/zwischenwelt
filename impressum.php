@@ -13,8 +13,8 @@ include("header.php");
 <pre>
 Sebastian Dorda
 
-Ringstraße 18
-85293 Reichertshausen
+Gralstrasse 1
+81925 Muenchen
 
 hagish (ignorieren) @ (das auch) schattenkind.net
 </pre>
