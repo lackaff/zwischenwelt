@@ -226,7 +226,7 @@ if (!isset($f_building) && !isset($f_army) && isset($f_do)) {
 						$r = $hqMinDistToOtherPlayers;
 						$blockerbuilding = sqlgetobject("SELECT * FROM `building` WHERE 
 							`x` >= ".($x - $r)." AND `y` >= ".($y - $r)." AND 
-							`x` <= ".($x + $r)." AND `y` <= ".($y + $r)." AND `user` <> ".intval($gUser->id)." AND LIMIT 1");
+							`x` <= ".($x + $r)." AND `y` <= ".($y + $r)." AND `user` <> ".intval($gUser->id)." LIMIT 1");
 						if ($blockerbuilding) {
 							$reqpic = GetBuildingTypeLink($blockerbuilding->type,$f_x,$f_y,false,$blockerbuilding->user,$blockerbuilding->level);
 							JSAddInfoMessage_BuildError($btype,$f_x,$f_y,"in der Nähe (".$r." Felder) befindet sich bereits ein Gebäude eines anderen Spielers: ".$reqpic."");
