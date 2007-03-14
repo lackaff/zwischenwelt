@@ -222,7 +222,7 @@ if (!isset($f_building) && !isset($f_army) && isset($f_do)) {
 					
 					// check if other players are nearby
 					if ($typeid == kBuilding_HQ) {
-						$hqMinDistToOtherPlayers = 10; // TODO : unhardcode, constant ? global ?
+						$hqMinDistToOtherPlayers = 40; // TODO : unhardcode, constant ? global ?
 						$r = $hqMinDistToOtherPlayers;
 						$blockerbuilding = sqlgetobject("SELECT * FROM `building` WHERE 
 							`x` >= ".($x - $r)." AND `y` >= ".($y - $r)." AND 
