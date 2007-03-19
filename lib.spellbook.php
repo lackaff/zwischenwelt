@@ -493,6 +493,10 @@ class Spell_Komet extends Spell_Instant_Damage {
 class Spell_Portalstein extends Spell {
 	function Birth ($success) {
 		if (!parent::Birth($success)) return false;
+		if (cArmy::GetPosSpeed($this->x,$this->y) <= 0) {
+			echo "feld ist nicht betretbar<br>";
+			return false;
+		}
 		$itemtypeids = array(
 			kItem_Portalstein_Blau,
 			kItem_Portalstein_Gruen,
