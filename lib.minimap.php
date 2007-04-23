@@ -80,7 +80,7 @@ function renderMinimap($top,$left,$bottom,$right,$filename,$mode="normal",$segme
 	
 	$im = imagecreatetruecolor($dx, $dy) or die("Cannot Initialize new GD image stream");
 	
-	$gAllUsers = sqlgettable("SELECT `id`,`color`,`guild` FROM `user`","id");
+	$gAllUsers = sqlgettable("SELECT * FROM `user`","id");
 	$gAllGuilds = sqlgettable("SELECT `id`,`color` FROM `guild`","id");
 	
 	array_walk($gTerrainType,"renderMinimap_walkhex2imgcolor",$im);
