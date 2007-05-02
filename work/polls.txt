@@ -1,3 +1,29 @@
+Thu, 08 Mar 2007 15:57:21 +0100
+14. Mit dem Update ändert sich wohl in der Spiellogik einiges. Wie steht Ihr dann zu einem Reset?	
+	Ja klar, auf jeden Fall	53	
+	Wenn ich nicht alles verliere, ok	45	
+	mir egal	18	
+	bin dagegen, würde aber weiterspielen	16	
+	Auf keinen Fall, dann würde ich aufhören zu spielen	34	
+
+
+Thu, 27 Jul 2006 14:39:31 +0200
+13. Unabhängig ob es technisch realisierbar ist, was würdet ihr zu einem Nebel des Krieges sagen?	
+	Ja, wäre dafür	110	
+	Vielleicht	81	
+	Nein, dagegen	80	
+	Was ist das?	47	
+
+
+Thu, 20 Jul 2006 19:33:14 +0200
+12. Welcher Auflösung benutzt Ihr denn meistens?	
+	640x480	2	
+	800x600	15	
+	1024x768	164	
+	1280x1024	117	
+	noch viel mehr :)	22
+
+
 Sun, 18 Jun 2006 11:49:33 +0200
 11. Spiegelein, Spieglein, welches ist das schönste Bild? (gute Bilder werden auch eingebaut, wenn Sie nicht gewinnen)		
 		http://zwischenwelt.org/~hagish/contest/conshar.png	1	
