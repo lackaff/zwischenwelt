@@ -9,8 +9,8 @@ else
 ?>
 	<SCRIPT LANGUAGE="JavaScript" type="text/javascript">
 	<!--
-		parent.map.location.href = parent.map.location.href;
-		parent.navi.location.href = parent.navi.location.href;
+	//	parent.map.location.href = parent.map.location.href;
+	//	parent.navi.location.href = parent.navi.location.href;
 	//-->
 	</SCRIPT>
 	Du hast noch kein Haupthaus, daher solltest Du Dir ein schönes Plätzchen suchen und dort eines bauen.<br>
