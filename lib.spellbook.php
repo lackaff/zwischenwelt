@@ -493,7 +493,8 @@ class Spell_Komet extends Spell_Instant_Damage {
 class Spell_Portalstein extends Spell {
 	function Birth ($success) {
 		if (!parent::Birth($success)) return false;
-		if (cArmy::GetPosSpeed($this->x,$this->y) <= 0) {
+		$army = sqlgetone("SELECT * FROM `army` WHERE `x` = ".intval($this->x)." AND `y` = ".intval($this->y));
+		if (!$army && cArmy::GetPosSpeed($this->x,$this->y,$this->owner) <= 0) {
 			echo "feld ist nicht betretbar<br>";
 			return false;
 		}
@@ -503,9 +504,8 @@ class Spell_Portalstein extends Spell {
 			kItem_Portalstein_Schwarz,
 			kItem_Portalstein_Rot);
 		$itemtypeid = $itemtypeids[array_rand($itemtypeids)];
-		$army = sqlgetone("SELECT * FROM `army` WHERE `x` = ".intval($this->x)." AND `y` = ".intval($this->y));
 		if ($army)
-				cItem::SpawnArmyItem($army,$itemtypeid);
+			cItem::SpawnArmyItem($army,$itemtypeid);
 		else	cItem::SpawnItem($this->x,$this->y,$itemtypeid);
 		global $gItemType;
 		echo "<img src='".g($gItemType[$itemtypeid]->gfx)."'>erzeugt<br>";
