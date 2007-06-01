@@ -1,6 +1,6 @@
 <html>
 <head>
-<meta http-equiv="refresh" content="60; URL=cron.php">
+<!-- <meta http-equiv="refresh" content="60; URL=cron.php"> -->
 <!-- ... andere Angaben im Dateikopf ... -->
 </head>
 <body>
@@ -37,12 +37,20 @@ require_once("lib.spells.php");
 require_once("lib.score.php");
 require_once("lib.hook.php");
 
+$time = time();
+
+if (1) {
+	if ($time - intval($gGlobal["lasttick"]) < 60) { 
+		echo "skipping cron.php, only needed every 60 seconds<br>\n";
+		exit(0);  // tick every 60 seconds
+	}
+}
+
 
 // wichtige GLOBALS INITIALISIEREN!!! nix loeschen es sei denn ihr seid euch _WIRKLICH_ sicher
 $gTechnologyLevelsOfAllUsers = sqlgetgrouptable("SELECT `user`,`type`,`level` FROM `technology`","user","type","level");
 $gVerbose = false; // if false, echo only segments
 
-$time = time();
 $gThiscronStartTime = $time;
 $lasttick = $gGlobal["lasttick"];
 $dtime = $time - $lasttick;
@@ -894,12 +902,17 @@ foreach ($technologies as $o) {
 		// only one upgrade per building at once
 		$other = sqlgetone("SELECT 1 FROM `technology` WHERE 
 			`upgradetime` > 0 AND `upgradebuilding` = ".$o->upgradebuilding." AND `id` <> ".$o->id);
+		
 		if (!$other) {
 			$techtype = $gTechnologyType[$o->type];
-		
+			$level = GetTechnologyLevel($o->type,$o->user);
 			// only upgrade if the technological requirements are met
-			if (!HasReq($techtype->req_geb,$techtype->req_tech,$o->user,GetTechnologyLevel($o->type,$o->user)+1)) {
+			if (!HasReq($techtype->req_geb,$techtype->req_tech,$o->user,$level+1)) {
 				sql("UPDATE `technology` SET `upgrades` = 0 WHERE `id` = ".$o->id." LIMIT 1");
+				
+				$text = $techtype->name." von user ".$o->user." wurde nicht gestartet, da die anforderungen nicht erfüllt wurden";
+				echo $text."<br>\n";
+				
 				continue;
 			}
 		
@@ -913,6 +926,9 @@ foreach ($technologies as $o) {
 				if ($gVerbose) echo $techtype->name." von user ".$o->user." upgrade gestartet<br>\n";
 				$finishtime = $time + cTechnology::GetUpgradeDuration($o->type,$o->level);
 				sql("UPDATE `technology` SET `upgradetime` = ".$finishtime." WHERE `id` = ".$o->id." LIMIT 1");
+				
+				$text = $gTechnologyType[$o->type]->name." von user ".$o->user." wurde gestartet";
+				echo $text."<br>\n";
 			}
 		}
 	}
