@@ -12,6 +12,7 @@ $minx = isset($f_minx) ? intval($f_minx) : 0;
 $miny = isset($f_miny) ? intval($f_miny) : 0;
 $maxx = isset($f_maxx) ? intval($f_maxx) : 0;
 $maxy = isset($f_maxy) ? intval($f_maxy) : 0;
+$idlist = isset($f_idlist) ? explode(",",$f_idlist) : array();
 
 // http://zwischenwelt.org/mapdata_json.php?minx=0&miny=0&maxx=999&maxy=999&what=armypos
 // http://zwischenwelt.org/mapdata_json.php?idlist=264881&what=armyunit
@@ -96,11 +97,11 @@ switch ($f_what) {
 	case "armypos":		JSON_ArmyPos(	$minx,$miny,$maxx,$maxy); break;	// x={y=armyid}
 	case "terrain":		JSON_Terrain(	$minx,$miny,$maxx,$maxy); break;	// terrain1={x,y,type},terrain4={x,y,type},terrain64={x,y,type}
 	case "items":		JSON_Items(		$minx,$miny,$maxx,$maxy); break;	// id={x,y,type,amount}
-	case "armyunit":	JSON_ArmyUnit(	$f_idlist); break;	// armyid={typ1=amount,typ2=amount}
-	case "armyitem":	JSON_ArmyItem(	$f_idlist); break;	// armyid={typ1=amount,typ2=amount}
-	case "armyinfo":	JSON_ArmyInfo(	$f_idlist); break;	// armyid={armyname="bla",owner=ownerid}
-	case "userinfo":	JSON_UserInfo(	$f_idlist); break;	// userid={name="bla",guildid=123,fof="enemy"}
-	case "guildinfo":	JSON_GuildInfo(	$f_idlist); break;	// guildid={name="bla"}
+	case "armyunit":	JSON_ArmyUnit(	$idlist); break;	// armyid={typ1=amount,typ2=amount}
+	case "armyitem":	JSON_ArmyItem(	$idlist); break;	// armyid={typ1=amount,typ2=amount}
+	case "armyinfo":	JSON_ArmyInfo(	$idlist); break;	// armyid={armyname="bla",owner=ownerid}
+	case "userinfo":	JSON_UserInfo(	$idlist); break;	// userid={name="bla",guildid=123,fof="enemy"}
+	case "guildinfo":	JSON_GuildInfo(	$idlist); break;	// guildid={name="bla"}
 	default : echo "ERROR:no query"; break;
 }
 
