@@ -93,17 +93,22 @@ function php_json_encode($arr) {
 }
 
 
+$res = false;
 switch ($f_what) {
-	case "armypos":		JSON_ArmyPos(	$minx,$miny,$maxx,$maxy); break;	// x={y=armyid}
-	case "terrain":		JSON_Terrain(	$minx,$miny,$maxx,$maxy); break;	// terrain1={x,y,type},terrain4={x,y,type},terrain64={x,y,type}
-	case "items":		JSON_Items(		$minx,$miny,$maxx,$maxy); break;	// id={x,y,type,amount}
-	case "armyunit":	JSON_ArmyUnit(	$idlist); break;	// armyid={id1={type1,amount1},id2={type2,amount2}}
-	case "armyitem":	JSON_ArmyItem(	$idlist); break;	// armyid={id1={type1,amount1},id2={type2,amount2}}
-	case "armyinfo":	JSON_ArmyInfo(	$idlist); break;	// armyid={armyname="bla",user=ownerid,...}
-	case "userinfo":	JSON_UserInfo(	$idlist); break;	// userid={name="bla",guildid=123,fof="enemy"}
-	case "guildinfo":	JSON_GuildInfo(	$idlist); break;	// guildid={name="bla"}
+	case "building":	$res = MapData_Building(	$minx,$miny,$maxx,$maxy); break;	// x={y={id,type,user,level,hp,mana}}
+	case "armypos":		$res = MapData_ArmyPos(	$minx,$miny,$maxx,$maxy); break;	// x={y=armyid}
+	case "terrain":		$res = MapData_Terrain(	$minx,$miny,$maxx,$maxy); break;	// terrain1={x,y,type},terrain4={x,y,type},terrain64={x,y,type}
+	case "items":		$res = MapData_Items(		$minx,$miny,$maxx,$maxy); break;	// id={x,y,type,amount}
+	case "armyunit":	$res = MapData_ArmyUnit(	$idlist); break;	// armyid={id1={type1,amount1},id2={type2,amount2}}
+	case "armyitem":	$res = MapData_ArmyItem(	$idlist); break;	// armyid={id1={type1,amount1},id2={type2,amount2}}
+	case "armyinfo":	$res = MapData_ArmyInfo(	$idlist); break;	// armyid={armyname="bla",user=ownerid,...}
+	case "userinfo":	$res = MapData_UserInfo(	$idlist); break;	// userid={name="bla",guildid=123,fof="enemy"}
+	case "guildinfo":	$res = MapData_GuildInfo(	$idlist); break;	// guildid={name="bla"}
 	default : echo "ERROR:no query"; break;
 }
+if ($res) echo php_json_encode($res); else echo "ERROR: no data"; break;
+
+// todo : armywp
 
 function MakeXYCond ($minx,$miny,$maxx,$maxy) {
 	return 	     "`x` >= ".intval($minx).
@@ -122,24 +127,35 @@ function MakeIDListCond ($idlist,$fieldname="id",$bSkipZero=true) {
 	return "`".$fieldname."` IN (".implode(",",$mylist).")";
 }
 
-function JSON_ArmyPos	($minx,$miny,$maxx,$maxy) {
+function MapData_Building	($minx,$miny,$maxx,$maxy) {
+	$mytable = sqlgettable("SELECT * FROM `building` WHERE ".MakeXYCond($minx,$miny,$maxx,$maxy));
+	// x={y={id,type,user,level,hp,mana}}
+	$res = array();
+	foreach ($mytable as $o) {
+		if (!isset($res[$o->x])) $res[$o->x] = array();
+		$res[$o->x][$o->y] = array($o->id,$o->type,$o->user,$o->level,$o->hp,$o->mana);
+	}
+	return $res;
+}
+
+function MapData_ArmyPos	($minx,$miny,$maxx,$maxy) {
 	$mytable = sqlgettable("SELECT `x`,`y`,`id` FROM `army` WHERE ".MakeXYCond($minx,$miny,$maxx,$maxy));
 	$res = array();
 	foreach ($mytable as $o) {
 		if (!isset($res[$o->x])) $res[$o->x] = array();
 		$res[$o->x][$o->y] = $o->id;
 	}
-	echo php_json_encode($res);
+	return $res;
 }
 
-function JSON_Items		($minx,$miny,$maxx,$maxy) {
+function MapData_Items		($minx,$miny,$maxx,$maxy) {
 	$mytable = sqlgettable("SELECT * FROM `item` WHERE `army` = 0 AND `building` = 0 AND ".MakeXYCond($minx,$miny,$maxx,$maxy));
 	$res = array();
 	foreach ($mytable as $o) $res[$o->id] = array($o->x,$o->y,$o->type,$o->amount);
-	echo php_json_encode($res);
+	return $res;
 }
 
-function JSON_TerrainPart	($mytable) {
+function MapData_TerrainPart	($mytable) {
 	$res = array();
 	foreach ($mytable as $o) {
 		if (!isset($res[$o->x])) $res[$o->x] = array();
@@ -148,17 +164,17 @@ function JSON_TerrainPart	($mytable) {
 	return $res;
 }
 
-function JSON_Terrain	($minx,$miny,$maxx,$maxy) {
+function MapData_Terrain	($minx,$miny,$maxx,$maxy) {
 	$t1 = sqlgettable("SELECT `x`,`y`,`type` FROM `terrain` WHERE ".MakeXYCond($minx,$miny,$maxx,$maxy));
 	$t4 = sqlgettable("SELECT `x`,`y`,`type` FROM `terrainsegment4` WHERE ".MakeXYCond(
 		floor($minx/4),floor($miny/4),ceil($maxx/4)+1,ceil($maxy/4)+1));
 	$t64 = sqlgettable("SELECT `x`,`y`,`type` FROM `terrainsegment64` WHERE ".MakeXYCond(
 		floor($minx/64),floor($miny/64),ceil($maxx/64)+1,ceil($maxy/64)+1));
-	$res = array("terrain1"=>JSON_TerrainPart($t1),"terrain4"=>JSON_TerrainPart($t4),"terrain64"=>JSON_TerrainPart($t64));
-	echo php_json_encode($res);
+	$res = array("terrain1"=>MapData_TerrainPart($t1),"terrain4"=>MapData_TerrainPart($t4),"terrain64"=>MapData_TerrainPart($t64));
+	return $res;
 }
 
-function JSON_ArmyUnit	($idlist) {
+function MapData_ArmyUnit	($idlist) {
 	$res = array();
 	foreach ($idlist as $id) {
 		$mytable = sqlgettable("SELECT * FROM `unit` WHERE `army` = ".intval($id));
@@ -166,9 +182,10 @@ function JSON_ArmyUnit	($idlist) {
 		foreach ($mytable as $o) $mylist[$o->id] = array($o->type,$o->amount);
 		$res[intval($id)] = $mylist;
 	}
-	echo php_json_encode($res);
+	return $res;
 }
-function JSON_ArmyItem	($idlist) {
+
+function MapData_ArmyItem	($idlist) {
 	$res = array();
 	foreach ($idlist as $id) {
 		$mytable = sqlgettable("SELECT * FROM `item` WHERE `army` = ".intval($id));
@@ -176,9 +193,10 @@ function JSON_ArmyItem	($idlist) {
 		foreach ($mytable as $o) $mylist[$o->id] = array($o->type,$o->amount);
 		$res[intval($id)] = $mylist;
 	}
-	echo php_json_encode($res);
+	return $res;
 }
-function JSON_ArmyInfo	($idlist) { 
+
+function MapData_ArmyInfo	($idlist) { 
 	$mytable = sqlgettable("SELECT * FROM `army` WHERE ".MakeIDListCond($idlist));
 	$res = array();
 	foreach ($mytable as $o) $res[$o->id] = array(	
@@ -190,24 +208,24 @@ function JSON_ArmyInfo	($idlist) {
 		"metal"=>$o->metal,
 		"runes"=>$o->runes,
 		"type"=>$o->type);
-	echo php_json_encode($res);
+	return $res;
 }
 
-function JSON_UserInfo	($idlist) { 
+function MapData_UserInfo	($idlist) { 
 	$mytable = sqlgettable("SELECT * FROM `user` WHERE ".MakeIDListCond($idlist));
 	$res = array();
 	foreach ($mytable as $o)  {
 		$fof = (isset($gUser) && $gUser) ? GetFOF($gUser->id,$o->id) : 0;
 		$res[$o->id] = array("name"=>$o->name,"guild"=>$o->guild , "fof"=>$fof );
 	}
-	echo php_json_encode($res);
+	return $res;
 }
 
-function JSON_GuildInfo	($idlist) { 
+function MapData_GuildInfo	($idlist) { 
 	$mytable = sqlgettable("SELECT * FROM `guild` WHERE ".MakeIDListCond($idlist));
 	$res = array();
 	foreach ($mytable as $o) $res[$o->id] = array( "name"=>$o->name );
-	echo php_json_encode($res);
+	return $res;
 }
 
 ?>
