@@ -198,7 +198,7 @@ function JSON_UserInfo	($idlist) {
 	$res = array();
 	foreach ($mytable as $o)  {
 		$fof = (isset($gUser) && $gUser) ? GetFOF($gUser->id,$o->id) : 0;
-		$res[$o->id] = array("name"=>$o->name,"guild"=>$o->guild , "fof"=$fof );
+		$res[$o->id] = array("name"=>$o->name,"guild"=>$o->guild , "fof"=>$fof );
 	}
 	echo php_json_encode($res);
 }
