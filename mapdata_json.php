@@ -217,6 +217,7 @@ function MapData_ArmyInfo	($idlist) {
 }
 
 function MapData_ArmyWP	($idlist) { 
+	global $gUser;
 	$res = array();
 	foreach ($idlist as $id) {
 		if (!isset($gUser) || !$gUser) continue;
@@ -230,6 +231,7 @@ function MapData_ArmyWP	($idlist) {
 }
 
 function MapData_UserInfo	($idlist) { 
+	global $gUser;
 	$mytable = sqlgettable("SELECT * FROM `user` WHERE ".MakeIDListCond($idlist));
 	$res = array();
 	foreach ($mytable as $o)  {
