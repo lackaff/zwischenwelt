@@ -106,7 +106,7 @@ switch ($f_what) {
 	case "guildinfo":	$res = MapData_GuildInfo(	$idlist); break;	// guildid={name="bla"}
 	default : echo "ERROR:no query"; break;
 }
-if ($res) echo php_json_encode($res); else echo "ERROR: no data"; break;
+if ($res) echo php_json_encode($res); else echo "ERROR: no data"; 
 
 // todo : armywp
 
