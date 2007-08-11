@@ -221,7 +221,8 @@ function MapData_ArmyWP	($idlist) {
 	$res = array();
 	foreach ($idlist as $id) {
 		if (!isset($gUser) || !$gUser) continue;
-		if (sqlgetone("SELECT `user` FROM `army` WHERE `id` = ".intval($id)) != $gUser->id) continue;
+		$army = sqlgetone("SELECT * FROM `army` WHERE `id` = ".intval($id));
+		if (!cArmy::CanControllArmy($army,$gUser)) continue;
 		$mytable = sqlgettable("SELECT * FROM `waypoint` WHERE `army` = ".intval($id)." ORDER BY `priority`");
 		$mylist = array();
 		foreach ($mytable as $o) $mylist[$o->id] = array($o->x,$o->y);
