@@ -158,6 +158,7 @@ kBaseJSMapVersion = <?=intval(kJSMapVersion)+intval($gGlobal["typecache_version_
 kBaseUrl = "<?=BASEURL?>";
 kMapScript = "<?=kMapScript?>";
 kUserID = "<?=$gUser->id?>";
+kCurTime = "<?=time()?>";
 gCX = <?=intval($gCX)?>;
 gCY = <?=intval($gCY)?>;
 gLeft = <?=$gLeft?>;

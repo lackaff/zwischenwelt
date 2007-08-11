@@ -3,6 +3,7 @@ require_once("lib.main.php");
 
 if (strlen(kMapCodePass) <= 0) exit("specify kMapCodePass in defines.mysql.php");
 
+echo time()." : ".date("H:i d-m-Y");
 if (isset($f_save)) {
 	if ($f_mypass == kMapCodePass) {
 		echo "<h1>code updated</h1>";
