@@ -97,9 +97,9 @@ switch ($f_what) {
 	case "armypos":		JSON_ArmyPos(	$minx,$miny,$maxx,$maxy); break;	// x={y=armyid}
 	case "terrain":		JSON_Terrain(	$minx,$miny,$maxx,$maxy); break;	// terrain1={x,y,type},terrain4={x,y,type},terrain64={x,y,type}
 	case "items":		JSON_Items(		$minx,$miny,$maxx,$maxy); break;	// id={x,y,type,amount}
-	case "armyunit":	JSON_ArmyUnit(	$idlist); break;	// armyid={typ1=amount,typ2=amount}
-	case "armyitem":	JSON_ArmyItem(	$idlist); break;	// armyid={typ1=amount,typ2=amount}
-	case "armyinfo":	JSON_ArmyInfo(	$idlist); break;	// armyid={armyname="bla",owner=ownerid}
+	case "armyunit":	JSON_ArmyUnit(	$idlist); break;	// armyid={id1={type1,amount1},id2={type2,amount2}}
+	case "armyitem":	JSON_ArmyItem(	$idlist); break;	// armyid={id1={type1,amount1},id2={type2,amount2}}
+	case "armyinfo":	JSON_ArmyInfo(	$idlist); break;	// armyid={armyname="bla",user=ownerid,...}
 	case "userinfo":	JSON_UserInfo(	$idlist); break;	// userid={name="bla",guildid=123,fof="enemy"}
 	case "guildinfo":	JSON_GuildInfo(	$idlist); break;	// guildid={name="bla"}
 	default : echo "ERROR:no query"; break;
@@ -112,7 +112,7 @@ function MakeXYCond ($minx,$miny,$maxx,$maxy) {
 			" AND `y` <= ".intval($maxy);
 }
 
-function MakeIDListCond ($idlist,$fieldname,$bSkipZero=true) {
+function MakeIDListCond ($idlist,$fieldname="id",$bSkipZero=true) {
 	$mylist = array();
 	foreach ($idlist as $id) {
 		if (intval($id) == 0 && $bSkipZero) continue;
@@ -163,7 +163,7 @@ function JSON_ArmyUnit	($idlist) {
 	foreach ($idlist as $id) {
 		$mytable = sqlgettable("SELECT * FROM `unit` WHERE `army` = ".intval($id));
 		$mylist = array();
-		foreach ($mytable as $o) $mylist[$o->type] = $o->amount;
+		foreach ($mytable as $o) $mylist[$o->id] = array($o->type,$o->amount);
 		$res[intval($id)] = $mylist;
 	}
 	echo php_json_encode($res);
@@ -173,22 +173,41 @@ function JSON_ArmyItem	($idlist) {
 	foreach ($idlist as $id) {
 		$mytable = sqlgettable("SELECT * FROM `item` WHERE `army` = ".intval($id));
 		$mylist = array();
-		foreach ($mytable as $o) $mylist[$o->type] = $o->amount;
+		foreach ($mytable as $o) $mylist[$o->id] = array($o->type,$o->amount);
 		$res[intval($id)] = $mylist;
 	}
 	echo php_json_encode($res);
 }
-function JSON_ArmyInfo	($idlist) { }
-function JSON_UserInfo	($idlist) { }
-function JSON_GuildInfo	($idlist) { }
+function JSON_ArmyInfo	($idlist) { 
+	$mytable = sqlgettable("SELECT * FROM `army` WHERE ".MakeIDListCond($idlist));
+	$res = array();
+	foreach ($mytable as $o) $res[$o->id] = array(	
+		"name"=>$o->name,
+		"user"=>$o->user,
+		"lumber"=>$o->lumber,
+		"stone"=>$o->stone,
+		"food"=>$o->food,
+		"metal"=>$o->metal,
+		"runes"=>$o->runes,
+		"type"=>$o->type);
+	echo php_json_encode($res);
+}
 
-/*
-	case "armyunit":	JSON_ArmyUnit(	$f_idlist); break;	// armyid={typ1=amount,typ2=amount}
-	case "armyitem":	JSON_ArmyItem(	$f_idlist); break;	// armyid={typ1=amount,typ2=amount}
-	case "armyinfo":	JSON_ArmyInfo(	$f_idlist); break;	// armyid={armyname="bla",owner=ownerid}
-	case "userinfo":	JSON_UserInfo(	$f_idlist); break;	// userid={name="bla",guildid=123,fof="enemy"}
-	case "guildinfo":	JSON_GuildInfo(	$f_idlist); break;	// guildid={name="bla"}
-*/
-// $mytable = sqlgettable("SELECT * FROM `unit` WHERE ".MakeIDListCond($idlist,"army"));
+function JSON_UserInfo	($idlist) { 
+	$mytable = sqlgettable("SELECT * FROM `user` WHERE ".MakeIDListCond($idlist));
+	$res = array();
+	foreach ($mytable as $o)  {
+		$fof = (isset($gUser) && $gUser) ? GetFOF($gUser->id,$o->id) : 0;
+		$res[$o->id] = array("name"=>$o->name,"guild"=>$o->guild , "fof"=$fof );
+	}
+	echo php_json_encode($res);
+}
+
+function JSON_GuildInfo	($idlist) { 
+	$mytable = sqlgettable("SELECT * FROM `guild` WHERE ".MakeIDListCond($idlist));
+	$res = array();
+	foreach ($mytable as $o) $res[$o->id] = array( "name"=>$o->name );
+	echo php_json_encode($res);
+}
 
 ?>
