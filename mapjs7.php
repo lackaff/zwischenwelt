@@ -141,6 +141,7 @@ if($gUser && $gfxpackactive){
 
 $gUseDarianMap = intval($gUser->flags) & kUserFlags_DarianMap;
 $gCustomMapCode = $gUseDarianMap ? sqlgetone("SELECT `code` FROM `mapcode` WHERE `name` = 'Darian'") : false;
+$gCustomMapCSS = $gUseDarianMap ? sqlgetone("SELECT `css` FROM `mapcode` WHERE `name` = 'Darian'") : false;
 
 
 ?>
@@ -149,6 +150,9 @@ $gCustomMapCode = $gUseDarianMap ? sqlgetone("SELECT `code` FROM `mapcode` WHERE
 <link rel="stylesheet" type="text/css" href="<?=GetZWStylePath()?>"></link>
 <?php if (!$gCustomMapCode) {?><script src="mapjs7_core.js?<?=$jsparam?>" type="text/javascript"></script><?php }?>
 <script src="<?="mapjs7_globals.js.php".$styleparam."&".$jsparam?>" type="text/javascript"></script>
+<?php if ($gCustomMapCSS) {?>
+<style type="text/css"><?=$gCustomMapCSS?></style>
+<?php } // endif?>
 <SCRIPT LANGUAGE="JavaScript" type="text/javascript"><!--
 kBaseJSMapVersion = <?=intval(kJSMapVersion)+intval($gGlobal["typecache_version_adder"])?>;
 kBaseUrl = "<?=BASEURL?>";
