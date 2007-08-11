@@ -99,6 +99,7 @@ $whatlist = explode(",",$f_what);
 $res = array();
 $res['meta']['now']=time();
 foreach ($whatlist as $what) switch ($what) {
+	case "fire":		$res[$what] = MapData_Fire(		$minx,$miny,$maxx,$maxy); break;	// x={y={id,type,user,level,hp,mana}}
 	case "building":	$res[$what] = MapData_Building(	$minx,$miny,$maxx,$maxy); break;	// x={y={id,type,user,level,hp,mana}}
 	case "armypos":		$res[$what] = MapData_ArmyPos(	$minx,$miny,$maxx,$maxy); break;	// x={y=armyid}
 	case "terrain":		$res[$what] = MapData_Terrain(	$minx,$miny,$maxx,$maxy); break;	// terrain1={x,y,type},terrain4={x,y,type},terrain64={x,y,type}
@@ -132,9 +133,18 @@ function MakeIDListCond ($idlist,$fieldname="id",$bSkipZero=true) {
 	return "`".$fieldname."` IN (".implode(",",$mylist).")";
 }
 
+function MapData_Fire	($minx,$miny,$maxx,$maxy) {
+	$mytable = sqlgettable("SELECT * FROM `fire` WHERE ".MakeXYCond($minx,$miny,$maxx,$maxy));
+	$res = array();
+	foreach ($mytable as $o) {
+		if (!isset($res[$o->x])) $res[$o->x] = array();
+		$res[$o->x][$o->y] = 1;
+	}
+	return $res;
+}
+
 function MapData_Building	($minx,$miny,$maxx,$maxy) {
 	$mytable = sqlgettable("SELECT * FROM `building` WHERE ".MakeXYCond($minx,$miny,$maxx,$maxy));
-	// x={y={id,type,user,level,hp,mana}}
 	$res = array();
 	foreach ($mytable as $o) {
 		if (!isset($res[$o->x])) $res[$o->x] = array();
