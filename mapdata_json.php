@@ -102,6 +102,7 @@ switch ($what) {
 	case "armypos":		$res[$what] = MapData_ArmyPos(	$minx,$miny,$maxx,$maxy); break;	// x={y=armyid}
 	case "terrain":		$res[$what] = MapData_Terrain(	$minx,$miny,$maxx,$maxy); break;	// terrain1={x,y,type},terrain4={x,y,type},terrain64={x,y,type}
 	case "items":		$res[$what] = MapData_Items(	$minx,$miny,$maxx,$maxy); break;	// id={x,y,type,amount}
+	case "armywp":		$res[$what] = MapData_ArmyWP(	$idlist); break;	// armyid={id1={x1,y1},id2=..}
 	case "armyunit":	$res[$what] = MapData_ArmyUnit(	$idlist); break;	// armyid={id1={type1,amount1},id2={type2,amount2}}
 	case "armyitem":	$res[$what] = MapData_ArmyItem(	$idlist); break;	// armyid={id1={type1,amount1},id2={type2,amount2}}
 	case "armyinfo":	$res[$what] = MapData_ArmyInfo(	$idlist); break;	// armyid={armyname="bla",user=ownerid,...}
@@ -211,6 +212,17 @@ function MapData_ArmyInfo	($idlist) {
 		"metal"=>$o->metal,
 		"runes"=>$o->runes,
 		"type"=>$o->type);
+	return $res;
+}
+
+function MapData_ArmyWP	($idlist) { 
+	$res = array();
+	foreach ($idlist as $id) {
+		$mytable = sqlgettable("SELECT * FROM `waypoint` WHERE `army` = ".intval($id)." ORDER BY `priority`");
+		$mylist = array();
+		foreach ($mytable as $o) $mylist[$o->id] = array($o->x,$o->y);
+		$res[intval($id)] = $mylist;
+	}
 	return $res;
 }
 
