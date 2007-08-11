@@ -7,6 +7,7 @@ define("BASEPATH","/some/where/zw/");   // under windoze something like "C:\\som
 define("PHP_ERROR_LOG_MAIL","admin@main.blubber");
 define("kGfxServerPath","http://localhost/gfx/");
 define("kStyleServerPath","http://localhost/");
+define("kMapCodePass","");
 define("PAGELAYOUT",1);
 define("BASEURL","http://localhost/");
 define("ZW_MAIL_SENDER","zwischenwelt@net-play.de"); // anmelde und passwort vergessen mails haben diese addy als absender
