@@ -168,7 +168,7 @@ gActiveArmyID = <?=isset($f_army)?intval($f_army):0?>;
 gThisUserID = <?=intval($gUser->id)?>;
 gGFXBase = "<?=$gGFXBase?>";
 gBig = <?=(isset($f_big) && $f_big)?1:0?>;
-gMapMode = <?=isset($f_mode)?intval($f_mode):"normal"?>;
+gMapMode = <?=isset($f_mode)?intval($f_mode):0?>;
 gSlowMap = <?=(intval($gUser->flags) & kUserFlags_SlowMap)?1:0?>;
 gWeatherGfx = "<?=g($gWeatherGfx[$gWeather])?>";
 gWeatherType = "<?=$gWeatherType[$gWeather]?>";
