@@ -17,7 +17,7 @@ $gCustomMapCode = sqlgetone("SELECT * FROM `mapcode` WHERE `name` = 'Darian'");
 ?>
 
 <form method="post" action="?">
-	password : <input type="password" name="pass" value="<?=htmlspecialchars($f_pass)?>"><br>
+	password : <input type="password" name="pass" value="<?=isset($f_f_pass)?htmlspecialchars($f_pass):""?>"><br>
 	code : <textarea name="code" cols=60 rows=5><?=htmlspecialchars($gCustomMapCode->code)?></textarea><br>
 	css : <textarea name="css" cols=60 rows=5><?=htmlspecialchars($gCustomMapCode->css)?></textarea><br>
 	<input type="submit" name="save" value="speichern">
