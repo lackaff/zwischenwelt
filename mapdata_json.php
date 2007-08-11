@@ -108,7 +108,7 @@ switch ($what) {
 	case "armyinfo":	$res[$what] = MapData_ArmyInfo(	$idlist); break;	// armyid={armyname="bla",user=ownerid,...}
 	case "userinfo":	$res[$what] = MapData_UserInfo(	$idlist); break;	// userid={name="bla",guildid=123,fof="enemy"}
 	case "guildinfo":	$res[$what] = MapData_GuildInfo($idlist); break;	// guildid={name="bla"}
-	default : echo "ERROR:no query"; break;
+	//default : $res[$what] = "ERROR:no query"; break;
 }
 echo php_json_encode($res);
 
