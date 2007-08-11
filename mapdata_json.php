@@ -16,6 +16,7 @@ $idlist = isset($f_idlist) ? explode(",",$f_idlist) : array();
 
 // http://zwischenwelt.org/mapdata_json.php?minx=0&miny=0&maxx=999&maxy=999&what=armypos
 // http://zwischenwelt.org/mapdata_json.php?idlist=264881&what=armyunit
+// http://zwischenwelt.org/mapdata_json.php?idlist=402109&what=armywp&sid=JDEkWWNLT2tRUk4kdS9vNUViTDBNVEp6
 // see also http://zwischenwelt.org/mapjs7_globals.js.php
 // sid=....
 
