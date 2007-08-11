@@ -13,7 +13,8 @@ $miny = isset($f_miny) ? intval($f_miny) : 0;
 $maxx = isset($f_maxx) ? intval($f_maxx) : 0;
 $maxy = isset($f_maxy) ? intval($f_maxy) : 0;
 
-// mapdata_json.php?minx=0&miny=0&maxx=999&maxy=999&what=terrain&sid=....
+// http://zwischenwelt.org/mapdata_json.php?minx=0&miny=0&maxx=999&maxy=999&what=armypos
+// sid=....
 
 function json_encode_string($in_str) {
 	mb_internal_encoding("UTF-8");
@@ -92,9 +93,10 @@ function php_json_encode($arr) {
 
 switch ($f_what) {
 	case "armypos":		JSON_ArmyPos(	$minx,$miny,$maxx,$maxy); break;	// x={y=armyid}
-	case "items":		JSON_Items(		$minx,$miny,$maxx,$maxy); break;	// id={x,y,type,amount}
 	case "terrain":		JSON_Terrain(	$minx,$miny,$maxx,$maxy); break;	// terrain1={x,y,type},terrain4={x,y,type},terrain64={x,y,type}
+	case "items":		JSON_Items(		$minx,$miny,$maxx,$maxy); break;	// id={x,y,type,amount}
 	case "armyunit":	JSON_ArmyUnit(	$f_idlist); break;	// armyid={typ1=amount,typ2=amount}
+	case "armyitem":	JSON_ArmyItem(	$f_idlist); break;	// armyid={typ1=amount,typ2=amount}
 	case "armyinfo":	JSON_ArmyInfo(	$f_idlist); break;	// armyid={armyname="bla",owner=ownerid}
 	case "userinfo":	JSON_UserInfo(	$f_idlist); break;	// userid={name="bla",guildid=123,fof="enemy"}
 	case "guildinfo":	JSON_GuildInfo(	$f_idlist); break;	// guildid={name="bla"}
@@ -109,16 +111,21 @@ function MakeXYCond ($minx,$miny,$maxx,$maxy) {
 }
 
 function JSON_ArmyPos	($minx,$miny,$maxx,$maxy) {
-	$armies = sqlgettable("SELECT `x`,`y`,`id` FROM `army` WHERE ".MakeXYCond($minx,$miny,$maxx,$maxy));
+	$mytable = sqlgettable("SELECT `x`,`y`,`id` FROM `army` WHERE ".MakeXYCond($minx,$miny,$maxx,$maxy));
 	$res = array();
-	foreach ($armies as $o) {
+	foreach ($mytable as $o) {
 		if (!isset($res[$o->x])) $res[$o->x] = array();
 		$res[$o->x][$o->y] = $o->id;
 	}
 	echo php_json_encode($res);
 }
 
-function JSON_Items		($minx,$miny,$maxx,$maxy) { }
+function JSON_Items		($minx,$miny,$maxx,$maxy) {
+	$mytable = sqlgettable("SELECT * FROM `item` WHERE `army` = 0 AND `building` = 0 AND ".MakeXYCond($minx,$miny,$maxx,$maxy));
+	$res = array();
+	foreach ($mytable as $o) $res[$o->id] = array($o->x,$o->y,$o->type,$o->amount);
+	echo php_json_encode($res);
+}
 
 
 function JSON_TerrainPart	($mytable) {
@@ -141,6 +148,7 @@ function JSON_Terrain	($minx,$miny,$maxx,$maxy) {
 }
 
 function JSON_ArmyUnit	($idlist) { }
+function JSON_ArmyItem	($idlist) { }
 function JSON_ArmyInfo	($idlist) { }
 function JSON_UserInfo	($idlist) { }
 function JSON_GuildInfo	($idlist) { }
