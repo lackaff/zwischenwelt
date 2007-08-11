@@ -94,10 +94,10 @@ function php_json_encode($arr) {
 
 
 
-$what = explode(",",$f_what);
+$whatlist = explode(",",$f_what);
 $res = array();
 $res['meta']['now']=time();
-switch ($what) {
+foreach ($whatlist as $what) switch ($what) {
 	case "building":	$res[$what] = MapData_Building(	$minx,$miny,$maxx,$maxy); break;	// x={y={id,type,user,level,hp,mana}}
 	case "armypos":		$res[$what] = MapData_ArmyPos(	$minx,$miny,$maxx,$maxy); break;	// x={y=armyid}
 	case "terrain":		$res[$what] = MapData_Terrain(	$minx,$miny,$maxx,$maxy); break;	// terrain1={x,y,type},terrain4={x,y,type},terrain64={x,y,type}
