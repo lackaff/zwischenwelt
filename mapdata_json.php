@@ -14,6 +14,7 @@ $maxx = isset($f_maxx) ? intval($f_maxx) : 0;
 $maxy = isset($f_maxy) ? intval($f_maxy) : 0;
 
 // http://zwischenwelt.org/mapdata_json.php?minx=0&miny=0&maxx=999&maxy=999&what=armypos
+// http://zwischenwelt.org/mapdata_json.php?idlist=264881&what=armyunit
 // sid=....
 
 function json_encode_string($in_str) {
@@ -110,6 +111,16 @@ function MakeXYCond ($minx,$miny,$maxx,$maxy) {
 			" AND `y` <= ".intval($maxy);
 }
 
+function MakeIDListCond ($idlist,$fieldname,$bSkipZero=true) {
+	$mylist = array();
+	foreach ($idlist as $id) {
+		if (intval($id) == 0 && $bSkipZero) continue;
+		$mylist[] = intval($id);
+	}
+	if (empty($mylist)) return "0";
+	return "`".$fieldname."` IN (".implode(",",$mylist).")";
+}
+
 function JSON_ArmyPos	($minx,$miny,$maxx,$maxy) {
 	$mytable = sqlgettable("SELECT `x`,`y`,`id` FROM `army` WHERE ".MakeXYCond($minx,$miny,$maxx,$maxy));
 	$res = array();
@@ -127,7 +138,6 @@ function JSON_Items		($minx,$miny,$maxx,$maxy) {
 	echo php_json_encode($res);
 }
 
-
 function JSON_TerrainPart	($mytable) {
 	$res = array();
 	foreach ($mytable as $o) {
@@ -143,15 +153,41 @@ function JSON_Terrain	($minx,$miny,$maxx,$maxy) {
 		floor($minx/4),floor($miny/4),ceil($maxx/4)+1,ceil($maxy/4)+1));
 	$t64 = sqlgettable("SELECT `x`,`y`,`type` FROM `terrainsegment64` WHERE ".MakeXYCond(
 		floor($minx/64),floor($miny/64),ceil($maxx/64)+1,ceil($maxy/64)+1));
-	$outarr = array("terrain1"=>JSON_TerrainPart($t1),"terrain4"=>JSON_TerrainPart($t4),"terrain64"=>JSON_TerrainPart($t64));
-	echo php_json_encode($outarr);
+	$res = array("terrain1"=>JSON_TerrainPart($t1),"terrain4"=>JSON_TerrainPart($t4),"terrain64"=>JSON_TerrainPart($t64));
+	echo php_json_encode($res);
 }
 
-function JSON_ArmyUnit	($idlist) { }
-function JSON_ArmyItem	($idlist) { }
+function JSON_ArmyUnit	($idlist) {
+	$res = array();
+	foreach ($idlist as $id) {
+		$mytable = sqlgettable("SELECT * FROM `unit` WHERE `army` = ".intval($id));
+		$mylist = array();
+		foreach ($mytable as $o) $mylist[$o->type] = $o->amount;
+		$res[intval($id)] = $mylist;
+	}
+	echo php_json_encode($res);
+}
+function JSON_ArmyItem	($idlist) {
+	$res = array();
+	foreach ($idlist as $id) {
+		$mytable = sqlgettable("SELECT * FROM `item` WHERE `army` = ".intval($id));
+		$mylist = array();
+		foreach ($mytable as $o) $mylist[$o->type] = $o->amount;
+		$res[intval($id)] = $mylist;
+	}
+	echo php_json_encode($res);
+}
 function JSON_ArmyInfo	($idlist) { }
 function JSON_UserInfo	($idlist) { }
 function JSON_GuildInfo	($idlist) { }
 
+/*
+	case "armyunit":	JSON_ArmyUnit(	$f_idlist); break;	// armyid={typ1=amount,typ2=amount}
+	case "armyitem":	JSON_ArmyItem(	$f_idlist); break;	// armyid={typ1=amount,typ2=amount}
+	case "armyinfo":	JSON_ArmyInfo(	$f_idlist); break;	// armyid={armyname="bla",owner=ownerid}
+	case "userinfo":	JSON_UserInfo(	$f_idlist); break;	// userid={name="bla",guildid=123,fof="enemy"}
+	case "guildinfo":	JSON_GuildInfo(	$f_idlist); break;	// guildid={name="bla"}
+*/
+// $mytable = sqlgettable("SELECT * FROM `unit` WHERE ".MakeIDListCond($idlist,"army"));
 
 ?>
