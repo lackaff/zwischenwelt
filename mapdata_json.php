@@ -5,7 +5,7 @@ require_once("lib.map.php");
 require_once("lib.army.php");
 require_once("lib.unit.php");
 require_once("lib.weather.php");
-//Lock();
+if (isset($f_sid)) Lock();
 // outputs map data in json format for javascript parsin by custom maps
 
 $minx = isset($f_minx) ? intval($f_minx) : 0;
@@ -16,6 +16,7 @@ $idlist = isset($f_idlist) ? explode(",",$f_idlist) : array();
 
 // http://zwischenwelt.org/mapdata_json.php?minx=0&miny=0&maxx=999&maxy=999&what=armypos
 // http://zwischenwelt.org/mapdata_json.php?idlist=264881&what=armyunit
+// see also http://zwischenwelt.org/mapjs7_globals.js.php
 // sid=....
 
 function json_encode_string($in_str) {
