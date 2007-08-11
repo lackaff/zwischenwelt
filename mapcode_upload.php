@@ -12,7 +12,7 @@ if (isset($f_save)) {
 	}
 }
 
-$gCustomMapCode = sqlgettable("SELECT * FROM `mapcode` WHERE `name` = 'Darian'");
+$gCustomMapCode = sqlgetobject("SELECT * FROM `mapcode` WHERE `name` = 'Darian'");
 
 ?>
 
