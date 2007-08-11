@@ -93,20 +93,23 @@ function php_json_encode($arr) {
 }
 
 
-$res = false;
-switch ($f_what) {
-	case "building":	$res = MapData_Building(	$minx,$miny,$maxx,$maxy); break;	// x={y={id,type,user,level,hp,mana}}
-	case "armypos":		$res = MapData_ArmyPos(	$minx,$miny,$maxx,$maxy); break;	// x={y=armyid}
-	case "terrain":		$res = MapData_Terrain(	$minx,$miny,$maxx,$maxy); break;	// terrain1={x,y,type},terrain4={x,y,type},terrain64={x,y,type}
-	case "items":		$res = MapData_Items(		$minx,$miny,$maxx,$maxy); break;	// id={x,y,type,amount}
-	case "armyunit":	$res = MapData_ArmyUnit(	$idlist); break;	// armyid={id1={type1,amount1},id2={type2,amount2}}
-	case "armyitem":	$res = MapData_ArmyItem(	$idlist); break;	// armyid={id1={type1,amount1},id2={type2,amount2}}
-	case "armyinfo":	$res = MapData_ArmyInfo(	$idlist); break;	// armyid={armyname="bla",user=ownerid,...}
-	case "userinfo":	$res = MapData_UserInfo(	$idlist); break;	// userid={name="bla",guildid=123,fof="enemy"}
-	case "guildinfo":	$res = MapData_GuildInfo(	$idlist); break;	// guildid={name="bla"}
+
+$what = explode(",",$f_what);
+$res = array();
+$res['meta']['now']=time();
+switch ($what) {
+	case "building":	$res[$what] = MapData_Building(	$minx,$miny,$maxx,$maxy); break;	// x={y={id,type,user,level,hp,mana}}
+	case "armypos":		$res[$what] = MapData_ArmyPos(	$minx,$miny,$maxx,$maxy); break;	// x={y=armyid}
+	case "terrain":		$res[$what] = MapData_Terrain(	$minx,$miny,$maxx,$maxy); break;	// terrain1={x,y,type},terrain4={x,y,type},terrain64={x,y,type}
+	case "items":		$res[$what] = MapData_Items(	$minx,$miny,$maxx,$maxy); break;	// id={x,y,type,amount}
+	case "armyunit":	$res[$what] = MapData_ArmyUnit(	$idlist); break;	// armyid={id1={type1,amount1},id2={type2,amount2}}
+	case "armyitem":	$res[$what] = MapData_ArmyItem(	$idlist); break;	// armyid={id1={type1,amount1},id2={type2,amount2}}
+	case "armyinfo":	$res[$what] = MapData_ArmyInfo(	$idlist); break;	// armyid={armyname="bla",user=ownerid,...}
+	case "userinfo":	$res[$what] = MapData_UserInfo(	$idlist); break;	// userid={name="bla",guildid=123,fof="enemy"}
+	case "guildinfo":	$res[$what] = MapData_GuildInfo($idlist); break;	// guildid={name="bla"}
 	default : echo "ERROR:no query"; break;
 }
-if ($res) echo php_json_encode($res); else echo "ERROR: no data"; 
+echo php_json_encode($res);
 
 // todo : armywp
 
