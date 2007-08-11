@@ -12,8 +12,8 @@ if ($f_pass == kMapCodePass && isset($f_save)) {
 ?>
 
 <form method="post" action="?">
-	<input type="password" name="pass" value="">
-	<textarea name="code" cols=60 rows=5><?=htmlspecialchars($gCustomMapCode)?></textarea>
+	password : <input type="password" name="pass" value=""><br>
+	code : <textarea name="code" cols=60 rows=5><?=htmlspecialchars($gCustomMapCode)?></textarea><br>
 	<input type="submit" name="save" value="speichern">
 </form>
 
