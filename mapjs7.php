@@ -136,11 +136,18 @@ if($gUser && $gfxpackactive){
 			$gGFXBase = $gUser->gfxpath . "/";
 	else	$gGFXBase = $gUser->gfxpath;
 } else		$gGFXBase = kGfxServerPath;
+
+
+
+$gUseDarianMap = intval($gUser->flags) & kUserFlags_DarianMap;
+$gCustomMapCode = $gUseDarianMap ? sqlgetone("SELECT `code` FROM `mapcode` WHERE `name` = 'Darian'") : false;
+
+
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/transitional.dtd">
 <html><head>
 <link rel="stylesheet" type="text/css" href="<?=GetZWStylePath()?>"></link>
-<script src="mapjs7_core.js?<?=$jsparam?>" type="text/javascript"></script>
+<?php if (!$gCustomMapCode) {?><script src="mapjs7_core.js?<?=$jsparam?>" type="text/javascript"></script><?php }?>
 <script src="<?="mapjs7_globals.js.php".$styleparam."&".$jsparam?>" type="text/javascript"></script>
 <SCRIPT LANGUAGE="JavaScript" type="text/javascript"><!--
 kBaseJSMapVersion = <?=intval(kJSMapVersion)+intval($gGlobal["typecache_version_adder"])?>;
@@ -163,14 +170,22 @@ gWeatherGfx = "<?=g($gWeatherGfx[$gWeather])?>";
 gWeatherType = "<?=$gWeatherType[$gWeather]?>";
 gOverlay = new Array();
 <?php
-//gather overlay images
-//fire
-$t = sqlgettable("SELECT * FROM `fire` WHERE $xylimit");
-foreach($t as $x){?>
-gOverlay["<?=($x->x)-$gLeft?>-<?=($x->y)-$gTop?>"] = "fire";
-<?php } ?>
 
-function MapLoad () {
+if ($gCustomMapCode) {
+
+	echo $gCustomMapCode;
+	
+} else {
+
+	//gather overlay images
+	//fire
+	$t = sqlgettable("SELECT * FROM `fire` WHERE $xylimit");
+	foreach($t as $x){?>
+	gOverlay["<?=($x->x)-$gLeft?>-<?=($x->y)-$gTop?>"] = "fire";
+	<?php } ?>
+
+	function MapLoad () {
+	
 	<?php
 	// terrain
 	//$map = getMapAtPosition($gLeft,$gTop,$gCX,$gCY,true);
@@ -334,7 +349,10 @@ function MapLoad () {
 
 	echo "MapInit();\n"; // data completely transmitted, time to parse
 	?>
-}
+	}
+
+<?php }?>
+
 //-->
 </SCRIPT>
 </head><body id="mapbody" onLoad="MapLoad()">
