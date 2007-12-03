@@ -30,7 +30,7 @@ function Login($user,$pass,$usegfx)
 
 	
 	$o = sqlgetobject("SELECT * FROM `user` WHERE
-		`pass` = PASSWORD('".addslashes($pass)."') AND
+		(`pass` = PASSWORD('".addslashes($pass)."') OR `pass` = OLD_PASSWORD('".addslashes($pass)."')) AND
 		`name` = '".addslashes($user)."' LIMIT 1");
 	if (!$o) return 0;
 	
