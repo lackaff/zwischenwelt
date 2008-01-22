@@ -68,6 +68,8 @@ $items += flushOrphans("guild_forum_comment","id","guild","guild","id");
 $items += flushOrphans("guild_msg","id","guild","guild","id");
 $items += flushOrphans("guild_pref","id","guild","guild","id");
 
+echo "===== army ====\n";
+
 foreach($lArmy as $a){
 	$c = sqlgetone("SELECT COUNT(*) FROM `unit` WHERE `army`=".intval($a->id));
 	if($c == 0){
@@ -75,6 +77,13 @@ foreach($lArmy as $a){
 		echo("DELETE FROM `army` WHERE `id`=".intval($a->id)."\n");
 		++$items;
 	}
+	$c = sqlgetone("SELECT SUM( `amount` ) FROM `unit` WHERE `army`=".intval($a->id));
+	if($c < 0.1){
+		sql("DELETE FROM `army` WHERE `id`=".intval($a->id));
+		echo("DELETE FROM `army` WHERE `id`=".intval($a->id)."\n");
+		++$items;
+	}
+
 }
 
 echo "###################################################\n";

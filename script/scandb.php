@@ -46,7 +46,8 @@ if(isset($f_delid))foreach($f_delid as $id=>$v){
 }
 
 echo "<form method=post action=?do=del>";
-echo "scanning for players with less than 5 buildings ...<br>";
+$blimit = 15;
+echo "scanning for players with less than $blimit buildings ...<br>";
 $t = sqlgettable("SELECT * FROM `user`");
 foreach($t as $u)
 {
@@ -54,9 +55,16 @@ foreach($t as $u)
 	$c = sqlgetone("SELECT COUNT(*) FROM `construction` WHERE `user`=".$u->id);
 	$dt = floor((time() - $u->lastlogin)/60/60/24);
 	$dtr = floor((time() - $u->registered)/60/60/24);
-	if($dt > 30 && $dt < 13000 && $dtr > 30)$checked = "checked";
-	else $checked = "";
-	if($b<5)echo "<input value=1 type=checkbox name=\"delid[$u->id]\" $checked> user ".$u->id." '".$u->name."' has $b buildings, $c constructions, $u->logins logins and last login was <b>$dt</b> days ago<br>";
+	
+	if($dt > 30 && ($dt < 13000 || $dtr > 30)){
+		$checked = "checked";
+		$color = "red";
+	} else {
+		$checked = "";
+		$color = "black";
+	}
+	
+	if($b<$blimit)echo "<span style='color:$color;'> <input value=1 type=checkbox name=\"delid[$u->id]\" $checked> user ".$u->id." '".$u->name."' has <b>$b</b> buildings, <b>$c</b> constructions, <b>$u->logins</b> logins and last login was <b>$dt</b> days ago (registered <b>$dtr</b> days ago)</span><br>";
 }
 echo "done<br><br>";
 echo "<input type=submit value=delete></form>";
