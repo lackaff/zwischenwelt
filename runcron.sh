@@ -1,5 +1,8 @@
 #!/bin/sh
 STATUS=120
+LOADLIMIT=3
+
+# test $LOADLIMIT -gt `cat /proc/loadavg | awk -F. '{print $1}'` && echo ok
 
 while `/bin/true`
 do
@@ -8,9 +11,16 @@ do
 #  and now i will adjust the cron.php itself to not execute if the last execution was less than 60 seconds ago
 
 #BEGIN=`date +%s`
-echo "running cron.php ..."
-/usr/bin/php cron.php > lastcron.html
-sleep 20
+echo -n "running cron.php at `date` ... "
+LOAD=`cat /proc/loadavg | awk -F. '{print $1}'`
+if [ $LOADLIMIT -gt $LOAD ]
+then 
+	(/usr/bin/php cron.php > lastcron.html) && echo "done"
+	sleep 10
+else
+	echo "skipping due to high load: $LOAD limit is $LOADLIMIT"
+	sleep 5
+fi
 #STATUS=$((`date +%s`-$BEGIN))
 #if `test $STATUS -ge 30`
 #then

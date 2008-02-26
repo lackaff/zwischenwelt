@@ -203,12 +203,12 @@ function HasReq ($req_geb,$req_tech,$userid=0,$techlevel=255) {
 	$req_geb = (is_string($req_geb) && !empty($req_geb)) ? ParseReqForATechLevel($req_geb, $techlevel) : array();
 
 	// check technologies
-	if(sizeof($req_tech)>0)foreach ($req_tech as $type => $o)
-	if (($o->ismax == 0 && GetTechnologyLevel($type,$userid) < abs($o->level)) ||
-		($o->ismax != 0 && GetTechnologyLevel($type,$userid) > abs($o->level)) ){
-		return false;
+	if(sizeof($req_tech)>0)foreach ($req_tech as $type => $o){
+		if (($o->ismax == 0 && GetTechnologyLevel($type,$userid) < abs($o->level)) ||
+			($o->ismax != 0 && GetTechnologyLevel($type,$userid) > abs($o->level)) ){
+			return false;
+		}
 	}
-	
 	// check buildings
 	if(sizeof($req_geb)>0)foreach ($req_geb as $type => $o){
 		if (($o->ismax == 0 && GetMaxBuildingLevel($type,$userid) < abs($o->level)) ||

@@ -44,7 +44,6 @@ function getTechPts($uid,$costar=0){
 	$techs= sqlgettable("SELECT `level`,`type` FROM `technology` WHERE `user`=".intval($uid)." AND `level`>0","type");
 	$points=0;
 	foreach($techs as $t){
-		//echo "[$t->type]";
 		$tp=$costar[$t->type]->costs/20;  // TODO : check for undefined !
 		$tl=0;
 		$level=$t->level;

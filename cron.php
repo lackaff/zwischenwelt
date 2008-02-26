@@ -15,7 +15,7 @@ if($lock){
 			shell_exec("/bin/rm -f /tmp/zw-cron.lock");
 			shell_exec("echo lock > /tmp/zw-cron.lock");
 		}else{
-			exit(1);
+			exit(0);
 		}
 	}else{
 		shell_exec("echo lock > /tmp/zw-cron.lock");
@@ -42,6 +42,7 @@ $time = time();
 if (1) {
 	if ($time - intval($gGlobal["lasttick"]) < 60) { 
 		echo "skipping cron.php, only needed every 60 seconds<br>\n";
+		echo "dt=".($time - intval($gGlobal["lasttick"]))."\n";
 		exit(0);  // tick every 60 seconds
 	}
 }
@@ -1137,4 +1138,7 @@ else echo $dt."sec left to net stats collection.\n\n";
 
 SetGlobal("lastcronduration",time() - $gThiscronStartTime);
 echo "<br>\n... cron finished";
+
+exit(0);
+
 ?>

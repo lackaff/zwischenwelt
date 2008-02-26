@@ -57,6 +57,7 @@ if (isset($f_singleupgrades)) {
 	}
 }
 
+
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 transitional//EN"
    "http://www.w3.org/TR/html4/transitional.dtd">
@@ -190,7 +191,8 @@ if (isset($f_listtype)) {
 	foreach ($buildinggroups as $o) if (!in_array($o->type,$btypes)) $btypes[] = $o->type;
 	$mytabs = array();
 	
-	foreach ($btypes as $btype) {
+	//exit(0);
+	foreach ($btypes as $btype) if (1) {
 		rob_ob_start();
 		$totalcost = array_fill(0,count($gRes),0);
 		$totaltime = 0;
@@ -298,6 +300,7 @@ if (isset($f_listtype)) {
 		else	$header = "<img src=\"".GetBuildingPic($btype,$gUser)."\">";
 		$mytabs[$btype] = array($header,rob_ob_end());
 	}
+	//exit("debugging in process");
 	//foreach ($mytabs as $arr) echo $arr[1];
 	echo GenerateTabsMultiRow("buildingsummarytabs",$mytabs,15,$f_selbtype);
 }

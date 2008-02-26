@@ -988,7 +988,7 @@ class cFight {
 		if ($defender && $defender->user && (intval($defender->flags) & kArmyFlag_GuildCommand)){
 			$gc = getGuildCommander(sqlgetone("SELECT `guild` FROM `user` WHERE `id` = ".$defender->user));
 			foreach($gc as $c) {
-				if($c!=$attacker->user)LogMe($c,NEWLOG_TOPIC_FIGHT,NEWLOG_FIGHT_STOP,$defender->x,$defender->y,0,$why,"");
+				if($c!=$defender->user)LogMe($c,NEWLOG_TOPIC_FIGHT,NEWLOG_FIGHT_STOP,$defender->x,$defender->y,0,$why,"");
 				$to_uid_list[] = $c;
 			}
 		}

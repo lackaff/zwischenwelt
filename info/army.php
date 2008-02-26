@@ -425,7 +425,7 @@ class cInfoArmy extends cInfoBase {
 			$target = sqlgetobject("SELECT * FROM `building` WHERE `id`=".$gPillage->building);
 			?>
 			<span style="color:red">plündert gerade <?=cArmy::DrawPillageRes($gPillage->type)?> aus <a href="<?=Query("?sid=?&x=".$target->x."&y=".$target->y)?>">Lager (<?=$target->x?>|<?=$target->y?>)</a></span>
-			<?php if($gCanControllArmy) {?><a href="<?=Query("?sid=?&x=?&y=?&army=".$gArmy->id."&do=cancelpillage&id=".$gPillage->id)?>"><img border=0 src="<?=g("del.png")?>"></a><?php } ?>
+			<?php if($gCanControllArmy) {?><a href="<?=Query("?sid=?&x=?&y=?&army=".$gArmy->id."&do=cancelpillage&id=".$gPillage->id)?>"><img border=0 src="<?=g("icon/cancel.png")?>"></a><?php } ?>
 			<?php if($gUser->admin){ ?>
 				<a href="<?=Query("?sid=?&x=?&y=?&army=$gObject->id&do=admin_pillage_step&id=$gPillage->id&steps=1")?>">(s1)</a>
 				<a href="<?=Query("?sid=?&x=?&y=?&army=$gObject->id&do=admin_pillage_step&id=$gPillage->id&steps=10")?>">(s10)</a>
@@ -441,7 +441,7 @@ class cInfoArmy extends cInfoBase {
 			$btype = $gBuildingType[$target->type];
 			?>
 			<span style="color:red">belagert gerade <a href="<?=Query("?sid=?&x=".$target->x."&y=".$target->y)?>"><?=$btype->name?> (<?=$target->x?>|<?=$target->y?>)</a></span>
-			<?php if($gCanControllArmy) {?><a href="<?=Query("?sid=?&x=?&y=?&army=".$gArmy->id."&do=cancelsiege&id=".$gSiege->id)?>"><img border=0 src="<?=g("del.png")?>"></a><?php } ?>
+			<?php if($gCanControllArmy) {?><a href="<?=Query("?sid=?&x=?&y=?&army=".$gArmy->id."&do=cancelsiege&id=".$gSiege->id)?>"><img border=0 src="<?=g("icon/cancel.png")?>"></a><?php } ?>
 			<?php if($gUser->admin){ ?>
 				<a href="<?=Query("?sid=?&x=?&y=?&army=$gObject->id&do=admin_siege_step&id=$gSiege->id&steps=1")?>">(s1)</a>
 				<a href="<?=Query("?sid=?&x=?&y=?&army=$gObject->id&do=admin_siege_step&id=$gSiege->id&steps=10")?>">(s10)</a>

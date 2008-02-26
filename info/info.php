@@ -225,7 +225,7 @@ if (!isset($f_building) && !isset($f_army) && isset($f_do)) {
 						$hqMinDistToOtherPlayers = 40; // TODO : unhardcode, constant ? global ?
 						$r = $hqMinDistToOtherPlayers;
 						$blockerbuilding = sqlgetobject("SELECT * FROM `building` WHERE 
-							`x` >= ".($x - $r)." AND `y` >= ".($y - $r)." AND 
+							`x` >= ".($x - $r)." AND `y` >= ".($y - $r)." AND `user` <> 0 AND 
 							`x` <= ".($x + $r)." AND `y` <= ".($y + $r)." AND `user` <> ".intval($gUser->id)." LIMIT 1");
 						if ($blockerbuilding) {
 							$reqpic = GetBuildingTypeLink($blockerbuilding->type,$f_x,$f_y,false,$blockerbuilding->user,$blockerbuilding->level);
