@@ -148,25 +148,42 @@ class Spell {
 	
 	// returns array($success,$penalty,$msg,$color), first two floats, third is message, penalty is used for extra cost
 	function GetRandomSuccess ($spelltype,$mages,$userid) {
-		// high entropy is bad
-		$entropy = 0;
-		$entropy += 10.0*$this->GetDifficulty($spelltype,$mages,$userid);
-		$entropy -= $mages/2.0; // 20 magier gleichen die schwierigkeit einer tech-stufe aus
-		$baseentropy = $entropy;
-		$entropy += rand(0,100);
-		// 10 zu 1 chance bei versagen einen patzer zu machen
+		// "entrophy umgerechet in power, da User denken:
+		// - Positive Effekte haben große Werte. 
+		// - Negative Werte bedeuten Versagen. 
+
+		$rand=rand(0,100);
+		$rare=(rand(0,10)==0);
+		$difficulty=$this->GetDifficulty($spelltype,$mages,$userid); // max req techlevel +2. min 1
 		
-		 // todo : document in wiki
-			 if ($entropy > 90.0)	$res = (rand(0,10)==0)?array(-1.0,2.2,"Patzer!","red"):array( 0.0,1.7,"versagt","red");
-		else if ($entropy > 50.0)	$res = array( 0.9,1.3,"knapp geschafft","#228800");
-		else if ($entropy > 30.0)	$res = array( 1.0,1.0,"geschafft","#00AA00");
-		else						$res = array( 1.5,0.8,"gut geschafft","#00CC00");
+		$power = 0;
+		$power -= $difficulty; 	// range: 1-14 (erdbeben: 12)
+		$power += $mages/20; 	// range: 0-12
+		$power += $rand/10; 	// range: 0-10
+
+		if ($power>=10 && $rare)			$res = array( 2.0, 1.0, "meisterlich",		"#cfb000",	"castresult5");
+		else if ($power >= 10)				$res = array( 1.5, 0.7, "außerordentlich",	"#00cfcc",	"castresult4");
+		else if ($power >= 7)				$res = array( 1.3, 0.8, "sehr gut",			"#10a900",	"castresult3");
+		else if ($power >= 5)				$res = array( 1.2, 0.9, "gut geschafft",	"#1b910f",	"castresult2");
+		else if ($power >= 2)				$res = array( 1.0, 1.0, "geschafft",		"#88ab84",	"castresult1");
+		else if ($power >= 0)				$res = array( 0.9, 1.3, "knapp geschafft",	"#807664",	"castresult0");
+		else if ($power >= -4)				$res = array( 0.0, 1.5, "leicht versagt",	"#eea352",	"castfail0");
+		else if (!$rare)					$res = array( 0.0, 2.0, "versagt",			"#eb3333",	"castfail1");
+		else								$res = array(-1.0, 2.5, "Patzer!",			"#ff0000",	"castfail2");
 		
-		$costmodtxt = (($res[1]>=1.0)?"+":"").($res[1]*100 - 100)."%";
 		
-		echo "<font color='".$res[3]."'>".
-			"<u><b>".$res[2]."</b></u>, Schwierigkeit ".sprintf("%0.1f",$baseentropy/10)." + Zufall = ".sprintf("%0.1f",$entropy/10).", ".
-			"Modifikator = ".sprintf("%0.1f",max(0,$res[0])).", Kosten : ".$costmodtxt."</font><br>";
+		if ($power>=10 && $rare) $success="hatten überragenden Erfolg!";
+		else if ($power<0 && $rare) $success="haben total versagt!";
+		else if ($power<0 && !$rare) $success="haben versagt.";
+		else $success=" hatten zu ".$rand."% Erfolg.";
+		
+		echo '<div class="cast '.$res[4].'" style="font-size: 12px; font-family:tahoma; margin-bottom: 3px">';
+		echo '<u><b style="color: '.$res[3].'">'.$res[2].'</b></u> mit Erfolgswert '.sprintf("%0.1f",$power);
+		echo ' hat Effizienz von '.(max(0,$res[0])*100).'% und kostet '.(max(0,$res[1])*100).'% von normal.';
+		echo '<div class="details" style="font-size: 10px; font-family:tahoma; padding-bottom: 2px">';
+			echo $mages.' Turmmager '.$success.' ';
+			echo 'Der Zauber hat eine Schwierigkeit von Level '.$difficulty;
+		echo '</div></div>';
 		return $res;
 	}
 	

@@ -168,25 +168,8 @@ function GetMagicCastingBox ($x,$y) {
 function PrintMagicHelp () {
 	?>
 	<?php ImgBorderStart("p2","jpg","#f2e7d5","",32,33); ?>
-	*) die Zeitangabe ist die Basiszeit, die tatsaechliche Zeit haengt vom Level der Technologie und Zufallsfaktoren ab und kann bis doppelt so Lang sein.<br>
-	<br>
-	Je nach Erfolg bzw Fehlschlag können die Kosten für den Zauber höher oder niedriger ausfallen.<br>
-	<br>
-	"L" steht für das erforschte Level des Zaubers.<br>
-	"S" steht für die Schwierigkeit des Zaubers, je höher, desto schwerer.<br>
-	20 Turmzauberer senken die Schwierigkeit um eine Stufe,<br>
-	0-10 Stufen kommen beim Zaubern durch Zufall noch drauf,<br>
-	wenn die Schwierigkeit danach unter 9 ist, schafft man den Zauber.<br>
-	wenn man den Zauber nicht schafft, besteht eine 10%tige Chance für einen Patzer, 
-	ein solcher kann, je nach Zauber, neben einer Kostenerhöhung noch weitere böse Effekte mit sich bringen.<br>
-	<table border=1 cellspacing=0>
-	<tr><th>Ergebnis</th><th>Kosten</th><th>Mod</th></tr>
-	<tr><td>&gt;9 : Patzer! (10%)</td>		<td>+120%</td>	<td>0.0</td></tr>
-	<tr><td>&gt;9 : versagt</td>		<td>+70%</td>	<td>0.0</td></tr>
-	<tr><td>&gt;5 : knapp geschafft</td><td>+30%</td>	<td>0.9</td></tr>
-	<tr><td>&gt;3 : geschafft</td>		<td>+0%</td>	<td>1.0</td></tr>
-	<tr><td>rest : gut geschafft</td>	<td>-20%</td>	<td>1.5</td></tr>
-	</table>
+		<a href="http://zwischenwelt.milchkind.net/zwwiki/index.php/Zauber-FAQ#Erfolgswert" target="blank">Erklärung des Zaubererfolgs findest du im Wiki.</a>
+		In kurz: Unter 0 versagt. Ab 10 ist Maximum.
 	<?php ImgBorderEnd("p2","jpg","#f2e7d5",32,33); ?>
 	<?php
 }
