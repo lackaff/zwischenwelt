@@ -40,9 +40,12 @@ require_once("lib.hook.php");
 $time = time();
 
 if (1) {
-	if ($time - intval($gGlobal["lasttick"]) < 60) { 
+	$lasttick = intval($gGlobal["lasttick"]);
+	if ($time - $lasttick < 60) { 
 		echo "skipping cron.php, only needed every 60 seconds<br>\n";
-		echo "dt=".($time - intval($gGlobal["lasttick"]))."\n";
+		echo "dt=".($time - $lasttick)."<br>\n";
+		echo "lasttick = ".date("H:i d-m-Y",$lasttick)." $lasttick<br>\n";
+		echo "curt     = ".date("H:i d-m-Y",$time)." $time<br>\n";
 		exit(0);  // tick every 60 seconds
 	}
 }
@@ -484,7 +487,7 @@ profile_page_start("cron.php - rarestuff",true);
 
 if(($gGlobal["ticks"] % 60) == 0){  // TODO : unhardcode
 	echo "remove old log<br>";
-	sql("DELETE FROM `newlog` WHERE $time-`time`>60*60*24*7");  // TODO : unhardcode
+	sql("DELETE FROM `newlog` WHERE $time-`time`>60*60*24");  // TODO : unhardcode
 }
 
 //if(($gGlobal["ticks"] % (60*6)) == 0)$gGlobal["ticks"] % 60 == 0){
