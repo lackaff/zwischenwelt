@@ -70,7 +70,7 @@ function ArmyThink ($army,$debug=false) {
 	if ($army->type == kArmyType_Arbeiter) {
 		if (kProfileArmyLoop) LoopProfiler("armyloop:bodenschatz");
 		$b = sqlgetobject("SELECT * FROM `building` WHERE `x`=".$army->x." AND `y`=".$army->y); // todo : looknear building ausnutzen !!!
-		if (in_array($b->type,$gBodenSchatzBuildings)) {
+		if ($b && in_array($b->type,$gBodenSchatzBuildings)) {
 			$btype = $gBuildingType[$b->type];
 			$resitems = array();
 			foreach ($gRes as $n=>$f) {
