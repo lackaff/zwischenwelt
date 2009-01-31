@@ -11,11 +11,6 @@ include("header.php");
 ?>
 <span id=team><h1>Impressum</h1></span>
 <pre>
-Sebastian Dorda
-
-Gralstrasse 1
-81925 Muenchen
-
-hagish (ignorieren) @ (das auch) schattenkind.net
+HIER DAS IMPRESSUM EINFUEGEN
 </pre>
 <?php include("footer.php"); ?>
