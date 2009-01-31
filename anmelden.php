@@ -65,6 +65,9 @@ if(isset($f_selfcall))
 				mail($f_mail, "Zwischenwelt Registratur", "Um den Account freizuschalten bitte folgenden Link aufrufen: ".BASEURL."anmelden.php?key=$key","From: ".ZW_MAIL_SENDER."\r\nReply-To: ".ZW_MAIL_SENDER."\r\nX-Mailer: PHP/" . phpversion()); 
 				if (ZW_NEWREGISTRATION_NOTIFY) mail(ZW_NEWREGISTRATION_NOTIFY,"neue Anmeldung","name=$f_name\nmail=$f_mail\nfrom=$f_from\ntext=$f_text","From: ".ZW_MAIL_SENDER."\r\nReply-To: ".ZW_MAIL_SENDER."\r\nX-Mailer: PHP/" . phpversion());
 				echo '<hr>Es hat geklappt, sie haben Post :).<hr><b style="color:red">Manchmal kann es mit dem Mails etwas dauern, also keine Panik.</b><hr>';
+				if(ZW_NEWREGISTRATION_SHOWLINK){
+					echo '<hr>Um den Account freizuschalten, <a href="anmelden.php?key='.$key.'">hier</a> klicken.<hr>';
+				}
 				include("footer.php");
 				exit;
 			}

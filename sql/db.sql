@@ -2795,7 +2795,7 @@ CREATE TABLE `user` (
 -- Dumping data for table `user`
 -- 
 
-INSERT INTO `user` VALUES (249, 'Admin', '43e9a4ab75570f5b', 'admin@localhost', '', 1, 12, 1147711194, 1, '', 0, 8, 18648630, 11666.9566666665, 151946, 428586.696837105, 432102.256758105, 581999.593333333, 582000, 625725, 582000, 582000, 582000, 582000, 640000, 30, 30, 20, 20, 0, 0, 0, 16821.4, 16821.4, 11197.6, 11147.6, '#000000', 1, 160074, 2147483647, 6033956, 206, 1108292583, 0, 1, 1, 98, 100);
+INSERT INTO `user` VALUES (249, 'Admin', '', 'admin@localhost', '', 1, 12, 1147711194, 1, '', 0, 8, 18648630, 11666.9566666665, 151946, 428586.696837105, 432102.256758105, 581999.593333333, 582000, 625725, 582000, 582000, 582000, 582000, 640000, 30, 30, 20, 20, 0, 0, 0, 16821.4, 16821.4, 11197.6, 11147.6, '#000000', 1, 160074, 2147483647, 6033956, 206, 1108292583, 0, 1, 1, 98, 100);
 
 -- --------------------------------------------------------
 
@@ -2926,3 +2926,35 @@ CREATE TABLE `wonder` (
 -- Dumping data for table `wonder`
 -- 
 
+CREATE TABLE `calllog` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `time` int(10) unsigned NOT NULL default '0',
+  `user` int(10) unsigned NOT NULL default '0',
+  `ip` varchar(15) NOT NULL default '',
+  `script` varchar(255) NOT NULL default '',
+  `query` text NOT NULL,
+  `post` text NOT NULL,
+  PRIMARY KEY  (`id`)
+) TYPE=MyISAM;
+
+CREATE TABLE `fire` (
+`x` INT NOT NULL ,
+`y` INT NOT NULL ,
+`nextdamage` INT UNSIGNED NOT NULL DEFAULT '0',
+`nextspread` INT UNSIGNED NOT NULL DEFAULT '0',
+PRIMARY KEY ( `x` , `y` ) ,
+INDEX ( `nextdamage` , `nextspread` )
+) TYPE = MYISAM ;
+ALTER TABLE `fire` ADD `created` INT UNSIGNED NOT NULL DEFAULT '0';
+ALTER TABLE `fire` ADD `putoutprob` SMALLINT UNSIGNED NOT NULL DEFAULT '0';
+
+ALTER TABLE `terraintype` ADD `flags` INT UNSIGNED NOT NULL DEFAULT '0';
+
+ALTER TABLE `buildingtype` ADD `fire_prob` SMALLINT UNSIGNED NOT NULL DEFAULT '0';
+ALTER TABLE `terraintype` ADD `fire_prob` SMALLINT UNSIGNED NOT NULL DEFAULT '0';
+ALTER TABLE `terraintype` ADD `fire_burnout_type` INT UNSIGNED NOT NULL DEFAULT '0';
+ALTER TABLE `user` ADD `buildings_on_fire` INT UNSIGNED NOT NULL DEFAULT '0';
+ALTER TABLE `fire` ADD INDEX ( `created` );
+
+
+DROP TABLE `guild_right`;

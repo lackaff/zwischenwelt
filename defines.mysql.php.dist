@@ -4,13 +4,17 @@ define("MYSQL_USER","root");
 define("MYSQL_PASS","");
 define("MYSQL_DB","zw");
 define("BASEPATH","/some/where/zw/");   // under windoze something like "C:\\some\\where\\zw\\"
-define("PHP_ERROR_LOG_MAIL","admin@main.blubber");
+define("PHP_ERROR_LOG_MAIL","admin@localhost");
 define("kGfxServerPath","http://localhost/gfx/");
 define("kStyleServerPath","http://localhost/");
 define("kMapCodePass","");
 define("PAGELAYOUT",1);
 define("BASEURL","http://localhost/");
-define("ZW_MAIL_SENDER","zwischenwelt@net-play.de"); // anmelde und passwort vergessen mails haben diese addy als absender
+define("ZW_MAIL_SENDER","zwischenwelt@localhost"); // anmelde und passwort vergessen mails haben diese addy als absender
 define("ZW_NEWREGISTRATION_NOTIFY",false); // wenn das hier auf nicht false gesetzt wird, wird an diese mail adresse eine nachricht geschickt, wenn sich ein neuer spieler anmeldet
 // define("ZW_NEWREGISTRATION_NOTIFY",ZW_MAIL_SENDER);
+
+// wenn showlink true ist, dann wird der bestätigungslink für die anmeldung direkt angezeigt.
+// wenn man fertig mit debuggen und testen ist, sollte man dies auf false stellen.
+define("ZW_NEWREGISTRATION_SHOWLINK",true);
 ?>
