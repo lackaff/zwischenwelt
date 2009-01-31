@@ -436,8 +436,6 @@ function sql	($query) {
 				fclose($f);
 			}
 		}	
-		// WER DAS WIEDER EINKOMMENTIERT WIRD GEKILLT !
-		//mail("hagish@schattenkind.net","[ZW ERROR] sql error",$s,"From: zwischenwelt@net-play.de\r\nReply-To: zwischenwelt@net-play.de\r\nX-Mailer: PHP/" . phpversion());
 		
 		global $gProfilPagePage;
 		$sqlerror = false;
