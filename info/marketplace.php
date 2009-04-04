@@ -142,13 +142,30 @@ class cInfoMarket extends cInfoBuilding {
 					<tr><th colspan="7" align="left">fremde Angebote</th></tr>
 					<tr>
 						<th colspan=3></th>
+						<th colspan=1>Verfügbar</th>
 						<th colspan=3>Angebot</th>
 						<th colspan=3>Preis</th>
 						<th colspan=1>Händler</th>
 						<th colspan=1></th>
 						</tr>
-					<?php foreach($t_other as $x) {?>
-							<?php $preisdiff = $x->price_count - $gUser->{$gResTypeVars[$x->price_res]};?>
+					<?php 
+					$count = 0;
+					$l = array();
+					
+					// group identical offers
+					foreach($t_other as $x){
+						$hash = $x->user."_".$x->offer_res."_".$x->offer_count."_".$x->price_res."_".$x->price_count;
+						
+						if(!isset($l[$hash]))$l[$hash] = array();
+						
+						$l[$hash][] = $x;
+					}
+
+					foreach($l as $hash => $offers) {
+						$x = $offers[0];
+						$count = count($offers);
+						
+						$preisdiff = $x->price_count - $gUser->{$gResTypeVars[$x->price_res]};?>
 							<tr>
 								<td>
 									<?php if ($preisdiff <= 0) {?>
@@ -158,6 +175,7 @@ class cInfoMarket extends cInfoBuilding {
 									</td>
 								<td>[<?=sprintf("%0.2f",$x->fak)?>]</td>
 								<td>&nbsp;</td>
+								<td><?=$count?>x</td>
 								<td><img src="<?=g("res_".$gResTypeVars[$x->offer_res].".gif")?>"></td>
 								<td><?=kplaintrenner($x->offer_count)?></td>
 								<td>&nbsp;für</td>
@@ -175,7 +193,7 @@ class cInfoMarket extends cInfoBuilding {
 									<?php }?>
 								</td>
 							</tr>
-							<tr><td colspan=10><hr style="height:1px;margin:0px;padding:0px;"></td></tr>
+							<tr><td colspan=11><hr style="height:1px;margin:0px;padding:0px;"></td></tr>
 					<?php }?>
 				</table>
 			<input type="submit" value="handeln">
