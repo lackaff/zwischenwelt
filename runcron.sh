@@ -16,10 +16,10 @@ LOAD=`cat /proc/loadavg | awk -F. '{print $1}'`
 if [ $LOADLIMIT -gt $LOAD ]
 then 
 	(/usr/bin/php cron.php > lastcron.html) && echo "done"
-	sleep 10
+	sleep 20
 else
 	echo "skipping due to high load: $LOAD limit is $LOADLIMIT"
-	sleep 5
+	sleep 10
 fi
 #STATUS=$((`date +%s`-$BEGIN))
 #if `test $STATUS -ge 30`

@@ -8,7 +8,7 @@ require_once("lib.item.php");
 todo : item add param ?? , army add quest ??
 */
 
-// monster jagt : 20 pogopuschel in region x töten
+// monster jagt : 20 pogopuschel in region x tï¿½ten
 // rettung funktioniert wie transport
 
 
@@ -191,7 +191,7 @@ function QuestTrigger_ArmyMove(&$army,$x,$y) { // called very often, non-monster
 		}
 	}
 	
-	if (!isset($gQuestItems[$army->id])) return;
+	if (!isset($army->id) || !isset($gQuestItems[$army->id])) return;
 	$items =& $gQuestItems[$army->id];
 	if (!$items) return;
 	// execute only when this army has quest items

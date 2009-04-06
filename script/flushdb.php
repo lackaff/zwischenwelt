@@ -86,6 +86,14 @@ foreach($lArmy as $a){
 
 }
 
+echo "\n";
+echo "===== remove broken crap ====\n";
+
+sql("DELETE FROM `technology` WHERE `type`=0");
+$items += mysql_affected_rows();
+
+echo "\n";
+
 echo "###################################################\n";
 echo "## $items items deleted\n";
 echo "###################################################\n";

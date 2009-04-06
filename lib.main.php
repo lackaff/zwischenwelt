@@ -26,7 +26,7 @@ if (CHECK_ZW_CONFIG) {
 			"also z.b. sowas wie /var/www/zw unter linux oder C:/wwwroot/zw unter win";
 		
 		// suggestions 
-		$sug = "Vorschlag für den BASEPATH : ";
+		$sug = "Vorschlag fï¿½r den BASEPATH : ";
 		$configwarnings[] = $sug.$_SERVER[SCRIPT_FILENAME]." (ohne den php file am ende)";
 		$configwarnings[] = $sug.$_SERVER[PATH_TRANSLATED]." (ohne den php file am ende)";
 		$configwarnings[] = $sug.$_SERVER[DOCUMENT_ROOT].$_SERVER[PHP_SELF]." (ohne den php file am ende)";
@@ -105,11 +105,11 @@ if (!isset($gTempTypeOverride)) {
 		require_once("generate_types.php");
 	if (!file_exists(kTypeCacheFile)) {
 		echo "Beim erstellen der Typecache Datei ist ein Fehler aufgetreten.<br>";
-		echo "Dies könnte dadran liegen, dass der Webserver oder PHP keine Schreibrechte im BASEPATH/tmp Verzeichnis hat<br>";
+		echo "Dies kï¿½nnte dadran liegen, dass der Webserver oder PHP keine Schreibrechte im BASEPATH/tmp Verzeichnis hat<br>";
 		echo "Die Rechte sind im moment auf '".get_readable_permission(BASEPATH."tmp/")."' eingestellt, sie sollten auf 'rwxrwxrwx' stehen<br>";
 		echo "Unter Linux kann man das mit dem Befehl 'chmod a+rwx tmp' erreichen<br>";
 		echo "Unter Win kann man vielleicht mit rechtsclick auf den Ordner Lese&Schreibrechte geben.<br>";
-		echo "Wenn man über ein FTP Programm zugriff hat, sollte man nach 'chmod' suchen, und da entweder alle rechte ankreuzen, oder auf 777 stellen.<br>";
+		echo "Wenn man ï¿½ber ein FTP Programm zugriff hat, sollte man nach 'chmod' suchen, und da entweder alle rechte ankreuzen, oder auf 777 stellen.<br>";
 		echo "<hr>Wichtig ist auch dass die Mysql-Datenbank richtig aufgesetzt wurde (Siehe Anleitung in 'INSTALL') <br>";
 		exit();
 	} else {
@@ -203,7 +203,7 @@ function IsInSameGuild	($masteruser,$otheruser) { // obj or id
 function Moral2HtmlIcon($moral){
 	$moral = round(max(0,min(200,$moral)) / 20);
 	switch($moral){
-		case 0:$title="Uberböse";break;
+		case 0:$title="Uberbï¿½se";break;
 		case 1:$title="Sadist";break;
 		case 2:$title="Fiesling";break;
 		case 3:$title="Bengelchen";break;
@@ -224,7 +224,7 @@ function changeUserMoral($userid,$deltamoral){
 	$deltamoral = intval(round($deltamoral));
 	$userid = intval($userid);
 	// DONE :  moral = GREATEST(0,SMALLEST(200,moral+deltamoral)) oder so...
-	// sonst hat superstarke moralaenderung keinerlei auswirkung, wenn sie über das limit kommen würde
+	// sonst hat superstarke moralaenderung keinerlei auswirkung, wenn sie ï¿½ber das limit kommen wï¿½rde
 	//sql("UPDATE `user` SET `moral`=`moral`+($deltamoral) WHERE `id`=$userid AND (`moral`+($deltamoral))>=0 AND (`moral`+($deltamoral))<=200");
 	sql("UPDATE `user` SET `moral`=GREATEST(0,LEAST(200,`moral`+($deltamoral))) WHERE `id`=$userid");
 }
@@ -602,6 +602,16 @@ function GetNextStep ($x,$y,$x1,$y1,$x2,$y2,$debug=false) {
 	}
 }
 
+
+function FillUserCache(){
+	global $gPayCache_Users;
+	$gPayCache_Users = sqlgettable("SELECT * FROM `user` ORDER BY `id`","id");
+}
+
+function ClearUserCache(){
+	global $gPayCache_Users;
+	unset($gPayCache_Users);
+}
 
 // pay res, true on success, atomar, $res>0 , uses $gPayCache_Users if available
 // only needed in cron,cronlib and portal so far
@@ -1080,19 +1090,44 @@ function g($path,$nwse="ns",$level="0",$race="0",$moral="100",$random=0){
 
 
 $gTableLockCounter = 0; //never change this by hand
-$gTableLockQuery = "";
+
+// if a table lock should be skipped (skip) or readonly lock (read)
+// you can overwrite the default write lock behaviour
+$gTableLockPreferences = array(
+	'session' => 'read',
+	//'calllog' => 'read',
+	//'fightlog' => 'read',
+	//'guildlog' => 'read',
+	//'log' => 'read',
+	'armytype' => 'read',
+	'buildingtype' => 'read',
+	'itemtype' => 'read',
+	'technologytype' => 'read',
+	'terrainpatchtype' => 'read',
+	'terrainsubtype' => 'read',
+	'armytype' => 'read',
+	'terraintype' => 'read',
+	'unittype' => 'read',
+);
+
 // lock all tables
-function TablesLock(){
-	global $gTableLockCounter,$gTableLockQuery;
+function TablesLock($ignore_lock_preferences = false){
+	global $gTableLockCounter,$gTableLockPreferences;
 	assert($gTableLockCounter>=0);
 	if($gTableLockCounter == 0){
-		if(empty($gTableLockQuery)){
-			$r = sql("SHOW TABLES");
-			$l = array();
-			while($row = mysql_fetch_row($r))$l[] = "`".$row[0]."` WRITE";
-			$gTableLockQuery = "LOCK TABLES ".implode(" , ",$l);
+		$r = sql("SHOW TABLES");
+		$l = array();
+		while($row = mysql_fetch_row($r)){
+			$mode = 'WRITE';
+			$t = $row[0];
+			if($ignore_lock_preferences == false && isset($gTableLockPreferences[$t])){
+				if($gTableLockPreferences[$t] == 'skip')continue;
+				else if($gTableLockPreferences[$t] == 'read')$mode = 'READ';
+			}
+
+			$l[] = "`".$t."` $mode";
 		}
-		sql($gTableLockQuery);
+		sql("LOCK TABLES ".implode(" , ",$l));
 	}
 	++$gTableLockCounter;
 }
@@ -1184,7 +1219,7 @@ function GetBrushFields ($x1,$y1,$brushrad=0,$brushdensity=100,$brushmode=0,$lin
 
 
 /**
-* Berechnet den Nahrungsverbraucht von n Bewohnern für den Zeitraum dt
+* Berechnet den Nahrungsverbraucht von n Bewohnern fï¿½r den Zeitraum dt
 * @param n Bewohnerzahl
 * @param dt Zeitraum in Sekunden
 **/
@@ -1516,10 +1551,10 @@ function FireSetOn($x,$y){
 						//first burning building, send message to user
 						if($fires == 1){
 								$text = "";
-								$text .= "Das Gebäude and er Position ($x,$y) steht in Flammen. Es besteht die Gefahr, daß ";
+								$text .= "Das Gebï¿½ude and er Position ($x,$y) steht in Flammen. Es besteht die Gefahr, daï¿½ ";
 								$text .= "sich das Feuer auf umliegende Felder ausbreitet. Diese Nachricht wird nur bei dem ";
-								$text .= "ersten brennenden Gebäude geschickt.";
-								sendMessage($user,0,"Eines Ihrer Gebäude brennt!",$text,0,false);
+								$text .= "ersten brennenden Gebï¿½ude geschickt.";
+								sendMessage($user,0,"Eines Ihrer Gebï¿½ude brennt!",$text,0,false);
 						}
 				}
 		}

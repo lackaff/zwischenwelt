@@ -2,7 +2,7 @@
 require_once("lib.army.php");
 
 /*
-regel : wenn ein $units array übergeben wird, ist es der erste parameter
+regel : wenn ein $units array ï¿½bergeben wird, ist es der erste parameter
 */
 
 function cmpUnit ($a,$b) {
@@ -350,7 +350,7 @@ class cUnit {
 		global $gUnitType;
 		usort($units,"cmpUnit");
 		$res = array();
-		$debug = false;
+		$debug = true;
 		if ($debug) {echo "GetUnitsAfterDamage: dmg=$damage units_vorher_sorted:";vardump2($units);}
 		foreach ($units as $o2) {
 			$o = copyobj($o2);
@@ -387,7 +387,7 @@ class cUnit {
 	function GetUnitsDiff ($before,$after,$neg=false) {
 		// TODO : this is function not PHP5 compatible
 		$diff = array();
-		$debug = false;
+		$debug = true;
 		foreach ($before as $lost2) if ($lost2->amount > 0) {
 			$lost = copyobj($lost2);
 			global $gUnitType;

@@ -192,7 +192,7 @@ if(empty($t)){
 	$o->title = "Brauereimeister";
 	$o->time = time();
 	$o->image = "title/title-bier.png";
-	$o->text = "Der König der Biere";
+	$o->text = "Der Kï¿½nig der Biere";
 	sql("INSERT INTO `title` SET ".obj2sql($o));
 }
 $u = sqlgetone("SELECT t.`user` FROM `technology` t,`user` u WHERE u.`id`=t.`user` AND u.`admin`=0 AND t.`level`>0 AND `type`=".kTech_Bier." ORDER BY `level` DESC LIMIT 1");
@@ -226,17 +226,14 @@ profile_page_start("cron.php - build buildings",true);
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 
-// lock around build building, upgrade building and user, for UserPay optimization
-TablesLock();
+// reset resources if <0
 $res = Array("lumber","food","stone","metal","runes");
 foreach($res as $r) sql("UPDATE `user` SET `$r`=0 WHERE `$r`<0");
-$gAllUsers = sqlgettable("SELECT * FROM `user` ORDER BY `id`","id");
-$gPayCache_Users =& $gAllUsers;
-// now it is save calculate paying on this buffer, UserPay() uses it automatically
-// TODO : all paying and res production within this lock must now operate on this array (via reference)
-// WARNING : all changes to user ressources within this lock that are not operating on this cache, are overwritten at the end
+
 
 $cons = sqlgettable("SELECT * FROM `building` WHERE `construction` > 0","user");
+
+$gAllUsers = sqlgettable("SELECT * FROM `user` ORDER BY `id`","id");
 foreach($gAllUsers as $x) {
 	$o = isset($cons[$x->id])?$cons[$x->id]:false;
 	if($o) { 
@@ -351,6 +348,7 @@ profile_page_start("cron.php - user",true);
 
 $zeroset_btypes = array($gGlobal["building_hq"],$gGlobal["building_house"],$gGlobal["building_store"],$gGlobal["building_runes"]);
 
+$gAllUsers = sqlgettable("SELECT * FROM `user` ORDER BY `id`","id");
 foreach($gAllUsers as $u) {
 	$b = sqlgettable("SELECT count( `id` ) AS `count` , `type` AS `type` , sum( `level` ) AS `level` , sum(`supportslots`) as `supportslots` FROM `building` WHERE `construction`=0 AND `user`=".$u->id." GROUP BY `type`","type");
 		
@@ -389,23 +387,24 @@ foreach($gAllUsers as $u) {
 		// haupthaus -> normale berechnung // TODO : unhardcode
 		$store =	$gGlobal["store"] * ($b[$gGlobal["building_hq"]]->count + $b[$gGlobal["building_hq"]]->level) + 
 					$gGlobal["store"] * ($b[$gGlobal["building_store"]]->count + $b[$gGlobal["building_store"]]->level);
+		
 		$rstore = 	2500			  * ($b[$gGlobal["building_runes"]]->count + $b[$gGlobal["building_runes"]]->level);
 		
 		// WARNING : all changes to user ressources within this lock that are not operating on $gPayCache_Users or $gAllUsers, are overwritten here
 		switch($u->race){
 			case kRace_Gnome:
-				$usersets .= ",	`max_lumber`=$store, `lumber`=".$u->lumber.",
-								`max_stone`=$store, `stone`=".$u->stone.",
-								`max_food`=$store, `food`=".$u->food.",
-								`max_metal`=$store, `metal`=".$u->metal.",
-								`max_runes`=$store, `runes`=".$u->runes;
+				$usersets .= ",	`max_lumber`=$store,
+								`max_stone`=$store,
+								`max_food`=$store,
+								`max_metal`=$store,
+								`max_runes`=$store";
 			break;
 			default:
-				$usersets .= ",	`max_lumber`=$store, `lumber`=".$u->lumber.",
-								`max_stone`=$store, `stone`=".$u->stone.",
-								`max_food`=$store, `food`=".$u->food.",
-								`max_metal`=$store, `metal`=".$u->metal.",
-								`max_runes`=$rstore, `runes`=".$u->runes;
+				$usersets .= ",	`max_lumber`=$store,
+								`max_stone`=$store,
+								`max_food`=$store,
+								`max_metal`=$store, 
+								`max_runes`=$rstore";
 			break;
 		}
 		$prodfaktoren = GetProductionFaktoren($u->id);
@@ -443,10 +442,6 @@ foreach($gAllUsers as $u) {
 }
 
 
-// lock around build building, upgrade building and user, for UserPay optimization
-unset($gPayCache_Users);
-TablesUnlock();
-
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 if (($gGlobal["ticks"] % 30) == 0 || empty($gGlobal["weather"])){  // TODO : unhardcode
 	profile_page_start("cron.php - weather",true);
@@ -469,6 +464,8 @@ if($gGlobal["ticks"] % $gSupportslotsFrequency == 0) {
 	`type`=".$gGlobal["building_food"]." OR 
 	`type`=".$gGlobal["building_runes"]." OR 
 	`type`=".$gGlobal["building_metal"].")","user");
+	
+	$gAllUsers = sqlgettable("SELECT * FROM `user` ORDER BY `id`","id");
 	foreach($gAllUsers as $u) {
 		if(!isset($supportslotbuildings[$u->id]))continue;
 		$t = $supportslotbuildings[$u->id];
@@ -493,6 +490,7 @@ if(($gGlobal["ticks"] % 60) == 0){  // TODO : unhardcode
 //if(($gGlobal["ticks"] % (60*6)) == 0)$gGlobal["ticks"] % 60 == 0){
 
 echo "generate points...<br>";
+$gAllUsers = sqlgettable("SELECT * FROM `user` ORDER BY `id`","id");
 $range=ceil(count($gAllUsers)/10);
 //echo "tick ".$gGlobal["ticks"]." / %10 ".($gGlobal["ticks"]%10)."<br>";
 
@@ -621,6 +619,7 @@ sql("UPDATE `building` SET `mana`=LEAST((`level`+1)*$basemana,`mana`+($basemana*
 
 profile_page_start("cron.php - runes production",true);
 
+$gAllUsers = sqlgettable("SELECT * FROM `user` ORDER BY `id`","id");
 foreach($gAllUsers as $u){
 	switch($u->race){
 		default:
@@ -683,6 +682,7 @@ profile_page_start("cron.php - weltbank",true);
 
 //TODO .. dies produziert zu viele sql querys 
 
+$gAllUsers = sqlgettable("SELECT * FROM `user` ORDER BY `id`","id");
 foreach ($gAllUsers as $id=>$u){
 	$id=$u->id;
 	if(($u->general_pts+$u->army_pts)<intval($gGlobal['wb_paybacklimit']))continue;
@@ -897,7 +897,7 @@ foreach ($technologies as $o) {
 				`upgrades` = 0 ,
 				`upgradetime` = 0 WHERE `id` = ".$o->id." LIMIT 1");
 				
-			$text = $gTechnologyType[$o->type]->name." von user ".$o->user." wurde abgebrochen, da die anforderungen nicht erfüllt wurden";
+			$text = $gTechnologyType[$o->type]->name." von user ".$o->user." wurde abgebrochen, da die anforderungen nicht erfï¿½llt wurden";
 			echo $text."<br>\n";
 		}
 	} else if ($o->upgradetime == 0) {
@@ -914,7 +914,7 @@ foreach ($technologies as $o) {
 			if (!HasReq($techtype->req_geb,$techtype->req_tech,$o->user,$level+1)) {
 				sql("UPDATE `technology` SET `upgrades` = 0 WHERE `id` = ".$o->id." LIMIT 1");
 				
-				$text = $techtype->name." von user ".$o->user." wurde nicht gestartet, da die anforderungen nicht erfüllt wurden";
+				$text = $techtype->name." von user ".$o->user." wurde nicht gestartet, da die anforderungen nicht erfï¿½llt wurden";
 				echo $text."<br>\n";
 				
 				continue;
@@ -1025,6 +1025,20 @@ if(($gGlobal["ticks"] % 60*24) == 0 || !file_exists(GetMiniMapFile("user",GetMin
 	}
 }
 */
+
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+profile_page_start("cron.php - collapse buildings",true);
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+// collapse probability
+$r = rand(0,100);
+// number of buildings to collapse
+$n = 10;
+$t = sqlgettable("SELECT b.* FROM `buildingtype` t LEFT JOIN `building` b ON b.type=t.id WHERE `collapse_prob`>0 AND `collapse_prob` < ".intval($r)." ORDER BY RAND() LIMIT ".intval($n));
+foreach($t as $b){
+	print "collapse building $b->id<br>\n";
+	cBuilding::removeBuilding($b,$b->user,true,false);
+}
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 profile_page_start("cron.php - misc",true);

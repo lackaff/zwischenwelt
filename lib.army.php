@@ -376,7 +376,7 @@ class cArmy {
 	}
 	
 	function DeleteArmy ($army,$no_resdrop=false,$why=false) {
-		TablesLock(); // TODO ! this unlock could destroy a lock in cron !!!! (not nestable)
+		TablesLock();
 		if (!is_object($army)) $army = sqlgetobject("SELECT * FROM `army` WHERE `id` = ".intval($army));
 		if (!$army) { TablesUnlock(); return; }
 		$armyid = intval($army->id);
@@ -393,7 +393,7 @@ class cArmy {
 		
 		require_once("lib.fight.php");
 	
-		if (!$why) $why = "Die Armee _ARMYNAME_ von _ARMYOWNERNAME_ wurde zerstört.";
+		if (!$why) $why = "Die Armee _ARMYNAME_ von _ARMYOWNERNAME_ wurde zerstï¿½rt.";
 		cFight::StopAllArmyFights($army,$why);
 		sql("DELETE FROM `armyaction` WHERE `army`=".$army->id);
 		sql("DELETE FROM `waypoint` WHERE `army` = ".$army->id);

@@ -6,7 +6,7 @@ require_once("defines.mysql.php");
 if (!defined("ZW_LOGDB_PREFIX")) define("ZW_LOGDB_PREFIX",""); // can be something like "`zwlog`."  used as in  "SELECT * FROM ".ZW_LOGDB_PREFIX."`calllog` WHERE ..."
 if (!defined("ZW_MAIL_SENDER")) define("ZW_MAIL_SENDER","no-reply@zwischenwelt.org");
 if (!defined("ZW_NEWREGISTRATION_NOTIFY")) define("ZW_NEWREGISTRATION_NOTIFY",false);
-if (!defined("ZW_ENABLE_CALLLOG")) define("ZW_ENABLE_CALLLOG",true); // logs every page-call with parameters
+if (!defined("ZW_ENABLE_CALLLOG")) define("ZW_ENABLE_CALLLOG",false); // logs every page-call with parameters
 if (!defined("ZW_ENABLE_PROFILING")) define("ZW_ENABLE_PROFILING",false); // time and memory usage profiling, disable for better performance
 
 //define("MYSQL_ERROR_LOG",BASEPATH."sqlerror.log");
@@ -43,5 +43,5 @@ define("kMapNaviScript","mapnavi7.php");
 define("kZWStyle_Neutral","zwstyle.css");
 define("kJSMapVersion","43"); // mapversion, $gGlobal["typecache_version_adder"] wird immer addiert
 define("kStyleSheetVersion","1"); // css version, $gGlobal["typecache_version_adder"] wird immer addiert
-define("kDummyFrames",10); // soviele dummy-befehls-empfaenger frames gibt es, viele -> schnell aufeinander folgende mapclicks können besser bearbeitet werden
+define("kDummyFrames",10); // soviele dummy-befehls-empfaenger frames gibt es, viele -> schnell aufeinander folgende mapclicks kï¿½nnen besser bearbeitet werden
 ?>

@@ -49,6 +49,10 @@ InitArmyThink();
 
 
 function ArmyThink ($army,$debug=false) {
+	if(!is_object($army)){
+		var_dump($army);
+	}
+	
 	if (kProfileArmyLoop) LoopProfiler("armyloop:startthink");
 	global $gAllHellholes,$gAllArmyUnits,$gAllActions,$gAllPillages,$gAllSieges,$gAllFights;
 	global $gTerrainType,$gRes,$gRes2ItemType,$gBuildingType,$gBodenSchatzBuildings;

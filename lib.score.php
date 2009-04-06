@@ -6,6 +6,9 @@ function getBuildingPts($uid,$costar=0){
 	$buildings= sqlgettable("SELECT COUNT(`id`) AS `anzahl`,`type`,SUM(`level`) AS `levelsum` FROM `building` WHERE `user`=".intval($uid)." AND `type`!=4 GROUP BY `type`"); // 4 : unhardcode me
 	$points=0;
 	foreach ($buildings as $building){
+		// ugly hack to ignore broken tech entries
+		if(!isset($costar[$building->type]))continue;
+		
 		$bp=$costar[$building->type]->costs/100;
 		$points+=round($bp*$building->anzahl,0);
 		$lschnitt=intval($building->levelsum/$building->anzahl);
@@ -24,11 +27,17 @@ function getArmyPts($uid,$costar=0){
 	$uid=intval($uid);
 	$unitsb= sqlgettable("SELECT SUM(m.`amount`) AS totala,m.`type` AS type FROM `unit` as m, `building` as b WHERE m.`building`<>0 AND b.`user`=".$uid." AND m.`building`=b.`id` GROUP BY m.`type`");
 	foreach($unitsb as $group){
+		// ugly hack to ignore broken tech entries
+		if(!isset($costar[$group->type]))continue;
+		
 		$up=$costar[$group->type]->costs/200;
 		$points+=round($group->totala/400 + $group->totala*$up,0);
 	}
 	$unitsb= sqlgettable("SELECT SUM(m.`amount`) AS totala,m.`type` AS type FROM `unit` as m, `army` as b WHERE m.`building`=0 AND b.`user`=".$uid." AND m.`army`=b.`id` GROUP BY m.`type`");
 	foreach($unitsb as $group){
+		// ugly hack to ignore broken tech entries
+		if(!isset($costar[$group->type]))continue;
+		
 		$up=$costar[$group->type]->costs/200;
 		$points+=round($group->totala/200 + $group->totala*$up,0);
 	}
@@ -44,12 +53,15 @@ function getTechPts($uid,$costar=0){
 	$techs= sqlgettable("SELECT `level`,`type` FROM `technology` WHERE `user`=".intval($uid)." AND `level`>0","type");
 	$points=0;
 	foreach($techs as $t){
-		$tp=$costar[$t->type]->costs/20;  // TODO : check for undefined !
+		// ugly hack to ignore broken tech entries
+		if(!isset($costar[$t->type]))continue;
+		
+		$tp=$costar[$t->type]->costs/20;
 		$tl=0;
 		$level=$t->level;
 		for($i=1;$i<=$level;$i++)
 			$tl+=$i;
-		$l=$level+$tl*$costar[$t->type]->increment/2;   // TODO : check for undefined !
+		$l=$level+$tl*$costar[$t->type]->increment/2;
 		$points+=round($tp*$l,0);
 	}
 	return $points;
