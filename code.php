@@ -4,7 +4,7 @@ include("header.php");
 ?>
 <span id=code><h1>Code</h1></span>
 <a href="code/">download code</a><br>
-<a href="http://zwischenwelt.org/cgi-bin/trac.cgi/zw/browser">SVN</a>
+<a href="http://zwischenwelt.org/trac/zw/browser">SVN</a>
 (svn://zwischenwelt.org/zw/zw/trunk)<br>
 [ <a href="https://sourceforge.net/cvs/?group_id=138787">CVS</a> 
 (cvs -z3 -d:pserver:anonymous@cvs.sourceforge.net:/cvsroot/zwischenwelt co -P zw) eine sehr sehr alte version ]<br>
