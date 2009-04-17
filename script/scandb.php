@@ -46,9 +46,9 @@ if(isset($f_delid))foreach($f_delid as $id=>$v){
 }
 
 echo "<form method=post action=?do=del>";
-$blimit = 15;
+$blimit = 30;
 echo "scanning for players with less than $blimit buildings ...<br>";
-$t = sqlgettable("SELECT * FROM `user`");
+$t = sqlgettable("SELECT * FROM `user` WHERE `dont_delete`=0");
 foreach($t as $u)
 {
 	$b = sqlgetone("SELECT COUNT(*) FROM `building` WHERE `user`=".$u->id);

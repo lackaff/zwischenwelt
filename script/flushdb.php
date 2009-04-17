@@ -87,9 +87,12 @@ foreach($lArmy as $a){
 }
 
 echo "\n";
-echo "===== remove broken crap ====\n";
+echo "===== remove broken and old crap ====\n";
 
 sql("DELETE FROM `technology` WHERE `type`=0");
+$items += mysql_affected_rows();
+
+sql("DELETE FROM `message` WHERE ".time()."-`date` > (60*60*24*365)");
 $items += mysql_affected_rows();
 
 echo "\n";
