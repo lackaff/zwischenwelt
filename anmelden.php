@@ -97,7 +97,7 @@ else if(isset($f_key))
 
 		$u = $newuser;
         /*	$fu = sqlgetobject("SELECT * FROM `fudforum`.`fud26_users` WHERE `login` like '".addslashes($u->name)."' OR `email` like '".addslashes($u->mail)."'");
-	        if(!$fu){
+	        if(empty($fu)){
 			$fu = null;
 			$fu->login = $u->name;
 			$fu->alias = $fu->login;
@@ -183,7 +183,7 @@ http://zwischenwelt.net-play.de/forum/phpBB2/index.php<br>
 				<option>sonstiges</option>
 				<option>ich entwickel an dem Spiel mit</option>
 				<option>Freunde</option>
-				<option>habe darüber gelesen</option>
+				<option>habe darÃ¼ber gelesen</option>
 				<option>Linksammlung</option>
 				<option>ein Geistesblitz</option>
 			</select>

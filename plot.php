@@ -7,7 +7,8 @@ if(file_exists("tmp/plot-$md5.png")){
 	exit();
 }
 
-header('Content-type: image/png');
+define("CONTENT_TYPE","image/png");
+// see CONTENT_TYPE header('Content-type: image/png');
 
 $x = explode(",",$_REQUEST["x"]);
 $y = explode(",",$_REQUEST["y"]);

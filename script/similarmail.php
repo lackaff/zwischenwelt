@@ -3,10 +3,10 @@
 // list users with similar email start (part before @)
 /*
 see also
-levenshtein --       Calculate Levenshtein distance between two strings
-similar_text --       Calculate the similarity between two strings
-soundex -- Calculate the soundex key of a string
-metaphone -- Calculate the metaphone key of a string
+levenshtein--      Calculate Levenshtein distance between two strings
+similar_text--      Calculate the similarity between two strings
+soundex--Calculate the soundex key of a string
+metaphone--Calculate the metaphone key of a string
 */
 
 

@@ -13,7 +13,7 @@ function FindRandomStartplace () {
 		$y = rand($o->miny-20,$o->maxy+20);
 		$d = 20;
 		$count = sqlgetone("SELECT COUNT(`id`) FROM `building` WHERE (".($x-$d).")<=`x` AND `x`<=(".($x+$d).") AND (".($y-$d).")<=`y` AND `y`<=(".($y+$d).")");
-		//sind hier schon gebäude
+		//sind hier schon gebÃ¤ude
 		if($count == 0){
 			//nein, also mal sehen ob man hier ueberhaupt bauen kann
 			$map = getMapAtPosition($x-1,$y-1,3,3);

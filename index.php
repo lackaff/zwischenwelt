@@ -4,7 +4,7 @@ if (!file_exists("defines.mysql.php")) {
 	?>
 	Bitte den Installationsanweisungen in der Datei INSTALL folgen,<br>
 	und eine Kopie von defines.mysql.php.dist names defines.mysql.php anlegen.<br>
-	Dort müssen dann die Zugansdaten und Pfade eingetragen werden.
+	Dort mÃ¼ssen dann die Zugansdaten und Pfade eingetragen werden.
 	<?php 
 	exit();
 }
@@ -20,7 +20,7 @@ if(isset($f_sid))
 include("header.php");
 $liveupdate=intval(sqlgetone("SELECT `value` FROM `global` WHERE `name`='liveupdate'"));
 ?>
-<div id=info><?=($liveupdate==1?"<center style='color:red;font-size:13px;'>Wegen eines LIVE-UPDATES ist ein Login derzeit leider nicht möglich,<br>wir versuchen die Arbeiten so schnell wie möglich abzuschliessen<br><br>vielen Dank für euer Verständnis<br>das zwischenwelt-team<br>&nbsp;<br></center>":"")?>
+<div id=info><?=($liveupdate==1?"<center style='color:red;font-size:13px;'>Wegen eines LIVE-UPDATES ist ein Login derzeit leider nicht mÃ¶glich,<br>wir versuchen die Arbeiten so schnell wie mÃ¶glich abzuschliessen<br><br>vielen Dank fÃ¼r euer VerstÃ¤ndnis<br>das zwischenwelt-team<br>&nbsp;<br></center>":"")?>
 
 <!--
 <hr><span style="font-weight:bold;font-size:12px;padding:5px;margin:5px;color:red">
@@ -32,7 +32,7 @@ Das Browsergame <b>Zwischenwelt</b> ist eine Kreuzung aus Civilisation, Master o
 Hier ein paar Features: 
 <ul>
 <li>Forschen</li>
-<li>Gebäude bauen</li>
+<li>GebÃ¤ude bauen</li>
 <li>Armeen kommandieren</li>
 <li>Zauber sprechen</li>
 <li>Handeln oder einfach nur Monster jagen</li>
@@ -43,7 +43,7 @@ Aber am besten einfach [<a href="anmelden.php">anmelden</a>] und testen.<br>
 Screenshots gibts [<a href="http://zwischenwelt.org/screenshot/">hier</a>].<br>
 Falls Sie Graphiken oder &auml;hnliches beisteuern wollen, k&ouml;nnen Sie das [<a href="upload.php">hier</a>].<br>
 <br>
-Ein paar Tipps für erste Schritte im Spiel findet man hier : [<a href="http://zwischenwelt.milchkind.net/zwwiki/index.php/Erste_Schritte">erste schritte</a>]<br>
+Ein paar Tipps fÃ¼r erste Schritte im Spiel findet man hier : [<a href="http://zwischenwelt.milchkind.net/zwwiki/index.php/Erste_Schritte">erste schritte</a>]<br>
 <?php
 $lastminimap = sqlgetone("SELECT `value` FROM `global` WHERE `name` = 'lastpngmap' LIMIT 1");
 $minimapfile = "tmp/pngmap_".$lastminimap.".png";

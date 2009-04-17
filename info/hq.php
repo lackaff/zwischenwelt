@@ -99,7 +99,7 @@ class cInfoHQ extends cInfoBuilding {
 			Diplomatie : <?=GetFOFtxt($gUser->id,$gObject->user)?>
 			
 			<?php if (GetFOF($gUser->id,$gObject->user) == kFOF_Friend) {?>
-				<input type="submit" name="delfriend" value="Freundschaft k¸ndigen">
+				<input type="submit" name="delfriend" value="Freundschaft k√ºndigen">
 			<?php } else { // ?>
 				<input type="submit" name="addfriend" value="Freundschaft schliessen">
 			<?php } // endif?>
@@ -107,7 +107,7 @@ class cInfoHQ extends cInfoBuilding {
 			<?php if (GetFOF($gUser->id,$gObject->user) == kFOF_Enemy) {?>
 				<input type="submit" name="delenemy" value="Feindschaft beenden">
 			<?php } else { // ?>
-				<input type="submit" name="addenemy" value="zum Feind erkl‰ren">
+				<input type="submit" name="addenemy" value="zum Feind erkl√§ren">
 			<?php } // endif?>
 		</form>
 		<?php } // endif?>
@@ -161,7 +161,7 @@ class cInfoHQ extends cInfoBuilding {
 		profile_page_end(); 
 		*/
 		RegisterInfoTab("Produktion",$this->PrintWorker());
-		RegisterInfoTab("‹bersicht",$this->PrintOverview());
+		RegisterInfoTab("√úbersicht",$this->PrintOverview());
 		
 		$diplohtml = trim($this->PrintDiplo());
 		if (!empty($diplohtml)) RegisterInfoTab("Diplomatie",$diplohtml);
@@ -187,7 +187,7 @@ class cInfoHQ extends cInfoBuilding {
 		
 		if ($gUser->food <= 0) {?>
 			<center><?ImgBorderStart();?>
-			<span style="color:red;font-size:12px;font-style:italic;">Ihre Bevˆlkerung hungert. Sie benˆtigen mehr Nahrung!</span>
+			<span style="color:red;font-size:12px;font-style:italic;">Ihre Bev√∂lkerung hungert. Sie ben√∂tigen mehr Nahrung!</span>
 			<?ImgBorderEnd();?></center>
 			<br>
 		<?php } // endif?>
@@ -311,9 +311,9 @@ class cInfoHQ extends cInfoBuilding {
 		$popicon = "<img src=\"".g("pop-r%R%.png","","",$gUser->race)."\">";
 		$minbtable[] = array(kBuilding_Lumberjack,4,", produziert <img src=\"".g("res_lumber.gif")."\">");
 		$minbtable[] = array(kBuilding_StoneProd,4,", produziert <img src=\"".g("res_stone.gif")."\">");
-		$minbtable[] = array(kBuilding_Farm,2,", produziert <img src=\"".g("res_food.gif")."\"> f¸r deine Bevˆlkerung");
+		$minbtable[] = array(kBuilding_Farm,2,", produziert <img src=\"".g("res_food.gif")."\"> f√ºr deine Bev√∂lkerung");
 		$minbtable[] = array(kBuilding_Silo,2,", dort werden deine Rohstoffe gelagert");
-		$minbtable[] = array(kBuilding_House,4,", damit deine Bevˆlkerung ".$popicon." wachsen kann");
+		$minbtable[] = array(kBuilding_House,4,", damit deine Bev√∂lkerung ".$popicon." wachsen kann");
 		
 		
 		
@@ -326,19 +326,19 @@ class cInfoHQ extends cInfoBuilding {
 		
 		
 		if (($allbuildings->minlevel < 5 && $allbuildings->count < 20) || $allbuildings->maxlevel < 5 || $debug_show_all_tips) {
-			$tip[] = "Um neu anzufangen und den Startplatz selber zu w‰hlen, einfach das ".GetBuildingTypeLink(kBuilding_HQ,$x,$y)." abreissen";
+			$tip[] = "Um neu anzufangen und den Startplatz selber zu w√§hlen, einfach das ".GetBuildingTypeLink(kBuilding_HQ,$x,$y)." abreissen";
 		}
 		
 		if ($gUser->guild == kGuild_Weltbank || $debug_show_all_tips) {
-			$tip[] = "Bis du ".kplaintrenner($gGlobal['wb_max_gp'])." Punkte erreicht hast, bist du in der Weltbank (Menup¸nkt \"Gilde\")";
+			$tip[] = "Bis du ".kplaintrenner($gGlobal['wb_max_gp'])." Punkte erreicht hast, bist du in der Weltbank (Menupunkt \"Gilde\")";
 			$tip[] = "In der Weltbank kann man sich mit anderen neuen Spielern unterhalten";
 			$tip[] = "<b>In der Weltbank kann man sich Rohstoffe ausleihen, bedien dich und wachse !</b>";
 			$tip[] = "Erst wenn man ".kplaintrenner($gGlobal['wb_paybacklimit'])." Punkte erreicht hat, werden ".$gGlobal['wb_payback_perc']."% der Produktion abgezogen, bis die Weltbank-Schulden bezahlt sind";
 			$tip[] = "Schulden sieht man als negative GildenPunkte in der Mitgliederliste";
-			$tip[] = "Wenn deine Lager ¸berlauffen, fliessen die Rohstoffe in die Weltbank, und werden als GildenPunkte angerechnet";
+			$tip[] = "Wenn deine Lager √ºberlauffen, fliessen die Rohstoffe in die Weltbank, und werden als GildenPunkte angerechnet";
 		}
 		
-		$tip[] = "Geb‰ude kˆnnen in einem Abstand von bis zu 2 Feldern zu eigenen Geb‰uden gebaut werden.<br>";
+		$tip[] = "Geb√§ude k√∂nnen in einem Abstand von bis zu 2 Feldern zu eigenen Geb√§uden gebaut werden.<br>";
 		
 		foreach ($minbtable as $o) {
 			$cb = CountUserBuildingType($gUser->id,$o[0]);
@@ -347,7 +347,7 @@ class cInfoHQ extends cInfoBuilding {
 		}
 		
 		if (CountUserBuildingType($gUser->id,kBuilding_Wall) < 5 || $debug_show_all_tips) {
-			$tip[] = "Du solltest eine ".GetBuildingTypeLink(kBuilding_Garage,$x,$y)." und ein paar ".GetBuildingTypeLink(kBuilding_Wall,$x,$y)." bauen, um dich vor Angriffen zu sch¸tzen.";
+			$tip[] = "Du solltest eine ".GetBuildingTypeLink(kBuilding_Garage,$x,$y)." und ein paar ".GetBuildingTypeLink(kBuilding_Wall,$x,$y)." bauen, um dich vor Angriffen zu sch√ºtzen.";
 		}
 		
 		if (CountUserBuildingType($gUser->id,kBuilding_Baracks) < 1 || 
@@ -358,16 +358,16 @@ class cInfoHQ extends cInfoBuilding {
 		if (CountUserBuildingType($gUser->id,kBuilding_Path) < 5 || 
 			CountUserBuildingType($gUser->id,kBuilding_Gate) < 1 || $debug_show_all_tips) {
 			$tip[] = "Du solltest ein paar ".GetBuildingTypeLink(kBuilding_Path,$x,$y)." und 
-				".GetBuildingTypeLink(kBuilding_Gate,$x,$y)." bauen, damit sich deine Truppen gut bewegen kˆnnen";
+				".GetBuildingTypeLink(kBuilding_Gate,$x,$y)." bauen, damit sich deine Truppen gut bewegen k√∂nnen";
 		}
 			
 		if (($allbuildings->minlevel < 5 && $allbuildings->count < 20) || $allbuildings->maxlevel < 5 || $debug_show_all_tips) {
-			$tip[] = "vergiss nicht, deine Geb‰ude aufzustufen (upgraden)";
-			$tip[] = "eine neue Stufe bringt genausoviel wie ein neues Geb‰ude";
-			$tip[] = "je hˆher die Stufe, desto teurer das Upgraden";
-			$tip[] = "es kˆnnen beliebig viele Geb‰ude gleichzeitig aufgesfuft werden";
-			$tip[] = "die Stufe von deinem Haupthaus bestimmt, wie hoch die Geb‰ude aufgestuft werden kˆnnen";
-			$tip[] = "in der <a href=\"".Query("summary_buildings.php?sid=?")."\">Geb‰ude¸bersicht</a> kann man viele Upgrades auf einmal planen";
+			$tip[] = "vergiss nicht, deine Geb√§ude aufzustufen (upgraden)";
+			$tip[] = "eine neue Stufe bringt genausoviel wie ein neues Geb√§ude";
+			$tip[] = "je h√∂her die Stufe, desto teurer das Upgraden";
+			$tip[] = "es k√∂nnen beliebig viele Geb√§ude gleichzeitig aufgesfuft werden";
+			$tip[] = "die Stufe von deinem Haupthaus bestimmt, wie hoch die Geb√§ude aufgestuft werden k√∂nnen";
+			$tip[] = "in der <a href=\"".Query("summary_buildings.php?sid=?")."\">Geb√§ude√ºbersicht</a> kann man viele Upgrades auf einmal planen";
 		}
 		
 		if (1) {
@@ -378,14 +378,14 @@ class cInfoHQ extends cInfoBuilding {
 			if (CountUserUnitType($gUser->id,kUnitType_Worker) < 1)
 				$tip[] = "Im ".GetBuildingTypeLink(kBuilding_Silo,$x,$y)." kann man ".GetUnitTypeLink(kUnitType_Worker,$x,$y)." ausbilden";
 			
-			$tip[] = GetUnitTypeLink(kUnitType_Worker,$x,$y)." und Soldaten kˆnnen ".GetTerrainTypeLink(kTerrain_Forest,$x,$y)."(".cost2txt(array(kHarvestAmount,0,0,0,0)).") und 
+			$tip[] = GetUnitTypeLink(kUnitType_Worker,$x,$y)." und Soldaten k√∂nnen ".GetTerrainTypeLink(kTerrain_Forest,$x,$y)."(".cost2txt(array(kHarvestAmount,0,0,0,0)).") und 
 				".GetTerrainTypeLink(kTerrain_Rubble,$x,$y)."(".cost2txt(array(0,kHarvestAmount,0,0,0)).") ernten";
 			$arr = array();
 			$bstypes = array_unique($gFlaggedBuildingTypes[kBuildingTypeFlag_Bodenschatz]);
 			foreach ($bstypes as $typeid) $arr[] = GetBuildingTypeLink($typeid,$x,$y,false,false,false,false);
-			$tip[] = GetUnitTypeLink(kUnitType_Worker,$x,$y)." kˆnnen Bodensch‰tze (".implode(" ",$arr).") abbauen (ein Arbeitertrupp produziert Rohstoffe solange er auf einem Bodenschatz-Feld steht)";
-			$tip[] = "Bodensch‰tze kann man mit der Suche unter der Karte finden, z.b. \"Kristall\"";
-			$tip[] = "rechts-oberhalb der Karte gibt es ein paar Knˆpfe f¸r unterschiedliche Weltkarten";
+			$tip[] = GetUnitTypeLink(kUnitType_Worker,$x,$y)." k√∂nnen Bodensch√§tze (".implode(" ",$arr).") abbauen (ein Arbeitertrupp produziert Rohstoffe solange er auf einem Bodenschatz-Feld steht)";
+			$tip[] = "Bodensch√§tze kann man mit der Suche unter der Karte finden, z.b. \"Kristall\"";
+			$tip[] = "rechts-oberhalb der Karte gibt es ein paar Kn√∂pfe f√ºr unterschiedliche Weltkarten";
 			$tip[] = "Zeichen auf den Weltkarten : &nbsp; ".
 							"<img src=\"".kGfxServerPath."/minimap_sample_army.png\">:Armee/Monster &nbsp; ".
 							"<img src=\"".kGfxServerPath."/minimap_sample_portal.png\">:Portal &nbsp; ".
@@ -396,7 +396,7 @@ class cInfoHQ extends cInfoBuilding {
 		if ($cannon_count < 1) {
 			$tip[] = "Du solltest noch einen ".GetBuildingTypeLink(kBuilding_Verteidigungsturm,$x,$y).
 				" bauen, und darin eine ".GetUnitTypeLink(kUnitType_Kanone,$x,$y).
-				" aufstellen, um dich gegen ".GetUnitTypeLink(kUnitType_Ameise,$x,$y)." zu sch¸tzen<br>";
+				" aufstellen, um dich gegen ".GetUnitTypeLink(kUnitType_Ameise,$x,$y)." zu sch√ºtzen<br>";
 		}
 		
 		if (count($tip) == 0) return;
@@ -435,7 +435,7 @@ class cInfoHQ extends cInfoBuilding {
 		global $gUser;
 		rob_ob_start(); 
 		$overviewtabs = array();
-		$overviewtabs[] = array("Geb‰ude",			"",Query("summary_buildings.php?sid=?"));
+		$overviewtabs[] = array("Geb√§ude",			"",Query("summary_buildings.php?sid=?"));
 		$overviewtabs[] = array("Forschung",		"",Query("summary_techs.php?sid=?"));
 		$overviewtabs[] = array("Truppen",			"",Query("summary_units.php?sid=?"));
 		$overviewtabs[] = array("Zauber",			"",Query("summary.php?sid=?"));
@@ -596,7 +596,7 @@ class cInfoHQ extends cInfoBuilding {
 		<?php } // endif?>
 				
 		<?php if ($gUser->worker_repair > 0) {?>
-		<h4>Ressourcenverbrauch durch Reparieren von Geb‰uden pro Stunde:</h4>
+		<h4>Ressourcenverbrauch durch Reparieren von Geb√§uden pro Stunde:</h4>
 		<?
 		$x = sqlgetobject("SELECT `user`.`id` as `id`, COUNT( * ) as `broken`,`user`.`pop` as `pop`,`user`.`worker_repair` as `worker_repair`
 	FROM `user`, `building`, `buildingtype`
@@ -616,8 +616,8 @@ class cInfoHQ extends cInfoBuilding {
 		$wood = $all * 100;
 		$stone = $all * 100;
 		?>
-		<?=$broken?> besch‰digte Geb‰ude zu reparieren verbraucht <?=round($wood,2)?> Holz und <?=round($stone,2)?> Stein /h.<br>
-		Dabei werden bei allen besch‰digten Geb‰uden jeweils <?=round($plus,2)?> HP /h wiederhergestellt.<br>
+		<?=$broken?> besch√§digte Geb√§ude zu reparieren verbraucht <?=round($wood,2)?> Holz und <?=round($stone,2)?> Stein /h.<br>
+		Dabei werden bei allen besch√§digten Geb√§uden jeweils <?=round($plus,2)?> HP /h wiederhergestellt.<br>
 		<?php } // endif?>
 		
 		<?php

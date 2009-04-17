@@ -131,6 +131,7 @@ if($gUser->guild > 0){
    "http://www.w3.org/TR/html4/transitional.dtd">
 <html>
 <head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 <link rel="stylesheet" type="text/css" href="<?=GetZWStylePath()?>">
 <title>Zwischenwelt - Gilde</title>
 
@@ -213,7 +214,7 @@ if(HasGuildRight($gUser,kGuildRight_GuildAdmin)){
 		</tr>
 	</table>
 	</p>
-	<p>Rechte f&uuml;r alle Mitglieder überschreiben:
+	<p>Rechte f&uuml;r alle Mitglieder Ã¼berschreiben:
 	<table>
 		<tr>
 		<?foreach ($gRight as $r){?>
@@ -310,7 +311,7 @@ if(HasGuildRight($gUser,kGuildRight_GuildAdmin)){
 ImgBorderStart();?>
 <table border=0 cellspacing=1 cellpadding=0>
 <tr><td colspan=3><h4>Minuspunktelimits</h4>
-(Limit als Zahl angeben, 0 für unbeschränkt)</td></tr>
+(Limit als Zahl angeben, 0 fÃ¼r unbeschrÃ¤nkt)</td></tr>
 <td colspan=3>&nbsp;</td></tr>
 <tr><th>Limit</th><th>User</th><th>Gildepunkte</th></tr>
 <form method="post" action="<?=Query("?sid=?")?>">
@@ -330,7 +331,7 @@ ImgBorderStart();?>
 
 <form method="post" action="<?=Query("?sid=?")?>">
 <input type=hidden name=do value="setstdlimit">
-<tr><td>Standardlimit für neue Mitglieder</td><td align=right><input align=right type=text size=15 name="stdlimit" value="<?=getStdGPLimit($gGuild->id)?>"></td><td><input type=submit name=setstdlimit value=Set></td></tr>
+<tr><td>Standardlimit fÃ¼r neue Mitglieder</td><td align=right><input align=right type=text size=15 name="stdlimit" value="<?=getStdGPLimit($gGuild->id)?>"></td><td><input type=submit name=setstdlimit value=Set></td></tr>
 </form>
 
 <form method="post" action="<?=Query("?sid=?")?>">
@@ -347,7 +348,7 @@ ImgBorderStart();?>
 if(HasGuildRight($gUser,kGuildRight_GuildBursar)){
 ImgBorderStart();?>
 <h4>Minuspunktelimits</h4>
-(Limit als Zahl angeben, 0 für unbeschränkt)
+(Limit als Zahl angeben, 0 fÃ¼r unbeschrÃ¤nkt)
 <table border=0 cellspacing=0 cellpadding=0><tr><th>Limit</th><th>User</th><th>Gildepunkte</th></tr>
 <?
 	foreach ($members as $o){?>
@@ -356,7 +357,7 @@ ImgBorderStart();?>
 </table>
 <br>
 <table>
-<tr><td>Standardlimit für neue Mitglieder</td><td><?=getStdGPLimit($gGuild->id)?></td><td></td></tr>
+<tr><td>Standardlimit fÃ¼r neue Mitglieder</td><td><?=getStdGPLimit($gGuild->id)?></td><td></td></tr>
 </table>
 </form>
 <?ImgBorderEnd();
@@ -382,7 +383,7 @@ ImgBorderEnd("s2","jpg","#ffffee",32,33);}
 <form method=post action="<?=query("?sid=?");?>">
 <input type="hidden" name="do" value="killguild">
 	<div style="padding:2px;border:solid red 2px;">
-	<input type=checkbox name=sure value=1> Diese Gilde <input type=submit value="löschen">
+	<input type=checkbox name=sure value=1> Diese Gilde <input type=submit value="lÃ¶schen">
 	</div>
 </form>
 <?php } ?>

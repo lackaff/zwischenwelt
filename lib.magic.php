@@ -72,7 +72,7 @@ function GetMagicCastingBox ($x,$y) {
 				</table>
 				
 				<?php if (!$f_full_tower_list) {?>
-				<a href="<?=Query("?sid=?&x=?&y=?&full_tower_list=1")?>">(alle Türme auflisten)</a><br>
+				<a href="<?=Query("?sid=?&x=?&y=?&full_tower_list=1")?>">(alle TÃ¼rme auflisten)</a><br>
 				<?php } // endif?>
 				
 			</td>
@@ -168,7 +168,7 @@ function GetMagicCastingBox ($x,$y) {
 function PrintMagicHelp () {
 	?>
 	<?php ImgBorderStart("p2","jpg","#f2e7d5","",32,33); ?>
-		<a href="http://zwischenwelt.milchkind.net/zwwiki/index.php/Zauber-FAQ#Erfolgswert" target="blank">Erklärung des Zaubererfolgs findest du im Wiki.</a>
+		<a href="http://zwischenwelt.milchkind.net/zwwiki/index.php/Zauber-FAQ#Erfolgswert" target="blank">ErklÃ¤rung des Zaubererfolgs findest du im Wiki.</a>
 		In kurz: Unter 0 versagt. Ab 10 ist Maximum.
 	<?php ImgBorderEnd("p2","jpg","#f2e7d5",32,33); ?>
 	<?php

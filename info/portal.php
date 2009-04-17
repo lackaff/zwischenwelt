@@ -38,7 +38,7 @@ class cInfoPortal extends cInfoBuilding {
 						// teleportation
 						sql("UPDATE `army` SET `x`=".$exit[0].",`y`=".$exit[1]." WHERE `id`=".$army->id);
 						QuestTrigger_TeleportArmy($army,$gObject,$exit[0],$exit[1]);
-						echo "<b><font color='green'>teleportation nach ".pos2txt($exit[0],$exit[1])." geglückt !</font></b><br>";
+						echo "<b><font color='green'>teleportation nach ".pos2txt($exit[0],$exit[1])." geglÃ¼ckt !</font></b><br>";
 						$gUser = sqlgetobject("SELECT * FROM `user` WHERE `id` = ".$gUser->id);
 					} else echo "<h3><font color='red'>ZU TEUER !</font></h3>";
 				}
@@ -140,7 +140,7 @@ class cInfoPortal extends cInfoBuilding {
 						// teleportation
 						sql("UPDATE `army` SET `x`=".$exit[0].",`y`=".$exit[1]." WHERE `id`=".$army->id);
 						QuestTrigger_TeleportArmy($army,$gObject,$exit[0],$exit[1]);
-						echo "<b><font color='green'>teleportation nach ".pos2txt($exit[0],$exit[1])." geglückt !</font></b><br>";
+						echo "<b><font color='green'>teleportation nach ".pos2txt($exit[0],$exit[1])." geglÃ¼ckt !</font></b><br>";
 						
 						if ($transportcount_my-1 <= 0) {
 							// verbindung beenden
@@ -189,8 +189,8 @@ class cInfoPortal extends cInfoBuilding {
 			<?php
 			$mark = sqlgetobject("SELECT * FROM `mapmark` WHERE `user` = ".$gUser->id." AND `x` = ".$target->x." AND `y` = ".$target->y." ORDER BY `name`");
 			?>
-			Das Portal ist verbunden mit <?=$mark?$mark->name:"dem"?> bei <?=opos2txt($target)?>  <?=$target->user?("von ".usermsglink($target->user)):"(öffentlich)"?><br>
-			Es sind noch <?=$transportcount?> Transporte möglich<br>
+			Das Portal ist verbunden mit <?=$mark?$mark->name:"dem"?> bei <?=opos2txt($target)?>  <?=$target->user?("von ".usermsglink($target->user)):"(Ã¶ffentlich)"?><br>
+			Es sind noch <?=$transportcount?> Transporte mÃ¶glich<br>
 			<br>
 			
 			<?php if (cBuilding::BuildingOpenForUser($gObject,$gUser->id) && cBuilding::BuildingOpenForUser($target,$gUser->id) && $transportcount > 0) {?>
@@ -207,7 +207,7 @@ class cInfoPortal extends cInfoBuilding {
 						<tr>
 							<th>Name</th>
 							<th>Besitzer</th>
-							<th>Grösse</th>
+							<th>GrÃ¶ÃŸe</th>
 							<?php $i=0; foreach($gRes as $n=>$f) {?>
 							<th><img src="<?=g("res_$f.gif")?>"></th>
 							<?php } // endforeach res?>
@@ -241,7 +241,7 @@ class cInfoPortal extends cInfoBuilding {
 		
 		<br><hr>
 		<?php if (cBuilding::BuildingOpenForUser($gObject,$gUser->id)) {?>
-			Kosten für das Herholen einer Armee : (<?=GetItemTypeLink(kItem_Portalstein_Blau,$gObject->x,$gObject->y)?>in der Armee) + <?=cost2txt(cBuilding::getPortalFetchArmyCost($gObject),$gUser)?><br>
+			Kosten fÃ¼r das Herholen einer Armee : (<?=GetItemTypeLink(kItem_Portalstein_Blau,$gObject->x,$gObject->y)?>in der Armee) + <?=cost2txt(cBuilding::getPortalFetchArmyCost($gObject),$gUser)?><br>
 			<?php 
 				$armylist = cArmy::ListControllableArmies(); 
 				$fetchlist = array();
@@ -271,7 +271,7 @@ class cInfoPortal extends cInfoBuilding {
 			<?php }?>
 			
 		<br><hr>
-			Kosten für eine neue Verbindung : <?=cost2txt(cBuilding::getPortalConCost($gObject),$gUser)?>
+			Kosten fÃ¼r eine neue Verbindung : <?=cost2txt(cBuilding::getPortalConCost($gObject),$gUser)?>
 			<?php $possibleTargets = cBuilding::listAllPortalTargets($gObject,$gUser);?>
 			<FORM method="post" action="<?=Query("?sid=?&x=?&y=?")?>">
 			<INPUT TYPE="hidden" NAME="building" VALUE="portal">
@@ -292,7 +292,7 @@ class cInfoPortal extends cInfoBuilding {
 					<td align="left"><?=$mark?$mark->name:""?></td>
 					<td align="center"><?=pos2txt($o->x,$o->y)?></td>
 					<td align="right"><?=ceil($o->dist)?></td>
-					<td align="left">&nbsp;<?=$o->user?usermsglink($o->user):"öffentlich"?></td>
+					<td align="left">&nbsp;<?=$o->user?usermsglink($o->user):"Ã¶ffentlich"?></td>
 					<td align="left"><?=cost2txt($tax)?></td>
 					<td><input type="submit" name="con_<?=$o->id?>" value="Walk the Abyss"></td>
 				</tr>
@@ -300,7 +300,7 @@ class cInfoPortal extends cInfoBuilding {
 			</table>
 			</FORM>
 			<?php if (!isset($f_showdest)) { // ?>
-				<a href="<?=Query("?sid=?&x=?&y=?&showdest=1")?>">(alle möglichen Ziel-Portale anzeigen)</a><br>
+				<a href="<?=Query("?sid=?&x=?&y=?&showdest=1")?>">(alle mÃ¶glichen Ziel-Portale anzeigen)</a><br>
 			<?php } // endif?>
 		<?php } else {// endif canuse?>
 			<font color="red">Portal-Zugang verweigert</font><br>

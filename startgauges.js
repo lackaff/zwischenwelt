@@ -5,7 +5,7 @@ function startGauges()
 	if (!document.body.style) return false;
 	var divs=document.getElementsByTagName('div');
 	var format=/(\d+)x(\d+):([\d]+)of([\d]+)need([\d]+):(\-?[\d]+)/;
-		// breite höhe pos max hot pixelinterval
+		// breite hÃ¶he pos max hot pixelinterval
 	for (var i in divs)
 	{
 		if (divs[i].className=='gauge')
@@ -24,7 +24,7 @@ function startGauges()
 			var max=parseInt(data[4]);
 			var hot=parseInt(data[5]);
 			var pix=parseInt(data[6]);
-			if (data.length==0) continue; // eigendlich überflüssig
+			if (data.length==0) continue; // eigendlich Ã¼berflÃ¼ssig
 			div_done.id=div.id+'_done';
 			div.appendChild(div_done);
 
@@ -51,7 +51,7 @@ function startGauges()
 				div_done.style.height=(h-6).toString()+'px';
 			}
 
-			div.title="Spanne: "+max+"sec. Die ersten "+hot+"sec läuft der CRON. Refresh: "+(Math.floor(sleep*10)/10).toString()+"sec.";
+			div.title="Spanne: "+max+"sec. Die ersten "+hot+"sec lÃ¤uft der CRON. Refresh: "+(Math.floor(sleep*10)/10).toString()+"sec.";
 		} // each div.gauge
 	} // each div
 } // startGauge()

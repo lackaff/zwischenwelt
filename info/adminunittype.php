@@ -46,11 +46,11 @@ new cTableEditForm("?sid=?&id=$f_id","UnitType $f_id editieren",
 			new cTableEditTextField("unittype","id",$f_id,"Reichweite","r"),
 			new cTableEditTextField("unittype","id",$f_id,"last","last"),
 			new cTableEditTextField("unittype","id",$f_id,"Cooldown","cooldown"),
-			new cTableEditTextField("unittype","id",$f_id,"Plündern","pillage"),
+			new cTableEditTextField("unittype","id",$f_id,"PlÃ¼ndern","pillage"),
 			
 			new cTableEditFlagField("unittype","id",$f_id,"Flags","flags",$gUnitFlagName),
 			new cTableEditTextField("unittype","id",$f_id,"Eff. Segeln","eff_sail"),
-			new cTableEditTextField("unittype","id",$f_id,"Eff. Übernehmen","eff_capture"),
+			new cTableEditTextField("unittype","id",$f_id,"Eff. Ãœbernehmen","eff_capture"),
 			new cTableEditTextField("unittype","id",$f_id,"Eff. Seekampf","eff_fightondeck"),
 			new cTableEditTextField("unittype","id",$f_id,"Eff. Belagerung","eff_siege"),
 			
@@ -65,7 +65,7 @@ new cTableEditForm("?sid=?&id=$f_id","UnitType $f_id editieren",
 			new cTableEditFlagField("unittype","id",$f_id,"Begehbarkeiten","movable_flag",$moveflags),
 			new cTableEditRadioField("unittype","id",$f_id,"armytype","armytype",$armytypes),
 			new cTableEditRadioField("unittype","id",$f_id,"Elite","elite",$unittypes),
-			new cTableEditRadioField("unittype","id",$f_id,"Gebäude","buildingtype",$buildings)
+			new cTableEditRadioField("unittype","id",$f_id,"GebÃ¤ude","buildingtype",$buildings)
 		))
 	))
 	,"unittype","id",$f_id,Query("listall.php?sid=?")

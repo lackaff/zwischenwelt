@@ -84,14 +84,14 @@ class cInfoLager extends cInfoBuilding {
 				<OPTION VALUE="<?=$o->id?>" <?=($o->id == $gUser->lastusedarmy)?"selected":""?>><?=$o->name?> (<?=$o->owner?>)</OPTION>
 			<?php }?>
 			</SELECT>
-			<input type="submit" name="pillage" value="plündern">
+			<input type="submit" name="pillage" value="plÃ¼ndern">
 			<input type="submit" name="deposit" value="einzahlen">
 			</form>
 		<?php }?>
 			
 		<?php /* ***** armyactions ***** */ ?>
 		<?php foreach ($gArmies as $o) if (sqlgetone("SELECT 1 FROM `armyaction` WHERE `cmd` = ".ARMY_ACTION_PILLAGE." AND `army` = ".$o->id." AND `param1` = ".$gObject->x." AND `param2` = ".$gObject->y)) {?>
-			<font color="red">soll mit <?=pos2txt($o->x,$o->y,$o->name)?> geplündert werden</font><br>
+			<font color="red">soll mit <?=pos2txt($o->x,$o->y,$o->name)?> geplÃ¼ndert werden</font><br>
 		<?php }?>
 		<?php foreach ($gArmies as $o) if (sqlgetone("SELECT 1 FROM `armyaction` WHERE `cmd` = ".ARMY_ACTION_DEPOSIT." AND `army` = ".$o->id." AND `param1` = ".$gObject->x." AND `param2` = ".$gObject->y)) {?>
 			<font color="green">hier soll mit <?=pos2txt($o->x,$o->y,$o->name)?> eingezahlt werden</font><br>
@@ -108,7 +108,7 @@ class cInfoLager extends cInfoBuilding {
 				<?php $ownername = sqlgetone("SELECT `name` FROM `user` WHERE `id` = ".$enemy->user);?>
 				<a href="<?=query("msg.php?sid=?&show=compose&to=".urlencode($ownername))?>"><?=$ownername?></a>
 				mit
-				<a href="<?=Query("?sid=?&x=".$enemy->x."&y=".$enemy->y)?>">'<?=$enemy->name?>'</a> geplündert
+				<a href="<?=Query("?sid=?&x=".$enemy->x."&y=".$enemy->y)?>">'<?=$enemy->name?>'</a> geplÃ¼ndert
 			</span><br>
 			<?php }?>
 		<?php }?>
@@ -139,7 +139,7 @@ class cInfoLager extends cInfoBuilding {
 				<td><input type="submit" name="transfer[<?=$army->id?>][2]" value="alles abheben"></td>
 				<?php }?>
 				<td><input type="submit" name="transfer[<?=$army->id?>][1]" value="einzahlen"></td>
-				<td><input type="submit" name="transfer[<?=$army->id?>][3]" value="lager füllen"></td>
+				<td><input type="submit" name="transfer[<?=$army->id?>][3]" value="lager fÃ¼llen"></td>
 			</tr>
 			<?php }?>
 		</table>

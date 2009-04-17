@@ -30,8 +30,8 @@ else $newpoll = false;
   - Entweder "Text" oder "Text PIPE HTML-Code"
   - Die JavaScript-Funktion compactmenusetpage() wird automatisch
     mit einem <div> auf die Tabs gelegt.
-  - Auch ein Menüpunkt mit Unterpunkten, kann mit einem Link oder JavaScript belegt werden
-    Das Menü wird dadurch nicht beeinträchtigt. (ausser wenn "return false" oder "void(0);"
+  - Auch ein MenÃ¼punkt mit Unterpunkten, kann mit einem Link oder JavaScript belegt werden
+    Das MenÃ¼ wird dadurch nicht beeintrÃ¤chtigt. (ausser wenn "return false" oder "void(0);"
     benutzt wird)
 */
 
@@ -53,8 +53,8 @@ compactmenusitemap=new Array
       <?php }
     }
   ?>
-  'Übersicht',
-  '- Gebäude | <a href="info/summary_buildings.php?'+phpsid+'" target="info">Gebäude</a>',
+  'Ãœbersicht',
+  '- GebÃ¤ude | <a href="info/summary_buildings.php?'+phpsid+'" target="info">GebÃ¤ude</a>',
   '- Forschung | <a href="info/summary_techs.php?'+phpsid+'" target="info">Forschung</a>',
   '- Truppen | <a href="info/summary_units.php?'+phpsid+'" target="info">Truppen</a>',
   '- - Alle | <a href="info/summary_units.php?armytype=0'+phpsid+'" target="info">Alle</a>',
@@ -73,7 +73,7 @@ compactmenusitemap=new Array
   '- Zauber | <a href="info/summary.php?'+phpsid+'" target="info">Zauber</a>',
   '- Waren | <a href="info/waren.php?'+phpsid+'" target="info">Waren</a>',
   '- Kosten | <a href="info/kosten.php?'+phpsid+'" target="info">Kosten</a>',
-  '- Baupläne | <a href="info/bauplan.php?'+phpsid+'" target="info">Baupläne</a>',
+  '- BauplÃ¤ne | <a href="info/bauplan.php?'+phpsid+'" target="info">BauplÃ¤ne</a>',
   '- Quests | <a href="info/quest.php?'+phpsid+'" target="info">Quests</a>',
   '- Diplomatie | <a href="info/info.php?x=<?=$hq->x?>&y=<?=$hq->y?>&selectedtab=5'+phpsid+'" target="info">Diplomatie</a>',
   'Einheiten',
@@ -117,18 +117,18 @@ $dev = sqlgetobject("SELECT * FROM `building` WHERE `type` = 10 LIMIT 1"); ?>
   'Stats | <a href="<?= sessionLink("stats/gen_pts.php")?>" title=stats target=info>Stats</a>',
   '- Spieler',
   '- - totale Punkte | <a href="stats/gen_pts.php?what=p'+phpsid+'" target="info">totale Punke</a>',
-  '- - ohne Militär | <a href="stats/gen_pts.php?what=pnm'+phpsid+'" target="info">ohne Militär</a>',
-  '- - nur Militär | <a href="stats/gen_pts.php?what=pom'+phpsid+'" target="info">nur Militär</a>',
-  '- Bevölkerung | <a href="stats/population.php?'+phpsid+'" target="info">Bevölkerung</a>',
+  '- - ohne MilitÃ¤r | <a href="stats/gen_pts.php?what=pnm'+phpsid+'" target="info">ohne MilitÃ¤r</a>',
+  '- - nur MilitÃ¤r | <a href="stats/gen_pts.php?what=pom'+phpsid+'" target="info">nur MilitÃ¤r</a>',
+  '- BevÃ¶lkerung | <a href="stats/population.php?'+phpsid+'" target="info">BevÃ¶lkerung</a>',
   '- Statistik | <a href="stats/stats.php?'+phpsid+'" target="info">Statistik</a>',
   '- Gilden',
   '- - totale Punkte | <a href="stats/gen_guild_pts.php?what=g'+phpsid+'" target="info">totale Punkte</a>',
-  '- - ohne Militär | <a href="stats/gen_guild_pts.php?what=gnm'+phpsid+'" target="info">ohne Militär</a>',
-  '- - nur Militär | <a href="stats/gen_guild_pts.php?what=gom'+phpsid+'" target="info">nur Militär </a>',
+  '- - ohne MilitÃ¤r | <a href="stats/gen_guild_pts.php?what=gnm'+phpsid+'" target="info">ohne MilitÃ¤r</a>',
+  '- - nur MilitÃ¤r | <a href="stats/gen_guild_pts.php?what=gom'+phpsid+'" target="info">nur MilitÃ¤r </a>',
   '- Armeen | <a href="stats/armeen.php?'+phpsid+'" target="info">Armeen</a>',
   'Forum | <a href="http://zwischenwelt.org/forum/?'+phpsid+'" target="_blank">Forum</a>',
   '- Private Nachrichten | <a href="forum/index.php?t=pmsg'+phpsid+'" target="_blank">Private Nachrichten</a>',
-  '- Ungelesene Beiträge | <a href="forum/index.php?t=selmsg&unread=1&frm_id=0'+phpsid+'" target="_blank">Ungelesene Beiträge</a>',
+  '- Ungelesene BeitrÃ¤ge | <a href="forum/index.php?t=selmsg&unread=1&frm_id=0'+phpsid+'" target="_blank">Ungelesene BeitrÃ¤ge</a>',
   'Hilfe',
   '- ZW Wiki | <a href="http://zwischenwelt.org/wiki/?'+phpsid+'" target="_blank">Nachschlagewerk</a>',
   '- Admin fragen | <a href="info/msg.php?show=compose&to=Admin'+phpsid+'" target="info">Admin fragen</a>',
@@ -139,7 +139,7 @@ $dev = sqlgetobject("SELECT * FROM `building` WHERE `type` = 10 LIMIT 1"); ?>
   '- Notiz schreiben | <a href="info/note.php?'+phpsid+'" target="_blank">Notiz schreiben</a>',
   '- Einstellungen | <a href="info/profile.php?'+phpsid+'" target="info">Einstellungen</a>',
   '- Ressourcenanzeige | <a href="info/showressource.php?'+phpsid+'" target="info">Ressourcenanzeige</a>',
-  '- Menü Layout',
+  '- MenÃ¼ Layout',
   <?php foreach($gMenuStyles as $name=>$css){?>
   '- - <?=$name?> | <a href="?setpage=__MENUID__&style=<?=$name?>'+phpsid+'" title="<?=$name?>"><?=$name?></a>',
   <?php } ?>

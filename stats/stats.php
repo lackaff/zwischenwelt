@@ -9,6 +9,7 @@ $t = time();
    "http://www.w3.org/TR/html4/transitional.dtd">
 <html>
 <head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 <link rel="stylesheet" type="text/css" href="<?=GetZWStylePath()?>">
 <title>Zwischenwelt - Statistiken</title>
 
@@ -45,15 +46,15 @@ include("../stats/header.php");
 		<tr><td align="left" nowrap>Aktive in 7T</td><td><?=sqlgetone("SELECT COUNT(`id`) FROM `user` WHERE admin=0 AND `lastlogin`>".($t-60*60*24*7));?></td></tr>
 		<tr><td align="left" nowrap>Armeen</td><td><?=sqlgetone("SELECT COUNT(*) FROM `army`");?></td></tr>
 		<tr><td align="left" nowrap>Hellholes</td><td><?=sqlgetone("SELECT COUNT(`id`) FROM `hellhole`");?></td></tr>
-		<tr><td align="left" nowrap>Gebäude</td><td><?=kplaintrenner($maxb=sqlgetone("SELECT COUNT(b.`id`) FROM `building` b,`user` u WHERE b.`user`=u.`id` AND u.`admin`=0"));?></td></tr>
+		<tr><td align="left" nowrap>GebÃ¤ude</td><td><?=kplaintrenner($maxb=sqlgetone("SELECT COUNT(b.`id`) FROM `building` b,`user` u WHERE b.`user`=u.`id` AND u.`admin`=0"));?></td></tr>
 		<tr><td align="left" nowrap>Zauber</td><td><?=$maxb=sqlgetone("SELECT COUNT(`id`) FROM `spell`");?></td></tr>
 		<tr><td align="left" nowrap>Gilden</td><td><?=$maxb=sqlgetone("SELECT COUNT(`id`) FROM `guild`");?></td></tr>
-		<tr><td align="left" nowrap>maximale Bevölkerung</td><td><?=kplaintrenner(round(sqlgetone("SELECT MAX(`pop`) FROM `user` WHERE `admin`=0")));?></td></tr>
-		<tr><td align="left" nowrap>Weltbevölkerung</td><td><?=kplaintrenner(round(sqlgetone("SELECT SUM(`pop`) FROM `user` WHERE `admin`=0")));?></td></tr>
-		<tr><td align="left" nowrap>horizontale Weltgrösse</td>
+		<tr><td align="left" nowrap>maximale BevÃ¶lkerung</td><td><?=kplaintrenner(round(sqlgetone("SELECT MAX(`pop`) FROM `user` WHERE `admin`=0")));?></td></tr>
+		<tr><td align="left" nowrap>WeltbevÃ¶lkerung</td><td><?=kplaintrenner(round(sqlgetone("SELECT SUM(`pop`) FROM `user` WHERE `admin`=0")));?></td></tr>
+		<tr><td align="left" nowrap>horizontale WeltgrÃ¶ÃŸe</td>
 			<td><?=sqlgetone("SELECT MIN(`x`) FROM `building`")?> bis 
 				<?=sqlgetone("SELECT MAX(`x`) FROM `building`")?></td></tr>
-		<tr><td align="left" nowrap>vertikale Weltgrösse</td>
+		<tr><td align="left" nowrap>vertikale WeltgrÃ¶ÃŸe</td>
 			<td><?=sqlgetone("SELECT MIN(`y`) FROM `building`")?> bis 
 				<?=sqlgetone("SELECT MAX(`y`) FROM `building`")?></td></tr>
 		<tr><td align="left" nowrap>cron dTime</td><td><?=sprintf("%0.3f",$gGlobal["crontime"])?></td></tr>
@@ -90,10 +91,10 @@ include("../stats/header.php");
 
 	$title[1] = "User";
 	$title[2] = "Gilden";
-	$title[3] = "Gebäude";
+	$title[3] = "GebÃ¤ude";
 	$title[4] = "cron dTime";
 	$title[5] = "Landschaft";
-	$title[6] = "Baupläne";
+	$title[6] = "BauplÃ¤ne";
 
 	for($i=1;$i<=6;++$i){ ImgBorderStart(); ?>
 	<b><?=$title[$i]?></b><br>

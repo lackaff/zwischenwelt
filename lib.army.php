@@ -393,7 +393,7 @@ class cArmy {
 		
 		require_once("lib.fight.php");
 	
-		if (!$why) $why = "Die Armee _ARMYNAME_ von _ARMYOWNERNAME_ wurde zerst�rt.";
+		if (!$why) $why = "Die Armee _ARMYNAME_ von _ARMYOWNERNAME_ wurde zerstört.";
 		cFight::StopAllArmyFights($army,$why);
 		sql("DELETE FROM `armyaction` WHERE `army`=".$army->id);
 		sql("DELETE FROM `waypoint` WHERE `army` = ".$army->id);
@@ -607,7 +607,7 @@ class cArmy {
 	
 	function ArmySetWaypoint ($army,$x,$y,$waypointmaxprio=-1) {  // object or id
 		if (!is_object($army)) $army = sqlgetobject("SELECT * FROM `army` WHERE `id`=".intval($army));
-		if(!$army) return false;
+		if(empty($army)) return false;
 		echo "ArmySetWaypoint($army->name,$x,$y)<br>";
 		
 		if ($waypointmaxprio == -1)

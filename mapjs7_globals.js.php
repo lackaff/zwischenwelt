@@ -1,7 +1,9 @@
 <?php
+define("CONTENT_TYPE","text/javascript");
+
 require_once("lib.main.php");
 //if ( extension_loaded('zlib') )ob_start('ob_gzhandler');
-header('Content-Type: text/javascript');
+// see CONTENT_TYPE header('Content-Type: text/javascript');
 $maxage = 60*60*24*7;
 header('Last-Modified: '.date("r",floor((time()-$maxage)/$maxage)*$maxage));
 header('Cache-Control: max-age='.$maxage.', must-revalidate');
@@ -390,36 +392,36 @@ BACKGROUND-COLOR : #efd39c;
 BACKGROUND-COLOR : #deb67b;
 
 display:Wert;
-Für Wert einen der folgenden Werte notieren.
+FÃ¼r Wert einen der folgenden Werte notieren.
 block = Erzwingt einen Block - das Element erzeugt eine neue Zeile.
 inline = Erzwingt die Anzeige im Text - das Element wird im laufenden Textfluss angezeigt.
-list-item = wie block, jedoch mit einem Aufzählungszeichen (Bullet) davor.
-marker = deklariert automatisch generierten Text für das Element.
-run-in und compact = bewirken, dass das Element kontext-abhängig als Block-Element oder als Inline-Element dargestellt wird.
+list-item = wie block, jedoch mit einem AufzÃ¤hlungszeichen (Bullet) davor.
+marker = deklariert automatisch generierten Text fÃ¼r das Element.
+run-in und compact = bewirken, dass das Element kontext-abhÃ¤ngig als Block-Element oder als Inline-Element dargestellt wird.
 none = Element wird nicht angezeigt und es wird auch kein Platzhalter freigelassen.
 
 visibility:hidden;
 visibility:visible;
-Für Wert einen der folgenden Werte notieren:
-hidden = Der Inhalt des Element wird zunächst versteckt (nicht angezeigt).
-visible = Der Inhalt des Element wird zunächst angezeigt (Normaleinstellung).
+FÃ¼r Wert einen der folgenden Werte notieren:
+hidden = Der Inhalt des Element wird zunÃ¤chst versteckt (nicht angezeigt).
+visible = Der Inhalt des Element wird zunÃ¤chst angezeigt (Normaleinstellung).
 
 line-height:0pt; font-size:0pt; font-weight:0;
 clip:rect(Wert1 Wert2 Wert3 Wert4);
 
 cursor:Wert;
-Zugeordnetes Element erhält beim Überfahren mit der Maus einen anderen Cursor. Für Wert einen der folgenden Werte notieren:
+Zugeordnetes Element erhÃ¤lt beim Ã¼berfahren mit der Maus einen anderen Cursor. FÃ¼r Wert einen der folgenden Werte notieren:
 auto = automatischer Cursor (Normaleinstellung).
-default = Plattformunabhängiger Standard-Cursor.
+default = PlattformunabhÃ¤ngiger Standard-Cursor.
 crosshair = Cursor in Form eines einfachen Fadenkreuzes.
 pointer = Cursor in Form eines Zeigers.
-move = Cursor in Form eines Kreuzes, das die Fähigkeit zum Bewegen des Elements signalisiert.
+move = Cursor in Form eines Kreuzes, das die FÃ¤higkeit zum Bewegen des Elements signalisiert.
 n-resize = Cursor in Form Pfeils, der nach oben zeigt (n = Norden).
 ne-resize = Cursor in Form Pfeils, der nach rechts oben zeigt (ne = Nordost).
 e-resize = Cursor in Form Pfeils, der nach rechts zeigt (e = Osten).
-se-resize = Cursor in Form Pfeils, der nach rechts unten zeigt (se = Südost).
-s-resize = Cursor in Form Pfeils, der nach unten zeigt (s = Süden).
-sw-resize = Cursor in Form Pfeils, der nach links unten zeigt (sw = Südwest).
+se-resize = Cursor in Form Pfeils, der nach rechts unten zeigt (se = SÃ¼dost).
+s-resize = Cursor in Form Pfeils, der nach unten zeigt (s = SÃ¼den).
+sw-resize = Cursor in Form Pfeils, der nach links unten zeigt (sw = SÃ¼dwest).
 w-resize = Cursor in Form Pfeils, der nach links zeigt (w = Westen).
 nw-resize = Cursor in Form Pfeils, der nach links oben zeigt (nw = Nordwest).
 text = Cursor in einer Form, die normalen Text symbolisiert.

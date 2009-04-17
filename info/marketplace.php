@@ -120,14 +120,14 @@ class cInfoMarket extends cInfoBuilding {
 					<td><select name="offer_res" size="1">
 					<?php foreach($gResTypeNames as $k=>$v)echo '<option value="'.$k.'">'.$v.'</option>'; ?>
 					</select></td>
-					<td><input type="text" name="offer_count" size="8"></td><td>Angebot <input type=text name=count value=1 size=2> mal (höchstens 10)</td></tr>
+					<td><input type="text" name="offer_count" size="8"></td><td>Angebot <input type=text name=count value=1 size=2> mal (hÃ¶chstens 10)</td></tr>
 					<tr><td>&nbsp;</td>
 					<td>Preis:</td>
 					<td><select name="price_res" size="1">
 					<?php foreach($gResTypeNames as $k=>$v)echo '<option value="'.$k.'">'.$v.'</option>'; ?>
 					</select></td>
 					<td><input type="text" name="price_count" size="8"></td><td><input type="submit" name="" value="aufgeben"> (jeweils mindestens <?=kMarketplace_MinResOffer?> erforderlich)</td>
-				<tr><td colspan=5 align=left>beim Zurücknehmen eines Handels werden 10% in die Weltbank überwiesen!</tr>
+				<tr><td colspan=5 align=left>beim ZurÃ¼cknehmen eines Handels werden 10% in die Weltbank Ã¼berwiesen!</tr>
 			</table>
 			</form>
 			<br>
@@ -142,10 +142,10 @@ class cInfoMarket extends cInfoBuilding {
 					<tr><th colspan="7" align="left">fremde Angebote</th></tr>
 					<tr>
 						<th colspan=3></th>
-						<th colspan=1>Verfügbar</th>
+						<th colspan=1>VerfÃ¼gbar</th>
 						<th colspan=3>Angebot</th>
 						<th colspan=3>Preis</th>
-						<th colspan=1>Händler</th>
+						<th colspan=1>HÃ¤ndler</th>
 						<th colspan=1></th>
 						</tr>
 					<?php 
@@ -178,7 +178,7 @@ class cInfoMarket extends cInfoBuilding {
 								<td><?=$count?>x</td>
 								<td><img src="<?=g("res_".$gResTypeVars[$x->offer_res].".gif")?>"></td>
 								<td><?=kplaintrenner($x->offer_count)?></td>
-								<td>&nbsp;für</td>
+								<td>&nbsp;fÃ¼r</td>
 								<td><img src="<?=g("res_".$gResTypeVars[$x->price_res].".gif")?>"></td>
 								<td><?=kplaintrenner($x->price_count)?></td>
 								<td>von</td>
@@ -213,9 +213,9 @@ class cInfoMarket extends cInfoBuilding {
 						<tr>
 							<td>&nbsp;</td>
 							<td><?=kplaintrenner($x->offer_count)?> <?=$gResTypeNames[$x->offer_res]?> <img style="vertical-align:middle" src="<?=g("res_".$gResTypeVars[$x->offer_res].".gif")?>"></td>
-							<td>für</td>
+							<td>fÃ¼r</td>
 							<td><?=kplaintrenner($x->price_count)?> <?=$gResTypeNames[$x->price_res]?> <img style="vertical-align:middle" src="<?=g("res_".$gResTypeVars[$x->price_res].".gif")?>"></td>
-							<td><input type="submit" value="zurücknehmen"></td>
+							<td><input type="submit" value="zurÃ¼cknehmen"></td>
 						</tr>
 						<tr><td></td><td colspan=6><hr style="height:1px;margin:0px;padding:0px;"></td></tr>
 					</form>
@@ -303,7 +303,7 @@ class cInfoMarket extends cInfoBuilding {
 				</tr>
 				<?php }?>
 				</table>
-				<input type="submit" name="del" value="löschen">
+				<input type="submit" name="del" value="lÃ¶schen">
 				<input type="submit" name="save" value="speichern">
 				<input type="submit" name="new" value="neu">
 			</form>

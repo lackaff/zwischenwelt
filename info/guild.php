@@ -81,6 +81,7 @@ $gGuild = sqlgetobject("SELECT g.*,u.`name` as `foundername` FROM `guild` g,`use
    "http://www.w3.org/TR/html4/transitional.dtd">
 <html>
 <head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 <link rel="stylesheet" type="text/css" href="<?=GetZWStylePath()?>">
 <title>Zwischenwelt - Gilde</title>
 
@@ -95,8 +96,8 @@ if($gUser->guild == 0)
 ?>
 	<form method="post" action="<?=Query("guild.php?sid=?")?>">
 	<h4>Gilde gr&uuml;nden</h4>
-	Um eine Gilde zu gründen benötigst du folgende Rohstoffe: 2000,2000,2000,2000<br>
-	Gewünschter Name: <input type="text" name="guildname"><br>
+	Um eine Gilde zu grÃ¼nden benÃ¶tigst du folgende Rohstoffe: 2000,2000,2000,2000<br>
+	GewÃ¼nschter Name: <input type="text" name="guildname"><br>
 	Farbe: <input type="text" name="color"><br>
 	<input type="submit" name="create" value="gr&uuml;nden">
 	</form>
@@ -162,7 +163,7 @@ else
 	
 	<table width=100% border=0>
 	<tr><td valign="top" style="padding-left:20px;padding-bottom:15px;">
-	Gründer: <?=$gGuild->foundername?><br>
+	GrÃ¼nder: <?=$gGuild->foundername?><br>
 	Bewerbungen: <?=sqlgetone("SELECT COUNT(`user`) FROM `guild_request` WHERE `guild`=".$gGuild->id)?>
 	
 	<p><span style="font-size:14px;font-weight:bold;">* <a style="font-size:14px;" href="<?=Query("guild_forum.php?sid=?")?>">Gildeforum</a></span></p>
@@ -171,7 +172,7 @@ else
 	<?$a=getnewArticles(); foreach ($a as $o){
 		$neu="";
 		if($o->nc>0) $neu="<span style='color:#9d0000'>&nbsp;(".$o->nc." ".($o->nc>1?"neue Kommentare":"neuer Kommentar").")</span>";?>
-	<tr><td style="padding-left:10px;color:<?=($o->new?"red":"black")?>;"> * <?="<a href='".Query("guild_forum.php?sid=?&guild=".$o->guild."&article=".$o->id)."'>".substr($o->head,0,60).(strlen($o->head)>60?"...":"")?></a><?=$neu?></td></tr>
+	<tr><td style="padding-left:10px;color:<?=($o->new?"red":"black")?>;"> * <a href='<?="".Query("guild_forum.php?sid=?&guild=".$o->guild."&article=".$o->id)."'>".substr($o->head,0,60).(strlen($o->head)>60?"...":"")?></a><?=$neu?></td></tr>
 	<?}?>
 	<tr><td>&nbsp;</td></tr>
 	<tr><td>[<a href="<?=query("?sid=?&do=markallforumread")?>">alles gelesen markieren</a>]</td></tr>

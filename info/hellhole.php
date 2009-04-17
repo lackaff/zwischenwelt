@@ -53,7 +53,7 @@ class cInfoHellHole extends cInfoBuilding {
 		
 		totalspawns : <?=$hellhole->totalspawns?><br>
 		level: <?=$hellhole->level?><br>
-		bis zum n‰chsten spawn: <?=round(($hellhole->spawntime - time()) / 3600,2)?>h<br>
+		bis zum n√§chsten spawn: <?=round(($hellhole->spawntime - time()) / 3600,2)?>h<br>
 		<br>
 		
 		<a target="_blank" href="<?=kURL_Nethack?>" style="font:12px;color:red">Hellhole betreten</a>

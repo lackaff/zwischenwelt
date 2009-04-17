@@ -65,15 +65,15 @@ $form->Show();
 <tr><th>sourceB/sourceA</th><td>nur eins von beiden darf gesetzt sein</td></tr>
 <tr><th>sourcetransport AUS</th><td>verwende die haupt-einheiten in sourcearmy</td></tr>
 <tr><th>sourcetransport AN</th><td>verwende die transportierten-einheiten in sourcearmy</td></tr>
-<tr><th>sourcetransport</th><td>bedeutungslos für sourceB</td></tr>
+<tr><th>sourcetransport</th><td>bedeutungslos fÃ¼r sourceB</td></tr>
 <tr><th>target</th><td>transfer geht in diesen armee-typ</td></tr>
 <tr><th>targetsub --main--</th><td>transfer geht in die haupt-einheiten in targetarmy</td></tr>
 <tr><th>targetsub sonst</th><td>transfer geht in die transportierten-einheiten in targetarmy</td></tr>
 <tr><th>targetsub</th><td>es werden nur einheiten transferriert, die diesem armeetyp entsprechen</td></tr>
-<tr><th>btyp</th><td>es werden nur einheiten transferriert, die man in diesem gebäudetyp bauen kann</td></tr>
-<tr><th>idlemod=0,auslader AUS</th><td>transfer ist zu jeder zeit möglich</td></tr>
-<tr><th>idlemod=3,auslader AUS</th><td>transfer ist nur möglich wenn die beteiligten armeen mindestens 3 minuten idletime haben</td></tr>
-<tr><th>idlemod=30,auslader=landungsboot</th><td>für alle 30 minuten idletime kann einmal die komplette ladekapazität aller landungsboote transferriert werden</td></tr>
+<tr><th>btyp</th><td>es werden nur einheiten transferriert, die man in diesem GebÃ¤udetyp bauen kann</td></tr>
+<tr><th>idlemod=0,auslader AUS</th><td>transfer ist zu jeder zeit mÃ¶glich</td></tr>
+<tr><th>idlemod=3,auslader AUS</th><td>transfer ist nur mÃ¶glich wenn die beteiligten armeen mindestens 3 minuten idletime haben</td></tr>
+<tr><th>idlemod=30,auslader=landungsboot</th><td>fÃ¼r alle 30 minuten idletime kann einmal die komplette ladekapazitÃ¤t aller landungsboote transferriert werden</td></tr>
 <tr><th></th><td></td></tr>
 </table>
 <?php

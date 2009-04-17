@@ -8,6 +8,7 @@ $t = time();
    "http://www.w3.org/TR/html4/transitional.dtd">
 <html>
 <head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 <link rel="stylesheet" type="text/css" href="<?=GetZWStylePath()?>">
 <title>Zwischenwelt - Statistiken</title>
 
@@ -24,7 +25,7 @@ ImgBorderStart();
 
 	<table border="0">
 	<tr><th colspan="3">Spieler</th></tr>
-	<tr><th></th><th>Name</th><th>HQ</th><th>Gilde</th><th>Bevölkerung</th></tr>
+	<tr><th></th><th>Name</th><th>HQ</th><th>Gilde</th><th>BevÃ¶lkerung</th></tr>
 	<?php
 		$i=1;
 		$time = time();

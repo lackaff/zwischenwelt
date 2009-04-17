@@ -10,6 +10,7 @@ $t = time();
    "http://www.w3.org/TR/html4/transitional.dtd">
 <html>
 <head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 <link rel="stylesheet" type="text/css" href="<?=GetZWStylePath()?>">
 <title>Zwischenwelt - Statistiken</title>
 
@@ -31,10 +32,10 @@ ImgBorderStart();
 	<tr><td align="left">letztes Login &lt; 2h</td><td><?=sqlgetone("SELECT COUNT(`id`) FROM `user` WHERE `lastlogin`>".($t-60*60*2));?></td></tr>
 	<tr><td align="left">letztes Login &lt; 24h</td><td><?=sqlgetone("SELECT COUNT(`id`) FROM `user` WHERE `lastlogin`>".($t-60*60*24));?></td></tr>
 	<tr><td align="left">Armeen</td><td><?=sqlgetone("SELECT COUNT(`id`) FROM `army`");?></td></tr>
-	<tr><td align="left">Geb‰ude</td><td><?=$maxb=sqlgetone("SELECT COUNT(`id`) FROM `building`");?></td></tr>
+	<tr><td align="left">Geb√§ude</td><td><?=$maxb=sqlgetone("SELECT COUNT(`id`) FROM `building`");?></td></tr>
 	<tr><td align="left">Gilden</td><td><?=$maxb=sqlgetone("SELECT COUNT(`id`) FROM `guild`");?></td></tr>
 	<tr><td align="left">maximale Population</td><td><?=sqlgetone("SELECT MAX(`pop`) FROM `user`");?></td></tr>
-	<tr><td align="left">genutze Fl‰che</td><td>
+	<tr><td align="left">genutze Fl√§che</td><td>
 	<?php 
 	$dx = sqlgetone("SELECT MAX(`x`)-MIN(`x`) FROM `building`");
 	$dy = sqlgetone("SELECT MAX(`y`)-MIN(`y`) FROM `building`");

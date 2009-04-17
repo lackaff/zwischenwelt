@@ -4,7 +4,7 @@ require_once("lib.spells.php");
 require_once("lib.text.php");
 
 
-// TODO : böse zauber : eintrag ins gildenlog
+// TODO : bÃ¶se zauber : eintrag ins gildenlog
 
 //********************[ Spell_Production ]*****************************************************
 // Production Modifications
@@ -48,13 +48,13 @@ class Spell_Duerre extends Spell_Production {
 		foreach ($killed as $kill) BanSpell($kill,$this->owner);
 		
 		// send message to victim
-		$spellreport = "Eine Dürre plagt das Land, die Nahrungsproduktion ist starkt gesunken.<br>\n";
+		$spellreport = "Eine DÃ¼rre plagt das Land, die Nahrungsproduktion ist starkt gesunken.<br>\n";
 		$owneruser = sqlgetobject("SELECT `id`,`name` FROM `user` WHERE `id` = ".intval($this->owner));
 		if ($owneruser){
 			$spellreport .= "Eure Magier konnten ".($owneruser->name)." als Verursacher identifizieren.<br>\n";
         } else $owneruser->id = 0;
         GuildLogMeShort($this->x,$this->y,$owneruser->id,$this->target,"Zauber",($this->spelltype->name)." wurde gezaubert");
-		sendMessage($this->target,0,"Dürre",$spellreport,kMsgTypeReport,FALSE);
+		sendMessage($this->target,0,"DÃ¼rre",$spellreport,kMsgTypeReport,FALSE);
 		
 		return true;
 	}
@@ -72,7 +72,7 @@ class Spell_Pest extends Spell_Production {
 		foreach ($killed as $kill) BanSpell($kill,$this->owner);
 		
 		// send message to victim
-		$spellreport = "Der schwarze Tod kriecht durch die Gassen,<br> grosse Teile der Bevölkerung sterben.<br>\n";
+		$spellreport = "Der schwarze Tod kriecht durch die Gassen,<br> grosse Teile der BevÃ¶lkerung sterben.<br>\n";
 		$owneruser = sqlgetobject("SELECT `id`,`name` FROM `user` WHERE `id` = ".intval($this->owner));
 		if ($owneruser){
 			$spellreport .= "Eure Magier konnten ".($owneruser->name)." als Verursacher identifizieren.<br>\n";
@@ -104,7 +104,7 @@ class Spell_Pest extends Spell_Production {
 
 
 
-// protects against dürre
+// protects against dÃ¼rre
 class Spell_Regen extends Spell_Cron {
 	function Birth ($success) {
 		if (!parent::Birth($success)) return false;
@@ -112,7 +112,7 @@ class Spell_Regen extends Spell_Cron {
 		//put out fires in the rain cast area
 		FirePutOut($this->cast_x,$this->cast_y,kFireRegenLoeschRadius);
 		
-		$spellreport = "Es fängt an zu regnen.<br>";
+		$spellreport = "Es fÃ¤ngt an zu regnen.<br>";
 		echo $spellreport;
 		sendMessage($this->target,0,"Regen",$spellreport,kMsgTypeReport,FALSE);
 		$this->Cron(60);
@@ -127,11 +127,11 @@ class Spell_Regen extends Spell_Cron {
 
 
 // locates nerby items
-// Level 1 : 1 Rohstoff-Depots + 0 Gegenstände im Umkreis von 100 Feldern
-// Level 2 : 2 Rohstoff-Depots + 1 Gegenstände im Umkreis von 100 Feldern
-// Level 3 : 3 Rohstoff-Depots + 2 Gegenstände im Umkreis von 200 Feldern
+// Level 1 : 1 Rohstoff-Depots + 0 GegenstÃ¤nde im Umkreis von 100 Feldern
+// Level 2 : 2 Rohstoff-Depots + 1 GegenstÃ¤nde im Umkreis von 100 Feldern
+// Level 3 : 3 Rohstoff-Depots + 2 GegenstÃ¤nde im Umkreis von 200 Feldern
 class Spell_Schatzsuche extends Spell {
-	// 3 zufällige grosse rohstoff-mengen die offen rumliegen zu entdecken
+	// 3 zufÃ¤llige grosse rohstoff-mengen die offen rumliegen zu entdecken
 	function Birth ($success) {
 		if (!parent::Birth($success)) return false;
 		$c_res = floor($this->level * $this->mod);
@@ -153,12 +153,12 @@ class Spell_Schatzsuche extends Spell {
 	function GetDifficulty ($spelltype,$mages,$userid) { return 5; }
 }
 
-// ameisenhügel + rohstoffe darauf + armeen drumrum
+// ameisenhÃ¼gel + rohstoffe darauf + armeen drumrum
 // Level 1 : im Umkreis von 100 Feldern
 // Level 2 : im Umkreis von 200 Feldern
 // Level 3 : im Umkreis von 300 Feldern
 class Spell_Ameisensuche extends Spell {
-	// 3 zufällige grosse rohstoff-mengen die offen rumliegen zu entdecken
+	// 3 zufÃ¤llige grosse rohstoff-mengen die offen rumliegen zu entdecken
 	
     function cmp_nest($a, $b) {
         $a = $a->myrespoints;
@@ -213,13 +213,13 @@ class Spell_Ameisensuche extends Spell {
 		}
 		usort($nests, array("Spell_Ameisensuche", "cmp_nest"));
 		?>
-		AmeisenHügel gesamt : <?=$c_total?>, davon <?=$c_queen?> mit Königinnen (min <?=kplaintrenner($spreadresmax)?> Res)
+		AmeisenHÃ¼gel gesamt : <?=$c_total?>, davon <?=$c_queen?> mit KÃ¶niginnen (min <?=kplaintrenner($spreadresmax)?> Res)
 		<table border=1 cellspacing=0 cellpadding=0>
 		<tr>
-			<th>AmeisenHügel</th>
+			<th>AmeisenHÃ¼gel</th>
 			<th>HP</th>
 			<th>Ressourcen</th>
-			<th>Königinnen</th>
+			<th>KÃ¶niginnen</th>
 			<th>danebenstehende Armeen</th>
 		</tr>
 		<?php foreach ($nests as $o) {?>
@@ -245,7 +245,7 @@ class Spell_Ameisensuche extends Spell {
 	function GetDifficulty ($spelltype,$mages,$userid) { return 5; }
 }
 
-// Armee für eine bestimmte zeit festhalten
+// Armee fÃ¼r eine bestimmte zeit festhalten
 class Spell_Spinnennetz extends Spell_Cron {
 	function Birth ($success) {
 		if (!parent::Birth($success)) return false;
@@ -258,11 +258,11 @@ class Spell_Spinnennetz extends Spell_Cron {
 		$victim_user = sqlgetobject("SELECT * FROM `user` WHERE `id` = ".intval($army->user));
 		if ($victim_user) {
 			echo "Die Armee $army->name von $victim_user->name wurde gefangen<br>";
-			echo "Vorraussichtliche Dauer der Bewegungsunfähigkeit : ".Duration2Text($this->lasts-time())."<br>\n";
+			echo "Vorraussichtliche Dauer der BewegungsunfÃ¤higkeit : ".Duration2Text($this->lasts-time())."<br>\n";
 
 			// send message to victim
 			$spellreport = "Unsere Armee $army->name sind bei ($army->x,$army->y) in ein riesiges Spinnennetz geraten.<br>\n";
-			$spellreport .= "Vorraussichtliche Dauer der Bewegungsunfähigkeit : ".Duration2Text($this->lasts-time())."<br>\n";
+			$spellreport .= "Vorraussichtliche Dauer der BewegungsunfÃ¤higkeit : ".Duration2Text($this->lasts-time())."<br>\n";
 			$owneruser = sqlgetobject("SELECT `id`,`name` FROM `user` WHERE `id` = ".intval($this->owner));
 			if ($owneruser){
 				$spellreport .= "Eure Magier konnten ".($owneruser->name)." als Verursacher identifizieren.<br>\n";
@@ -271,7 +271,7 @@ class Spell_Spinnennetz extends Spell_Cron {
             sendMessage($victim_user->id,0,"Spinnennetz bei ($army->x,$army->y)",$spellreport,kMsgTypeReport,FALSE);
 		} else {
 			echo "Die Armee $army->name wurde gefangen<br>";
-			echo "Vorraussichtliche Dauer der Bewegungsunfähigkeit : ".Duration2Text($this->lasts-time())."<br>\n";
+			echo "Vorraussichtliche Dauer der BewegungsunfÃ¤higkeit : ".Duration2Text($this->lasts-time())."<br>\n";
 		}
 		$this->Cron(60);
 		return true;
@@ -284,7 +284,7 @@ class Spell_Spinnennetz extends Spell_Cron {
 	}
 	function GetDifficulty ($spelltype,$mages,$userid) { return 8; }
 	function Effect () {
-		return "<font color='#dd6600'>hält eine Armee gefangen</font>";
+		return "<font color='#dd6600'>hÃ¤lt eine Armee gefangen</font>";
 	}
 }
 
@@ -322,7 +322,7 @@ class Spell_Hoellenauge extends Spell {
 			
 		global $gUnitType,$gItemType;
 		if ($hellhole) {
-			echo "Höllenauge auf (".$hellhole->x.",".$hellhole->y.")<br>";
+			echo "HÃ¶llenauge auf (".$hellhole->x.",".$hellhole->y.")<br>";
 			if ($hellhole->type > 0) {
 				$unittype = $gUnitType[$hellhole->type];
 				$units = cUnit::Simple($hellhole->type,$hellhole->armysize);
@@ -334,16 +334,16 @@ class Spell_Hoellenauge extends Spell {
 				}
 				$faktor = 100*$hellhole->spawndelay/3600.0;
 				foreach ($total_treasure as $k => $v) $total_treasure[$k] = floor($v/$faktor)."<img src='".g($gItemType[$k]->gfx)."'>";
-				echo "Truppenstärke : ".$hellhole->armysize." <img src='".g($unittype->gfx)."'>".$unittype->name."<br>";
+				echo "TruppenstÃ¤rke : ".$hellhole->armysize." <img src='".g($unittype->gfx)."'>".$unittype->name."<br>";
 				echo "Ressourcenproduktion pro Stunde : ".implode(",",$total_treasure)."<br>";
-			} else echo "Truppenstärke : ".$hellhole->armysize." ???<br>";
+			} else echo "TruppenstÃ¤rke : ".$hellhole->armysize." ???<br>";
 			echo "Maxmimal ".$hellhole->num." Truppen gleichzeitig, alle ".Duration2Text($hellhole->spawndelay)." ein neuer Trupp<br>";
 			echo "Bewegung im Radius ".$hellhole->radius."<br>";
 		}
 		
 		global $gRes;
 		if ($targetuser) {
-			echo "Höllenauge auf ".$targetuser->name."<br>";
+			echo "HÃ¶llenauge auf ".$targetuser->name."<br>";
 		}
 		if ($this->level >= 2 && $targetuser) {
 			echo "<b>Lagerinhalt</b> : ";
@@ -388,10 +388,10 @@ class Spell_Hoellenauge extends Spell {
 		echo magictext($report);
 		
 		if ($targetuser) {
-			sendMessage($this->owner,0,"Höllenauge auf ".$targetuser->name,$report,kMsgTypeReport,FALSE);
+			sendMessage($this->owner,0,"HÃ¶llenauge auf ".$targetuser->name,$report,kMsgTypeReport,FALSE);
 		}
 		if ($hellhole) {
-			sendMessage($this->owner,0,"Höllenauge auf (".$hellhole->x.",".$hellhole->y.")",$report,kMsgTypeReport,FALSE);
+			sendMessage($this->owner,0,"HÃ¶llenauge auf (".$hellhole->x.",".$hellhole->y.")",$report,kMsgTypeReport,FALSE);
 		}
 		
 		return true;
@@ -429,7 +429,7 @@ class Spell_Bann extends Spell {
                 GuildLogMeShort($this->x,$this->y,$owneruser->id,$this->target,"Zauber",($this->spelltype->name)." wurde gezaubert");
 				sendMessage($this->target,0,"Bann (Turm,$building->x,$building->y)",$spellreport,kMsgTypeReport,FALSE);
 			} else if (count($killed) == 0) {
-				echo "hier ist kein Mana, und auch kein Zauber, den man bannen könnte<br>";
+				echo "hier ist kein Mana, und auch kein Zauber, den man bannen kÃ¶nnte<br>";
 				return false;
 			}
 		}
@@ -442,7 +442,7 @@ class Spell_Bann extends Spell {
 // todo : spell feuer : wirkt auf ein feld, mach cron schaden, 
 // ist auf der map sichtbar, genau wie netz, killbar durch regen (area)
 // nicht zauberbar bei wetter : regen
-// brand mehr area : gebäudeschaden ? konter durch regen (spieler)
+// brand mehr area : gebÃ¤udeschaden ? konter durch regen (spieler)
 
 
 
@@ -452,7 +452,7 @@ class Spell_Bann extends Spell {
 //*********************************************************************************************
 
 
-// hinterlässt schutt
+// hinterlÃ¤sst schutt
 // schaden gegen armee
 // level 1 : 40 000 schadenspunkte (ca 400 Ritter)
 // level 2 : 80 000 schadenspunkte (ca 800 Ritter)
@@ -468,7 +468,7 @@ class Spell_Steinschlag extends Spell_Instant_Damage {
 }
 
 
-// hinterlässt Krater
+// hinterlÃ¤sst Krater
 // schaden gegen armee
 // level 1 : 4 000 000 schadenspunkte (ca 4000 Ritter)
 // level 2 : 8 000 000 schadenspunkte (ca 8000 Ritter)
@@ -565,7 +565,7 @@ class Spell_Erdbeben extends Spell_Once_Per_User {
 		if ($this->accumulated)
 				$msg = "Ein weiteres Erdbeben";
 		else	$msg = "Ein Erdbeben";
-		$msg .= " beschädigt Ihre Gebäude bei ($this->x,$this->y).<br>\n";
+		$msg .= " beschÃ¤digt Ihre GebÃ¤ude bei ($this->x,$this->y).<br>\n";
 		$msg .= $spellreport;
 		
 		$owneruser = sqlgetobject("SELECT `id`,`name` FROM `user` WHERE `id` = ".intval($this->owner));
@@ -575,16 +575,16 @@ class Spell_Erdbeben extends Spell_Once_Per_User {
         
 		foreach ($aff_users as $uid => $num) {
 			$mymsg = $msg;
-			$mymsg .= "Von unseren Gebäuden befinden sich $num im Wirkungsbereich.<br>\n";
+			$mymsg .= "Von unseren GebÃ¤uden befinden sich $num im Wirkungsbereich.<br>\n";
 			sendMessage($uid,0,$topic,$mymsg,kMsgTypeReport,FALSE);
 			LogMe($uid,NEWLOG_TOPIC_MAGIC,NEWLOG_MAGIC_DAMAGE_TARGET,$this->x,$this->y,$this->target,$this->spelltype->name,$this->owner);
             GuildLogMeShort($this->x,$this->y,$owneruser->id,$uid,"Zauber",($this->spelltype->name)." wurde gezaubert");
    		}
 		
 		if (count($aff_buildings) == 0) {
-			echo "Kein Gebäude beschädigt<br>";
+			echo "Kein GebÃ¤ude beschÃ¤digt<br>";
 		} else {
-			echo count($aff_buildings)." Gebäude im Wirkungsbereich<br>";
+			echo count($aff_buildings)." GebÃ¤ude im Wirkungsbereich<br>";
 			arsort($aff_users);
 			foreach ($aff_users as $uid => $num)
 				echo "$num von ".nick($uid)."<br>";
@@ -597,7 +597,7 @@ class Spell_Erdbeben extends Spell_Once_Per_User {
 		$x = $this->x;
 		$y = $this->y;
 		$r = $this->GetRadius($this->level);
-		// kreis : x² + y² <= r²
+		// kreis : x + y <= r
 		$arr = sqlgettable("SELECT * FROM `building` WHERE
 			`x` >= (".($x-$r).") AND `x` <= (".($x+$r).") AND
 			`y` >= (".($y-$r).") AND `y` <= (".($y+$r).")");
@@ -663,7 +663,7 @@ class Spell_Erdbeben extends Spell_Once_Per_User {
 
 class Spell_Strike extends Spell {
 	function Birth ($success) { // $success < 0 -> patzer , $success == 0 -> normal failure
-		// if ($success < 0) damage($this->towerid); // böser zauberpatzer ??
+		// if ($success < 0) damage($this->towerid); // bÃ¶ser zauberpatzer ??
 		if (!parent::Birth($success)) return false;
 		$result = false;
 		TablesLock();
@@ -673,7 +673,7 @@ class Spell_Strike extends Spell {
 			$spellreport = "Schaden : $dmg, HP vorher = ".round($o->hp,1).", HP nachher = ".max(0,round($o->hp - $dmg,1))."<br>";
 			if ($o->hp - $dmg <= 0) {
 				cBuilding::removeBuilding($o,$o->user);
-				$spellreport .= "Gebäude VERNICHTET !<br>";
+				$spellreport .= "GebÃ¤ude VERNICHTET !<br>";
 			} else sql("UPDATE `building` SET `hp`=`hp`-".$dmg." WHERE `id`=".$o->id);
 			echo $spellreport;
 			
@@ -681,7 +681,7 @@ class Spell_Strike extends Spell {
 			// send message to victim
 			if ($o->user) {
 				$topic = "Strike auf ($this->x,$this->y)";
-				$msg = "Ein Strike hat Ihr Gebäude bei ($this->x,$this->y) beschädigt.<br>\n";
+				$msg = "Ein Strike hat Ihr GebÃ¤ude bei ($this->x,$this->y) beschÃ¤digt.<br>\n";
 				$msg .= $spellreport;
 				$owneruser = sqlgetobject("SELECT `id`,`name` FROM `user` WHERE `id` = ".intval($this->owner));
 				if ($owneruser){
@@ -694,8 +694,8 @@ class Spell_Strike extends Spell {
 			}
 			
 			$result = true;
-		} else if (!$o) echo "Kein Gebäude beschädigt<br>";
-		else if ($o->type != kBuilding_HQ) echo "Strike ist wirkungslos gegen Haupthäuser !<br>";
+		} else if (!$o) echo "Kein GebÃ¤ude beschÃ¤digt<br>";
+		else if ($o->type != kBuilding_HQ) echo "Strike ist wirkungslos gegen HaupthÃ¤user !<br>";
 		TablesUnlock();
 		return $result;
 	}
@@ -709,7 +709,7 @@ class Spell_Strike extends Spell {
 
 class Spell_Brandrodung extends Spell {
 	function Birth ($success) { // $success < 0 -> patzer , $success == 0 -> normal failure
-		// if ($success < 0) damage($this->towerid); // böser zauberpatzer ??
+		// if ($success < 0) damage($this->towerid); // bÃ¶ser zauberpatzer ??
 		if (!parent::Birth($success)) return false;
 		$ter = cMap::StaticGetTerrainAtPos($this->x,$this->y);
 		if (in_array($ter,array(kTerrain_YoungForest,kTerrain_TreeStumps,kTerrain_Forest,kTerrain_Flowers,kTerrain_Field,kTerrain_Swamp))) {
@@ -731,7 +731,7 @@ class Spell_WaldAnpflanzen extends Spell {
 	function Birth ($success) { // $success < 0 -> patzer, $success == 0 -> normal failure
 		global $gWaldAnpflanzReplaceableTerrain;
 		$o = sqlgetobject("SELECT * FROM `building` WHERE `x`=".intval($this->x)." AND `y`=".intval($this->y));
-		if ($o) { echo "kann nicht auf Gebäude gesprochen werden"; return false; }
+		if ($o) { echo "kann nicht auf GebÃ¤ude gesprochen werden"; return false; }
 		$ter = cMap::StaticGetTerrainAtPos($this->x,$this->y);
 		if (!in_array($ter, $gWaldAnpflanzReplaceableTerrain)) { echo "kann nicht auf diesem Terrain gesprochen werden"; return false; }
 		
@@ -770,7 +770,7 @@ class Spell_Brandbaender extends Spell {
         // send message to victim
         if ($o && $o->user) {
             $topic = "Brandbaender auf ($this->x,$this->y)";
-            $msg = "Brandbaender hat Ihr Gebäude bei ($this->x,$this->y) in Flammen aufgehen lassen.<br>\n";
+            $msg = "Brandbaender hat Ihr GebÃ¤ude bei ($this->x,$this->y) in Flammen aufgehen lassen.<br>\n";
             $owneruser = sqlgetobject("SELECT `id`,`name` FROM `user` WHERE `id` = ".intval($this->owner));
             if ($owneruser){
                 $msg .= "Eure Magier konnten ".($owneruser->name)." als Verursacher identifizieren.<br>\n";
@@ -851,7 +851,7 @@ class Spell_ArmeeDerToten extends Spell_Once_Per_User {
 		if (!parent::Birth($success)) return false;
 		$r = $this->radius;
 		// echo "Beschworene Kreaturen pro Stunde : ".round($this->GetSummonable(3600),1)."<br>";
-		// echo "Verfügbare Leichen in der Umgebung : ".$this->GetCorpsesLeft()."<br>";
+		// echo "VerfÃ¼gbare Leichen in der Umgebung : ".$this->GetCorpsesLeft()."<br>";
 		echo $this->Effect()."<br>";
 		
 		// send message to victims
@@ -929,7 +929,7 @@ class Spell_ArmeeDerToten extends Spell_Once_Per_User {
 	function Effect(){
 		$summonable = $this->GetSummonable(3600);
 		$corpses = $this->GetCorpsesLeft();
-		return "beschwört GhostKnights in der Gegend um ($this->x,$this->y)<br>".
+		return "beschwÃ¤rt GhostKnights in der Gegend um ($this->x,$this->y)<br>".
 			"bis zu $summonable Kreaturen pro Stunde, noch $corpses Leichen in der Umgebung.";
 	}
 	*/

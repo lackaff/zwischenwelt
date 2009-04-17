@@ -19,9 +19,9 @@ else {
 	<link rel="stylesheet" type="text/css" href="images/<?=$layout?>/pagestyles.css">
 	<link REL="shortcut icon" HREF="favicon.ico" TYPE="image/png">
 	
-	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 	<META NAME="keywords" CONTENT="online, strategie, multiplayer, kostenlos, spiel, MOO, ogame,Browsergames, OnlineGame, MUD, Rollenspiel, Freewar, Browsergame, Opensource, GPL, Onlinegames, Game, forschen, siedeln, bauen, creepen">
-	<META NAME="description" CONTENT="Zwischenwelt - kostenloses realtime online Browsergame, baue, forsche, zaubere, kämpfe : erschaffe deine Welt">
+	<META NAME="description" CONTENT="Zwischenwelt - kostenloses realtime online Browsergame, baue, forsche, zaubere, kÃ¶mpfe : erschaffe deine Welt">
 	<META NAME="robots" CONTENT="index, follow">
 	<META NAME="revisit-after" content="21 days">
 	<META NAME="language" CONTENT="de">

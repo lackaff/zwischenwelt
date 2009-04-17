@@ -24,7 +24,7 @@ class cInfoBuilding extends cInfoBase {
 		if ($gObject->construction == 0) parent::command();
 	}
 	
-	function GetMainTabHead () { // header grafik für main tab
+	function GetMainTabHead () { // header grafik fÃ¼r main tab
 		global $gObject,$gUser,$gBuildingType;
 		$btype = $gBuildingType[$gObject->type];
 		return $this->GetBuildingPic();//.$btype->name;
@@ -53,7 +53,7 @@ class cInfoBuilding extends cInfoBase {
 			$content = trim(rob_ob_end());
 			if (!empty($content)) RegisterInfoTab("Truppen",$content,3);
 			
-			// kampfsim link in jedem gebäude in dem man KAMPF-einheiten produzieren kann
+			// kampfsim link in jedem gebÃ¤ude in dem man KAMPF-einheiten produzieren kann
 			$units = $this->producable_units();
 			$has_fighters = 0;
 			foreach ($units as $o) if ($o->a > 0) $has_fighters++;
@@ -127,7 +127,7 @@ class cInfoBuilding extends cInfoBase {
 					WHERE `user` = ".$gObject->user." AND `type` = ".intval($f_tech));
 			break;
 			case "reset":
-				// alle forschungen für diese tech für alle spieler auf 0 resetten
+				// alle forschungen fÃ¼r diese tech fÃ¼r alle spieler auf 0 resetten
 				sql("DELETE FROM `technology` WHERE `type` = ".intval($f_tech));
 			break;
 			case "newtech":
@@ -285,7 +285,7 @@ class cInfoBuilding extends cInfoBase {
 	}
 	
 	function producable_units () {
-		// einheitentypen auflisten, die in diesem gebäude produziert werden können
+		// einheitentypen auflisten, die in diesem gebÃ¤ude produziert werden kÃ¶nnen
 		global $gObject;
 		global $gUnitType;
 		$res = array();
@@ -354,8 +354,8 @@ class cInfoBuilding extends cInfoBase {
 		<INPUT TYPE="hidden" NAME="building" VALUE="unit_producer">
 		<INPUT TYPE="hidden" NAME="id" VALUE="<?=$gObject->id?>">
 		<INPUT TYPE="hidden" NAME="do" VALUE="set_all_tasks_to_this">
-		Den Ausbildungsauftrag von hier für alle gleichen Geb&auml;ude 
-		<input type="submit" name="save" value="übernehmen">
+		Den Ausbildungsauftrag von hier fÃ¼r alle gleichen Geb&auml;ude 
+		<input type="submit" name="save" value="Ãœbernehmen">
 		</form>
 		<?php 
 		
@@ -364,7 +364,7 @@ class cInfoBuilding extends cInfoBase {
 		$cur_weight = cUnit::GetUnitsSum(cUnit::GetUnits($gObject->id,kUnitContainer_Building),"weight");
 		
 		if ($max_weight_left >= 0) {?>
-		Platz im Gebäude : <?=kplaintrenner($cur_weight)?> / <?=kplaintrenner($max_weight_left)?>
+		Platz im GebÃ¤ude : <?=kplaintrenner($cur_weight)?> / <?=kplaintrenner($max_weight_left)?>
 		<?php }
 		
 		
@@ -477,7 +477,7 @@ class cInfoBuilding extends cInfoBase {
 				<td rowspan=2 valign="center">&gt;</td>
 				<?php }?>
 				
-				<?php /* #### GEBÄUDE BILD & ENERGIE #### */ ?>
+				<?php /* #### GEBÃ„UDE BILD & ENERGIE #### */ ?>
 				<td rowspan=2 valign="top" width=30>
 					<table border=0 cellspacing=0 cellpadding=0>
 						<tr><td>
@@ -512,7 +512,7 @@ class cInfoBuilding extends cInfoBase {
 							<a href="<?=query("adminuser.php?id=$gObject->user&sid=?")?>"><img alt="user" title="user" src="<?=g("icon/admin.png")?>" border=0></a>
 						<?php } ?>
 					<?php }?>
-				<img alt="Geschwindigkeit: Wartezeit in s bis der nächste Schritt möglich ist" title="Geschwindigkeit: Wartezeit in s bis der nächste Schritt möglich ist" src="<?=g("sanduhrklein.gif")?>">:<?=$btype->speed?>s 
+				<img alt="Geschwindigkeit: Wartezeit in s bis der nÃ¤chste Schritt mÃ¶glich ist" title="Geschwindigkeit: Wartezeit in s bis der nÃ¤chste Schritt mÃ¶glich ist" src="<?=g("sanduhrklein.gif")?>">:<?=$btype->speed?>s 
 				<?php if (0) { /* TODO : REACTIVATE ONCE THE TERRAIN MOD SYSTEM IS COMPLETE */?>
 				Mod:(a*<?=round($btype->mod_a,2)?>|v*<?=round($btype->mod_v,2)?>|f*<?=round($btype->mod_f,2)?>) <?=cText::Wiki("kampf_mod")?>
 				<?php } // endif?>
@@ -570,7 +570,7 @@ class cInfoBuilding extends cInfoBase {
 							<td></td>
 							</tr><tr>
 							<td colspan=3>
-							<a href="<?=Query("summary_buildings.php?sid=?&selbtype=".$gObject->type)?>">(Gebäudeübersicht)</a>
+							<a href="<?=Query("summary_buildings.php?sid=?&selbtype=".$gObject->type)?>">(GebÃ¤udeÃ¼bersicht)</a>
 							</td></tr></table>
 							</FORM>
 							
@@ -595,7 +595,7 @@ class cInfoBuilding extends cInfoBase {
 									if($show>0){
 								?>
 								<tr>
-									<td align="right"><?=(!$upgrading || $L > $gObject->level)?"geplant":"wird ausgeführt"?></td>
+									<td align="right"><?=(!$upgrading || $L > $gObject->level)?"geplant":"wird ausgefÃ¼hrt"?></td>
 									<td align="right">&nbsp;<?=$L+1?>&nbsp;</td>
 									<?php foreach($gRes as $n=>$f) echo '<td align="right">'.ktrenner(round($upmod*$btype->{"cost_".$f},0)).'</td>'; ?>
 									<td align="right"><?=Duration2Text($time)?></td>
@@ -664,7 +664,7 @@ class cInfoBuilding extends cInfoBase {
 						<table>
 						<?php if (in_array($gObject->type,$gOpenableBuildingTypes)) { $edited = true;?>
 							<tr>
-								<th>Offen für </th>
+								<th>Offen fÃ¼r </th>
 								<td align="center" nowrap><?=IFlagCheck($gObject,"flags",kBuildingFlag_Open_Guild)?>Gilde</td>
 								<td align="center" nowrap><?=IFlagCheck($gObject,"flags",kBuildingFlag_Open_Friend)?>Freunde</td>
 								<td align="center" nowrap><?=IFlagCheck($gObject,"flags",kBuildingFlag_Open_Stranger)?>Fremde</td>
@@ -678,7 +678,7 @@ class cInfoBuilding extends cInfoBase {
 						<?php }?>
 						<?php if (in_array($gObject->type,$gTaxableBuildingTypes)) { $edited = true;?>
 							<tr>
-								<th>Zoll für </th>
+								<th>Zoll fÃ¼r </th>
 								<td align="center" nowrap><?=IFlagCheck($gObject,"flags",kBuildingFlag_Tax_Guild)?>Gilde</td>
 								<td align="center" nowrap><?=IFlagCheck($gObject,"flags",kBuildingFlag_Tax_Friend)?>Freunde</td>
 								<td align="center" nowrap><?=IFlagCheck($gObject,"flags",kBuildingFlag_Tax_Stranger)?>Fremde</td>
@@ -713,9 +713,9 @@ class cInfoBuilding extends cInfoBase {
 					<?php if ($edited) {?>
 						<INPUT TYPE="submit" VALUE="speichern">
 						<input type="checkbox" name="foralloftype" value="1">
-							Für alle 
+							FÃ¼r alle 
 							<img src="<?=g($btype->gfx,($gObject->nwse=="?" || empty($gObject->nwse))?"ns":$gObject->nwse,$lpic)?>" border=1>
-							übernehmen
+							Ãœbernehmen
 					<?php } // endif?>
 					</FORM>	
 				<?php } // endif verhalten edit
@@ -773,7 +773,7 @@ class cInfoBuilding extends cInfoBase {
 				?>
 				<?php PrintBuildTimeHelp($gObject->x,$gObject->y,$gObject->type,0); ?>
 				<?php if (!in_array($gObject->type,$gSpeedyBuildingTypes)) {?>
-				(Gebäude-Typ ist vom NewbieFaktor ausgeschlossen)<br>
+				(GebÃ¤ude-Typ ist vom NewbieFaktor ausgeschlossen)<br>
 				<?php } // endif?>
 				<table>
 				<tr><td>normale Bauzeit</td><td><?=($normalbuildtime>0)?Duration2Text($normalbuildtime):"sofort fertig"?></td></tr>
@@ -788,7 +788,7 @@ class cInfoBuilding extends cInfoBase {
 					</FORM>
 				<?php } ?>
 				</td></tr>
-				<tr><td>Restzeit</td><td><?=($remaining_time>0)?Duration2Text($remaining_time):"fertig, nur noch aufräumen..."?> (<?=round(100*GetConstructionProgress($gObject))?>%)</td></tr>
+				<tr><td>Restzeit</td><td><?=($remaining_time>0)?Duration2Text($remaining_time):"fertig, nur noch aufrÃ¤umen..."?> (<?=round(100*GetConstructionProgress($gObject))?>%)</td></tr>
 				</table>
 				<FORM METHOD=POST ACTION="<?=Query("?sid=?&x=?&y=?")?>">
 				<INPUT TYPE="hidden" NAME="do" VALUE="removebuilding">
@@ -840,7 +840,7 @@ class cInfoBuilding extends cInfoBase {
 		rob_ob_start();
 		
 		?>
-		<a href="<?=Query("summary_techs.php?sid=?")?>">(Forschungsübersicht)</a>
+		<a href="<?=Query("summary_techs.php?sid=?")?>">(ForschungsÃ¼bersicht)</a>
 		<?php
 		
 		if($gUser->admin){ ?>
@@ -852,7 +852,7 @@ class cInfoBuilding extends cInfoBase {
 		ImgBorderStart("s1","jpg","#ffffee","",32,33);
 		?>
 		<?php if($gUser->admin){ ?>
-			<?php if (0) {?>ACHTUNG, (reset) setzt das forschungslevel ALLER spieler auf 0 zurück !!!<br><?php } ?>
+			<?php if (0) {?>ACHTUNG, (reset) setzt das forschungslevel ALLER spieler auf 0 zurÃ¼ck !!!<br><?php } ?>
 			cheaten : lvl: ein level , max: auf maximum, min: auf 0 , 1h : eine Stunde vor fertigstellung<br>
 		<?php } ?>
 		<table>
@@ -945,7 +945,7 @@ class cInfoBuilding extends cInfoBase {
 							<?php } // endif?>
 						</tr>
 						
-						<?php /* #### FORSCHUNG LÄUFT #### */?>
+						<?php /* #### FORSCHUNG LÃ„UFT #### */?>
 						<?php if ($tech->upgradetime > 0 && $tech->upgradebuilding == $gObject->id) {?>
 							<?php 
 								$max = max(1,cTechnology::GetUpgradeDuration($tech->type,$tech->level));

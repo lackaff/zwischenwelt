@@ -101,5 +101,10 @@ echo "###################################################\n";
 echo "## $items items deleted\n";
 echo "###################################################\n";
 
+$tables = sqlgetonetable("SHOW TABLES");
+foreach($tables as $t){
+	sql("OPTIMIZE TABLE `$t`");
+}
+
 ?>
 </pre>

@@ -113,7 +113,7 @@ class cTransfer {
 		
 		ImgBorderStart("p2","jpg","#f2e7d5","",32,33);
 		if ($idlewait > 0) {
-			?> <?=$transfer->name?> erst in <?=$idlewait?> Minuten möglich <?php
+			?> <?=$transfer->name?> erst in <?=$idlewait?> Minuten mÃ¶glich <?php
 		} else {
 			?>
 			<FORM METHOD=POST ACTION="<?=Query("?sid=?&x=?&y=?")?>">
@@ -179,7 +179,7 @@ class cTransfer {
 				<?php foreach ($unittypes as $typeid => $here) {?>
 					<td align=right><?=ktrenner(floor($here))?></td>
 				<?php }?>
-				<td><input type=checkbox name=transfer_remove_here value=1> alle hier töten ?<br>(um eingesperrte Einheiten aus der Truppenübersicht zu entfernen)</td>
+				<td><input type=checkbox name=transfer_remove_here value=1> alle hier tÃ¶ten ?<br>(um eingesperrte Einheiten aus der TruppenÃ¼bersicht zu entfernen)</td>
 			</tr>
 			
 			</table>
@@ -237,7 +237,7 @@ class cTransfer {
 		$sourceuserid = $sourcearmy ? $sourcearmy->user : $sourcebuilding->user;
 		if ($sourcearmy && $sourcearmy->id == $targetarmy->id) return "Quelle=Ziel";
 		if (!$targetarmy && !cArmy::CanCreateNewArmy($sourceuserid,$transfer->targetarmytype)) return "ArmeeLimit";
-		if (!$targetarmy && $transfer->transportarmytype) return "Gründung durch Besatzung allein nicht möglich"; 
+		if (!$targetarmy && $transfer->transportarmytype) return "GrÃ¼ndung durch Besatzung allein nicht mÃ¶glich"; 
 		if ($targetarmy && !cArmy::CanControllArmy($targetarmy,$user)) return "nicht steuerbar"; 
 		if ($targetarmy && $targetarmy->type != $transfer->targetarmytype) return "typ passt nicht"; 
 		if ($targetarmy) {
@@ -252,15 +252,15 @@ class cTransfer {
 			if ($myidlewait > 0) return "erst in $myidlewait Minuten";
 		}
 		if ($targetarmy) {
-			if (sqlgetone("SELECT 1 FROM `fight` WHERE `attacker` = ".$targetarmy->id)) return "kämpft gerade";
-			if (sqlgetone("SELECT 1 FROM `fight` WHERE `defender` = ".$targetarmy->id)) return "kämpft gerade";
-			if (sqlgetone("SELECT 1 FROM `pillage` WHERE `army` = ".$targetarmy->id)) return "plündert gerade";
+			if (sqlgetone("SELECT 1 FROM `fight` WHERE `attacker` = ".$targetarmy->id)) return "kÃ¤mpft gerade";
+			if (sqlgetone("SELECT 1 FROM `fight` WHERE `defender` = ".$targetarmy->id)) return "kÃ¤mpft gerade";
+			if (sqlgetone("SELECT 1 FROM `pillage` WHERE `army` = ".$targetarmy->id)) return "plÃ¼ndert gerade";
 			if (sqlgetone("SELECT 1 FROM `siege` WHERE `army` = ".$targetarmy->id)) return "belagert gerade";
 		}
 		if ($sourcearmy) {
-			if (sqlgetone("SELECT 1 FROM `fight` WHERE `attacker` = ".$sourcearmy->id)) return "kämpft gerade";
-			if (sqlgetone("SELECT 1 FROM `fight` WHERE `defender` = ".$sourcearmy->id)) return "kämpft gerade";
-			if (sqlgetone("SELECT 1 FROM `pillage` WHERE `army` = ".$sourcearmy->id)) return "plündert gerade";
+			if (sqlgetone("SELECT 1 FROM `fight` WHERE `attacker` = ".$sourcearmy->id)) return "kÃ¤mpft gerade";
+			if (sqlgetone("SELECT 1 FROM `fight` WHERE `defender` = ".$sourcearmy->id)) return "kÃ¤mpft gerade";
+			if (sqlgetone("SELECT 1 FROM `pillage` WHERE `army` = ".$sourcearmy->id)) return "plÃ¼ndert gerade";
 			if (sqlgetone("SELECT 1 FROM `siege` WHERE `army` = ".$sourcearmy->id)) return "belagert gerade";
 		}
 		return false;
@@ -373,10 +373,10 @@ class cTransfer {
 						if (!$targetarmy) {
 							// create failed, return units to source
 							cUnit::AddUnits($sourceid,$o->type,$totarget,$sourcecontainer,$o->user,$o->spell);
-							echo $gArmyType[$transfer->targetarmytype]->name." konnte nicht gegründet werden, kein Ausgang gefunden !";
+							echo $gArmyType[$transfer->targetarmytype]->name." konnte nicht gegrÃ¼ndet werden, kein Ausgang gefunden !";
 							return false;
 						}
-						echo $gArmyType[$transfer->targetarmytype]->name." '".addslashes(cArmy::escapearmyname($newname))."' gegründet<br>";
+						echo $gArmyType[$transfer->targetarmytype]->name." '".addslashes(cArmy::escapearmyname($newname))."' gegrÃ¼ndet<br>";
 						$targetid = $targetarmy->id;
 					}
 					$target_add -= $totarget;
@@ -447,15 +447,15 @@ class cTransfer {
 		if ($sourcearmy) {
 			if (!$transfer->sourcetransport && $empty_source && cUnit::GetUnitsSum(cUnit::GetUnits($sourcearmy->id)) < 1) {
 				cArmy::DropExcessCargo($sourcearmy,$targetarmy,0);
-				cArmy::DeleteArmy($sourcearmy,true,"aufgelöst");
-				echo $gArmyType[$sourcearmy->type]->name." '".addslashes($sourcearmy->name)."' aufgelöst<br>";
+				cArmy::DeleteArmy($sourcearmy,true,"aufgelÃ¶st");
+				echo $gArmyType[$sourcearmy->type]->name." '".addslashes($sourcearmy->name)."' aufgelÃ¶st<br>";
 				sql("UPDATE `army` SET `frags` = `frags` + ".intval($sourcearmy->frags)." WHERE `id` = ".intval($targetarmy->id));
 			} else cArmy::DropExcessCargo($sourcearmy,$targetarmy);
 		}
 		if (!$transfer->transportarmytype && $empty_target && cUnit::GetUnitsSum(cUnit::GetUnits($targetid)) < 1) {
 			cArmy::DropExcessCargo($targetarmy,$sourcearmy,0);
-			cArmy::DeleteArmy($targetid,true,"aufgelöst");
-			echo $gArmyType[$transfer->targetarmytype]->name." '".addslashes($targetarmy->name)."' aufgelöst<br>";
+			cArmy::DeleteArmy($targetid,true,"aufgelÃ¶st");
+			echo $gArmyType[$transfer->targetarmytype]->name." '".addslashes($targetarmy->name)."' aufgelÃ¶st<br>";
 			sql("UPDATE `army` SET `frags` = `frags` + ".intval($targetarmy->frags)." WHERE `id` = ".intval($sourcearmy->id));
 		} else cArmy::DropExcessCargo($targetarmy,$sourcearmy);
 		

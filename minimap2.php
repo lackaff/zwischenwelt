@@ -118,6 +118,7 @@ if(($gUser->flags & kUserFlags_TerraFormer) || $gUser->admin){
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <HTML>
 <HEAD>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 <TITLE>MiniMap</TITLE>
 </head>
 <body style="margin:0px;padding:0px;border:0px;">

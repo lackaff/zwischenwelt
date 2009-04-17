@@ -28,6 +28,7 @@ if ($gUser->admin && isset($f_regentypes)) {
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/transitional.dtd">
 <html>
 <head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 <link rel="stylesheet" type="text/css" href="<?=GetZWStylePath()?>"></link>
 <SCRIPT LANGUAGE="JavaScript">
 <!--
@@ -76,7 +77,7 @@ if ($gUser->admin && isset($f_regentypes)) {
 		kMapNaviGotoCat_Friends		=> sqlgettable("SELECT `user`.* FROM `fof_user`,`user` WHERE `class` = ".kFOF_Friend." AND `master` = ".$gUser->id." AND `other` = `user`.id ORDER BY `name`","id","name"),
 		kMapNaviGotoCat_Enemies		=> sqlgettable("SELECT `user`.* FROM `fof_user`,`user` WHERE `class` = ".kFOF_Enemy." AND `master` = ".$gUser->id." AND `other` = `user`.id ORDER BY `name`","id","name"),
 		kMapNaviGotoCat_Search		=> array("Spieler","Gilde","Armee","Monster","Bodenschatz"),
-		kMapNaviGotoCat_Random		=> array("Geb‰ude","Landschaft","Position"),
+		kMapNaviGotoCat_Random		=> array("Geb√§ude","Landschaft","Position"),
 		kMapNaviGotoCat_Hellhole	=> 0,
 	);
 	echo "gGotoCats = new Array();\n";
@@ -328,7 +329,7 @@ if ($gUser->admin && isset($f_regentypes)) {
 		}
 		
 		//parent.info.location.href = "info/info.php?blind=1&x="+x+"&y="+y+urladd+"&sid=<?=$gSID?>";
-		// ohne baseurl kommt hier der merkw¸rdige fehler, dass sich mehrere info/ ansammeln...
+		// ohne baseurl kommt hier der merkw√ºrdige fehler, dass sich mehrere info/ ansammeln...
 		// vermutlich weil die funktion ueber das map frame aufgerufen wird -> browserbug ?
 		var url = "<?=BASEURL?>info/info.php?x="+x+"&y="+y+urladd+"&sid=<?=$gSID?>";
 		//alert(url);
@@ -486,7 +487,7 @@ $head = "<img src=\"".g("tool_look.png")."\" alt=\"".($tip="anschauen und Wegpun
 $content = "";
 $content .= "<div class=\"mapnavitool_general\">\n";
 $content .= NaviTool(g("tool_look.png")		,kMapNaviTool_Look		,0,"anschauen"					,"navtoolicon");
-$content .= NaviTool(g("tool_cancel.png")	,kMapNaviTool_Cancel	,0,"Bauplan/Wegpunkt lˆschen"	,"navtoolicon");
+$content .= NaviTool(g("tool_cancel.png")	,kMapNaviTool_Cancel	,0,"Bauplan/Wegpunkt l√∂schen"	,"navtoolicon");
 $content .= NaviTool(g("tool_wp.png")		,kMapNaviTool_WP		,0,"Wegpunkt setzen"			,"navtoolicon");
 $content .= NaviTool(g("tool_route.png")	,kMapNaviTool_Route		,0,"Route berechnen"			,"navtoolicon");
 $content .= NaviTool(g("pick.png")			,kMapNaviTool_Pick		,0,"Koordinate aufschreiben"	,"navtoolicon");
@@ -548,7 +549,7 @@ $candospells = GetPossibleSpells($gUser->id,true);
 foreach ($candospells as $group => $arr) if (count($arr) > 0) {
 	$tip = "Zauber";
 	if ($group == MTARGET_PLAYER)	$tip = "Zauber auf Spieler";
-	if ($group == MTARGET_AREA)		$tip = "Zauber auf Gel‰nde";
+	if ($group == MTARGET_AREA)		$tip = "Zauber auf Gel√§nde";
 	$head = "<img src=\"".g("tool_mana.png")."\" alt=\"".($tip)."\" title=\"".$tip."\">";
 	$content = "<div class=\"mapnavitool_magic\">\n";
 	foreach ($arr as $spelltype)
@@ -611,12 +612,12 @@ rob_ob_start(); ?>
 <?php $brushtabs[] = array(rob_ob_end(),""); rob_ob_start();?>
 <img border=0 src="<?=g("brush/brush_linestrip.png")?>" alt="<?=$tip="Jeder Click erzeugt eine Linie zum letzten"?>" title="<?=$tip?>">
 <?php $brushtabs[] = array(rob_ob_end(),""); rob_ob_start();?>
-<img border=0 src="<?=g("brush/brush_rects.png")?>" alt="<?=$tip="Jeder zweite Click f¸llt ein Rechteck zum letzten"?>" title="<?=$tip?>">
+<img border=0 src="<?=g("brush/brush_rects.png")?>" alt="<?=$tip="Jeder zweite Click f√ºllt ein Rechteck zum letzten"?>" title="<?=$tip?>">
 <?php $brushtabs[] = array(rob_ob_end(),""); rob_ob_start();?>
 <?php if ($gUser->admin || intval($gUser->flags) & kUserFlags_TerraFormer) {?>
 	<table border=0 cellspacing=0 cellpadding=0>
 	<tr>
-	<td><img border=0 src="<?=g("brush/brush_size.png")?>" alt="<?=$tip="Pinselgrˆsse (Nur f¸r Landschaft)"?>" title="<?=$tip?>"></td>
+	<td><img border=0 src="<?=g("brush/brush_size.png")?>" alt="<?=$tip="Pinselgr√∂√üe (Nur f√ºr Landschaft)"?>" title="<?=$tip?>"></td>
 	<td><INPUT TYPE="text" NAME="brushrad" VALUE="0" style="width:30px"></td>
 	<td>
 		<table border=0 cellspacing=2 cellpadding=2>
@@ -627,7 +628,7 @@ rob_ob_start(); ?>
 		</tr>
 		</table>
 	</td>
-	<td><img border=0 src="<?=g("brush/brush_density.png")?>" alt="<?=$tip="Pinseldichte (Nur f¸r Landschaft)"?>" title="<?=$tip?>"></td>
+	<td><img border=0 src="<?=g("brush/brush_density.png")?>" alt="<?=$tip="Pinseldichte (Nur f√ºr Landschaft)"?>" title="<?=$tip?>"></td>
 	<td>
 	<select name="brushdensity">
 		<?php for ($i=100;$i>0;$i-=10) {?>

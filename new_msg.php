@@ -9,15 +9,15 @@ foreach($user as $u){
 	$sent=sqlgetobject("SELECT `id`,`name` FROM `message_folder` WHERE `type`=".kFolderTypeSent." AND `parent`=0 AND `user`=".$u->id);
 	$berichte=sqlgetobject("SELECT `id`,`name` FROM `message_folder` WHERE `type`=".kFolderTypeExtra." AND `parent`=0 AND `user`=".$u->id);
 
-	if(!$root){
+	if(empty($root)){
 		createFolder("Eingang",0,$u->id,kFolderTypeRoot);
 	}
 	
-	if(!$sent){
+	if(empty($sent)){
 		createFolder("Ausgang",0,$u->id,kFolderTypeSent);
 	}
 	
-	if(!$berichte){
+	if(empty($berichte)){
 		createFolder("Berichte",0,$u->id,kFolderTypeExtra);
 	}
 	

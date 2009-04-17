@@ -190,10 +190,10 @@ $gUserFlagNames = array(
 	kUserFlags_ShowLogFrame					=> "LogFrame anzeigen?",
 	kUserFlags_DontShowWikiHelp				=> "WikiHilfe ausblenden",
 	kUserFlags_NoMonsterFightReport			=> "Monsterkampfberichte entfernen",
-	kUserFlags_AutomaticUpgradeBuildingTo	=> "bei neuen Geb‰uden automatisch Upgrades planen",
+	kUserFlags_AutomaticUpgradeBuildingTo	=> "bei neuen Geb√§uden automatisch Upgrades planen",
 	kUserFlags_DontShowNoobTip				=> "NoobTips ausblenden",
-	kUserFlags_ShowMaxRes					=> "Lagerkapazit‰t anzeigen (obsolete, da man nun das komplette Format einstellen kann)",
-	kUserFlags_NoTabs							=> "Tabs Deaktivieren (bei Abst¸rzen im IE)",
+	kUserFlags_ShowMaxRes					=> "Lagerkapazit√§t anzeigen (obsolete, da man nun das komplette Format einstellen kann)",
+	kUserFlags_NoTabs							=> "Tabs Deaktivieren (bei Abst√ºrzen im IE)",
 	kUserFlags_SlowMap						=> "Karte langsam aufbauen (hilft gegen 'Script-abbrechen?'-Warnungen)",
 	kUserFlags_SendIgmPerMail				=> "InGame Nachrichten auch per Mail empfangen?",
 	kUserFlags_DarianMap					=> "Darians-Karten-Modus benutzen?",
@@ -330,20 +330,20 @@ $gArmyFlagNames = array(
 	kArmyFlag_WillingToAbortFight=>		"bereit, den Kampf abzubrechen",
 	kArmyFlag_Patrol=>					"Patrouillenmodus (WP wiederholen)",
 	kArmyFlag_AutoAttack=>				"feindliche Armeen automatisch angreifen",
-	kArmyFlag_AutoAttackRangeMonster =>	"automatisch auf Monster schieﬂen",
+	kArmyFlag_AutoAttackRangeMonster =>	"automatisch auf Monster schie√üen",
 	kArmyFlag_AttackBlockingArmy=>		"blockierende Armeen automatisch angreifen",
-	kArmyFlag_SiegeBlockingBuilding=>	"blockierende Geb‰ude automatisch belagern",
-	kArmyFlag_CaptureShips => 			"Die Flotte versucht Schiffe zu ¸bernehmen",
+	kArmyFlag_SiegeBlockingBuilding=>	"blockierende Geb√§ude automatisch belagern",
+	kArmyFlag_CaptureShips => 			"Die Flotte versucht Schiffe zu √ºbernehmen",
 	kArmyFlag_RunToEnemy => 			"Auf Feinde zulaufen",
 	kArmyFlag_Wander => 				"Ziellos umherwandern, wenn kein WP gesetzt ist",
-	kArmyFlag_AlwaysCollectItems=>		"Alle Gegenst‰nde einsammeln",
+	kArmyFlag_AlwaysCollectItems=>		"Alle Gegenst√§nde einsammeln",
 	kArmyFlag_HarvestForest => 			"Wald abernten",
-	kArmyFlag_HarvestRubble => 			"Gerˆll abernten",
+	kArmyFlag_HarvestRubble => 			"Ger√∂ll abernten",
 	kArmyFlag_HarvestField => 			"Felder abernten",
 	kArmyFlag_Captured => 				"in Gefangenschaft(systemflag)",
 	kArmyFlag_LastWaypointArrived => 	"letzter wegpunkt wurde erreicht(systemflag)",
 	kArmyFlag_AutoSiege => 				"Feinde automatisch belagern",
-	kArmyFlag_AutoPillage => 			"Feinde automatisch pl¸ndern",
+	kArmyFlag_AutoPillage => 			"Feinde automatisch pl√ºndern",
 	kArmyFlag_AutoDeposit => 			"automatisch in freundliche Lager einzahlen",
 	kArmyFlag_BuildingWait => 			"wait for wp bevore next auto-building action", // stops kArmyFlag_AutoDeposit
 	kArmyFlag_AutoPillageOff => 		"wait for move bevore next auto-pillage action", // stops kArmyFlag_AutoPillage
@@ -352,9 +352,9 @@ $gArmyFlagNames = array(
 	kArmyFlag_AutoGive_Friend => 		"Freundliche Armeen/Karawanen automatisch beladen",
 	kArmyFlag_AutoShoot_Enemy => 		"Automatisch auf Feinde schiessen",
 	kArmyFlag_AutoShoot_Strangers => 	"Automatisch auf Fremde schiessen",
-	kArmyFlag_HoldFire => 				"Feuer einstellen (w‰hrend dem Schiessen ist man unbeweglich)",
+	kArmyFlag_HoldFire => 				"Feuer einstellen (w√§hrend dem Schiessen ist man unbeweglich)",
 	kArmyFlag_SiegePillage => 			"Armee erbeutet beim belagern Baumaterial (Ameisen)",
-	kArmyFlag_StopSiegeWhenFull =>		"Armee hˆrt auf zu belagern, wenn sie vollgeladen ist (Ameisen)",
+	kArmyFlag_StopSiegeWhenFull =>		"Armee h√∂rt auf zu belagern, wenn sie vollgeladen ist (Ameisen)",
 	);
 	
 	
@@ -364,7 +364,7 @@ define("kArmyTypeFlag_CanShootArmy",		1<<0); // used for cannon towers, building
 define("kArmyTypeFlag_CanShootBuilding",	1<<1); // used for cannon towers, building can shoot
 $gArmyTypeFlagNames = array(
 	kArmyTypeFlag_CanShootArmy => 		"kann Armeen schiessen",
-	kArmyTypeFlag_CanShootBuilding => 	"kann Geb‰ude schiessen",
+	kArmyTypeFlag_CanShootBuilding => 	"kann Geb√§ude schiessen",
 );
 */
 
@@ -595,13 +595,13 @@ define("kBuildingTypeFlag_IsInQuickJump",			1<<9); // apears in the quickjump ba
 define("kBuildingTypeFlag_CanBurn",			1<<10); // building can burn
 $gBuildingTypeFlagNames = array(
 	kBuildingTypeFlag_BuildDistSource => 	"BuildDistSource (Abstand zu diesen typen bestimmt den bauzeit faktor)",
-	kBuildingTypeFlag_Speedy => 			"Speedy (newbee Faktor betrifft diese geb‰ude)",
+	kBuildingTypeFlag_Speedy => 			"Speedy (newbee Faktor betrifft diese Geb√§ude)",
 	kBuildingTypeFlag_Openable => 			"Openable (absperren : Tor,Portal)",
 	kBuildingTypeFlag_Taxable => 			"Taxable (besteuern : Portal)",
 	kBuildingTypeFlag_CanShootArmy => 		"kann auf Armeen schiessen (Turm)",
-	kBuildingTypeFlag_CanShootBuilding => 	"kann auf Geb‰ude schiessen (Turm)",
-	kBuildingTypeFlag_OthersCanSeeUnits => 	"fremde Spieler kˆnnen Einheiten im Geb‰ude sehen (Turm)",
-	kBuildingTypeFlag_DrawMaxTypeOnTop => 	"Haupt-EinheitenTyp wird ¸ber das Geb‰udebild gezeichnet (Kanonen-Turm)",
+	kBuildingTypeFlag_CanShootBuilding => 	"kann auf Geb√§ude schiessen (Turm)",
+	kBuildingTypeFlag_OthersCanSeeUnits => 	"fremde Spieler k√∂nnen Einheiten im Geb√§ude sehen (Turm)",
+	kBuildingTypeFlag_DrawMaxTypeOnTop => 	"Haupt-EinheitenTyp wird √ºber das Geb√§udebild gezeichnet (Kanonen-Turm)",
 	kBuildingTypeFlag_Bodenschatz => 		"Bodenschatz",
 	kBuildingTypeFlag_IsInQuickJump => 		"im Schnellsprung?",
 	kBuildingTypeFlag_CanBurn => 		"kann brennen?",
@@ -650,9 +650,9 @@ define("kBodenSchatzIdealWorkers",10000); // maximum workers that are of use whe
 define("kShootingAlarmTimeout",2*3600); // send a new igm when fire is resumed after a longer pause
 define("kSpeedyBuildingsLimit",121*2); // 11*11 = 1 map full
 
-$gBuildingTypeGroupsPics = array("Geb‰ude"=>"tool_house.png","Infrastruktur"=>"tool_street.png","Deko"=>"tool_brunnen.png"); 
+$gBuildingTypeGroupsPics = array("Geb√§ude"=>"tool_house.png","Infrastruktur"=>"tool_street.png","Deko"=>"tool_brunnen.png"); 
 $gBuildingTypeGroups = array( // used by for mapnavi tabs
-	"Geb‰ude" => array(0=>kBuilding_House,-1), // -1 is replaced by the whole rest
+	"Geb√§ude" => array(0=>kBuilding_House,-1), // -1 is replaced by the whole rest
 	/*"Produktion" => array(0=>	kBuilding_Farm,
 								kBuilding_Lumberjack,
 								kBuilding_StoneProd,

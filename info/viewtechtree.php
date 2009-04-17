@@ -1,4 +1,6 @@
 <?php
+define("CONTENT_TYPE","image/png");
+
 /*
 OBSOLETE FILE !
 spring based tech-dependance diagram
@@ -242,7 +244,7 @@ function imagearrow(&$im,$x0,$y0,$x1,$y1,&$color){
 
 
 
-header("Content-type: image/png");
+// see CONTENT_TYPE header("Content-type: image/png");
 
 $im = imagecreatetruecolor($w,$h);
 

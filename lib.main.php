@@ -26,7 +26,7 @@ if (CHECK_ZW_CONFIG) {
 			"also z.b. sowas wie /var/www/zw unter linux oder C:/wwwroot/zw unter win";
 		
 		// suggestions 
-		$sug = "Vorschlag f�r den BASEPATH : ";
+		$sug = "Vorschlag für den BASEPATH : ";
 		$configwarnings[] = $sug.$_SERVER[SCRIPT_FILENAME]." (ohne den php file am ende)";
 		$configwarnings[] = $sug.$_SERVER[PATH_TRANSLATED]." (ohne den php file am ende)";
 		$configwarnings[] = $sug.$_SERVER[DOCUMENT_ROOT].$_SERVER[PHP_SELF]." (ohne den php file am ende)";
@@ -105,11 +105,11 @@ if (!isset($gTempTypeOverride)) {
 		require_once("generate_types.php");
 	if (!file_exists(kTypeCacheFile)) {
 		echo "Beim erstellen der Typecache Datei ist ein Fehler aufgetreten.<br>";
-		echo "Dies k�nnte dadran liegen, dass der Webserver oder PHP keine Schreibrechte im BASEPATH/tmp Verzeichnis hat<br>";
+		echo "Dies könnte dadran liegen, dass der Webserver oder PHP keine Schreibrechte im BASEPATH/tmp Verzeichnis hat<br>";
 		echo "Die Rechte sind im moment auf '".get_readable_permission(BASEPATH."tmp/")."' eingestellt, sie sollten auf 'rwxrwxrwx' stehen<br>";
 		echo "Unter Linux kann man das mit dem Befehl 'chmod a+rwx tmp' erreichen<br>";
 		echo "Unter Win kann man vielleicht mit rechtsclick auf den Ordner Lese&Schreibrechte geben.<br>";
-		echo "Wenn man �ber ein FTP Programm zugriff hat, sollte man nach 'chmod' suchen, und da entweder alle rechte ankreuzen, oder auf 777 stellen.<br>";
+		echo "Wenn man über ein FTP Programm zugriff hat, sollte man nach 'chmod' suchen, und da entweder alle rechte ankreuzen, oder auf 777 stellen.<br>";
 		echo "<hr>Wichtig ist auch dass die Mysql-Datenbank richtig aufgesetzt wurde (Siehe Anleitung in 'INSTALL') <br>";
 		exit();
 	} else {
@@ -203,7 +203,7 @@ function IsInSameGuild	($masteruser,$otheruser) { // obj or id
 function Moral2HtmlIcon($moral){
 	$moral = round(max(0,min(200,$moral)) / 20);
 	switch($moral){
-		case 0:$title="Uberb�se";break;
+		case 0:$title="Uberböse";break;
 		case 1:$title="Sadist";break;
 		case 2:$title="Fiesling";break;
 		case 3:$title="Bengelchen";break;
@@ -224,7 +224,7 @@ function changeUserMoral($userid,$deltamoral){
 	$deltamoral = intval(round($deltamoral));
 	$userid = intval($userid);
 	// DONE :  moral = GREATEST(0,SMALLEST(200,moral+deltamoral)) oder so...
-	// sonst hat superstarke moralaenderung keinerlei auswirkung, wenn sie �ber das limit kommen w�rde
+	// sonst hat superstarke moralaenderung keinerlei auswirkung, wenn sie über das limit kommen würde
 	//sql("UPDATE `user` SET `moral`=`moral`+($deltamoral) WHERE `id`=$userid AND (`moral`+($deltamoral))>=0 AND (`moral`+($deltamoral))<=200");
 	sql("UPDATE `user` SET `moral`=GREATEST(0,LEAST(200,`moral`+($deltamoral))) WHERE `id`=$userid");
 }
@@ -717,7 +717,7 @@ function GetProductionSlots ($uid,$buildings=false) {
 	foreach($gRes as $resname=>$resfield) {
 		//$slotlist[$resfield] = 0;
 		$btype = $gGlobal["building_".$resfield];
-		if(!$btype)$btype = 0;
+		if(empty($btype))$btype = 0;
 		
 		if (!isset($buildings[$btype])) {
 			$buildings[$btype]->count = 0;
@@ -737,7 +737,7 @@ function GetProductionSlots ($uid,$buildings=false) {
 // terrain-bonus-slots
 function getSlotAddonFromSupportFields($b){ // id or object	
 	if (!is_object($b)) $b = sqlgetobject("SELECT * FROM `building` WHERE `id`=".intval($b));
-	if(!$b) return 0;
+	if(empty($b)) return 0;
 	global $gGlobal;
 	
 	$supporter=array();
@@ -1219,7 +1219,7 @@ function GetBrushFields ($x1,$y1,$brushrad=0,$brushdensity=100,$brushmode=0,$lin
 
 
 /**
-* Berechnet den Nahrungsverbraucht von n Bewohnern f�r den Zeitraum dt
+* Berechnet den Nahrungsverbraucht von n Bewohnern für den Zeitraum dt
 * @param n Bewohnerzahl
 * @param dt Zeitraum in Sekunden
 **/
@@ -1551,10 +1551,10 @@ function FireSetOn($x,$y){
 						//first burning building, send message to user
 						if($fires == 1){
 								$text = "";
-								$text .= "Das Geb�ude and er Position ($x,$y) steht in Flammen. Es besteht die Gefahr, da� ";
+								$text .= "Das Gebäude and er Position ($x,$y) steht in Flammen. Es besteht die Gefahr, daß ";
 								$text .= "sich das Feuer auf umliegende Felder ausbreitet. Diese Nachricht wird nur bei dem ";
-								$text .= "ersten brennenden Geb�ude geschickt.";
-								sendMessage($user,0,"Eines Ihrer Geb�ude brennt!",$text,0,false);
+								$text .= "ersten brennenden Gebäude geschickt.";
+								sendMessage($user,0,"Eines Ihrer Gebäude brennt!",$text,0,false);
 						}
 				}
 		}

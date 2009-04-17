@@ -446,7 +446,7 @@ class Hellhole_3 extends Hellhole_0 {
 	function BuildNewHellhole ($king) {
 		global $gBuildingType;
 		if (!$king) return;
-		cArmy::DeleteArmy($king,true,"Ein neuer Ameisenbau wurde gegründet....");
+		cArmy::DeleteArmy($king,true,"Ein neuer Ameisenbau wurde gegrÃ¼ndet....");
 		
 		// DESIGN-PATTERN : PROTOTYPE =)
 		$oldbuilding = sqlgetobject("SELECT * FROM `building` WHERE `x` = ".intval($this->x)." AND `y` = ".intval($this->y));

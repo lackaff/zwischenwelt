@@ -2,7 +2,7 @@
 require_once("lib.army.php");
 
 /*
-regel : wenn ein $units array �bergeben wird, ist es der erste parameter
+regel : wenn ein $units array übergeben wird, ist es der erste parameter
 */
 
 function cmpUnit ($a,$b) {

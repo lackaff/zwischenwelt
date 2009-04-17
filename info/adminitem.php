@@ -20,7 +20,7 @@ new cTableEditForm("?sid=?&id=$f_id","ItemType $f_id editieren",
 			new cTableEditTextField("itemtype","id",$f_id,"gammeltype","gammeltype"),
 			new cTableEditTextField("itemtype","id",$f_id,"gammeltime","gammeltime"),
 			new cTableEditTextField("itemtype","id",$f_id,"Wert","value"),
-			new cTableEditTextField("itemtype","id",$f_id,"Geb‰ude","buildings"),
+			new cTableEditTextField("itemtype","id",$f_id,"Geb√§ude","buildings"),
 			
 			new cTableEditTextField("itemtype","id",$f_id,"Kosten: Holz","cost_lumber"),
 			new cTableEditTextField("itemtype","id",$f_id,"Kosten: Stein","cost_stone"),

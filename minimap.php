@@ -224,6 +224,7 @@ if (!isset($f_x) && !isset($f_cross_x) && !isset($f_u)) {
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <HTML>
 <HEAD>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 <TITLE>MiniMap</TITLE>
 <?php
 if (isset($f_clickimgmap_x)) {

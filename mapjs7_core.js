@@ -6,10 +6,10 @@
 // TODO : user anzeig : gilde, punktestand, rang...
 // TODO : armee - anzeige : gilde,sprechblasen ?
 // TODO : portal : maptip : schloss/lock grafik, wenn nicht benutzbar ?
-// TODO : localusers : FOF auslesen -> namen einfärben in maptip
-// TODO : gebäude hp-balken + farbe im maptip
+// TODO : localusers : FOF auslesen -> namen einfÃ¤rben in maptip
+// TODO : gebÃ¤ude hp-balken + farbe im maptip
 // TODO : schild-text im tooltip ?
-// TODO : brücken an fluss ausrichten !
+// TODO : brÃ¼cken an fluss ausrichten !
 // TODO : tor nwse bug : connect-to-building : self rausschmeissen
 // TODO : tooltip : einheiten reihenfolge stimmt nicht (orderval ?)
 
@@ -958,7 +958,7 @@ function GetToolActionInfo (relx,rely) {
 	if (curtool == kMapNaviTool_WP) {
 		var activearmy = GetActiveArmy();
 		if (activearmy) 
-			return "WP für "+activearmy.name+" setzen";
+			return "WP fÃ¼r "+activearmy.name+" setzen";
 	}
 	if (curtool == kMapNaviTool_MultiTool) {
 		// flostre multitool
@@ -967,15 +967,15 @@ function GetToolActionInfo (relx,rely) {
 		var wp = SearchPos(gWPs,relx,rely);
 		if (army) {
 			if (army.jsflags & kJSMapArmyFlag_Controllable)
-					return ""+army.name+" auswählen";
-			else	return "Info für "+army.name+" abrufen";
+					return ""+army.name+" auswÃ¤hlen";
+			else	return "Info fÃ¼r "+army.name+" abrufen";
 		} else if (building && GetArmyPosSpeed(relx,rely,gArmies[gActiveArmyID]) == 0) {
-			return "Info für Gebäude abrufen";
+			return "Info fÃ¼r GebÃ¤ude abrufen";
 		} else if (wp) {
-			return "WP löschen";
+			return "WP lÃ¶schen";
 		} else {
 			var activearmy = GetActiveArmy();
-			return "WP für "+activearmy.name+" setzen";
+			return "WP fÃ¼r "+activearmy.name+" setzen";
 		}
 	}
 	return false;
@@ -1072,7 +1072,7 @@ function ShowMapTip(relx,rely) {
 			if (building.jsflags & kJSMapBuildingFlag_BeingSieged) 
 				tiptext += "<span><b><font color=red>wird belagert</font></b></span><br>";
 			if (building.jsflags & kJSMapBuildingFlag_BeingPillaged) 
-				tiptext += "<span><b><font color=red>wird geplündert</font></b></span><br>";
+				tiptext += "<span><b><font color=red>wird geplÃ¼ndert</font></b></span><br>";
 			if (building.jsflags & kJSMapBuildingFlag_Shooting) 
 				tiptext += "<span><b><font color=red>schiesst gerade</font></b></span><br>";
 			if (building.jsflags & kJSMapBuildingFlag_BeingShot) 
@@ -1096,7 +1096,7 @@ function ShowMapTip(relx,rely) {
 			tiptext += "</td></tr>";
 		} else {
 			tiptext += "<tr><td nowrap colspan=3 align=\"left\">";
-			tiptext += "<span> Unbekannter GebäudeTyp "+ building.type + "</span><br>";
+			tiptext += "<span> Unbekannter GebÃ¤udeTyp "+ building.type + "</span><br>";
 			tiptext += "</td></tr>";
 		}
 	}
@@ -1135,11 +1135,11 @@ function ShowMapTip(relx,rely) {
 		if (army.jsflags & kJSMapArmyFlag_GC) 
 			tiptext += "<span><b><font color=orange>steht unter GC</font></b></span><br>";
 		if (army.jsflags & kJSMapArmyFlag_Fighting) 
-			tiptext += "<span><b><font color=red>kämpft gerade</font></b></span><br>";
+			tiptext += "<span><b><font color=red>kÃ¤mpft gerade</font></b></span><br>";
 		if (army.jsflags & kJSMapArmyFlag_Sieging) 
 			tiptext += "<span><b><font color=red>belagert gerade</font></b></span><br>";
 		if (army.jsflags & kJSMapArmyFlag_Pillaging) 
-			tiptext += "<span><b><font color=red>plündert gerade</font></b></span><br>";
+			tiptext += "<span><b><font color=red>plÃ¼ndert gerade</font></b></span><br>";
 		if (army.jsflags & kJSMapArmyFlag_Shooting) 
 			tiptext += "<span><b><font color=red>schiesst gerade</font></b></span><br>";
 		if (army.jsflags & kJSMapArmyFlag_BeingShot) 

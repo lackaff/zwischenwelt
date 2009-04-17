@@ -11,6 +11,7 @@ profile_page_start("waren");
    "http://www.w3.org/TR/html4/transitional.dtd">
 <html>
 <head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 <link rel="stylesheet" type="text/css" href="<?=GetZWStylePath()?>">
 <title>Zwischenwelt - Kosten</title>
 
@@ -21,7 +22,7 @@ include("../menu.php");
 ?>
 
 <?php if (isset($f_t)) {?>
-<a href="<?=Query("?sid=?")?>"><u><b>Warenübersicht</b></u></a>
+<a href="<?=Query("?sid=?")?>"><u><b>WarenÃ¼bersicht</b></u></a>
 <?php } // endif?>
 <table>
 <tr>

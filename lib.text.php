@@ -70,7 +70,7 @@ class cText {
 	
 	function UnitsList ($units,$userid,$header="",$drawcost=true,$armyidle=false) {
 		global $gRes,$gUnitType,$gTerrainType,$gUser,$gMovableFlagMainTerrain;
-		// $units ein array mit objekten, wie in lib.units.php, $o->cell = htmltext für die extra zelle
+		// $units ein array mit objekten, wie in lib.units.php, $o->cell = htmltext fÃ¼r die extra zelle
 		// $userid is used for upraded a,v etc
 		// $drawcost : costs only drawn if true
 		// $armyidle is used for cooldown display for ranged weapons
@@ -87,7 +87,7 @@ class cText {
 			"eff_siege"=>"<img src='".g("units/ramme.png")."' alt='Belagern' title='Belagern' border=0>",
 		);
 		
-		$eff_show = array(); // ob die effizienz spalten überhaupt gezeigt werden
+		$eff_show = array(); // ob die effizienz spalten Ã¼berhaupt gezeigt werden
 		foreach($eff_img as $field => $img)
 				$eff_show[$field] = false;
 		foreach($units as $o) if ($o->amount > 0)
@@ -195,7 +195,7 @@ function building2txt ($building) {
 	return $gBuildingType[$building->type]->name."[u=".user2txt($building->user)."]"."($building->x,$building->y)";
 }
 function user2txt ($user) { 
-	// name[id,pop=bevölkerung]
+	// name[id,pop=bevÃ¶lkerung]
 	global $gAllUsers;
 	if (!is_object($user))
 		if ($user == 0) return "no_user";

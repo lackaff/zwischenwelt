@@ -69,7 +69,7 @@ require_once("header.php");
 		<tr><th>geschlossen</th><td><?=$bug->closed>0?date("j.m. G:i",$bug->closed):"-"?></td></tr>
 		<tr><th>Ersteller</th><td><?=nick($bug->creator,"0")?></td></tr>
 		<tr><th>Finder</th><td><input type="text" name="i_finder" value="<?=nick($bug->finder,"0")?>"></td></tr>
-		<tr><th>zust‰ndig</th><td><input type="text" name="i_assigned_user" value="<?=nick($bug->assigned_user,"0")?>"></td></tr>
+		<tr><th>zust√§ndig</th><td><input type="text" name="i_assigned_user" value="<?=nick($bug->assigned_user,"0")?>"></td></tr>
 		<tr><th>Prio</th><td><input type="text" name="i_prio" value="<?=$bug->prio?>"></td></tr>
 		<tr><th>Status</th><td>
 		<select name="i_status" size=1><?=PrintOptions($gBugStatusText,$bug->status)?></select>
@@ -94,7 +94,7 @@ require_once("header.php");
 		<tr><th>geschlossen</th><td><?=$bug->closed>0?date("j.m. G:i",$bug->closed):"-"?></td></tr>
 		<tr><th>Ersteller</th><td><?=nick($bug->creator,"-")?></td></tr>
 		<tr><th>Finder</th><td><?=nick($bug->finder,"-")?></td></tr>
-		<tr><th>zust‰ndig</th><td><?=nick($bug->assigned_user,"-")?></td></tr>
+		<tr><th>zust√§ndig</th><td><?=nick($bug->assigned_user,"-")?></td></tr>
 		<tr><th>Prio</th><td><?=$bug->prio?></td></tr>
 		<tr><th>Status</th><td><?=$gBugStatusText[$bug->status]?></td></tr>
 		<tr><th>Bereich</th><td><?=$gBugTopicText[$bug->topic]?></td></tr>
@@ -108,7 +108,7 @@ require_once("header.php");
 <form method=post action="<?=query("?sid=?")?>">nach <input type="text" name="search" value="<?php if(isset($f_search))echo $f_search;?>"> <input type=submit name=do_search value=suchen></form>
 <table border=1>
 	<tr>
-		<th>#ID</th><th>Name</th><th>Info</th><th>Prio</th><th>erstellt</th><th>Status</th><th>zust‰ndig</th>
+		<th>#ID</th><th>Name</th><th>Info</th><th>Prio</th><th>erstellt</th><th>Status</th><th>zust√§ndig</th>
 	</tr>
 <?php foreach($bugs as $b){ ?>
 	<tr>

@@ -428,7 +428,7 @@ class cFight {
 		sql("INSERT INTO `pillage` SET ".obj2sql($t));
 		$t->id = mysql_insert_id();
 		
-		cFight::ActOfWar($army->user,$building->user,"Plünderung",$army->x,$army->y);
+		cFight::ActOfWar($army->user,$building->user,"PlÃ¼nderung",$army->x,$army->y);
 		
 		// userlog
 		global $gAllUsers,$gBuildingType;
@@ -443,15 +443,15 @@ class cFight {
 		
 		// report
 		if ($building->user) {
-			$topic = "Plünderung bei ($building->x,$building->y)";
-			$report = "Unser ".$gBuildingType[$building->type]->name." bei ($building->x,$building->y) wird von ".$army->name." von ".$armyownername." geplündert !<br>";
+			$topic = "PlÃ¼nderung bei ($building->x,$building->y)";
+			$report = "Unser ".$gBuildingType[$building->type]->name." bei ($building->x,$building->y) wird von ".$army->name." von ".$armyownername." geplÃ¼ndert !<br>";
 			sendMessage($building->user,0,$topic,$report,kMsgTypeReport,FALSE);
 			
 			if ($army->user && $building->user)
 				GuildLogMe($army->x,$army->y,$army->user,$building->user,
 					sqlgetone("SELECT `guild` FROM `user` WHERE `id` = ".$army->user),
 					sqlgetone("SELECT `guild` FROM `user` WHERE `id` = ".$building->user),
-					"Plünderung","");
+					"PlÃ¼nderung","");
 		}
 		return true;
 	}
@@ -510,7 +510,7 @@ class cFight {
 			intval($user->food).",".
 			intval($user->metal).",".
 			intval($user->runes)." aus ".
-			"Lager (".$building->x."|".$building->y.") geplündert.<br>";
+			"Lager (".$building->x."|".$building->y.") geplÃ¼ndert.<br>";
 			
 		foreach($gResFields as $res){
 			sql("UPDATE `army` SET `$res` = `$res` + ".$army->{"pillage_".$res}." WHERE `id` = ".$army->id);
@@ -521,7 +521,7 @@ class cFight {
 		
 		if ($debug) echo "auslastung : $army->last / $army->lastmax<br>";
 		if ($army->last > $army->lastmax - 2) { // TODO : unhardcode
-			cFight::EndPillage($pillage,"Die Plünderer sind vollgeladen.");
+			cFight::EndPillage($pillage,"Die PlÃ¼nderer sind vollgeladen.");
 		} else if ($pillagetotal < $army->pillage/2) { // TODO : BUG !!! stops as soon as one of the target res is empty
 			cFight::EndPillage($pillage,"Das Lager ist leer.");
 		}
@@ -656,7 +656,7 @@ class cFight {
 			// army is full, stop pillage-siege
 			if ($armyfull && (intval($army->flags) & kArmyFlag_StopSiegeWhenFull)) {
 				echo "siegepillage : full : abort<br>";
-				cFight::EndSiege($siege,"Der Belagerer hat sich zurückgezogen.");
+				cFight::EndSiege($siege,"Der Belagerer hat sich zurÃ¼ckgezogen.");
 				return;
 			}
 		}
@@ -667,10 +667,10 @@ class cFight {
 			
 		sql("UPDATE `building` SET `hp`='".$building->hp."' WHERE `id`=".$building->id);
 		
-		// gebäude tot, oder noch im bau unter 10 prozent..
+		// gebÃ¤ude tot, oder noch im bau unter 10 prozent..
 		if ($building->hp < 1 || ($building->construction>0 && GetConstructionProgress($building)<0.1)) { // TODO : unhardcode
 			// belagerung beendet
-			cFight::EndSiege($siege,"Das Gebäude wurde vernichtet.");
+			cFight::EndSiege($siege,"Das GebÃ¤ude wurde vernichtet.");
 			cBuilding::removeBuilding($building,$building->user);
 			cArmy::AddArmyFrags($siege->army,1);
 		}
@@ -771,7 +771,7 @@ class cFight {
 		$army1 = sqlgetobject("SELECT * FROM `army` WHERE `id` = ".$fight->attacker);
 		$army2 = sqlgetobject("SELECT * FROM `army` WHERE `id` = ".$fight->defender);
 		
-		if(!$army1 || !$army2) {
+		if(empty($army1) || empty($army2)) {
 			warning("BUG : $army1 , $army2<br>");
 			sql("DELETE FROM `fight` WHERE `id`=".$fight->id);
 			return;
@@ -1035,7 +1035,7 @@ class cFight {
 				$report = "Der Beschuss auf (".$defender->x.",".$defender->y.") ist beendet.<br>";
 		else	$report = "Die Schlacht bei (".$attacker->x.",".$attacker->y.") ist beendet.<br>";
 		$report .= $why."<br>";
-		if ($monster) $report .= "Monsterkampfberichte können unter Einstellungen abgeschaltet werden.<br>";
+		if ($monster) $report .= "Monsterkampfberichte kÃ¶nnen unter Einstellungen abgeschaltet werden.<br>";
 		$report .= "<br>";
 		
 		// report army state
@@ -1045,7 +1045,7 @@ class cFight {
 			if (!$container) continue;
 			$containernametext = cFight::GetContainerText($container,$containertype);
 			
-			$report .= "<b>".$containernametext."</b> ".($container->destroyed?"<font color='red'><b>(ausgelöscht)</b></font>":"")."<br>";
+			$report .= "<b>".$containernametext."</b> ".($container->destroyed?"<font color='red'><b>(ausgelÃ¶scht)</b></font>":"")."<br>";
 			$losses = cUnit::GetUnitsDiff($container->startunits,$container->units,true);
 			$losses = array_merge($losses,cUnit::GetUnitsDiff($container->starttransport,$container->transport,true));
 			$losses = cUnit::GroupUnits($losses);
@@ -1058,7 +1058,7 @@ class cFight {
 				$report .= rob_ob_end();
 			}
 			
-			// verluste/neuzugänge
+			// verluste/neuzugÃ¤nge
 			$report .= "<table border=1 cellspacing=0>";
 			$arr_loss = array();
 			$arr_gain = array();
@@ -1070,9 +1070,9 @@ class cFight {
 					else	$arr_gain[] = $txt;
 				}
 				if (count($arr_loss) > 0) $report .= "<tr><th>Verluste</th>".implode(" ",$arr_loss)."</tr>";
-				if (count($arr_gain) > 0) $report .= "<tr><th>Neuzugänge</th>".implode(" ",$arr_gain)."</tr>";
+				if (count($arr_gain) > 0) $report .= "<tr><th>NeuzugÃ¤nge</th>".implode(" ",$arr_gain)."</tr>";
 			} else {
-				$report .= "<font color='red'><b>ausgelöscht</b></font>";
+				$report .= "<font color='red'><b>ausgelÃ¶scht</b></font>";
 			}
 			
 			// verlorene res, items
@@ -1136,7 +1136,7 @@ class cFight {
 		cUnit::SetUnits($army->flucht_units,$army->id);
 		foreach ($fights as $fight) {
 			$enemy = (($fight->attacker!=$army->id)?$fight->attacker:$fight->defender);
-			// den gegner ein bisschen beschäftigen, damit er nicht gleich nächste runder hinterherrennt und weiterkämpft
+			// den gegner ein bisschen beschÃ¤ftigen, damit er nicht gleich nÃ¤chste runder hinterherrennt und weiterkÃ¤mpft
 			sql("UPDATE `army` SET `idle` = 0, `nextactiontime` = ".(time()+180)." WHERE `id` = ".$enemy);
 		}
 		cFight::StopAllArmyFights($army,"Die Armee _ARMYNAME_ von _ARMYOWNERNAME_ ist geflohen.");

@@ -39,7 +39,7 @@ if ($gUser->admin) {
 		foreach ($f_sel as $id) {
 			sql("DELETE FROM `itemtype` WHERE `id` = ".intval($id)." LIMIT 1");
 			sql("DELETE FROM `item` WHERE `type` = ".intval($id));
-			echo mysql_affected_rows()." items vom typ $id gelöscht<br>";
+			echo mysql_affected_rows()." items vom typ $id gelÃ¶scht<br>";
 		}
 		$gItemType = sqlgettable("SELECT * FROM `itemtype`","id");
 	}
@@ -70,11 +70,11 @@ if ($gUser->admin) {
 		}
 		if (isset($f_deletequestitems)) {
 			sql("DELETE FROM `item` WHERE `quest` = ".intval($f_questid));
-			echo mysql_affected_rows()." items gelöscht";
+			echo mysql_affected_rows()." items gelÃ¶scht";
 		}
 		if (isset($f_deletequestarmies)) {
 			sql("DELETE FROM `army` WHERE `quest` = ".intval($f_questid));
-			echo mysql_affected_rows()." armeen gelöscht";
+			echo mysql_affected_rows()." armeen gelÃ¶scht";
 		}
 		if (isset($f_startquest)) { 
 			if ($quest->running) Quest_Timeout($quest);
@@ -93,6 +93,7 @@ if ($gUser->admin) {
    "http://www.w3.org/TR/html4/transitional.dtd">
 <html>
 <head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 <link rel="stylesheet" type="text/css" href="<?=GetZWStylePath()?>">
 <title>Zwischenwelt - Quests</title>
 
@@ -148,16 +149,16 @@ wdh. = wiederholung in
 <?php } // endif count(quests) > 0?>
 
 <pre>
-Alle Gegenstände müssen in einer Armee sein beim abgeben.
+Alle GegenstÃ¤nde mÃ¼ssen in einer Armee sein beim abgeben.
 Um sie abzugeben einfach mit der Armee das ZielFeld betreten.
-Wenn mehrere Spieler gesammelt haben, müssen sie die Gegenstände ablegen,
-und dann mit einer Armee aufsammeln, dann könnt ihr sie mit dieser Armee abgeben.
-Man kann sich natürlich auch darum streiten, wenn eine Armee getötet wird,
-fallen die Gegenstände, die sie dabei hatte auf den Boden und können vom Sieger eingesammelt werden.
-Bei QuestEnde verschwinden alle zu diesem Quest gehörigen Gegenstände.
-Das Lagerlimit kann für die Belohnung überschritten werden, 
-der Überschuss geht dann ins Gildenlager, solange bis das auch voll ist.
-Den Belohnungsgegenstand erhält die Armee die die Questgegenstände abgegeben hat.
+Wenn mehrere Spieler gesammelt haben, mÃ¼ssen sie die GegenstÃ¤nde ablegen,
+und dann mit einer Armee aufsammeln, dann kÃ¶nnt ihr sie mit dieser Armee abgeben.
+Man kann sich natÃ¼rlich auch darum streiten, wenn eine Armee getÃ¶tet wird,
+fallen die GegenstÃ¤nde, die sie dabei hatte auf den Boden und kÃ¶nnen vom Sieger eingesammelt werden.
+Bei QuestEnde verschwinden alle zu diesem Quest gehÃ¶rigen GegenstÃ¤nde.
+Das Lagerlimit kann fÃ¼r die Belohnung Ã¼berschritten werden, 
+der Ãœberschuss geht dann ins Gildenlager, solange bis das auch voll ist.
+Den Belohnungsgegenstand erhÃ¤lt die Armee die die QuestgegenstÃ¤nde abgegeben hat.
 Viel Spass ^^
 </pre>
 <?php }?>
@@ -171,7 +172,7 @@ Viel Spass ^^
 <li><a href="<?=Query("?sid=?&notnormal=1&triggerlog=1")?>">triggerlog</a></li>
 <li><a href="<?=Query("?sid=?&notnormal=1&triggerlog=2")?>">triggerlog(all)</a></li>
 <li><a href="<?=Query("?sid=?&notnormal=1&questcontrol=1")?>">questcontrol</a></li>
-<li><a href="<?=Query("?sid=?&notnormal=1&itemcontrol=1")?>">Gegenstände</a></li>
+<li><a href="<?=Query("?sid=?&notnormal=1&itemcontrol=1")?>">GegenstÃ¤nde</a></li>
 <li><a href="<?=Query("?sid=?&notnormal=1&repairhellhole=1")?>">repairhellhole</a></li>
 </ul>
 
@@ -388,21 +389,21 @@ Questtypen :
 	Monster-Jagt : noch nicht implementiert
 	Rettung , Transport , Sammeln , Stehlen   sind vom code her ein und dasselbe (realtype=Rettung)
 
-magictext Kürzel :
+magictext KÃ¼rzel :
 Koordinaten Angaben in dem Beschreibungstext mit der form (-120,44) werden automatisch clickbar gemacht.
 (i44) wird durch das Bild von item typ 44 ersetzt.
 (u22) wird durch das Bild von unit typ 22 ersetzt.
-Dasselbe gilt übrigends ab sofort für Schild-Texte.
+Dasselbe gilt Ã¼brigends ab sofort fÃ¼r Schild-Texte.
 
 Der Button startquest setzt den startzeitpunkt auf jetzt, und startet das quest sofort.
 Die beiden nummern nach dem Namen sind die Koordinaten auf die gesprungen wird, wenn man auf den Questnamen clickt.
 Zumal noch keine armeen von den quests selber generiert werden ist Delete_QuestArmy_On_Finish im moment nutzlos.
-Hab übrigends einen teleportarmy knopf unten in info eingebaut, 
-der löst auch questtrigger aus, somit kann man damit schnell durchcheaten.
+Hab Ã¼brigends einen teleportarmy knopf unten in info eingebaut, 
+der lÃ¶st auch questtrigger aus, somit kann man damit schnell durchcheaten.
 
 params beschreibung :
 die einzelnen parameter sind mit # getrennt
-ist ein parameter eine liste (x_list), so sind die einzelnen einträge mit | getrennt
+ist ein parameter eine liste (x_list), so sind die einzelnen eintrÃ¤ge mit | getrennt
 x und y koordinaten von positionen sind mit , getrennt
 11,22|33,44|55,66  sind die drei positionen (11,22) (33,44) (55,66)
 
@@ -410,13 +411,13 @@ typ = Rettung , Transport , Sammeln , Stehlen :
 	paramsyntax = itemtype_list#startpos_list#endpos_list#itemsetmode
 	beispiel = 8|9|10#0,0|1,0|2,0#0,5|0,-5#1
 	itemsetmode kann 0 oder 1 sein
-	itemsetmode 0 "zufällig" : 
-		bei queststart wird zufällig ein item aus itemtype_list generiert
-		es wird auf eine zufällig ausgewählte position aus startpos_list gesetzt
-		es genügt ein item auf irgendeine der positionen aus endpos_list zu bringen, um das quest zu erfüllen
+	itemsetmode 0 "zufÃ¤llig" : 
+		bei queststart wird zufÃ¤llig ein item aus itemtype_list generiert
+		es wird auf eine zufÃ¤llig ausgewÃ¤hlte position aus startpos_list gesetzt
+		es genÃ¼gt ein item auf irgendeine der positionen aus endpos_list zu bringen, um das quest zu erfÃ¼llen
 	itemsetmode 1 "reihenfolge" : 
 		bei queststart wird jedes der items in itemtype_list auf der entsprechenden position in startpos_list gesetz
-		man muss alle items sammeln und auf irgendeine der positionen aus endpos_list zu bringen, um das quest zu erfüllen
+		man muss alle items sammeln und auf irgendeine der positionen aus endpos_list zu bringen, um das quest zu erfÃ¼llen
 </pre>
 
 <?php } // endif questcontrol?>
@@ -438,7 +439,7 @@ typ = Rettung , Transport , Sammeln , Stehlen :
 
 
 <?php if (isset($f_itemcontrol)) {?>
-	<h3>Gegenstände</h3>
+	<h3>GegenstÃ¤nde</h3>
 	<?php $items = sqlgetgrouptable("SELECT * FROM `item`","type");?>
 	<form method="post" action="<?=Query("?sid=?&notnormal=?&itemcontrol=?")?>">
 	<table border=1>

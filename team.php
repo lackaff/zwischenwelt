@@ -42,24 +42,24 @@ include("header.php");
 
 =-..-=-..-=-..-=[ Greets ]=-..-=-..-=-..-=
 
-* talia (für viel viel faq)
-* blob (für moralische Unterstützung
+* talia (fÃ¼r viel viel faq)
+* blob (fÃ¼r moralische UnterstÃ¼tzung
         und den Schrott im alten Forum)
 * lil_spack
 * felix + jan
 * cairon
-* großkonsul
+* groÃŸkonsul
 * saturnine
 * n3
 * blackvelvet
 * nhin
 * benus
 * ray
-* Ishka (für seine Hilfe in ML)
+* Ishka (fÃ¼r seine Hilfe in ML)
 * den griechen neben der uni und der sushi mensch
 * alle geeks und anime freaks auf der erdenscheibe
 * das internet, weil wir alle nun so toll vernetzt sind
-* gott, dafür daß er kaffee und tee gemacht hat
+* gott, dafÃ¼r daÃŸ er kaffee und tee gemacht hat
 * hetzner.de (weil sie das beste Rechenzentrum der Welt sind)
 * slayradio.org (weil das der beste Sender der Welt ist)
 * real life

@@ -19,6 +19,7 @@ if(empty($css))$css = $gMenuStyles["default"];
 ?>
 <html>
   <head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <title>"compact menu" demo by Gor_de_Mar</title>
     <script src="js/compactmenu.js"></script>
     <script src="js/compactmenusitemap.js.php?sid=<?=$_REQUEST["sid"]?>"></script>

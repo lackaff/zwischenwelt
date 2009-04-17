@@ -227,7 +227,7 @@ function PrintBuildTimeHelp ($x,$y,$type=-1,$priority=-1,$userid=false) {
 		<td>Bauzeit * <?=round($faktor_tech,2)?></td>
 	</tr><tr>
 	<?php if ($faktor_newbee < 1.0) {?>	
-		<td>frisch gegründete Siedlung (Newbee)</td>
+		<td>frisch gegrÃ¼ndete Siedlung (Newbee)</td>
 		<td>Bauzeit * <?=round($faktor_newbee,2)?></td>
 	</tr><tr>
 	<?php } // endif?>

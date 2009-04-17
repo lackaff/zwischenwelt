@@ -260,12 +260,12 @@ class cInfoHospital extends cInfoBuilding {
 			<input type="hidden" name="building" value="hospital">
 			<input type="hidden" name="id" value="<?=$gObject->id?>">
 			<select name="sqlbookmark"><option value="0">-</option><?=PrintObjOptions($sqlbookmarks,"id","name",isset($f_sqlbookmark)?$f_sqlbookmark:0)?></select>
-			<input type="submit" name="use" value="ausführen"> |
+			<input type="submit" name="use" value="ausfÃ¼hren"> |
 			<input type="submit" name="show" value="befehl anzeigen"> |
-			<input type="submit" name="del" value="löschen">
+			<input type="submit" name="del" value="lÃ¶schen">
 			<input type="checkbox" name="sure" value="1">sicher? <br>
 			<textarea name="i_sql" cols=60 rows=3><?=htmlspecialchars($sqlqry)?></textarea><br>
-			<input type="submit" name="usedirect" value="ausführen">
+			<input type="submit" name="usedirect" value="ausfÃ¼hren">
 			Name:<input type="text" name="i_name" value="<?=$newname?>">
 			<input type="submit" name="new" value="speichern">
 		</form>
@@ -423,7 +423,7 @@ class cInfoHospital extends cInfoBuilding {
 		<?=kZWTestMode2?"true":"false"?><br>
 		<?=kZWTestMode2?><br>
 		
-		* ) beendet alle Sessions und macht nur noch adminlogin möglich<br>
+		* ) beendet alle Sessions und macht nur noch adminlogin mÃ¶glich<br>
 		<?php } 
 	}
 }?>

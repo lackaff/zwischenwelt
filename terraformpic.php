@@ -26,19 +26,19 @@ if (isset($f_export)) {
 	?>
 	<img border=0 src="<?=$filename?>" alt="" title=""><br>
 	Mitte(x,y) : (<?=intval($mid[0])?>,<?=intval($mid[1])?>)<br>
-	Grösse(x,y) : (<?=$width?>,<?=$height?>)<br>
+	GrÃ¶ÃŸe(x,y) : (<?=$width?>,<?=$height?>)<br>
 	<hr>
-	TIPP : am besten beim Bearbeiten markante Farben verwenden, wie z.b. hellgrün,rot,orange,knallrosa,...<br>
+	TIPP : am besten beim Bearbeiten markante Farben verwenden, wie z.b. hellgrÃ¼n,rot,orange,knallrosa,...<br>
 	die nicht in der normalen Mimimap vorkommen.<br>
 	Beim Re-Import kann man einfach dann alle "normalen" Farben ignorieren, <br>
-	so minimiert man das Risiko, bestehendes Terrain unabsichtlich zu verändern, <br>
+	so minimiert man das Risiko, bestehendes Terrain unabsichtlich zu verÃ¤ndern, <br>
 	vor allem, weil manchmal mehrere terrain-typen die gleiche Farben haben.<br>
 	<hr>
-	WICHTIG : beim bearbeiten keine Pinsel mit "weichem Rand" benutzten, die Farbverläufe am Rand erzeugen,<br>
-	Es ist wichtig, dass das Bild möglichst wenige, klar voneinander unterscheidbare Farben hat,<br>
-	denn beim Reimport kann man in einer Farb-Liste FÜR JEDE FARBE einen Terrain-Typ wählen (oder sie ignorieren).<br>
-	Wenn man einen weichen Pinsel verwendet, oder irgendwie anders Farbverläufe ins Bild bringt,<br>
-	hat man schnell eine Farbliste mit mehreren hundert Einträgen, da wird das zuweisen sehr mühselig ;)<br>
+	WICHTIG : beim bearbeiten keine Pinsel mit "weichem Rand" benutzten, die FarbverlÃ¤ufe am Rand erzeugen,<br>
+	Es ist wichtig, dass das Bild mÃ¶glichst wenige, klar voneinander unterscheidbare Farben hat,<br>
+	denn beim Reimport kann man in einer Farb-Liste FÃœR JEDE FARBE einen Terrain-Typ wÃ¤hlen (oder sie ignorieren).<br>
+	Wenn man einen weichen Pinsel verwendet, oder irgendwie anders FarbverlÃ¤ufe ins Bild bringt,<br>
+	hat man schnell eine Farbliste mit mehreren hundert EintrÃ¤gen, da wird das zuweisen sehr mÃ¼hselig ;)<br>
 	<hr>
 	<?php
 }
@@ -68,7 +68,7 @@ if (isset($f_openimporter)) {
 		if ($upload["error"] != UPLOAD_ERR_OK)
 		{ echo "Unbekannter Fehler bei ".$name."<br>\n"; continue; }
 		if (!is_uploaded_file($upload['tmp_name']))
-		{ echo "Mögliche File Upload Attack bei ".$name.".<br>\n"; continue; }
+		{ echo "MÃ¶gliche File Upload Attack bei ".$name.".<br>\n"; continue; }
 
 		//echo "($name)($origfilename)(".$upload['tmp_name'].")<br>";
 		
@@ -118,8 +118,8 @@ if (isset($f_openimporter)) {
 		}
 		?>
 		</table>
-			ZW-Koordinaten für die Mitte (x,y) : <input type="text" name="mid" value="<?=intval($f_x).",".intval($f_y)?>" style="width:80px">,
-			Grösse = <?=$width.",".$height?>
+			ZW-Koordinaten fÃ¼r die Mitte (x,y) : <input type="text" name="mid" value="<?=intval($f_x).",".intval($f_y)?>" style="width:80px">,
+			GrÃ¶ÃŸe = <?=$width.",".$height?>
 			<input type="submit" name="import_preview" value="weiter zur Vorschau">
 		</form>
 		
@@ -151,8 +151,8 @@ if (isset($f_openimporter)) {
 	$right = $left + $width;
 	$bottom = $top + $height;
 	
-	echo "Vorschau für Import von Bild mit $width x $height Pixeln und $totalcolors Farben nach (".intval($mid[0]).",".intval($mid[1]).")(Mitte)...<br>";
-	echo "(der Landschaftsgestalter-Sicherheitsabstand wird hier noch nicht berücksichtig,<br> beim endgültigen Import aber schon)<br>";
+	echo "Vorschau fÃ¼r Import von Bild mit $width x $height Pixeln und $totalcolors Farben nach (".intval($mid[0]).",".intval($mid[1]).")(Mitte)...<br>";
+	echo "(der Landschaftsgestalter-Sicherheitsabstand wird hier noch nicht berÃ¼cksichtig,<br> beim endgÃ¼ltigen Import aber schon)<br>";
 	
 	$path_old = "tmp/lgold_".$time."_x".$left."_y".$top."_x".$right."_y".$bottom.".png";
 	$path_new = "tmp/lgnew_".$time."_x".$left."_y".$top."_x".$right."_y".$bottom.".png";
@@ -196,7 +196,7 @@ if (isset($f_openimporter)) {
 	<table>
 	<tr>
 		<th>Upload</th>
-		<th>Änderungen</th>
+		<th>Ã„nderungen</th>
 		<th>Vorher</th>
 		<th>Nachher</th>
 	</tr><tr>
@@ -213,7 +213,7 @@ if (isset($f_openimporter)) {
 			<input type="hidden" name="setterrain[<?=$colorindex?>]" value="<?=$terrtypeid?>">
 		<?php } // endforeach?>
 		<input type="hidden" name="mid" value="<?=$f_mid?>" style="width:80px">
-		<input type="submit" name="import" value="Import Durchführen">
+		<input type="submit" name="import" value="Import DurchfÃ¼hren">
 	</form>
 	<?php
 	
@@ -300,7 +300,7 @@ if (isset($f_openimporter)) {
 	<table>
 	<tr>
 		<th>Upload</th>
-		<th>Änderungen</th>
+		<th>Ã„nderungen</th>
 		<th>Vorher</th>
 		<th>Nachher-Soll</th>
 		<th>Ergebnis</th>
@@ -312,12 +312,12 @@ if (isset($f_openimporter)) {
 		<td><img border=0 src="<?=$path_result?>" alt="" title=""></td>
 	</tr>
 	</table>
-	(nur das "Ergebnis" berücksichtigt den Terraformer-Sicherheitsabstand)
+	(nur das "Ergebnis" berÃ¼cksichtigt den Terraformer-Sicherheitsabstand)
 	<?php
 } else {
 	?>
 	<form method="post" enctype="multipart/form-data" action="<?=Query("?sid=?&x=?&y=?")?>">
-		Landschafts-Import-Dialog für Bild <input name="bildup" type="file"> (nur PNG)
+		Landschafts-Import-Dialog fÃ¼r Bild <input name="bildup" type="file"> (nur PNG)
 		 um (Mitte:x,y)<input type="text" name="mid" value="<?=intval($f_x).",".intval($f_y)?>" style="width:80px">
 		<input type="submit" name="openimporter" value="oeffnen">
 	</form>

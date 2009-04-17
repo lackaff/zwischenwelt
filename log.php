@@ -7,6 +7,7 @@ Lock();
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/transitional.dtd">
 <html>
 <head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 <meta http-equiv="refresh" content="300; URL=<?=sessionLink("log.php")?>">
 <link rel="stylesheet" type="text/css" href="<?=GetZWStylePath()?>">
 <title>Zwischenwelt - log</title>
@@ -34,17 +35,17 @@ foreach($log as $x)
 	switch($x->type)
 	{
 		case NEWLOG_PILLAGE_ATTACKER_START:
-			$text = "Ihre Armee $s1 hat begonnen das Lager bei <a target='info' href=".query("info/info.php?sid=?&x=$i1&y=$i2").">($i1|$i2)</a> von $s2 zu plündern";break;
+			$text = "Ihre Armee $s1 hat begonnen das Lager bei <a target='info' href=".query("info/info.php?sid=?&x=$i1&y=$i2").">($i1|$i2)</a> von $s2 zu plÃ¼ndern";break;
 		case NEWLOG_PILLAGE_ATTACKER_STOP:
-			$text = "Ihre Armee $s1 aufgehört das Lager bei <a target='info' href=".query("info/info.php?sid=?&x=$i1&y=$i2").">($i1|$i2)</a> von $s2 zu plündern";break;
+			$text = "Ihre Armee $s1 aufgehÃ¶rt das Lager bei <a target='info' href=".query("info/info.php?sid=?&x=$i1&y=$i2").">($i1|$i2)</a> von $s2 zu plÃ¼ndern";break;
 		case NEWLOG_PILLAGE_DEFENDER_START:
-			$text = "Die Armee $s1 von $s2 hat begonnen ihr Lager bei <a target='info' href=".query("info/info.php?sid=?&x=$i1&y=$i2").">($i1|$i2)</a> zu plündern";break;
+			$text = "Die Armee $s1 von $s2 hat begonnen ihr Lager bei <a target='info' href=".query("info/info.php?sid=?&x=$i1&y=$i2").">($i1|$i2)</a> zu plÃ¼ndern";break;
 		case NEWLOG_PILLAGE_DEFENDER_STOP:
-			$text = "Die Armee $s1 von $s2 hat aufgehört ihr Lager bei <a target='info' href=".query("info/info.php?sid=?&x=$i1&y=$i2").">($i1|$i2)</a> zu plündern";break;
+			$text = "Die Armee $s1 von $s2 hat aufgehÃ¶rt ihr Lager bei <a target='info' href=".query("info/info.php?sid=?&x=$i1&y=$i2").">($i1|$i2)</a> zu plÃ¼ndern";break;
 		case NEWLOG_PILLAGE_ATTACKER_CANCEL:
-			$text = "Ihre Armee $s1 das Plündern von dem Lager bei <a target='info' href=".query("info/info.php?sid=?&x=$i1&y=$i2").">($i1|$i2)</a> von $s2 abgebrochen";break;
+			$text = "Ihre Armee $s1 das plÃ¼ndern von dem Lager bei <a target='info' href=".query("info/info.php?sid=?&x=$i1&y=$i2").">($i1|$i2)</a> von $s2 abgebrochen";break;
 		case NEWLOG_PILLAGE_DEFENDER_CANCEL:
-			$text = "Die Armee $s1 von $s2 hat das Plündern von ihrem Lager bei <a target='info' href=".query("info/info.php?sid=?&x=$i1&y=$i2").">($i1|$i2)</a> abgebrochen";break;
+			$text = "Die Armee $s1 von $s2 hat das plÃ¼ndern von ihrem Lager bei <a target='info' href=".query("info/info.php?sid=?&x=$i1&y=$i2").">($i1|$i2)</a> abgebrochen";break;
 		case NEWLOG_FIGHT_START:
 			$text = "Kampf zwischen den Armeen $s1 und $s2 bei <a target='info' href=".query("info/info.php?sid=?&x=$i1&y=$i2").">($i1|$i2)</a> start";break;
 		case NEWLOG_FIGHT_STOP:
@@ -56,17 +57,17 @@ foreach($log as $x)
 		case NEWLOG_BUILD_FINISHED:
 			$text = "$s1 an Position <a target='info' href=".query("info/info.php?sid=?&x=$i1&y=$i2").">($i1|$i2)</a> fertiggestellt";break;
 		case NEWLOG_RAMPAGE_ATTACKER_START:
-			$text = "Ihre Ramme $s1 hat begonnen das Gebäude bei <a target='info' href=".query("info/info.php?sid=?&x=$i1&y=$i2").">($i1|$i2)</a> von $s2 zu zerstören";break;
+			$text = "Ihre Ramme $s1 hat begonnen das GebÃ¤ude bei <a target='info' href=".query("info/info.php?sid=?&x=$i1&y=$i2").">($i1|$i2)</a> von $s2 zu zerstÃ¶ren";break;
 		case NEWLOG_RAMPAGE_ATTACKER_CANCEL:
-			$text = "Ihre Ramme $s1 hat aufgehört das Gebäude bei <a target='info' href=".query("info/info.php?sid=?&x=$i1&y=$i2").">($i1|$i2)</a> von $s2 zu zerstören";break;
+			$text = "Ihre Ramme $s1 hat aufgehÃ¶rt das GebÃ¤ude bei <a target='info' href=".query("info/info.php?sid=?&x=$i1&y=$i2").">($i1|$i2)</a> von $s2 zu zerstÃ¶ren";break;
 		case NEWLOG_RAMPAGE_DEFENDER_START:
-			$text = "Die Ramme $s1 von $s2 hat begonnen ihr Gebäude bei <a target='info' href=".query("info/info.php?sid=?&x=$i1&y=$i2").">($i1|$i2)</a> zu zerstören";break;
+			$text = "Die Ramme $s1 von $s2 hat begonnen ihr GebÃ¤ude bei <a target='info' href=".query("info/info.php?sid=?&x=$i1&y=$i2").">($i1|$i2)</a> zu zerstÃ¶ren";break;
 		case NEWLOG_RAMPAGE_DEFENDER_CANCEL:
-			$text = "Die Ramme $s1 von $s2 hat aufgehört ihr Gebäude bei <a target='info' href=".query("info/info.php?sid=?&x=$i1&y=$i2").">($i1|$i2)</a> zu zerstören";break;
+			$text = "Die Ramme $s1 von $s2 hat aufgehÃ¶rt ihr GebÃ¤ude bei <a target='info' href=".query("info/info.php?sid=?&x=$i1&y=$i2").">($i1|$i2)</a> zu zerstÃ¶ren";break;
 		case NEWLOG_RAMPAGE_ATTACKER_DESTROY:
-			$text = "Ihre Ramme $s1 hat das Gebäude bei <a target='info' href=".query("info/info.php?sid=?&x=$i1&y=$i2").">($i1|$i2)</a> von $s2 zerstört";break;
+			$text = "Ihre Ramme $s1 hat das GebÃ¤ude bei <a target='info' href=".query("info/info.php?sid=?&x=$i1&y=$i2").">($i1|$i2)</a> von $s2 zerstÃ¶rt";break;
 		case NEWLOG_RAMPAGE_DEFENDER_DESTROY:
-			$text = "Die Ramme $s1 von $s2 hat ihr Gebäude bei <a target='info' href=".query("info/info.php?sid=?&x=$i1&y=$i2").">($i1|$i2)</a> zerstört";break;
+			$text = "Die Ramme $s1 von $s2 hat ihr GebÃ¤ude bei <a target='info' href=".query("info/info.php?sid=?&x=$i1&y=$i2").">($i1|$i2)</a> zerstÃ¶rt";break;
 		case NEWLOG_ARMY_RES_PUTDOWN:
 			$text = "Die Armee $s1 hat '$s2' in ihr Lager bei <a target='info' href=".query("info/info.php?sid=?&x=$i1&y=$i2").">($i1|$i2)</a> geladen";break;
 		case NEWLOG_ARMY_RES_GETOUT:

@@ -100,7 +100,7 @@ $form = new cTableEditForm("?sid=?&id=$f_id","BuildingType $f_id editieren",
 			new cTableEditListFlagField("buildingtype","id",$f_id,"Brauche:<br>Building","require_building",$buildings2),
 			new cTableEditListFlagField("buildingtype","id",$f_id,"Darf nicht:<br>Building","exclude_building",$buildings2),
 			
-			new cTableEditRadioField("buildingtype","id",$f_id,"benötigter<br>Untergrund","terrain_needed",$terrains),
+			new cTableEditRadioField("buildingtype","id",$f_id,"benÃ¶tigter<br>Untergrund","terrain_needed",$terrains),
 			new cTableEditRadioField("buildingtype","id",$f_id,"wird bei<br>Fertigstellung<br>zu Terrain","convert_into_terrain",$terrains),
 			new cTableEditListFlagField("buildingtype","id",$f_id,"Verbindung:<br>Terrain","connectto_terrain",$terrains2),
 		)),

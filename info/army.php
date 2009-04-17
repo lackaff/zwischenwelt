@@ -139,7 +139,7 @@ class cInfoArmy extends cInfoBase {
 			case "cancelpillage":
 				$pillage = sqlgetobject("SELECT * FROM `pillage` WHERE `id` = ".intval($f_id));
 				if (!$pillage || $pillage->army != $army->id) break;
-				cFight::EndPillage($pillage,"Die Plünderung wurde abgebrochen.",true);
+				cFight::EndPillage($pillage,"Die PlÃ¼nderung wurde abgebrochen.",true);
 			break;
 			case "shootinglist":
 				global $gContainerType2Number,$gNumber2ContainerType;
@@ -192,7 +192,7 @@ class cInfoArmy extends cInfoBase {
 					echo "(vielleicht nicht erreichbar, oder zu komplex)<br><br>";
 					break;
 				} else if (!$newwps) {
-					echo "<h3><font color=red>Entfernung zu gross für Wegfindung</font></h3>";
+					echo "<h3><font color=red>Entfernung zu gross fÃ¼r Wegfindung</font></h3>";
 					echo "(maximal 30 Felder in jede Richtung, hier waren es ".max(abs($f_x-$lastwp->x),abs($f_y-$lastwp->y)).")<br><br>";
 					break;
 				}
@@ -424,7 +424,7 @@ class cInfoArmy extends cInfoBase {
 		if ($gPillage) {
 			$target = sqlgetobject("SELECT * FROM `building` WHERE `id`=".$gPillage->building);
 			?>
-			<span style="color:red">plündert gerade <?=cArmy::DrawPillageRes($gPillage->type)?> aus <a href="<?=Query("?sid=?&x=".$target->x."&y=".$target->y)?>">Lager (<?=$target->x?>|<?=$target->y?>)</a></span>
+			<span style="color:red">plÃ¼ndert gerade <?=cArmy::DrawPillageRes($gPillage->type)?> aus <a href="<?=Query("?sid=?&x=".$target->x."&y=".$target->y)?>">Lager (<?=$target->x?>|<?=$target->y?>)</a></span>
 			<?php if($gCanControllArmy) {?><a href="<?=Query("?sid=?&x=?&y=?&army=".$gArmy->id."&do=cancelpillage&id=".$gPillage->id)?>"><img border=0 src="<?=g("icon/cancel.png")?>"></a><?php } ?>
 			<?php if($gUser->admin){ ?>
 				<a href="<?=Query("?sid=?&x=?&y=?&army=$gObject->id&do=admin_pillage_step&id=$gPillage->id&steps=1")?>">(s1)</a>
@@ -493,7 +493,7 @@ class cInfoArmy extends cInfoBase {
 
 
 
-		<?php /* #### Armeegrösse #### */ ?>
+		<?php /* #### ArmeegrÃ¶ÃŸe #### */ ?>
 		<?php 
 			$max_army_weight = cUnit::GetMaxArmyWeight($gArmy->type);
 			$army_unit_weight = cUnit::GetUnitsSum($gArmy->units,"weight");
@@ -519,11 +519,11 @@ class cInfoArmy extends cInfoBase {
 			$gArmy->transport = cUnit::GetUnits($gArmy->id,kUnitContainer_Transport);
 			$gArmy->maxtransp = cUnit::GetUnitsSum($gArmy->units,"last");
 			$sailors = cUnit::GetUnitsSailors($gArmy->transport);
-			echo "Effektiv ".round(100*$sailors/$gArmy->maxtransp)."% der Maximalen Besatzung haben Seglerfähigkeiten<br>";
+			echo "Effektiv ".round(100*$sailors/$gArmy->maxtransp)."% der Maximalen Besatzung haben SeglerfÃ¤higkeiten<br>";
 			$speed = cArmy::GetArmySpeed($gArmy);
 			if ($speed > 0)
 				echo "Damit ist die Reisegeschwindigkeit der Flotte ".Duration2Text(round($speed))."/Feld (ohne Terraineffekte)<br>";
-			else	echo "Die Flotte kann so nicht in See stechen, es werden mehr Matrosen benötigt.<br>";
+			else	echo "Die Flotte kann so nicht in See stechen, es werden mehr Matrosen benÃ¶tigt.<br>";
 		} else $gArmy->transport = false;
 		?>
 		
@@ -543,8 +543,8 @@ class cInfoArmy extends cInfoBase {
 		
 		<?php if (intval($gArmy->flags) & kArmyFlag_Captured) {?>
 			<?=cText::Wiki("gekapert",0,true)?> Diese <?=$gArmyType[$gArmy->type]->name?> ist gekapert,
-			Sie muss erst zu einem Hafen gebracht und aufgelöst werden, um die Schiffe den eigenen Flottenverbänden einzuverleiben,
-			bis dahin kann sie nicht kämpfen (Angriff=0).
+			Sie muss erst zu einem Hafen gebracht und aufgelÃ¶st werden, um die Schiffe den eigenen FlottenverbÃ¤nden einzuverleiben,
+			bis dahin kann sie nicht kÃ¤mpfen (Angriff=0).
 		<?php } // endif?>
 		
 		
@@ -613,7 +613,7 @@ class cInfoArmy extends cInfoBase {
 			<tr><td colspan=6><input type=radio name=useditem value=0 <?=$gArmy->useditem==0?"checked":""?>> kein Gegenstand aktiviert</td></tr>
 			<?php foreach($gArmyItems as $i) {?>
 				<tr>
-				<?php if ($gCanControllArmy) { // doch cancontroll.. gc ist der erstatz für das account daten austauschen.?>
+				<?php if ($gCanControllArmy) { // doch cancontroll.. gc ist der erstatz fÃ¼r das account daten austauschen.?>
 					<td><input type=radio name=useditem value=<?=$i->id?> <?=$gArmy->useditem==$i->id?"checked":""?>></td>
 					<td>
 						<?php if (cItem::canUseItem($i,$gArmy)) {?>
@@ -634,7 +634,7 @@ class cInfoArmy extends cInfoBase {
 			<?php }?>
 			</table>
 			<?php if ($gCanControllArmy) {?>
-				<input type="submit" name="save" value="übernehmen">
+				<input type="submit" name="save" value="Ãœbernehmen">
 				<input type="submit" name="drop" value="ablegen">
 				<a href="<?=query("?sid=?&x=?&y=?&do=itemdropall&army=".$gArmy->id)?>">
 					<img src="<?=g("drop.png")?>" border=0 alt="ablegen" title="ablegen">alles ablegen
@@ -666,7 +666,7 @@ class cInfoArmy extends cInfoBase {
 				$gArmy->verluste = cUnit::GetUnitsDiff($gArmy->units,$gArmy->flucht_units);
 				?>
 				<?php if ($escape_n || $escape_w || $escape_s || $escape_e) {?>
-					Flucht möglich nach : 
+					Flucht mÃ¶glich nach : 
 					<form method="post" action="<?=Query("?sid=?&x=?&y=?")?>">
 					<input type="hidden" name="army" value="<?=$gArmy->id?>">
 					<input type="hidden" name="do" value="flee">
@@ -686,8 +686,8 @@ class cInfoArmy extends cInfoBase {
 						</tr>
 					</table>
 					</form>
-					Warnung, bei einer Flucht verliert man alle Gegenstände,<br>
-					die Hälfte der Frags und die Hälfte der Truppenstärke :<br>
+					Warnung, bei einer Flucht verliert man alle GegenstÃ¤nde,<br>
+					die HÃ¤lfte der Frags und die HÃ¤lfte der TruppenstÃ¤rke :<br>
 					<table border=1 cellspacing=0><tr>
 						<?php foreach ($gArmy->verluste as $o) { $key = $o->type; $val = $o->amount;?>
 							<th><img src="<?=g($gUnitType[$key]->gfx)?>" alt="<?=$gUnitType[$key]->name?>" title="<?=$gUnitType[$key]->name?>" class="picframe"></th>
@@ -698,9 +698,9 @@ class cInfoArmy extends cInfoBase {
 						<?php }?>
 					</tr>
 					</table>
-					Am besten schon vor der Flucht die nächsten Wegpunkte setzen, damit die Armee gleich losrennen kann.<br>
+					Am besten schon vor der Flucht die nÃ¤chsten Wegpunkte setzen, damit die Armee gleich losrennen kann.<br>
 				<?php } else {?>
-					Flucht nicht möglich
+					Flucht nicht mÃ¶glich
 				<?php } // endif?>
 			<?php } // endif not fighting?>
 			
@@ -720,7 +720,7 @@ class cInfoArmy extends cInfoBase {
 			}
 			?> 
 			
-			Routenlänge: <?=$routelength?> Felder , <?=max(0,$wplen-1)?> Wegpunkte<br>
+			RoutenlÃ¤nge: <?=$routelength?> Felder , <?=max(0,$wplen-1)?> Wegpunkte<br>
 			<?php foreach ($gWaypoints as $o) if ($o->priority > 0) {?>
 			<a href="<?=SessionLink("../".kMapScript."?x=".$o->x."&y=".$o->y."&army=".$gArmy->id)?>" target="map"><?=$o->x?>,<?=$o->y?></a>
 			<?php }?>
@@ -730,15 +730,15 @@ class cInfoArmy extends cInfoBase {
 				<INPUT TYPE="hidden" NAME="do" VALUE="setwaypointlist">
 				<INPUT TYPE="hidden" NAME="army" VALUE="<?=$gArmy->id?>">
 				<INPUT TYPE="text" NAME="pointlist" style="width:200px">
-				<INPUT TYPE="submit" VALUE="wegpunkte hinzufügen">(z.b. "-1,10 5,-10 5,20")
+				<INPUT TYPE="submit" VALUE="wegpunkte hinzufÃ¼gen">(z.b. "-1,10 5,-10 5,20")
 			</FORM>
 			<?php if ($wplen > 0) {?>
-			<a href="<?=Query("?sid=?&x=?&y=?&do=delallwaypoints&army=".$gArmy->id)?>">(alle Wegpunkte löschen)</a><br>
+			<a href="<?=Query("?sid=?&x=?&y=?&do=delallwaypoints&army=".$gArmy->id)?>">(alle Wegpunkte lÃ¶schen)</a><br>
 			<a href="<?=Query("?sid=?&x=?&y=?&calctraveltime=".$gArmy->id)?>">(Reisezeit Berechnen)</a><br>
-			<a href="<?=Query("?sid=?&x=?&y=?&do=returnwaypoints&army=".$gArmy->id)?>">(Rückweg setzen)</a><br>
+			<a href="<?=Query("?sid=?&x=?&y=?&do=returnwaypoints&army=".$gArmy->id)?>">(RÃ¼ckweg setzen)</a><br>
 			<a href="javascript:WPMap(<?=$gArmy->id?>)">(WPMap)</a><br>
 			<?php }?>
-			Man kann Wegpunkte auch bequem in der Karte setzen, in dem man <img src='<?=g("tool_wp.png")?>'> für einzelne Wegpunkte und <img src='<?=g("tool_route.png")?>'> für die Wegfindung verwendet,
+			Man kann Wegpunkte auch bequem in der Karte setzen, in dem man <img src='<?=g("tool_wp.png")?>'> fÃ¼r einzelne Wegpunkte und <img src='<?=g("tool_route.png")?>'> fÃ¼r die Wegfindung verwendet,
 			funktioniert allerdings nur auf kurze Entfernungen.<br>
 			
 			<?php if (isset($f_calctraveltime) && intval($f_calctraveltime) == $gArmy->id) {
@@ -769,9 +769,9 @@ class cInfoArmy extends cInfoBase {
 				<?php if ($blocked) { list($x,$y) = $blocked; ?>
 					<h3><font color=red>WEG BLOCKIERT BEI <a href="<?=SessionLink("../".kMapScript."?x=".$x."&y=".$y."&army=".$gArmy->id)?>" target="map">(<?=$x?>,<?=$y?>)</a></font></h3>
 				<?php }?>
-				Die Reisezeit <?=$blocked?" <b>bis zum Hindernis</b>":""?> beträgt mindestens <?=Duration2Text($traveltime)?>,<br>
-				Ankunft frühestens <?=date("d.m H:i",time()+$traveltime)?><br>
-				Durch Kämpfe, Hindernisse, Befehle, Rohstoffsammlungen und diverse andere Ereignisse, kann die Armee natürlich aufgehalten werden.
+				Die Reisezeit <?=$blocked?" <b>bis zum Hindernis</b>":""?> betrÃ¤gt mindestens <?=Duration2Text($traveltime)?>,<br>
+				Ankunft frÃ¼hestens <?=date("d.m H:i",time()+$traveltime)?><br>
+				Durch KÃ¤mpfe, Hindernisse, Befehle, Rohstoffsammlungen und diverse andere Ereignisse, kann die Armee natÃ¼rlich aufgehalten werden.
 				<?php
 			} /* endif calctraveltime   */?>
 			
@@ -783,19 +783,19 @@ class cInfoArmy extends cInfoBase {
 		
 			<?php $terraintype = cMap::StaticGetTerrainAtPos($gArmy->x,$gArmy->y);?>
 			<?php if (($coltime = cArmy::GetArmyCollectTime($gArmy,$terraintype)) == 0) { ?>
-				Auf diesem Gelände kann nichts geerntet werden.<br>
+				Auf diesem GelÃ¤nde kann nichts geerntet werden.<br>
 			<?php } else if ($gArmy->idle < $coltime) { ?>
-				Noch <?=$rest = ceil(($coltime - $gArmy->idle)/60)?> <?=($rest > 1)?"Minuten":"Minute"?> bis das Ernten möglich ist.<br>
+				Noch <?=$rest = ceil(($coltime - $gArmy->idle)/60)?> <?=($rest > 1)?"Minuten":"Minute"?> bis das Ernten mÃ¶glich ist.<br>
 			<?php } else { ?>
 				<form method=post action="<?=Query("?sid=?&x=?&y=?&army=".$gArmy->id."&do=armycollect")?>">
 				<input type="submit" name="armycollect" value="einsammeln"></form>
 			<?php } ?>
 			<?php if($gArmy->nextactiontime - time() > 0) {?>
-				Nächste Aktion in <?=$gArmy->nextactiontime - time()?> Sekunden<br>
+				NÃ¤chste Aktion in <?=$gArmy->nextactiontime - time()?> Sekunden<br>
 			<?php } ?>
 			<?php $sum = cUnit::GetUnitsSum($gArmy->units);?>
 			<?php if($sum > kArmy_BigArmyGoSlowLimit) {?>
-				Geschwindigkeitsfaktor wegen Armeegrösse (<?=floor($sum)?>) : <?=round(pow(kArmy_BigArmyGoSlowFactorPer1000Units,($sum - kArmy_BigArmyGoSlowLimit) / 1000),2)?><br>
+				Geschwindigkeitsfaktor wegen ArmeegrÃ¶ÃŸe (<?=floor($sum)?>) : <?=round(pow(kArmy_BigArmyGoSlowFactorPer1000Units,($sum - kArmy_BigArmyGoSlowLimit) / 1000),2)?><br>
 			<?php } ?>
 			Armee Geschwindigkeit (soviele Sekunden muss sie pro Feld mindestens warten): <?=ceil(cArmy::getArmySpeed($gArmy))?><br>
 			das entspricht etwa <?=speedformat(cArmy::getArmySpeed($gArmy))?> Felder/h<br>
@@ -846,7 +846,7 @@ class cInfoArmy extends cInfoBase {
 						case ARMY_ACTION_PILLAGE:
 							$target = sqlgetobject("SELECT * FROM `building` WHERE `x`=".$c->param1." AND `y`=".$c->param2);
 							if ($target) {?>
-								<?=cArmy::DrawPillageRes($c->param3)?> plündern aus <a href="<?=Query("?sid=?&x=".$target->x."&y=".$target->y)?>">
+								<?=cArmy::DrawPillageRes($c->param3)?> plÃ¼ndern aus <a href="<?=Query("?sid=?&x=".$target->x."&y=".$target->y)?>">
 								<?=$gBuildingType[$target->type]->name?>
 								(<?=$target->x?>|<?=$target->y?>)</a>
 							<?php } else sql("DELETE FROM `armyaction` WHERE `id`=".$c->id);
@@ -957,7 +957,7 @@ class cInfoArmy extends cInfoBase {
 						<OPTION VALUE="<?=$o->id?>" <?=($o->id == $gUser->lastusedarmy)?"selected":""?>><?=$o->name?> <?=($o->user!=$gUser->id)?("(".$o->owner.")"):""?></OPTION>
 					<?php }?>
 					</SELECT>
-					<input type="submit" value="beschießen">
+					<input type="submit" value="beschieÃŸen">
 					</form>
 				<?php }?>
 			</td>

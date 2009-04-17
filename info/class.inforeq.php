@@ -7,8 +7,8 @@ class cInfoReq {
 	function PrintHeader () {  ImgBorderStart("s1","jpg","#ffffee","",32,33); }
 	function PrintFooter () {  ImgBorderEnd("s1","jpg","#ffffee",32,33); echo "<hr>"; }
 	
-	// setzt eine mini-tabelle mit einem bild links und  (min/max ¸ber einer abs($level)) rechts   zusammen
-	// rechnet aus ob das level erf¸llt ist, und f‰rbt dann gr¸n bzw rot
+	// setzt eine mini-tabelle mit einem bild links und  (min/max √ºber einer abs($level)) rechts   zusammen
+	// rechnet aus ob das level erf√ºllt ist, und f√§rbt dann gr√ºn bzw rot
 	// entweder $ttype oder $btype oder keines von beiden gesetzt
 	function LevelMinMaxTable ($pic,$level,$ismax,$ttype=false,$btype=false) {
 		global $gUser;
@@ -49,12 +49,12 @@ class cInfoReq {
 			// calculate interdepance
 			$where = array(); // wo kann diese forschung erforscht werden ?
 			$mytechs = array(); // was kann hier erforscht werden ?
-			$need = array(); // das wird benˆtigt
+			$need = array(); // das wird ben√∂tigt
 			$enables = array();
 			$disables = array();
 			$enables_techs = array();
 			foreach ($gBuildingType as $x) if (!$x->special) {
-				// Geb‰ude
+				// Geb√§ude
 				$reqs = ParseReqForATechLevel($ttype?$x->req_tech:$x->req_geb);
 				$add = '<a href="'.Query("?sid=?&x=?&y=?&infobuildingtype=".$x->id).'"><img class="picframe" alt="." src="'.g($x->gfx,"ns",1,$gUser->race).'"></a>';
 				if ($o) foreach ($reqs as $req) if ($req->type == $mytypeid) {
@@ -131,7 +131,7 @@ class cInfoReq {
 			<h3>ab Level <?=$level?></h3><hr>
 			<table border=0>
 			<?php if (count($need) > 0) {?>
-				<tr><th align="left" nowrap>Benˆtigt</th><td><?=implode("",$need)?></td></tr>
+				<tr><th align="left" nowrap>Ben√∂tigt</th><td><?=implode("",$need)?></td></tr>
 			<?php } // endforeach?>
 			<?php if (count($where) > 0) {?>
 				<tr><th align="left" nowrap>Erforschbar in</th><td><?=implode("",$where)?></td></tr>
@@ -143,7 +143,7 @@ class cInfoReq {
 				<tr><th align="left" nowrap>Level <?=$level?> verhindert</th><td><?=implode("",$arr)?></td></tr>
 			<?php } // endforeach?>
 			<?php foreach ($enables as $level => $arr) {?>
-				<tr><th align="left" nowrap>Level <?=$level?> ermˆglicht</th><td><?=implode("",$arr)?></td></tr>
+				<tr><th align="left" nowrap>Level <?=$level?> erm√∂glicht</th><td><?=implode("",$arr)?></td></tr>
 			<?php } // endforeach?>
 			</table>
 		
@@ -206,12 +206,12 @@ class cInfoReq {
 		<?=$mytopbuilding?("<a href='".Query("info.php?sid=?&x=".$mytopbuilding->x."&y=".$mytopbuilding->y)."'>"):""?>
 		<img border=0 class="picframe" src="<?=g($o->gfx,"ns",1,$gUser->race)?>"> <?=cText::Wiki("building",$o->id,true)?> <?=$o->name?> 
 		<?=$mytopbuilding?("</a>"):""?>
-			(Geb‰udeTyp, <?=($mytopbuilding->level>=0)?("Level $mytopbuilding->level"):"noch nicht gebaut"?>)<?
+			(Geb√§udeTyp, <?=($mytopbuilding->level>=0)?("Level $mytopbuilding->level"):"noch nicht gebaut"?>)<?
 		cInfoReq::PrintRequirements(0,20,$o->req_geb,$o->req_tech,0,$o->id);
 		echo "...";
 		?>
 		<table border=1>
-			<tr><th>keines darf angrenzen</th><th>min. eines muﬂ in der N‰he sein</th><th>min. eines muﬂ angrenzen</th></tr>
+			<tr><th>keines darf angrenzen</th><th>min. eines mu√ü in der N√§he sein</th><th>min. eines mu√ü angrenzen</th></tr>
 			<tr>
 				<td><?php foreach($gBuildingType[$type]->exclude_building as $x){ ?>
 				<img src="<?=g($gBuildingType[$x]->gfx)?>" title="<?=$gBuildingType[$x]->name?>" alt="<?=$gBuildingType[$x]->name?>">

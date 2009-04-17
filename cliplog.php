@@ -11,6 +11,7 @@ if (isset($f_log)) {
 }
 ?>
 <html><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 <SCRIPT LANGUAGE="JavaScript" type="text/javascript">
 <!--
 	function logclipboard() {

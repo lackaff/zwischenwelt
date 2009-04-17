@@ -33,7 +33,7 @@ include("header.php");
 Dier hier ist die offizielle Schnittstelle um Material wie Graphiken oder &auml;hnliches einzuschicken.
 Ob das ganze dann in den offiziellen Source kommt h&auml;ngt von der Qualit&auml;t der Sachen ab, und
 ob sie vom Stil her zu den restlichen Sachen passen. Es d&uuml;rfen nur eigene Sachen oder welche an denen man die 
-Urheberrechte hat hochgeladen werden. Außerdem muß man mit den Lizenzbestimmungen einverstanden sein.
+Urheberrechte hat hochgeladen werden. AuÃŸerdem muÃŸ man mit den Lizenzbestimmungen einverstanden sein.
 Code wird unter der GPL ver&ouml;ffentlicht und andere Daten unter der 
 <a target="_blank" href="http://creativecommons.org/licenses/by-nc-sa/2.0/">[CC]Attribution-NonCommercial-ShareAlike 2.0</a>.
 Alle Daten mit eventuellen Hinweisen bitte in ein Archiv zusammenpacken (zB. zip, tar,bz2) und das Archiv hochladen. Einzelne Dateien muss man nicht
@@ -48,11 +48,11 @@ werden zusammen mit den hochgeladenen Daten gespeichert, damit es m&ouml;glich i
 		<tr><td>eMail</td><td><input type="text" name="mail" size=32 value="<?=$_REQUEST["mail"]?>"> (zB. hans.m@domain.de) <b>(notwendig)</b></td></tr>
 		<tr><td>Archiv Datei</td><td><input name="archiv" type="file" size=32>(zB. zip, tar.bz2) <b>(notwendig)</b></td></tr>
 		<tr><td>Zustimmung</td><td>
-			<input type="checkbox" name="ok" value=1> Ja, ich bin damit einverstanden, daß meine hochgeladenen Daten unter GPL (Code) 
+			<input type="checkbox" name="ok" value=1> Ja, ich bin damit einverstanden, daÃŸ meine hochgeladenen Daten unter GPL (Code) 
 			und [CC]Attribution-NonCommercial-ShareAlike 2.0 (nicht Code) ver&ouml;ffentlicht werden. <b>(notwendig)</b>
 		</td></tr>
 		<tr><td></td><td style="color:gray;font-style:italic;">
-			<input type="checkbox" name="complete" value=1> Ich überlasse dem ZW Team die kompletten Rechte über die Materialien, damit sie z.b. auch in anderen Projekten verwendet werden können.
+			<input type="checkbox" name="complete" value=1> Ich Ã¼berlasse dem ZW Team die kompletten Rechte Ã¼ber die Materialien, damit sie z.b. auch in anderen Projekten verwendet werden kÃ¶nnen.
 			<b>(optional)</b>
 		</td></tr>
 		<tr><td></td><td><input type="submit" name="upload" value="hochladen"></td></tr>
@@ -61,23 +61,23 @@ werden zusammen mit den hochgeladenen Daten gespeichert, damit es m&ouml;glich i
 
 
 <h3>Animation</h3>
-Wir können auch animierte Gifs einbauen, z.b. für brodelnde Lava Landschaft, oder Gebäude mit rauchenden Schornsteinen oder beweglichen Teilen (Wasser-/Wind-Mühlen),
-allerdings muss die Dateigrösse möglichst klein sein, also nicht zuviele Frames verwenden.
+Wir kÃ¶nnen auch animierte Gifs einbauen, z.b. fÃ¼r brodelnde Lava Landschaft, oder GebÃ¤ude mit rauchenden Schornsteinen oder beweglichen Teilen (Wasser-/Wind-MÃ¼hlen),
+allerdings muss die DateigrÃ¶ÃŸe mÃ¶glichst klein sein, also nicht zuviele Frames verwenden.
 Wer selbst kein Programm hat, um die Animation zu erstellen, kann auch Einzelbilder machen,
 und im <a href="http://zwischenwelt.org/gifmaker.php">ZW-GifMaker</a> zu einer Animation zusammenstellen lassen.<br>
-In <a href="http://zwischenwelt.org/forum/index.php?t=msg&th=546&start=0">diesem Thread</a> gibts unter anderem Infos über gängige Programme.
+In <a href="http://zwischenwelt.org/forum/index.php?t=msg&th=546&start=0">diesem Thread</a> gibts unter anderem Infos Ã¼ber gÃ¤ngige Programme.
 
 <h3>Landschaftsgrafiken</h3>
-Für Landschaftsgrafiken bitte am besten
+FÃ¼r Landschaftsgrafiken bitte am besten
 <ul>
 <li>4*4 Matrix = 16 einzelne Grafiken</li>
 <li>25 x 25 Pixel pro Grafik</li>
 <li>PNG Format</li>
-<li>benannt nach NWSE (Nord-West-Süd-Ost(=east))-System (siehe unten)</li>
+<li>benannt nach NWSE (Nord-West-SÃ¼d-Ost(=east))-System (siehe unten)</li>
 <li>alle 16 grafiken zusammenpacken (zB. zip, tar,bz2) und hier hochladen</li>
 </ul>
-dann ist das Einbauen am einfachsten für uns.<br>
-Beispiele für die solche Tiles findet man im Grafikpacket, das man im Spiel
+dann ist das Einbauen am einfachsten fÃ¼r uns.<br>
+Beispiele fÃ¼r die solche Tiles findet man im Grafikpacket, das man im Spiel
 unter dem Menupunkt "Einstellungen" runterladen kann.<br>
 Vielen Dank an alle, die etwas beitragen !<br>
 Beispiel 4*4 Matrix mit guter Benennung : <table>

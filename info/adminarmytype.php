@@ -18,7 +18,7 @@ $form = new cTableEditForm("?sid=?&id=$f_id","armeetyp $f_id editieren",
 			new cTableEditTextField("armytype","id",$f_id,"Name","name"),
 			new cTableEditTextField("armytype","id",$f_id,"Limit-Anzahl","limit"),
 			new cTableEditTextField("armytype","id",$f_id,"Limit-Gewicht","weightlimit"),
-			new cTableEditTextField("armytype","id",$f_id,"AddTechs(tech:+erhöhung)","addtechs"),
+			new cTableEditTextField("armytype","id",$f_id,"AddTechs(tech:+erhÃ¶hung)","addtechs"),
 			new cTableEditTextField("armytype","id",$f_id,"SubTechs(tech:+senkung)","subtechs"),
 			new cTableEditFlagField("armytype","id",$f_id,"Flags, die der Spieler einstellen kann","ownerflags",$gArmyFlagNames),
 			//new cTableEditFlagField("armytype","id",$f_id,"TypeFlags","flags",$gArmyTypeFlagNames),
@@ -38,7 +38,7 @@ echo "<a href='".Query("adminarmytype.php?sid=?&new=1")."'>[new armytype]</a><br
 foreach ($gArmyTransfer as $o) echo "<a href='".Query("adminarmytransfer.php?sid=?&id=".$o->id)."'>edit armytransfer ".cTransfer::GetArmyTransferName($o->id)."</a><br>";
 echo "<a href='".Query("adminarmytransfer.php?sid=?&new=1")."'>[new armytransfer]</a><br>";
 $form->Show();
-echo "SpielerFlags : Diese Flags kann der Spieler für diesen Armeetyp setzen<br>";
+echo "SpielerFlags : Diese Flags kann der Spieler fÃ¼r diesen Armeetyp setzen<br>";
 require_once("footer.php"); 
 
 ?>

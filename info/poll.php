@@ -26,9 +26,9 @@ $tabs = array(
   array("Alle anzeigen","",query("poll.php?tab=1&sid=?")),
 );
 if($gUser->admin){
-  //das hier kann nur der admin (löschen, erstellen)
+  //das hier kann nur der admin (lÃ¶schen, erstellen)
   $tabs[] = array("Verwalten","",query("poll.php?tab=2&sid=?"));
-  //eine umfrage löschen
+  //eine umfrage lÃ¶schen
   if(isset($f_delpoll)){
     $id = intval($f_delpoll);
     sql("DELETE FROM `poll` WHERE `id`=$id");

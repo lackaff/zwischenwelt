@@ -34,8 +34,8 @@ class cInfoBroid extends cInfoBuilding {
 		
 		B.R.O.I.D. - Blue Ray Of Instant Death<br>
 		<br>
-		Dieser Turm ist für Administrative Maßnahmen, 
-		damit kann	man alles auf beliebigen Koordinaten zerstören.<br>
+		Dieser Turm ist fÃ¼r Administrative MaÃŸnahmen, 
+		damit kann	man alles auf beliebigen Koordinaten zerstÃ¶ren.<br>
 		<br>
 		
 		<?php if($gObject->user == $gUser->id) { ?>

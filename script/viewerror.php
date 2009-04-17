@@ -41,7 +41,7 @@ foreach($t as $x){
 			<form method=post action=?>
 				<input type=hidden name=line value="<?=$x->scriptlinenum?>">
 				<input type=hidden name=file value="<?=$x->scriptname?>">
-				<input type=submit value="löschen">
+				<input type=submit value="lÃ¶schen">
 			</form>
 		</td>
 	</tr>

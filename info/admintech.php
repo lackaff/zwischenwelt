@@ -41,7 +41,7 @@ new cTableEditForm("?sid=?&id=$f_id","TechnologyType $f_id editieren",
 			new cTableEditIMGUrl("technologytype","id",$f_id,"Bild","gfx")
 		)),
 		new cTableEditRows(array(
-			new cTableEditRadioField("technologytype","id",$f_id,"Geb‰ude","buildingtype",$buildings),
+			new cTableEditRadioField("technologytype","id",$f_id,"Geb√§ude","buildingtype",$buildings),
 			new cTableEditRadioField("technologytype","id",$f_id,"Gruppe","group",$groups)
 		))
 	))

@@ -35,7 +35,7 @@ foreach ($techids as $tid) {
 	$techbuffer[2][$tid] = isset($f_tech[2][$tid])?$f_tech[2][$tid]:0;
 }
 
-// units in den armeen und gebäuden des users zählen
+// units in den armeen und gebÃ¤uden des users zÃ¤hlen
 if (!isset($f_units[1])) if ($army) {
 	$f_units[1] = AF(cUnit::GetUnits($army->id),"amount","type");
 	array_walk($f_units[1],"walkint");
@@ -58,6 +58,7 @@ $armyname = array(1=>"eigene",2=>"Feind");
    "http://www.w3.org/TR/html4/transitional.dtd">
 <html>
 <head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 <link rel="stylesheet" type="text/css" href="<?=GetZWStylePath()?>">
 <title>Zwischenwelt - Kampfsim</title>
 </head>
@@ -91,7 +92,7 @@ include("../menu.php");
 	<?php }?>
 	</tr>
 	</table>
-	(<?=cText::Wiki("Kämpfen",0,true)?>Seekampf funktioniert nach anderen Regeln, hierfür gibt es keinen Simulator )
+	(<?=cText::Wiki("KÃ¤mpfen",0,true)?>Seekampf funktioniert nach anderen Regeln, hierfÃ¼r gibt es keinen Simulator )
 	
 	<h4>Techs</h4>
 	<table><tr><td valign="top">
@@ -203,10 +204,10 @@ if (isset($f_calc)) {
 	$army2->anfang_units = $army2->units;
 	$armies = array(1=>$army1,2=>$army2);
 	
-	echo "<hr><h3>Stärke</h3>";
+	echo "<hr><h3>StÃ¤rke</h3>";
 
 	?>
-	<?php /* stärke */ ?>
+	<?php /* stÃ¤rke */ ?>
 	<?php for ($i=1;$i<=2;$i++) {?>	
 		<?=$armyname[$i]?><br>
 		insgesamt <?=cUnit::GetUnitsSum($armies[$i]->units)?> Einheiten<br>

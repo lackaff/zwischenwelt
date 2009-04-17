@@ -25,7 +25,7 @@ function sendMessage($to,$from,$subject,$text,$type=0,$tosent=TRUE)
 			$len = sizeof($l);
 			$i = rand(0,$len-1);
 			$subject = trim($l[$i]);
-			$text = "Der Betreff enth‰lt einen zuf‰lligen Text,\nda der Absender keinen eingegeben hat!\n----------------------------------------------------\n".$text;
+			$text = "Der Betreff enth√§lt einen zuf√§lligen Text,\nda der Absender keinen eingegeben hat!\n----------------------------------------------------\n".$text;
 		} else $subject = " - KEIN BETREFF - ";
 	}
 	if(!empty($to) && !empty($subject) && !empty($text)){

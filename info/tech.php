@@ -33,6 +33,7 @@ function listTechThatDependOn($id) {
    "http://www.w3.org/TR/html4/transitional.dtd">
 <html>
 <head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 <link rel="stylesheet" type="text/css" href="<?=GetZWStylePath()?>">
 <title>Zwischenwelt - Forschung</title>
 
@@ -52,7 +53,7 @@ include("../menu.php");
 	<b>laufende Forschungen</b><br>
 	
 	<table border=1>
-	<tr><th></th><th>Name</th><th>Gebäude</th><th>Restzeit</th></tr>
+	<tr><th></th><th>Name</th><th>GebÃ¤ude</th><th>Restzeit</th></tr>
 	<?php
 	$t = sqlgettable("SELECT * FROM `technology` WHERE `user`=".$gUser->id." AND `upgradetime`>0","id");
 	
@@ -77,8 +78,8 @@ include("../menu.php");
 	$t = sqlgettable("SELECT * FROM `technology` WHERE `level`>0 AND `user`=".$gUser->id,"id");
 	
 	foreach($t as $x){
-		//wenn es den technik typ nicht mehr gibt, dann lösch die technik
-		if(!$gTechnologyType[$x->type]){
+		//wenn es den technik typ nicht mehr gibt, dann lÃ¶sch die technik
+		if(!isset($gTechnologyType[$x->type])){
 			sql("DELETE FROM `technology` WHERE `user`=".$gUser->id." AND `id`=".$x->id);
 			continue;
 		}
@@ -140,7 +141,7 @@ if(!empty($f_tech)){
 <br>
 <div class="showtechdep">
 <table border=1>
-	<tr><th>Vorraussetzung für</th><th>ausgewählt</th><th>braucht man dafür</th></tr>
+	<tr><th>Vorraussetzung fÃ¼r</th><th>ausgewÃ¤hlt</th><th>braucht man dafÃ¼r</th></tr>
 	<tr><td>
 		<?php
 		$l = listTechThatDependOn($f_tech);

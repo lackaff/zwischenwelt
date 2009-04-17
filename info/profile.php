@@ -87,6 +87,7 @@ if(isset($f_do)){
    "http://www.w3.org/TR/html4/transitional.dtd">
 <html>
 <head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 <link rel="stylesheet" type="text/css" href="<?=GetZWStylePath()?>">
 <title>Zwischenwelt - Einstellungen</title>
 
@@ -156,7 +157,7 @@ require_once("../lib.guild.php");
 <table>
 <tr><?php foreach($gRes as $n=>$f)echo '<td><img alt="'.$f.'" src="'.g('res_'.$f.'.gif').'"><td align="right"><input value="0" type="text" size="8" name="'.$f.'"></td>'; 
 $s=sqlgetobject("SELECT `value` FROM `guild_pref` WHERE `var`='schulden_".$gUser->id."'");?>
-<td><input type=submit name=give value="<?=($s && $s->value > 0)?"Zurückzahlen":"Spenden"?>"></td>
+<td><input type=submit name=give value="<?=($s && $s->value > 0)?"ZurÃ¼ckzahlen":"Spenden"?>"></td>
 </tr>
 </table>
 </form><?}else echo "du bist in der weltbank<br>"?>
@@ -170,15 +171,15 @@ $s=sqlgetobject("SELECT `value` FROM `guild_pref` WHERE `var`='schulden_".$gUser
 	<tr><td colspan=2>hier kann man den Pfad zu den lokalen Graphiken eintragen oder leer lassen, um die online Graphiken zu verwenden. <a href="http://zwischenwelt.org/gfx.zip"><u><b>hier</b></u></a> kann man das Graphik Packet runterladen. Einfach lokal enpacken (es wird ein gfx/ Ordner angelegt) und den Browserkompatiblen Pfad zum Verzeichnis, in das es entpackt wurde + gfx/, angeben.</td></tr>
 	<tr><th>Ein alternatives GFX-Pack von Baruso</th><td><a href="http://zwischenwelt.org/tmp/barusogfx.zip"><u><b>barusogfx.zip</b></u></a>(Achtung, wird von uns nicht aktuell gehalten, kann also sein, dass Grafiken fehlen, siehe <a href="http://zwischenwelt.org/forum/index.php?t=msg&th=717"><u><b>thread im forum</b></u></a>)</td></tr>
 	<tr><th>GFX-Pack unter Firefox 1.5</th><td>
-		Für Firefox 1.5 muss man aus Sicherheitsgründen Webseiten extra erlauben, solche Grafikpackete zu verwenden, wie das geht steht <a href="http://www.firefox-browser.de/wiki/Lokale_Bilder"><u><b>hier</b></u></a>.<br>
-		Im Prinzip muss man in die user.js nur folgende Zeilen einfügen:
+		FÃ¼r Firefox 1.5 muss man aus SicherheitsgrÃ¼nden Webseiten extra erlauben, solche Grafikpackete zu verwenden, wie das geht steht <a href="http://www.firefox-browser.de/wiki/Lokale_Bilder"><u><b>hier</b></u></a>.<br>
+		Im Prinzip muss man in die user.js nur folgende Zeilen einfÃ¼gen:
 		<pre>
 		user_pref("capability.policy.policynames", "localfilelinks"); 
 		user_pref("capability.policy.localfilelinks.sites", "http://www.zwischenwelt.org"); 
 		user_pref("capability.policy.localfilelinks.checkloaduri.enabled", "allAccess"); 
 		</pre>
 		Achtung, NICHT http://zwischenwelt.org  (ohne www) , sondern immer MIT "www.", scheint sonst Probleme zu geben.<br>
-		Vielen Dank an scara2 für diese Tipps <br>
+		Vielen Dank an scara2 fÃ¼r diese Tipps <br>
 		Wenns immernoch nicht geht, mal in diesen forums-thread gucken bitte : 
 		<a href="http://forum.zwischenwelt.org/index.php?t=msg&amp;goto=11014">hier</a>
 		</td></tr>
@@ -192,7 +193,7 @@ $s=sqlgetobject("SELECT `value` FROM `guild_pref` WHERE `var`='schulden_".$gUser
 	<?php foreach($flaglist as $flag => $text){ ?>
 	<tr><td colspan=2><input type="checkbox" name="flag_<?=$flag?>" value="1" <?=(intval($gUser->flags) & $flag?"checked":"")?>> <b><?=$text?></b> 
 	<?php } ?>
-	<tr><td colspan=2 align=left><input type="submit" name="ok" value="übernehmen"></td></tr>
+	<tr><td colspan=2 align=left><input type="submit" name="ok" value="Ã¼bernehmen"></td></tr>
 </table>
 </form>
 
@@ -202,7 +203,7 @@ $s=sqlgetobject("SELECT `value` FROM `guild_pref` WHERE `var`='schulden_".$gUser
 <form action="<?=Query("profile.php?sid=?")?>" method="post">
 	<input type="hidden" name="do" value="change color">
 	<b>Farbe:</b> <input style="border:solid <?=$gUser->color?> 2px" type="text" size="8" name="color" value="<?=$gUser->color?>"> 
-	<input type="submit" name="set" value="übernehmen">
+	<input type="submit" name="set" value="Ã¼bernehmen">
 	<input type="submit" name="random" value="zufall">
 </form>
 	

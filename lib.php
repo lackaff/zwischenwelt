@@ -418,6 +418,7 @@ function sql	($query) {
 		mysql_select_db(MYSQL_DB)
 		//	or exit("Could not select database");
 			or exit("Could not select database ".MYSQL_DB);
+		mysql_query("SET NAMES 'utf8'");
 		$gConnected = true;
 	}
 	$gSqlQueries++;

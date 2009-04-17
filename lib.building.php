@@ -166,7 +166,7 @@ class cBuilding {
 		if (!$building || $building->user != $userid) return false;
 		
 		require_once("lib.fight.php");
-		cFight::StopAllBuildingFights($building,"Das Gebäude _BUILDINGTYPE_ bei (_x_,_y_) von _BUILDINGOWNERNAME_ wurde zerstört.");
+		cFight::StopAllBuildingFights($building,"Das GebÃ¤ude _BUILDINGTYPE_ bei (_x_,_y_) von _BUILDINGOWNERNAME_ wurde zerstÃ¶rt.");
 		
 		sql("DELETE FROM `building` WHERE `id`=".$building->id);
 		sql("DELETE FROM `action` WHERE `building`=".$building->id);
@@ -182,7 +182,7 @@ class cBuilding {
 				
 		$terraintype = cMap::StaticGetTerrainAtPos($building->x,$building->y);
 				
-		// in ruine oder schutt verwandeln, wenn es keine brücke oder ähnliches ist
+		// in ruine oder schutt verwandeln, wenn es keine brÃ¼cke oder Ã¤hnliches ist
 		if ($building->type != kBuilding_Bridge && $building->type != kBuilding_GB && rand(0,1) == 0) {
 			if (
 				($terraintype == kTerrain_Grass) && 
@@ -210,11 +210,11 @@ class cBuilding {
 		//TODO: wenn kaserne vernichtet wird armee (aus 80% der einheiten) erstellen wenn moeglich sonst units loeschen
 		//Wenn bruecke vernichtet wird und armee drauf steht sollten 50% ueberleben und in 2 armeen aufgesplittet werden
 		//beides evtl mit zufall auf basisprozente
-		// ghouly : aber wir müssen aufpassen das dadurch das armee limit nicht überschritten werden kann, 
+		// ghouly : aber wir mÃ¼ssen aufpassen das dadurch das armee limit nicht Ã¼berschritten werden kann, 
 		//   sonst werden das manche leute absichtlich machen mit milizenarmeen, und dann mit richtigen einheiten aufstocken.
-		//   ich finde nicht das man eine brücke auf der eine armee steht absichtlich einreissen können soll, das braucht arbeiter,
-		//   die die armee abschalchten würde, brücken werden ja schliesslich nicht mit sprengstoff drinnen gebaut.
-		//   evtl bei spielerlöschung sogar die brücken als spieler 0 gebäude da lassen.
+		//   ich finde nicht das man eine brÃ¼cke auf der eine armee steht absichtlich einreissen kÃ¶nnen soll, das braucht arbeiter,
+		//   die die armee abschalchten wÃ¼rde, brÃ¼cken werden ja schliesslich nicht mit sprengstoff drinnen gebaut.
+		//   evtl bei spielerlÃ¶schung sogar die brÃ¼cken als spieler 0 gebÃ¤ude da lassen.
 		
 		switch($building->type){
 			case kBuilding_HQ: {

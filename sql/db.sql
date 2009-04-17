@@ -2959,4 +2959,8 @@ ALTER TABLE `fire` ADD INDEX ( `created` );
 ALTER TABLE `buildingtype` ADD `collapse_prob` TINYINT NOT NULL; 
 ALTER TABLE `buildingtype` CHANGE `collapse_prob` `collapse_prob` SMALLINT UNSIGNED NOT NULL ;
 
+ALTER TABLE `user` ADD `dont_delete` TINYINT NOT NULL ;
+
 DROP TABLE `guild_right`;
+
+ALTER TABLE `user` ADD `dont_delete` TINYINT UNSIGNED NOT NULL;

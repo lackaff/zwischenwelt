@@ -25,6 +25,7 @@ if($gGuild){
    "http://www.w3.org/TR/html4/transitional.dtd">
 <html>
 <head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 <link rel="stylesheet" type="text/css" href="<?=GetZWStylePath()?>">
 <title>Zwischenwelt - Gilde</title>
 
@@ -54,7 +55,7 @@ else
 		<?php
 		foreach($members as $u){
 			$hq=sqlgetobject("SELECT `id`,`x`,`y` FROM `building` WHERE `user`=".$u->id." AND `type`=1");
-			if(!$hq->id) continue;
+			if(empty($hq)) continue;
 			$time=time();
 			$online = sqlgetone("SELECT `id` FROM `session` WHERE `userid`=".$u->id." AND $time-`lastuse`<300");
 			if($online)$online = "#338833"; 

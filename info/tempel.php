@@ -31,8 +31,8 @@ class cInfoTempel extends cInfoBuilding {
             case 2:
               $x = $pop * $moral_bad;
               $msg = "Die geopferten Bewohner werden ganz braun und kriegen krustige Haut,
-              auf einmal wachsen ihnen Blätter und sie fangen an Wurzeln zu schlagen.
-              Das ist die wahre Macht von rein biologischen Schampoo, du erhälst $x Holz !";
+              auf einmal wachsen ihnen BlÃ¤tter und sie fangen an Wurzeln zu schlagen.
+              Das ist die wahre Macht von rein biologischen Schampoo, du erhÃ¤lst $x Holz !";
               changeUserMoral($gUser->id,-round($pop/10000));
               sql("UPDATE `user` SET `lumber`=`lumber`+$x WHERE `id`=".$gUser->id);
             break;
@@ -40,34 +40,34 @@ class cInfoTempel extends cInfoBuilding {
             case 4:
               $x = $pop * $moral_bad;
               $msg = "Er hat Jehova gesagt ! Steinigt ihn !
-              Bääärte ! schöööne flauschige falsche Bääääärte !
+              BÃ¤rte ! schÃ¶ne flauschige falsche BÃ¤Ã¤rte !
               Kann es sein das Weibsfolk anwesend ist ?
               Eine Steinigung frei nach Monty Python.
-              Du erhälst $x Stein !";
+              Du erhÃ¤lst $x Stein !";
               changeUserMoral($gUser->id,-round($pop/10000));
               sql("UPDATE `user` SET `stone`=`stone`+$x WHERE `id`=".$gUser->id);
             break;
             case 5:
             case 6:
               $x = $pop * $moral_bad;
-              $msg = "Happy Kannibalen-Wochen bei McTempel, du erhälst $x Nahrung !";
+              $msg = "Happy Kannibalen-Wochen bei McTempel, du erhÃ¤lst $x Nahrung !";
               changeUserMoral($gUser->id,-round($pop/10000));
               sql("UPDATE `user` SET `food`=`food`+$x WHERE `id`=".$gUser->id);
             break;
             case 7:
             case 8:
               $x = $pop * $moral_bad;
-              $msg = "Den armen Opfern werden sämtliche Zahnspangen, Plomben
+              $msg = "Den armen Opfern werden sÃ¤mtliche Zahnspangen, Plomben
               und sonstige Implantate entfernt.
-              Du erhälst $x Metall !";
+              Du erhÃ¤lst $x Metall !";
               changeUserMoral($gUser->id,-round($pop/10000));
               sql("UPDATE `user` SET `metal`=`metal`+$x WHERE `id`=".$gUser->id);
             break;
             case 9:
               $x = floor($pop * $moral_bad / 100);
-              $msg = "*zap*rauch*bruzzel* Oh da haben sich wohl ein paar Leute aufgelöst.
+              $msg = "*zap*rauch*bruzzel* Oh da haben sich wohl ein paar Leute aufgelÃ¶st.
               Ah aber ein paar Zaubersteinchen sind geblieben.
-              Du erhälst $x Runen !";
+              Du erhÃ¤lst $x Runen !";
               changeUserMoral($gUser->id,-round($pop/10000));
               sql("UPDATE `user` SET `runes`=`runes`+$x WHERE `id`=".$gUser->id);
             break;
@@ -107,47 +107,47 @@ class cInfoTempel extends cInfoBuilding {
               case 1:
               case 2:
                 $msg = "Die geopferten Bewohner werden ganz braun und kriegen krustige Haut,
-                auf einmal wachsen ihnen Blätter und sie fangen an Wurzeln zu schlagen.
-                Das ist die wahre Macht von rein biologischen Schampoo, du erhälst $x Holz !";
+                auf einmal wachsen ihnen BlÃ¤tter und sie fangen an Wurzeln zu schlagen.
+                Das ist die wahre Macht von rein biologischen Schampoo, du erhÃ¤lst $x Holz !";
                 changeUserMoral($gUser->id,round($sum/10000));
                 sql("UPDATE `user` SET `lumber`=`lumber`+$x WHERE `id`=".$gUser->id);
               break;
               case 3:
               case 4:
                 $msg = "Er hat Jehova gesagt ! Steinigt ihn !
-                Bääärte ! schöööne flauschige falsche Bääääärte !
+                BÃ¤rte ! schÃ¶ne flauschige falsche BÃ¤Ã¤rte !
                 Kann es sein das Weibsfolk anwesend ist ?
                 Eine Steinigung frei nach Monty Python.
-                Du erhälst $x Stein !";
+                Du erhÃ¤lst $x Stein !";
                 changeUserMoral($gUser->id,round($sum/10000));
                 sql("UPDATE `user` SET `stone`=`stone`+$x WHERE `id`=".$gUser->id);
               break;
               case 5:
               case 6:
-                $msg = "Happy Kannibalen-Wochen bei McTempel, du erhälst $x Nahrung !";
+                $msg = "Happy Kannibalen-Wochen bei McTempel, du erhÃ¤lst $x Nahrung !";
                 changeUserMoral($gUser->id,round($sum/10000));
                 sql("UPDATE `user` SET `food`=`food`+$x WHERE `id`=".$gUser->id);
               break;
               case 7:
               case 8:
-                $msg = "Den armen Opfern werden sämtliche Zahnspangen, Plomben
+                $msg = "Den armen Opfern werden sÃ¤mtliche Zahnspangen, Plomben
                 und sonstige Implantate entfernt.
-                Du erhälst $x Metall !";
+                Du erhÃ¤lst $x Metall !";
                 changeUserMoral($gUser->id,round($sum/10000));
                 sql("UPDATE `user` SET `metal`=`metal`+$x WHERE `id`=".$gUser->id);
               break;
               case 9:
                 $x = floor($x / 100);
-                $msg = "*zap*rauch*bruzzel* Oh da haben sich wohl ein paar Leute aufgelöst.
+                $msg = "*zap*rauch*bruzzel* Oh da haben sich wohl ein paar Leute aufgelÃ¶st.
                 Ah aber ein paar Zaubersteinchen sind geblieben.
-                Du erhälst $x Runen !";
+                Du erhÃ¤lst $x Runen !";
                 changeUserMoral($gUser->id,round($sum/10000));
                 sql("UPDATE `user` SET `runes`=`runes`+$x WHERE `id`=".$gUser->id);
               break;
               case 10:
                 $x = floor($x / 50);
                 $msg = "Nach Stunden der Zeremonie ziehen sich die geopferten Rohstoffe zu seltsamen
-                Formen zusammen und es beginnt stark zu stinken. Durch die dann geöffneten Fenster weht ein
+                Formen zusammen und es beginnt stark zu stinken. Durch die dann geÃ¶ffneten Fenster weht ein
                 Windhauch, der dem Haufen neues Leben einhaucht. Bereits nach einiger Zeit kann man schon
                 fast $x Menschen erkennen.";
                 changeUserMoral($gUser->id,round($sum/10000));
@@ -166,7 +166,7 @@ class cInfoTempel extends cInfoBuilding {
     <div class="effect"><?=$msg?></div>
 		<form method="post" action="<?=query("info.php?sid=?&x=?&y=?")?>">
     <div class="desc">Hier kann man Allerlei opfern, was ein paar interessante Auswirkungen haben kann. 
-    Bedenke aber, daß man seine Gesinnung durch das Opfern verändert und es auch keine präzise Wissenschaft ist.</div>
+    Bedenke aber, daÃŸ man seine Gesinnung durch das Opfern verÃ¤ndert und es auch keine prÃ¤zise Wissenschaft ist.</div>
 		<ul>
 			<li><input name="pop" value="0"> <img alt="Bewohner" title="Bewohner" src="<?=g("pop-r%R%.png")?>"></li>
 			<?php foreach($gRes as $name=>$field){ ?>

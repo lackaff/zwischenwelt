@@ -44,8 +44,9 @@ if (isset($f_typeup_to)) {
    "http://www.w3.org/TR/html4/transitional.dtd">
 <html>
 <head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 <link rel="stylesheet" type="text/css" href="<?=GetZWStylePath()?>">
-<title>Zwischenwelt - Übersicht</title>
+<title>Zwischenwelt - Ãœbersicht</title>
 </head>
 <body>
 <?php include("../menu.php"); ?>
@@ -185,7 +186,7 @@ if (isset($f_typeup_to)) {
 				<?php $wps = sqlgetone("SELECT COUNT(*) FROM `waypoint` WHERE `army` = ".$army->id);?>
 				<?=$wps?("WP:".$wps):""?>
 				<?=($fight?"Kampf":"")?>
-				<?=($pillage?"Plünderung":"")?>
+				<?=($pillage?"PlÃ¼nderung":"")?>
 				<?=($siege?"Belagerung":"")?>
 				<?php foreach ($items as $o) {?>
 				<img border=0 title="<?=$gItemType[$o->type]->name?>" alt="<?=$gItemType[$o->type]->name?>" src="<?=g($gItemType[$o->type]->gfx)?>"><?=ktrenner($o->amount)?>

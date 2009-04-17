@@ -11,6 +11,7 @@ profile_page_start("kosten");
    "http://www.w3.org/TR/html4/transitional.dtd">
 <html>
 <head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 <link rel="stylesheet" type="text/css" href="<?=GetZWStylePath()?>">
 <title>Zwischenwelt - Kosten</title>
 
@@ -226,9 +227,9 @@ include("../menu.php");
 <br>
 <br>
 siehe auch <a href="<?=Query("bauplan.php?sid=?")?>"><b>Baupl&auml;ne</b></a><br>
-Die Zeitberechnung hier berücksichtigt nicht alle Faktoren, und gibt nur einen groben Hinweis auf die tatsächliche Dauer.<br>
+Die Zeitberechnung hier berÃ¼cksichtigt nicht alle Faktoren, und gibt nur einen groben Hinweis auf die tatsÃ¤chliche Dauer.<br>
 Auf der Karte kann man sich anzeigen lassen,<br>
-was die Entfernung von Bauplänen zum nächsten Lager bewirkt, wenn man den "Bauzeit" Knopf drückt<br>
+was die Entfernung von BauplÃ¤nen zum nÃ¤chsten Lager bewirkt, wenn man den "Bauzeit" Knopf drÃ¼ckt<br>
 <?php profile_page_end();?>
 </body>
 </html>

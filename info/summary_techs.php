@@ -60,8 +60,9 @@ if (isset($f_techs)) {
    "http://www.w3.org/TR/html4/transitional.dtd">
 <html>
 <head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 <link rel="stylesheet" type="text/css" href="<?=GetZWStylePath()?>">
-<title>Zwischenwelt - ‹bersicht</title>
+<title>Zwischenwelt - √úbersicht</title>
 <SCRIPT LANGUAGE="JavaScript" type="text/javascript">
 <!--
 	function planall (name,maxindex,setvalname) {
@@ -102,8 +103,8 @@ if (isset($f_techs)) {
 		rob_ob_start();
 		?>
 		<?php if ($btype != 0) {?>
-			<?=($bcount>0)?($bcount." Geb‰ude von diesem Typ"):"<font color='red'>Noch kein Geb‰ude von diesem Typ</font>"?><br>
-			<?=$highest_building?("Hˆchstes Geb‰ude von diesem Typ hat Stufe <b>".$highest_building->level."</b> bei ".oposinfolink($highest_building)):""?>
+			<?=($bcount>0)?($bcount." Geb√§ude von diesem Typ"):"<font color='red'>Noch kein Geb√§ude von diesem Typ</font>"?><br>
+			<?=$highest_building?("H√∂chstes Geb√§ude von diesem Typ hat Stufe <b>".$highest_building->level."</b> bei ".oposinfolink($highest_building)):""?>
 		<?php } // endif?>
 		<form method="post" action="<?=Query("?sid=?&selbtype=".$btype)?>">
 			<table border=1 cellspacing=0>
@@ -112,7 +113,7 @@ if (isset($f_techs)) {
 				<th>Level</th>
 				<th>Max</th>
 				<th>Upgrades</th>
-				<th>n‰chstes Upgrade</th>
+				<th>n√§chstes Upgrade</th>
 				<th><img src="<?=g("sanduhrklein.gif")?>" alt="<?=$timetip?>" title="<?=$timetip?>"></th>
 				<th>geplant bis</th>
 			</tr>
@@ -154,7 +155,7 @@ if (isset($f_techs)) {
 					<?php } // endif?>
 					</td>
 					<td norwap>
-						<?php /* #### FORSCHUNG LƒUFT in $tech->upgradebuilding #### */?>
+						<?php /* #### FORSCHUNG L√ÑUFT in $tech->upgradebuilding #### */?>
 						<?php if ($tech->upgradetime > 0) {?>
 							<?php 
 								$max = max(1,cTechnology::GetUpgradeDuration($tech->type,$tech->level));
@@ -204,7 +205,7 @@ if (isset($f_techs)) {
 
 <a href="<?=query("techgraphpart.php?sid=?")?>">[Technologiebaum durchsuchen]</a><br>
 <a target="_blank" href="../tmp/tech.png">[ganzen Technologiebaum anzeigen]</a><br>
-Der Punkt "n‰chstes Upgrade" stellt die Kosten vom n‰chsten Upgrade dar, das kommt nach dem alle geplanten fertig sind.<br>
+Der Punkt "n√§chstes Upgrade" stellt die Kosten vom n√§chsten Upgrade dar, das kommt nach dem alle geplanten fertig sind.<br>
 
 </body>
 </html>

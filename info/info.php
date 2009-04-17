@@ -178,7 +178,7 @@ if (!isset($f_building) && !isset($f_army) && isset($f_do)) {
 				if ($army && (intval($army->flags) & kArmyFlag_SelfLock) && $army->user == $gUser->id) break;
 				if ($army && $wp->priority > 0 && cArmy::CanControllArmy($army,$gUser)) {
 					cArmy::ArmyCancelWaypoint($army,$wp);	
-					echo "Wegpunkt gelöscht";
+					echo "Wegpunkt gelÃ¶scht";
 					JSRefreshArmy($army);
 				}
 			}
@@ -194,7 +194,7 @@ if (!isset($f_building) && !isset($f_army) && isset($f_do)) {
 						`army` = ".$wp->army." AND `priority` >= ".$wp->priority." ORDER BY `priority` DESC");
 					foreach ($allwpafter as $o)
 						cArmy::ArmyCancelWaypoint($army,$o);
-					echo "Wegpunkte gelöscht";
+					echo "Wegpunkte gelÃ¶scht";
 					JSRefreshArmy($army);
 				}
 			}
@@ -229,7 +229,7 @@ if (!isset($f_building) && !isset($f_army) && isset($f_do)) {
 							`x` <= ".($x + $r)." AND `y` <= ".($y + $r)." AND `user` <> ".intval($gUser->id)." LIMIT 1");
 						if ($blockerbuilding) {
 							$reqpic = GetBuildingTypeLink($blockerbuilding->type,$f_x,$f_y,false,$blockerbuilding->user,$blockerbuilding->level);
-							JSAddInfoMessage_BuildError($btype,$f_x,$f_y,"in der Nähe (".$r." Felder) befindet sich bereits ein Gebäude eines anderen Spielers: ".$reqpic."");
+							JSAddInfoMessage_BuildError($btype,$f_x,$f_y,"in der NÃ¤he (".$r." Felder) befindet sich bereits ein GebÃ¤ude eines anderen Spielers: ".$reqpic."");
 							continue;
 						}
 					}
@@ -241,13 +241,13 @@ if (!isset($f_building) && !isset($f_army) && isset($f_do)) {
 					}
 					// check build cross
 					if (!InBuildCross($f_x,$f_y,$gUser->id)) {
-						JSAddInfoMessage_BuildError($btype,$f_x,$f_y,"kein eigenes Gebäude in der Nähe");
+						JSAddInfoMessage_BuildError($btype,$f_x,$f_y,"kein eigenes GebÃ¤ude in der NÃ¤he");
 						continue;
 					}
 					// check req
 					if (!HasReq($btype->req_geb,$btype->req_tech,$gUser->id)) {
 						$anforderungen = GetBuildingTypeLink($btype,$f_x,$f_y,"<font color=\"red\"><b>Anforderungen</b></font>");
-						JSAddInfoMessage_BuildError($btype,$f_x,$f_y,"$anforderungen sind nicht erfüllt");
+						JSAddInfoMessage_BuildError($btype,$f_x,$f_y,"$anforderungen sind nicht erfÃ¼llt");
 						continue;
 					}
 					
@@ -260,7 +260,7 @@ if (!isset($f_building) && !isset($f_army) && isset($f_do)) {
 					}
 					if ($gTerrainType[$terrain]->buildable == 0 && $btype->terrain_needed != $terrain) {
 						$reqpic = "<img border=0 src=\"".g($gTerrainType[$terrain]->gfx)."\">";
-						JSAddInfoMessage_BuildError($btype,$f_x,$f_y,"Gelände $reqpic ist nicht bebaubar");
+						JSAddInfoMessage_BuildError($btype,$f_x,$f_y,"GelÃ¤nde $reqpic ist nicht bebaubar");
 						continue;
 					}
 					
@@ -268,7 +268,7 @@ if (!isset($f_building) && !isset($f_army) && isset($f_do)) {
 					$blockerbuilding = sqlgetobject("SELECT * FROM `building` WHERE `x` = ".$f_x." AND `y` = ".$f_y);
 					if ($blockerbuilding) {
 						$reqpic = GetBuildingTypeLink($blockerbuilding->type,$f_x,$f_y,false,$blockerbuilding->user,$blockerbuilding->level);
-						JSAddInfoMessage_BuildError($btype,$f_x,$f_y,"hier befindet sich bereits ein Gebäude : ".$reqpic."");
+						JSAddInfoMessage_BuildError($btype,$f_x,$f_y,"hier befindet sich bereits ein GebÃ¤ude : ".$reqpic."");
 						continue;
 					}
 					
@@ -284,7 +284,7 @@ if (!isset($f_building) && !isset($f_army) && isset($f_do)) {
 						!GetNearBuilding($x,$y,$gUser->id,kBuildingRequirenment_NearRadius,$btype->neednear_building)) {
 						$piclist = "";
 						foreach ($btype->neednear_building as $b) $piclist .= GetBuildingTypeLink($b,$f_x,$f_y);
-						JSAddInfoMessage_BuildError($btype,$f_x,$f_y,"$piclist muss in der Nähe sein");
+						JSAddInfoMessage_BuildError($btype,$f_x,$f_y,"$piclist muss in der NÃ¤he sein");
 						continue;
 					}
 					if (sizeof($btype->require_building)>0 && 
@@ -313,7 +313,7 @@ if (!isset($f_building) && !isset($f_army) && isset($f_do)) {
 							break;
 							case kBuilding_Harbor:
 								$reqpic = "<img border=0 src=\"".g($gTerrainType[kTerrain_Sea]->gfx)."\">";
-								JSAddInfoMessage_BuildError($btype,$f_x,$f_y,"$reqpic muss in der nähe sein");
+								JSAddInfoMessage_BuildError($btype,$f_x,$f_y,"$reqpic muss in der nÃ¤he sein");
 							break;
 							default:
 								JSAddInfoMessage_BuildError($btype,$f_x,$f_y,"kann hier nicht gebaut werden");
@@ -360,7 +360,7 @@ if (!isset($f_building) && !isset($f_army) && isset($f_do)) {
 				if ($army && (intval($army->flags) & kArmyFlag_SelfLock) && $army->user == $gUser->id) break;
 				if ($army && $wp->priority > 0 && cArmy::CanControllArmy($army,$gUser)) {
 					cArmy::ArmyCancelWaypoint($army,$wp);	
-					echo "Wegpunkt gelöscht";
+					echo "Wegpunkt gelÃ¶scht";
 					JSRefreshArmy($army);
 				}
 			} else {
@@ -401,7 +401,7 @@ if (!isset($f_building) && !isset($f_army) && isset($f_do)) {
 				$building = sqlgetobject("SELECT * FROM `building` WHERE `id` = ".intval($f_id));
 				if ($building && $building->user == $gUser->id) {
 					cBuilding::removeBuilding($f_id,$gUser->id,true);
-					echo "Gebäude gelöscht";
+					echo "GebÃ¤ude gelÃ¶scht";
 					$gJSCommands[] = "parent.map.location.href = parent.map.location.href;";
 					$gJSCommands[] = "parent.navi.location.href = parent.navi.location.href;";
 					if ($building->type == kBuilding_HQ)
@@ -515,7 +515,7 @@ if (!isset($f_blind)) {
 	
 	<?=$terrainpic?>
 	<?=$gClickCoords?> <?=($terraintype->name)?>  <?=($terraintype->descr)?>
-	<?php $uhrtip = "Geschwindigkeit: Wartezeit in s bis der nächste Schritt möglich ist";?>
+	<?php $uhrtip = "Geschwindigkeit: Wartezeit in s bis der nÃ¤chste Schritt mÃ¶glich ist";?>
 	<img alt="<?=$uhrtip?>"  title="<?=$uhrtip?>" src="<?=g("sanduhrklein.gif")?>">:<?=$terraintype->speed?>s <br>
 	
 	<?php if (0) { // terrain mod currently unused, so hide ?>	
@@ -539,7 +539,7 @@ if (!isset($f_blind)) {
 	<form method="post" action="<?=Query("?sid=?&x=?&y=?")?>">
 		<input type="hidden" name="do" value="mapmark">
 		<?php if ($mapmark) {?>
-		"<?=$mapmark->name?>" <input type="submit" name="del" value="löschen">
+		"<?=$mapmark->name?>" <input type="submit" name="del" value="lÃ¶schen">
 		<?php } else { // ?>
 		<input type="text" name="mapmarkname" value="neue Karten-Markierung" style="width:160px"> <input type="submit" name="new" value="eintragen">
 		<?php } // endif?>
@@ -572,7 +572,7 @@ if (!isset($f_blind)) {
 	if (count($gMapArmy) == 0 && count($gMapBuilding) == 0 && count($gItems) == 0 && count($gMapCons) == 0 && count($gMapWaypoints) == 0) {
 		$x = intval($f_x); $y = intval($f_y);
 		$portal = sqlgetobject("SELECT *,((`x`-($x))*(`x`-($x)) + (`y`-($y))*(`y`-($y))) as `dist` FROM `building` WHERE `type` = ".kBuilding_Portal." AND `user` = 0 ORDER BY `dist` LIMIT 1");
-		if ($portal) echo "Nächstes öffentliches Portal : ".opos2txt($portal)."<br>";
+		if ($portal) echo "NÃ¤chstes Ã¶ffentliches Portal : ".opos2txt($portal)."<br>";
 	}
 	?>
 	
@@ -589,12 +589,12 @@ if (!isset($f_blind)) {
 	<form method="post" target="_blank" action="<?=Query("../terraformpic.php?sid=?&x=?&y=?")?>">
 		<INPUT TYPE="hidden" NAME="do" VALUE="terraform">
 		Landschaft um (Mitte:x,y)<input type="text" name="mid" value="<?=intval($f_x).",".intval($f_y)?>" style="width:80px">
-		als Bild<br> mit der Grösse (Breite,Höhe) <input type="text" name="size" value="100,100" style="width:80px">
+		als Bild<br> mit der GrÃ¶ÃŸe (Breite,HÃ¶he) <input type="text" name="size" value="100,100" style="width:80px">
 		<input type="submit" name="export" value="exportieren">
 	</form>
 	<hr>
 	<form method="post" enctype="multipart/form-data"  target="_blank" action="<?=Query("../terraformpic.php?sid=?&x=?&y=?")?>">
-		Landschafts-import-Dialog für Bild <input name="bildup" type="file"> (nur PNG)
+		Landschafts-import-Dialog fÃ¼r Bild <input name="bildup" type="file"> (nur PNG)
 		 um (Mitte:x,y)<input type="text" name="mid" value="<?=intval($f_x).",".intval($f_y)?>" style="width:80px">
 		<input type="submit" name="openimporter" value="oeffnen">
 	</form>
@@ -674,7 +674,7 @@ if (!isset($f_blind)) foreach($gMapCons as $gObject) {
 		</table>
 		<?php if (GetBuildNewbeeFactor($gObject->type,$gObject->priority,$gObject->user) < 1.0) {?>
 			NewbeeFaktor: die Bauzeit der ersten <?=kSpeedyBuildingsLimit?> steigt langsam von 0 bis normal an.<br>
-			Dies gilt nur für folgende Gebäudetypen : 
+			Dies gilt nur fÃ¼r folgende GebÃ¤udetypen : 
 			<?php 
 				foreach ($gBuildingType as $o) 
 					if (in_array($o->id,$gSpeedyBuildingTypes)) 
@@ -797,7 +797,7 @@ if (!isset($f_blind)) if ($gUser->admin) {
 			<?=PrintObjOptions($maptemplates,"id","name")?>
 		</select>
 		<input type="submit" name="use" value="anwenden">
-		<input type="submit" name="del" value="löschen"><br>
+		<input type="submit" name="del" value="lÃ¶schen"><br>
 		x<input type="text" name="x1" value="<?=$f_x-5?>" style="width:30px">
 		y<input type="text" name="y1" value="<?=$f_y-5?>" style="width:30px">
 		x<input type="text" name="x2" value="<?=$f_x+5?>" style="width:30px">
@@ -937,7 +937,7 @@ if (!isset($f_blind)) {
 	if (!empty($content)) RegisterInfoTab("Infos",$content,100);
 }
 	
-/* gegenstände */
+/* gegenstÃ¤nde */
 if (!isset($f_blind)) if(sizeof($gItems)>0) {
 	$armyid = 0;
 	foreach($gMapArmy as $a) {$armyid = $a->id;$armyowner = $a->user;break;}
@@ -964,7 +964,7 @@ if (!isset($f_blind)) if(sizeof($gItems)>0) {
 			<img src="<?=g("pick.png")?>" border=0 alt="einsammeln" title="einsammeln">alles einsammeln
 		</a>
 	<?php } // endif
-	RegisterInfoTab("Gegenstände",rob_ob_end(),4);
+	RegisterInfoTab("GegenstÃ¤nde",rob_ob_end(),4);
 } // endif armyitems count > 0 
 
 
@@ -1014,6 +1014,7 @@ if (!isset($f_blind)) {
    "http://www.w3.org/TR/html4/transitional.dtd">
 <html>
 <head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 <script src="<?=BASEURL?>startgauges.js" type="text/javascript"></script>
 <link rel="stylesheet" type="text/css" href="<?=BASEURL?>startgauges.css">
 <link rel="stylesheet" type="text/css" href="<?=GetZWStylePath()?>">

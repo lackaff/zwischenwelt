@@ -1,4 +1,5 @@
 <?php
+define("CONTENT_TYPE","image/png");
 
 include_once("../lib.main.php");
 if($f_mode == "plot"){
@@ -15,7 +16,7 @@ if($f_mode == "plot"){
 			exit();
 		}
 
-		header('Content-type: image/png');
+		// see CONTENT_TYPE header('Content-type: image/png');
 
 		$tmp = "tmp/activity-".$md5;
 

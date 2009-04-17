@@ -13,13 +13,13 @@ else
 	//	parent.navi.location.href = parent.navi.location.href;
 	//-->
 	</SCRIPT>
-	Du hast noch kein Haupthaus, daher solltest Du Dir ein schönes Plätzchen suchen und dort eines bauen.<br>
+	Du hast noch kein Haupthaus, daher solltest Du Dir ein schÃ¶nes PlÃ¤tzchen suchen und dort eines bauen.<br>
 	Unter der Karte im rechten Fenster sind Pfeile, damit kannst du dich umschauen.<br>
 	Wenn du auf (MiniMap) clickst siehst du eine kleine Weltkarte.<br>
 	Bedenke bei der Wahl deines Startplatzes das du Platz brauchst um dich auszubreiten, <br>
-	also nicht unbedingt in einer kleinen Niesche zwischen den "älteren" Spielern anfangen ;)<br>
+	also nicht unbedingt in einer kleinen Niesche zwischen den "Ã¤lteren" Spielern anfangen ;)<br>
 	Wenn du einen Platz gefunden hast,<br>
-	wähle rechts unten das Bild für das Haupthaus <img src="<?=g($gBuildingType[kBuilding_HQ]->gfx)?>" alt="."><br>
+	wÃ¤hle rechts unten das Bild fÃ¼r das Haupthaus <img src="<?=g($gBuildingType[kBuilding_HQ]->gfx)?>" alt="."><br>
 	und clicke auf eine freie Stelle, um es zu Bauen<br>
 	Viel Spass !<br>
 	<br>

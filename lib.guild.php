@@ -87,7 +87,7 @@ function createGuild($name,$color)
 	
 		if($ok)
 		{
-			$text = "Neue Gilde gegründet: ".$name;
+			$text = "Neue Gilde gegrÃ¼ndet: ".$name;
 			//sql("INSERT INTO `newlog` SET `time`=".time().",`text`='$text',`user`=0");
 		
 			sql("UPDATE `user` SET 
@@ -240,7 +240,7 @@ function ArmyChangeGC($army,$statenow) {
 function gForumEditA($user,$id){
 	global $gGuild,$gUser;
 	if($gUser->id!=$user) return FALSE;
-	if(!$gGuild)$gGuild=sqlgetobject("SELECT * FROM `guild` WHERE `id`=".$gUser->guild);
+	if(empty($gGuild))$gGuild=sqlgetobject("SELECT * FROM `guild` WHERE `id`=".$gUser->guild);
 	if(sqlgetone("SELECT `user` FROM `guild_forum` WHERE `id`=".intval($id))==$gUser->id || $gGuild->founder==$gUser->id)
 		return TRUE;
 	return FALSE;
@@ -249,7 +249,7 @@ function gForumEditA($user,$id){
 function gForumDelA($user,$id){
 	global $gGuild,$gUser;
 	if($gUser->id!=$user) return FALSE;
-	if(!$gGuild)$gGuild=sqlgetobject("SELECT * FROM `guild` WHERE `id`=".$gUser->guild);
+	if(empty($gGuild))$gGuild=sqlgetobject("SELECT * FROM `guild` WHERE `id`=".$gUser->guild);
 	if(sqlgetone("SELECT `user` FROM `guild_forum` WHERE `id`=".intval($id))==$gUser->id || $gGuild->founder==$gUser->id)
 		return TRUE;
 	return FALSE;
@@ -258,7 +258,7 @@ function gForumDelA($user,$id){
 function gForumEditC($user,$id){
 	global $gGuild,$gUser;
 	if($gUser->id!=$user) return FALSE;
-	if(!$gGuild)$gGuild=sqlgetobject("SELECT * FROM `guild` WHERE `id`=".$gUser->guild);
+	if(empty($gGuild))$gGuild=sqlgetobject("SELECT * FROM `guild` WHERE `id`=".$gUser->guild);
 	if(sqlgetone("SELECT `user` FROM `guild_forum_comment` WHERE `id`=".intval($id))==$gUser->id || $gGuild->founder==$gUser->id)
 		return TRUE;
 	return FALSE;
@@ -267,7 +267,7 @@ function gForumEditC($user,$id){
 function gForumDelC($user,$id){
 	global $gGuild,$gUser;
 	if($gUser->id!=$user) return FALSE;
-	if(!$gGuild)$gGuild=sqlgetobject("SELECT * FROM `guild` WHERE `id`=".$gUser->guild);
+	if(empty($gGuild))$gGuild=sqlgetobject("SELECT * FROM `guild` WHERE `id`=".$gUser->guild);
 	if(sqlgetone("SELECT `user` FROM `guild_forum_comment` WHERE `id`=".intval($id))==$gUser->id || $gGuild->founder==$gUser->id)
 		return TRUE;
 	return FALSE;

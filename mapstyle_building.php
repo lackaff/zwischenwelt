@@ -1,7 +1,9 @@
 <?php
+define("CONTENT_TYPE","text/css");
+
 if ( extension_loaded('zlib') )ob_start('ob_gzhandler');
 
-header('Content-Type: text/css');
+// see CONTENT_TYPE header('Content-Type: text/css');
 $maxage = 60*60*24*7;
 header('Last-Modified: '.date("r",floor((time()-$maxage)/$maxage)*$maxage));
 header('Cache-Control: max-age='.$maxage.', must-revalidate');

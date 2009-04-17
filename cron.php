@@ -1,5 +1,6 @@
 <html>
 <head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 <!-- <meta http-equiv="refresh" content="60; URL=cron.php"> -->
 <!-- ... andere Angaben im Dateikopf ... -->
 </head>
@@ -192,7 +193,7 @@ if(empty($t)){
 	$o->title = "Brauereimeister";
 	$o->time = time();
 	$o->image = "title/title-bier.png";
-	$o->text = "Der K�nig der Biere";
+	$o->text = "Der König der Biere";
 	sql("INSERT INTO `title` SET ".obj2sql($o));
 }
 $u = sqlgetone("SELECT t.`user` FROM `technology` t,`user` u WHERE u.`id`=t.`user` AND u.`admin`=0 AND t.`level`>0 AND `type`=".kTech_Bier." ORDER BY `level` DESC LIMIT 1");
@@ -897,7 +898,7 @@ foreach ($technologies as $o) {
 				`upgrades` = 0 ,
 				`upgradetime` = 0 WHERE `id` = ".$o->id." LIMIT 1");
 				
-			$text = $gTechnologyType[$o->type]->name." von user ".$o->user." wurde abgebrochen, da die anforderungen nicht erf�llt wurden";
+			$text = $gTechnologyType[$o->type]->name." von user ".$o->user." wurde abgebrochen, da die anforderungen nicht erfüllt wurden";
 			echo $text."<br>\n";
 		}
 	} else if ($o->upgradetime == 0) {
@@ -914,7 +915,7 @@ foreach ($technologies as $o) {
 			if (!HasReq($techtype->req_geb,$techtype->req_tech,$o->user,$level+1)) {
 				sql("UPDATE `technology` SET `upgrades` = 0 WHERE `id` = ".$o->id." LIMIT 1");
 				
-				$text = $techtype->name." von user ".$o->user." wurde nicht gestartet, da die anforderungen nicht erf�llt wurden";
+				$text = $techtype->name." von user ".$o->user." wurde nicht gestartet, da die anforderungen nicht erfüllt wurden";
 				echo $text."<br>\n";
 				
 				continue;
@@ -1064,7 +1065,7 @@ if($farm && (rand()%10==0)){ // TODO : unhardcode
 		for($y=-$radius;$y<=$radius;++$y)if(!$done){
 			$b = sqlgetobject("SELECT * FROM `building` WHERE `x`=(".($x+$farm->x).") AND `y`=(".($y+$farm->y).")");
 			$t = sqlgetobject("SELECT * FROM `terrain` WHERE `x`=(".($x+$farm->x).") AND `y`=(".($y+$farm->y).")");
-			if(!$b && (!$t || $t->type == kTerrain_Grass)){
+			if(empty($b) && (empty($t) || $t->type == kTerrain_Grass)){
 				sql("DELETE FROM `terrain` WHERE `x`=(".($x+$farm->x).") AND `y`=(".($y+$farm->y).")");
 				$o = null;
 				$o->x = $x+$farm->x;

@@ -9,19 +9,19 @@ $root=sqlgetobject("SELECT `id`,`name` FROM `message_folder` WHERE `type`=".kFol
 $sent=sqlgetobject("SELECT `id`,`name` FROM `message_folder` WHERE `type`=".kFolderTypeSent." AND `parent`=0 AND `user`=".$gUser->id);
 $berichte=sqlgetobject("SELECT `id`,`name` FROM `message_folder` WHERE `type`=".kFolderTypeExtra." AND `parent`=0 AND `user`=".$gUser->id);
 
-if(!$root){
+if(empty($root)){
 	createFolder("Eingang",0,$gUser->id,kFolderTypeRoot);
 }
 
-if(!$sent){
+if(empty($sent)){
 	createFolder("Ausgang",0,$gUser->id,kFolderTypeSent);
 }
 
-if(!$berichte){
+if(empty($berichte)){
 	createFolder("Berichte",0,$gUser->id,kFolderTypeExtra);
 }
 
-if(!$root || !$sent || !$berichte)Redirect(Query("?sid=?"));
+if(empty($root) || empty($sent) || empty($berichte))Redirect(Query("?sid=?"));
 
 //change msg view checkbox
 if(isset($f_saveprev)){
@@ -125,6 +125,7 @@ if(isset($f_do)){
    "http://www.w3.org/TR/html4/transitional.dtd">
 <html>
 <head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 <link rel="stylesheet" type="text/css" href="<?=GetZWStylePath()?>">
 <title>Zwischenwelt - Nachrichten</title>
 <script>
@@ -157,7 +158,7 @@ function CheckAll() {
 <td  style="padding-left:30px;">&nbsp;</td>
 <td style="padding:5px;" align=center><a href="<?=Query("?sid=?&show=foldertree")?>"><img src="<?=g("post/einstellungen.png")?>" border=0 title=Einstellungen></a></td>
 <td  style="padding-left:30px;">&nbsp;</td>
-<td><form method="post" action="<?=query("?sid=?")?>"><input value=1 type="checkbox" name="preview"<?=($gUser->msgmode==1?" checked":"")?>> Vorschau? <input type="submit" name="saveprev" value="Übernehmen"></form></td>
+<td><form method="post" action="<?=query("?sid=?")?>"><input value=1 type="checkbox" name="preview"<?=($gUser->msgmode==1?" checked":"")?>> Vorschau? <input type="submit" name="saveprev" value="Ã¼bernehmen"></form></td>
 </tr>
 </table>
 <?ImgBorderEnd();?>
@@ -183,7 +184,7 @@ switch ($f_show){
 		<td><?=($m->type==kMsgTypeGM?sqlgetone("SELECT g.`name` FROM `guild` g, `user` u WHERE g.`id`=u.`guild` AND u.`id`=".intval($m->from))." (".nick($m->from).")":nick($m->from))?></td>
 		</tr>
 		<tr>
-		<td>Empfänger:</td>
+		<td>EmpfÃ¤nger:</td>
 		<td><?=($m->type==kMsgTypeGM?sqlgetone("SELECT g.`name` FROM `guild` g, `user` u WHERE g.`id`=u.`guild` AND u.`id`=".intval($m->to))." (".nick($m->to).")":nick($m->to))?></td>
 		</tr>
 		<tr><td>Datum:</td><td><?=time_output($m->date,"detail")?></td></tr>
@@ -316,7 +317,7 @@ switch ($f_show){
 		<table border=0 cellpadding=0 cellspacing=0>
 		<tr><td>Name: <td><input type=text size=15 name="name" value="<?=$folder->name?>"></td></tr>
 		<?if($folder->parent!=0){?><tr><td>Parent: <td><select name="parent"><?=PrintObjOptions(sqlgettable("SELECT `id`,`name` FROM `message_folder` WHERE `user`=".$gUser->id." AND `id`<>".$folder->id." AND (`type`=".$folder->type." OR (`type`=".kFolderTypeRoot." AND ".$folder->type."=".kFolderTypeSub.") OR (`type`=".kFolderTypeSent." AND ".$folder->type."=".kFolderTypeSentSub.") OR (`type`=".kFolderTypeExtra." AND ".$folder->type."=".kFolderTypeExtraSub.")  )"),"id","name",$folder->parent) ?></select></tr><?}?>
-		<tr><td colspan=2><table><tr><td>Löschen?</td><td> <input type=checkbox name=delete value=y></td><td>dabei Unterordner löschen?</td><td><input type=checkbox name=delsub value=y></td><td> dabei Nachrichten löschen </td><td><input type=checkbox name=delmsg value=y></td></tr></table></td></tr>
+		<tr><td colspan=2><table><tr><td>LÃ¶schen?</td><td> <input type=checkbox name=delete value=y></td><td>dabei Unterordner lÃ¶schen?</td><td><input type=checkbox name=delsub value=y></td><td> dabei Nachrichten lÃ¶schen </td><td><input type=checkbox name=delmsg value=y></td></tr></table></td></tr>
 		<tr><td colspan=2>&nbsp;</td></tr>
 		<tr><td colspan=2 align=right><input type=submit name=save value=Save></td></tr>
 		</table>
@@ -355,7 +356,7 @@ switch ($f_show){
 				&gt;&gt;&gt;
 				<?php } // endif?>
 				</th><th></th><th></th></tr>
-			<tr><th></th><th></th><th><?=$inbox?"Empfänger":"Absender"?></th><th>Betreff</th><th>Datum</th><th></th></tr>
+			<tr><th></th><th></th><th><?=$inbox?"EmpfÃ¤nger":"Absender"?></th><th>Betreff</th><th>Datum</th><th></th></tr>
 		<?if(count($messages)>0){
 			foreach ($messages as $m){?>
 			<tr>

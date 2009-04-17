@@ -47,13 +47,13 @@ function GetPossibleSpells ($userid=0,$groupbytarget=false) {
 function GetSpellInstance ($spelltype,$o=false) {
 	global $gSpellType;
 	if (!is_object($spelltype)) $spelltype = $gSpellType[intval($spelltype)];
-	$class = "Spell_".strtr($spelltype->name,array("ä"=>"ae","ö"=>"oe","ü"=>"ue","-"=>"_","Ã¼"=>"ue","Ã¶"=>"oe"));
+	$class = "Spell_".strtr($spelltype->name,array("Ã¤"=>"ae","Ã¶"=>"oe","Ã¼"=>"ue","-"=>"_","Ã¼"=>"ue","Ã¶"=>"oe"));
 	if (!class_exists($class)) {
 		?>
 		FEHLER !
 		Es gibt wohl ein Installationsproblem, es wurde versucht einen Zauberspruch names '<?=$class?>' zu laden, 
-		der dazugehörige PHP Code wurde aber nicht gefunden.<br>
-		Wenn in dem Namen merkwürdige Zeichen vorkommen, dann ist das wohl ein Problem mit Umlauten,Unicode,Collations oder sowas.<br>
+		der dazugehÃ¶rige PHP Code wurde aber nicht gefunden.<br>
+		Wenn in dem Namen merkwÃ¼rdige Zeichen vorkommen, dann ist das wohl ein Problem mit Umlauten,Unicode,Collations oder sowas.<br>
 		Wenn man sich damit nicht mit MySQL Konfiguration und Administration auskennt, am besten von Hand in der Datenbank
 		in der Tabelle "spelltype" die Daten in der Spalte "name" korrigieren.
 		<?php
@@ -149,7 +149,7 @@ class Spell {
 	// returns array($success,$penalty,$msg,$color), first two floats, third is message, penalty is used for extra cost
 	function GetRandomSuccess ($spelltype,$mages,$userid) {
 		// "entrophy umgerechet in power, da User denken:
-		// - Positive Effekte haben große Werte. 
+		// - Positive Effekte haben groÃŸe Werte. 
 		// - Negative Werte bedeuten Versagen. 
 
 		$rand=rand(0,100);
@@ -162,7 +162,7 @@ class Spell {
 		$power += $rand/10; 	// range: 0-10
 
 		if ($power>=10 && $rare)			$res = array( 2.0, 1.0, "meisterlich",		"#cfb000",	"castresult5");
-		else if ($power >= 10)				$res = array( 1.5, 0.7, "außerordentlich",	"#00cfcc",	"castresult4");
+		else if ($power >= 10)				$res = array( 1.5, 0.7, "auÃŸerordentlich",	"#00cfcc",	"castresult4");
 		else if ($power >= 7)				$res = array( 1.3, 0.8, "sehr gut",			"#10a900",	"castresult3");
 		else if ($power >= 5)				$res = array( 1.2, 0.9, "gut geschafft",	"#1b910f",	"castresult2");
 		else if ($power >= 2)				$res = array( 1.0, 1.0, "geschafft",		"#88ab84",	"castresult1");
@@ -172,7 +172,7 @@ class Spell {
 		else								$res = array(-1.0, 2.5, "Patzer!",			"#ff0000",	"castfail2");
 		
 		
-		if ($power>=10 && $rare) $success="hatten überragenden Erfolg!";
+		if ($power>=10 && $rare) $success="hatten Ã¼berragenden Erfolg!";
 		else if ($power<0 && $rare) $success="haben total versagt!";
 		else if ($power<0 && !$rare) $success="haben versagt.";
 		else $success=" hatten zu ".$rand."% Erfolg.";
@@ -518,7 +518,7 @@ class Spell_Instant_Damage extends Spell {
 			$victim_user = sqlgetobject("SELECT * FROM `user` WHERE `id` = ".intval($army->user));
 			$spellreport .= "Die Armee $army->name von $victim_user->name wurde getroffen, Verluste : <br>\n";
 			
-			// todo : der ganze lock block dient nur dem armee-beschädigen, die teile kommen aus dem cron fight, KAPSEL MICH !
+			// todo : der ganze lock block dient nur dem armee-beschÃ¤digen, die teile kommen aus dem cron fight, KAPSEL MICH !
 			TablesLock();
 			$debug = false;
 			$army->units = cUnit::GetUnits($army->id);

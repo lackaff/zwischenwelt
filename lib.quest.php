@@ -8,7 +8,7 @@ require_once("lib.item.php");
 todo : item add param ?? , army add quest ??
 */
 
-// monster jagt : 20 pogopuschel in region x t�ten
+// monster jagt : 20 pogopuschel in region x töten
 // rettung funktioniert wie transport
 
 

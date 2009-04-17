@@ -27,23 +27,23 @@ $weather = array(
 );
 
 $b = array(
-	"building_hq"=>"Hauptgebäude",
-	"building_lumber"=>"Gebäude: Holzproduktion",
-	"building_stone"=>"Gebäude: Steinproduktion",
-	"building_food"=>"Gebäude: Nahrungproduktion",
-	"building_metal"=>"Gebäude: Metalproduktion",
-	"building_runes"=>"Gebäude: Runenproduktion",
-	"building_house"=>"Gebäude: Wohnhaus",
-	"building_store"=>"Gebäude: Lager",
-	"building_gate"=>"Gebäude: Tor",
-	"building_bridge"=>"Gebäude: Brücke"
+	"building_hq"=>"HauptgebÃ¤ude",
+	"building_lumber"=>"GebÃ¤ude: Holzproduktion",
+	"building_stone"=>"GebÃ¤ude: Steinproduktion",
+	"building_food"=>"GebÃ¤ude: Nahrungproduktion",
+	"building_metal"=>"GebÃ¤ude: Metalproduktion",
+	"building_runes"=>"GebÃ¤ude: Runenproduktion",
+	"building_house"=>"GebÃ¤ude: Wohnhaus",
+	"building_store"=>"GebÃ¤ude: Lager",
+	"building_gate"=>"GebÃ¤ude: Tor",
+	"building_bridge"=>"GebÃ¤ude: BrÃ¼cke"
 );
 
 $ro = array(
 	"lasttick"=>"Timestamp des letzten Ticks",
 	"crontime"=>"Mittlere Laufzeit der Cron",
-	"ticks"=>"Tickzähler",
-	"stats_nexttime"=>"nächster Berechnungszeitpunkt für Statistiken",
+	"ticks"=>"TickzÃ¤hler",
+	"stats_nexttime"=>"nÃ¤chster Berechnungszeitpunkt fÃ¼r Statistiken",
 	"minimap_left"=>"Minimap: Links",
 	"minimap_right"=>"Minimap: Rechts",
 	"minimap_top"=>"Minimap: Oben",
@@ -63,9 +63,9 @@ $l = array(
 	"prod_slots_runes"=>"Produktionsslots Runen",
 	"prod_faktor_slotless"=>"Produktionsfaktor ohne Slots",
 	"prod_faktor"=>"Produktionsfaktor",
-	"store"=>"Lagerkapazität",
-	"pop_slots_hq"=>"Einwohner Hauptgebäudes",
-	"pop_slots_house"=>"Einwohner Häuser",
+	"store"=>"LagerkapazitÃ¤t",
+	"pop_slots_hq"=>"Einwohner HauptgebÃ¤udes",
+	"pop_slots_house"=>"Einwohner HÃ¤user",
 
 	"fc_prod_runes"=>"runenkosten:food",
 	"mc_prod_runes"=>"runenkosten:metal",
@@ -75,10 +75,10 @@ $l = array(
 	"unitresratio"=>"weight of one transported unit", // the real weight in unittype is only used for armylimit...
 
 	"kArmyRecalcBlockedRoute_Timeout"=>"Timeout: Armee berechnet Umweg",
-	"kArmyAutoAttackRangeMonster_Timeout"=>"Timeout: Armee schießt automatisch auf Monster",
+	"kArmyAutoAttackRangeMonster_Timeout"=>"Timeout: Armee schieÃŸt automatisch auf Monster",
 	"kArmy_BigArmyGoSlowLimit"=>"Armee-Einheiten-Langsam-Limit",
 	"kArmy_BigArmyGoSlowFactorPer1000Units"=>"Armee-Einheiten-Langsam-Faktor-pro1000",
-	"kBaracksDestMaxDist"=>"maximal-abstand für kasernen-stationierung",
+	"kBaracksDestMaxDist"=>"maximal-abstand fÃ¼r kasernen-stationierung",
 	"kPortalTaxUnitNum"=>"portalsteuer pro x einheiten",
 	"kTerraFormer_SicherheitsAbstand"=>"Sicherheitsabstand der Terraformer zu Spielern",
 	"kArmy_AW_for_one_exp"=>"soviel a+v gibt einen frag",
@@ -104,7 +104,7 @@ $list_l = array();
 foreach($l as $field=>$text){
 	$list_l[] = new cTableEditTextField("global","name",$field,$text,"value");
 }
-$list_l[] = new cTableEditCheckedField("global","name","liveupdate","Liveupdate läuft gerade","value");
+$list_l[] = new cTableEditCheckedField("global","name","liveupdate","Liveupdate lÃ¤uft gerade","value");
 $list_l[] = new cTableEditDropDown("global","name","tech_architecture","Technologie: Architektur","value",$techs);
 $list_l[] = new cTableEditDropDown("global","name","weather","Wetter","value",$gWeatherType);
 
@@ -113,7 +113,7 @@ foreach($b as $field=>$text){
 	$list_b[] = new cTableEditDropDown("global","name",$field,$text,"value",$buildings);
 }
 
-// global-tabelle mit default-werten füllen
+// global-tabelle mit default-werten fÃ¼llen
 function global_default ($name,$default) {
 	if (!sqlgetone("SELECT 1 FROM `global` WHERE `name` = '".addslashes($name)."'"))
 		sql("REPLACE INTO `global` SET `value`='".addslashes($val)."' , `name`='".addslashes($name)."'");

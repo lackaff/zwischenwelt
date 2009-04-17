@@ -11,6 +11,7 @@ profile_page_start("guild_log.php");
    "http://www.w3.org/TR/html4/transitional.dtd">
 <html>
 <head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 <link rel="stylesheet" type="text/css" href="<?=GetZWStylePath()?>">
 <title>Zwischenwelt - Gildelog</title>
 
@@ -76,7 +77,7 @@ $guildlogs_page = 50;
 		<?php }?>
 		</table>
 	<?php } // count($guildlogs) > 0 ?>
-<p><a href="<?=Query("guild.php?sid=?")?>"><img src="<?=g("gildeforum/back.png")?>" border=0 alt="Zur&uuml;ck" title="zur&uuml;ck zur Gilde"></a></p></center>
+<p><a href="<?=Query("guild.php?sid=?")?>"><img src="<?=g("gildeforum/back.png")?>" border=0 alt="Zur&uuml;ck" title="zur&uuml;ck zur Gilde"></a></p>
 <?php
 
 }

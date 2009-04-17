@@ -326,11 +326,11 @@ class cItem {
 		$res = false;
 		$teleportziele = false;
 		switch ($item->type) {
-			case kItem_Portalstein_Blau: // blau -> öff. portal
+			case kItem_Portalstein_Blau: // blau -> Ã¶ff. portal
 				$teleportziele = sqlgettable("SELECT *,SQRT((x-$x)*(x-$x) + (y-$y)*(y-$y)) as `dist` FROM `building` 
 					WHERE `type` = ".kBuilding_Portal." AND `user` = 0 ORDER BY `dist`");
 			break;
-			case kItem_Portalstein_Gruen: // grün -> eigenes lager
+			case kItem_Portalstein_Gruen: // grÃ¼n -> eigenes lager
 				$teleportziele = sqlgettable("SELECT *,SQRT((x-$x)*(x-$x) + (y-$y)*(y-$y)) as `dist` FROM `building` 
 					WHERE `type` = ".kBuilding_Silo." AND `user` = ".$army->user." ORDER BY `dist`");
 			break;
@@ -348,11 +348,11 @@ class cItem {
 				$res = array($x,$y);
 			break;
 			/*
-			0 : erzeugt höllenhund, roter portalstein, flucht vor monsterkampf
+			0 : erzeugt hÃ¶llenhund, roter portalstein, flucht vor monsterkampf
 			1 : erzeugt wald
-			2 : erzeugt geröll
+			2 : erzeugt gerÃ¶ll
 			3 : erzeugt felder
-			4 : erzeugt hühnchen, grüner portalstein, flucht vor monsterkampf
+			4 : erzeugt hÃ¤hnchen, grÃ¼ner portalstein, flucht vor monsterkampf
 			5 : teleportiert ramme zur armee
 			*/
 			case kItem_Osterei0+0:

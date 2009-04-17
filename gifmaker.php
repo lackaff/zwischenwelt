@@ -10,7 +10,7 @@ define("kAnimOutPrefix","gifmakerout_");
 define("kAnimOutPostfix",".gif");
 ?>
 
-(alle gängigen grafikformate, aber am besten png oder gifs hochladen,  jpg besser nicht, das hat so hohe qualitätsverluste, und ist für solche kleinen pixelgrafiken eher ungeeignet)
+(alle gÃ¤ngigen grafikformate, aber am besten png oder gifs hochladen,  jpg besser nicht, das hat so hohe qualitÃ¤tsverluste, und ist fÃ¼r solche kleinen pixelgrafiken eher ungeeignet)
 <FORM enctype="multipart/form-data" METHOD=POST ACTION="">
 msec pro Frame (100msec = 1sek) :<input type="text" name="delay" value="30"><br>
 <?php for ($i=1;$i<=kMaxFiles;$i++) {?>
@@ -46,7 +46,7 @@ if (isset($f_delay)) {
 		if ($upload["error"] != UPLOAD_ERR_OK)
 		{ echo "Unbekannter Fehler bei ".$name."<br>\n"; continue; }
 		if (!is_uploaded_file($upload['tmp_name']))
-		{ echo "Mögliche File Upload Attack bei ".$name.".<br>\n"; continue; }
+		{ echo "MÃ¶gliche File Upload Attack bei ".$name.".<br>\n"; continue; }
 
 		//echo "($name)($origfilename)(".$upload['tmp_name'].")<br>";
 		$framepath = kFramesFolder.kFramePrefix.$animationid."_".count($frames).kFramePostfix;

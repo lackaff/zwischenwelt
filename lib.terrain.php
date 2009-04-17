@@ -215,7 +215,7 @@ function growTerrainAroundPos($x,$y,$radius,$terrainid,$overwriteall=false,$also
 			if($overwriteall == false)$t = sqlgetobject("SELECT * FROM `terrain` WHERE `x`=(".intval($px).") AND `y`=(".intval($py).")");
 			else $t = null;
 			
-			if(!$b && (!$t || $t->type == kTerrain_Grass)){
+			if(empty($b) && (empty($t) || $t->type == kTerrain_Grass)){
 				setTerrain($px,$py,$terrainid);
 				//echo " -- grow $terrainid at $px,$py<br>\n";
 				$done = true;

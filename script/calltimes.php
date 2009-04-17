@@ -268,10 +268,10 @@ function callcmp ($uid1,$uid2,$showdetails=false) {
 	$mycmp->uid2 = $uid2;
 	
 	// bestimmung der multi-wahrscheinlichkeit
-	// anzahl der sessions wo die user direkt nacheinander online waren (wird durch überlappung verfäscht)
+	// anzahl der sessions wo die user direkt nacheinander online waren (wird durch Ãœberlappung verfÃ¤scht)
 	$mycmp->score = $mycmp->c_shortwait; 
 	
-	// wenn beide gleichzeitig unabhaengig voneinander online sind (überlappung=overlap), ist es unwahrscheinlicher, aber hier von hand untersuchen
+	// wenn beide gleichzeitig unabhaengig voneinander online sind (Ãœberlappung=overlap), ist es unwahrscheinlicher, aber hier von hand untersuchen
 	if ($mycmp->c_overlap > 0)  $mycmp->score *= 0.5; 
 	//if ($mycmp->c_overlap > 0)  $mycmp->score = 1; 
 	

@@ -32,7 +32,7 @@ $t = sqlgettable("SELECT * FROM `action`");
 foreach($t as $a)
 {
 	$b = sqlgetobject("SELECT * FROM `building` WHERE `id`=".$a->building);
-	if(!$b)echo "action ".$a->id." has no building<br>";
+	if(empty($b))echo "action ".$a->id." has no building<br>";
 }
 echo "done<br><br>";
 

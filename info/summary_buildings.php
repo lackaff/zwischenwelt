@@ -63,8 +63,9 @@ if (isset($f_singleupgrades)) {
    "http://www.w3.org/TR/html4/transitional.dtd">
 <html>
 <head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 <link rel="stylesheet" type="text/css" href="<?=GetZWStylePath()?>">
-<title>Zwischenwelt - ‹bersicht</title>
+<title>Zwischenwelt - √úbersicht</title>
 <SCRIPT LANGUAGE="JavaScript" type="text/javascript">
 <!--
 	function planall (name,maxindex,setvalname) {
@@ -83,7 +84,7 @@ $totalbuildings = sqlgetone("SELECT COUNT(*) FROM `building` WHERE `user`=".$gUs
 $hqlevel = sqlgetone("SELECT `level` FROM `building` WHERE `user`=".$gUser->id." AND `type`=".kBuilding_HQ." LIMIT 1");
 $maxlevel = 3*($hqlevel+1);
 ?>
-insgesamt <?=$totalbuildings?> Geb‰ude
+insgesamt <?=$totalbuildings?> Geb√§ude
 
 <?php
 if (isset($f_listtype)) {
@@ -97,7 +98,7 @@ if (isset($f_listtype)) {
 	$buildings = sqlgettable("SELECT * FROM `building` WHERE ".implode(" AND ",$cond)." ORDER BY `level`,`upgrades`");
 	$typepic = "<img src=\"".GetBuildingPic(intval($f_listtype),$gUser)."\">";
 	?>
-	<a href="<?=Query("?sid=?&selbtype=".$f_listtype)?>">(zur¸ck zur ‹bersicht)</a><br>
+	<a href="<?=Query("?sid=?&selbtype=".$f_listtype)?>">(zur√ºck zur √úbersicht)</a><br>
 	<?php
 	echo "Liste aller(".count($buildings).") ".$typepic;
 	if ($f_listlevel != -1) echo " auf Stufe ".intval($f_listlevel);
@@ -115,7 +116,7 @@ if (isset($f_listtype)) {
 			<th>Pos</th>
 			<th>Stufe</th>
 			<th>Upgrades</th>
-			<th>n‰chstes Upgrade</th>
+			<th>n√§chstes Upgrade</th>
 			<th><img src="<?=g("sanduhrklein.gif")?>" alt="<?=$timetip?>" title="<?=$timetip?>"></th>
 			<th>geplant bis</th>
 			<th>max</th>
@@ -160,7 +161,7 @@ if (isset($f_listtype)) {
 					<?php } // endif?>
 				</td>
 				<td align="right"><input align="right" style="width:40px" type="text" id="planner_<?=$countplanner++?>" name="plan[<?=$o->id?>]" value="<?=$o->upgrades+$o->level?>"></td>
-				<td align="right"><?=($o->level>=$maxlevel)?"max Geb‰udestufe":""?></td>
+				<td align="right"><?=($o->level>=$maxlevel)?"max Geb√§udestufe":""?></td>
 			</tr>
 		<?php } // endforeach?>
 		<tr>
@@ -174,7 +175,7 @@ if (isset($f_listtype)) {
 		</tr>
 		</table>
 		<input type="submit" name="singleupgrades" value="speichern">
-		(max Geb‰udestufe <b><?=$maxlevel?></b> bei <?="<img src=\"".GetBuildingPic(kBuilding_HQ,$gUser)."\">"?> Stufe <b><?=$hqlevel?></b>)
+		(max Geb√§udestufe <b><?=$maxlevel?></b> bei <?="<img src=\"".GetBuildingPic(kBuilding_HQ,$gUser)."\">"?> Stufe <b><?=$hqlevel?></b>)
 	</form>
 	<?php
 } else {
@@ -211,7 +212,7 @@ if (isset($f_listtype)) {
 				<th>Anzahl</th>
 				<th>Upgrades</th>
 				<?php if ($btype!=0) {?>
-					<th>n‰chstes Upgrade</th>
+					<th>n√§chstes Upgrade</th>
 				<?php } // endif?>
 				<th nowrap>geplant bis</th>
 			</tr>
@@ -292,7 +293,7 @@ if (isset($f_listtype)) {
 				</tr>
 			</table>
 			<input type="submit" name="<?=($btype == 0)?"allupgrades":"upgrades"?>" value="<?=($btype == 0)?"ALLE speichern":"speichern"?>">
-			(max Geb‰udestufe <b><?=$maxlevel?></b> bei <?="<img src=\"".GetBuildingPic(kBuilding_HQ,$gUser)."\">"?> Stufe <b><?=$hqlevel?></b>)
+			(max Geb√§udestufe <b><?=$maxlevel?></b> bei <?="<img src=\"".GetBuildingPic(kBuilding_HQ,$gUser)."\">"?> Stufe <b><?=$hqlevel?></b>)
 		</form>
 		<?php
 		if ($btype == 0)
@@ -305,7 +306,7 @@ if (isset($f_listtype)) {
 	echo GenerateTabsMultiRow("buildingsummarytabs",$mytabs,15,$f_selbtype);
 }
 ?>
-Der Punkt "n‰chstes Upgrade" stellt die Kosten vom n‰chsten Upgrade dar, das kommt nach dem alle geplanten fertig sind.
+Der Punkt "n√§chstes Upgrade" stellt die Kosten vom n√§chsten Upgrade dar, das kommt nach dem alle geplanten fertig sind.
 
 </body>
 </html>

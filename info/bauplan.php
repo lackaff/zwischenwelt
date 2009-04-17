@@ -48,8 +48,9 @@ $types = array_unique($types);
    "http://www.w3.org/TR/html4/transitional.dtd">
 <html>
 <head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 <link rel="stylesheet" type="text/css" href="<?=GetZWStylePath()?>">
-<title>Zwischenwelt - Baupl‰ne</title>
+<title>Zwischenwelt - Baupl√§ne</title>
 
 </head>
 <body>
@@ -58,7 +59,7 @@ include("../menu.php");
 ?>
 
 
-insgesamt <?=count($cps)?> Pl‰ne:
+insgesamt <?=count($cps)?> Pl√§ne:
 <form method="post" action="<?=Query("?sid=?")?>">
 	<table><tr>
 		<?php $i=0; foreach ($cps as $cp) {?>
@@ -76,7 +77,7 @@ insgesamt <?=count($cps)?> Pl‰ne:
 	<input type="submit" name="cp_abort" value="Abbrechen">
 </form>
 
-Alle von einem Typ ausw‰hlen :<br>
+Alle von einem Typ auswahlen :<br>
 <?php foreach ($types as $tid) {
 	echo "<a href='".Query("?sid=?&type=".$tid)."'>";
 	echo "<img border=1 src='".g($gBuildingType[$tid]->gfx,"we",0,$gUser->race)."'>";
@@ -88,7 +89,7 @@ Alle von einem Typ ausw‰hlen :<br>
 <br>
 siehe auch <a href="<?=Query("kosten.php?sid=?")?>"><b>Kosten</b></a><br>
 Auf der Karte kann man sich anzeigen lassen,<br>
-welcher Plan was wird, wenn man den "Pl‰ne" Knopf dr¸ckt<br>
+welcher Plan was wird, wenn man den "Pl√§ne" Knopf dr√ºckt<br>
 
 <?php profile_page_end();?>
 </body>

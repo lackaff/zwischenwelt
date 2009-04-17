@@ -9,7 +9,7 @@ require_once("../lib.tableedit.php");
 AdminLock();
 
 $userrecord = sqlgetone("SELECT `userid` FROM `userrecord` WHERE `userid`=".intval($f_id));
-if(!$userrecord)sql("INSERT INTO `userrecord` SET `userid`=".intval($f_id));
+if(empty($userrecord))sql("INSERT INTO `userrecord` SET `userid`=".intval($f_id));
 
 $races = array(
 	kRace_Mensch => "Mensch",
