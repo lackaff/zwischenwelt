@@ -97,7 +97,11 @@ include("../stats/header.php");
 
 	for($i=1;$i<=6;++$i){ ImgBorderStart(); ?>
 	<b><?=$title[$i]?></b><br>
+	<?php 	if(count($x) == 0){
+			echo "zu wenig Daten";
+		} else { ?>
 	<img src="../plot.php?title=<?=$title[$i]?>&x=<?=implode(",",$x)?>&y=<?=implode(",",$y[$i])?>">
+	<?php } ?>
 	<?php ImgBorderEnd(); } ?>
 
 
@@ -123,7 +127,11 @@ include("../stats/header.php");
 
 	for($i=1;$i<=3;++$i){ ImgBorderStart(); ?>
 	<b><?=$title[$i]?></b><br>
+	<?php 	if(count($x) == 0){
+			echo "zu wenig Daten";
+		} else { ?>
 	<img src="../plot.php?title=<?=$title[$i]?>&x=<?=implode(",",$x)?>&y=<?=implode(",",$y[$i])?>">
+	<?php } ?>
 	<?php ImgBorderEnd(); } ?>
 
 
@@ -151,7 +159,11 @@ include("../stats/header.php");
 
 	for($i=1;$i<=4;++$i){ ImgBorderStart(); ?>
 	<b><?=$title[$i]?></b><br>
+	<?php 	if(count($x) == 0){
+			echo "zu wenig Daten";
+		} else { ?>
 	<img src="../plot.php?title=<?=$title[$i]?>&x=<?=implode(",",$x)?>&y=<?=implode(",",$y[$i])?>">
+	<?php } ?>
 	<?php ImgBorderEnd(); } ?>
 
 
@@ -181,7 +193,11 @@ include("../stats/header.php");
 
 	for($i=1;$i<=5;++$i){ ImgBorderStart(); ?>
 	<b><?=$title[$i]?></b><br>
+	<?php 	if(count($x) == 0){
+			echo "zu wenig Daten";
+		} else { ?>
 	<img src="../plot.php?title=<?=$title[$i]?>&x=<?=implode(",",$x)?>&y=<?=implode(",",$y[$i])?>">
+	<?php } ?>
 	<?php ImgBorderEnd(); } ?>
 
 	<?php
@@ -208,7 +224,11 @@ include("../stats/header.php");
 
 	for($i=1;$i<=1;++$i){ ImgBorderStart(); ?>
 	<b><?=$title[$i]?></b><br>
+	<?php 	if(count($x) == 0){
+			echo "zu wenig Daten";
+		} else { ?>
 	<img src="../plot.php?title=<?=$title[$i]?>&x=<?=implode(",",$x)?>&y=<?=implode(",",$y[$i])?>">
+	<?php } ?>
 	<?php ImgBorderEnd(); } ?>
 
 	</td>
