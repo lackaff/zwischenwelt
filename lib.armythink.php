@@ -149,7 +149,7 @@ function ArmyThink ($army,$debug=false) {
 		}
 		foreach ($enemies as $k => $enemy) $enemies[$k]->units = $gAllArmyUnits[$enemy->id];
 		if ($debug) echo "looking for enemies in radius $r, found ".count($enemies)."<br>";
-		if ($army->user == 0 && !$followarmy && count($enemies) > 0) {
+		if ($army->user == 0 && empty($followarmy) && count($enemies) > 0) {
 			// monster : remeber followed army
 			$followarmy = $enemies[0];
 			sql("UPDATE `army` SET ".arr2sql(array("follow"=>$followarmy->id))." WHERE `id` = ".intval($army->id));
@@ -412,7 +412,7 @@ function ArmyThink ($army,$debug=false) {
 			if (($army->flags & kArmyFlag_SiegeBlockingBuilding) || ($army->flags & kArmyFlag_AttackBlockingArmy)) {
 				$blockingarmy = sqlgetobject("SELECT * FROM `army` WHERE `x` = ".$pos[0]." AND `y` = ".$pos[1]." LIMIT 1");
 				
-				if (($army->flags & kArmyFlag_SiegeBlockingBuilding) && !$blockingarmy &&
+				if (($army->flags & kArmyFlag_SiegeBlockingBuilding) && empty($blockingarmy) &&
 					($blocking=sqlgetobject("SELECT * FROM `building` WHERE `x` = ".$pos[0]." AND `y` = ".$pos[1]." LIMIT 1"))) {
 					// siege blocking
 					if ($debug) echo "army tries to siege blocking building<br>";
@@ -503,7 +503,7 @@ function TryExecArmyAction ($army,$cmd,$param1,$param2,$param3,$actid,$debug=fal
 				if ($directobject) 
 						$building = $directobject;
 				else	$building = sqlgetobject("SELECT * FROM `building` WHERE `x` = ".intval($param1)." AND `y` = ".intval($param2));
-				if (!$building) { $action_complete = true; break; }
+				if (empty($building)) { $action_complete = true; break; }
 				cArmy::ArmyGetRes($army->id,$building->user,-$lumber,-$stone,-$food,-$metal,-$runes);
 				$action_complete = true;
 			}

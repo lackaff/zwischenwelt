@@ -123,7 +123,7 @@ class cBuilding {
 	
 	function SetBuildingUpgrades($buildingid,$num) {
 		$building = sqlgetobject("SELECT * FROM `building` WHERE `id` = ".intval($buildingid));
-		if (!$building) return;
+		if (empty($building)) return;
 		$num = max(($building->upgradetime == 0)?0:1,intval($num));
 		sql("UPDATE `building` SET `upgrades` = ".$num." WHERE `id` = ".intval($buildingid));
 	}
@@ -162,8 +162,8 @@ class cBuilding {
 		global $gBuildingType,$gUser;
 		if (!is_object($building))
 			$building = sqlgetobject("SELECT * FROM `building` WHERE `id`=".intval($building));
-		if ($userid == 0 && (!$building || $building->user != 0)) $userid = $gUser->id;
-		if (!$building || $building->user != $userid) return false;
+		if ($userid == 0 && (empty($building) || $building->user != 0)) $userid = $gUser->id;
+		if (empty($building) || $building->user != $userid) return false;
 		
 		require_once("lib.fight.php");
 		cFight::StopAllBuildingFights($building,"Das Gebäude _BUILDINGTYPE_ bei (_x_,_y_) von _BUILDINGOWNERNAME_ wurde zerstört.");

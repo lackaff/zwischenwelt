@@ -23,7 +23,7 @@ class cInfoPortal extends cInfoBuilding {
 				$cost = cBuilding::getPortalFetchArmyCost($gObject);
 				foreach ($f_sel as $id) {
 					$army = sqlgetobject("SELECT * FROM `army` WHERE `id` = ".intval($id));
-					if (!$army) continue;
+					if (empty($army)) continue;
 					if (!cArmy::CanControllArmy($army,$gUser)) continue;
 					if (!cArmy::CanFetchArmyToPortal($gObject,$army)) continue;
 					$army->units = cUnit::GetUnits($army->id); 
@@ -80,7 +80,7 @@ class cInfoPortal extends cInfoBuilding {
 				
 				$target = intval(GetBParam($gObject->id,"target"));
 				$target = $target?sqlgetobject("SELECT * FROM `building` WHERE `id` = ".intval($target)):false;
-				if (!$target) {
+				if (empty($target)) {
 					echo "<h3><font color='red'>Keine Verbindung !</font></h3>";
 					break;
 				}
@@ -286,7 +286,7 @@ class cInfoPortal extends cInfoBuilding {
 			</tr>
 			<?php foreach ($possibleTargets as $o) {?>
 				<?php $mark = sqlgetobject("SELECT * FROM `mapmark` WHERE `user` = ".$gUser->id." AND `x` = ".$o->x." AND `y` = ".$o->y." ORDER BY `name`");?>
-				<?php if (!isset($f_showdest) && !$mark) continue;?>
+				<?php if (!isset($f_showdest) && empty($mark)) continue;?>
 				<?php $tax = cBuilding::getPortalConTax($gObject,$o,$gUser->id);?>
 				<tr>
 					<td align="left"><?=$mark?$mark->name:""?></td>

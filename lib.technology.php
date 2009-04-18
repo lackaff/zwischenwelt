@@ -40,7 +40,7 @@ class cTechnology {
 function ParseReq ($req) {
 	$level = 0;
 	if (empty($req)) return array();
-	if (!$req || $req == "") return array();
+	if (empty($req) || $req == "") return array();
 	// OLD SYNTAX, STILL SUPPORTED : $req is the requirement text from technologytype like "4:5,33:5" for id 4 at least level 5
 	// NEW SYNTAX : type>minlevel+inc  OR  type<maxlevel+inc   inc can be float : "4>5+0.5"  for id 4 at least level 5
 	// SYNTAX EXTENSION : a number in [] means, that everything on right of this number is only relevant for the requirements 
@@ -150,12 +150,12 @@ function SetTechnologyUpgrades($typeid,$buildingid,$num) {
 	$debug = false;
 	if ($debug) echo " debuggin SetTechnologyUpgrades(typeid=$typeid,buildingid=$buildingid,num=$num)<br>";
 	$techtype =  $gTechnologyType[$typeid];
-	if (!$techtype) { if ($debug) echo "no techtype id $typeid<br>"; return; }
+	if (empty($techtype)) { if ($debug) echo "no techtype id $typeid<br>"; return; }
 	$tech = GetTechnologyObject($techtype->id);
 	if ($tech->upgradetime > 0 && sqlgetone("SELECT 1 FROM `building` WHERE `id` = ".intval($tech->upgradebuilding))) $buildingid = $tech->upgradebuilding;
 
 	$building = sqlgetobject("SELECT * FROM `building` WHERE `id` = ".intval($buildingid));
-	if (!$building) { if ($debug) echo "no building id $buildingid<br>"; return; }
+	if (empty($building)) { if ($debug) echo "no building id $buildingid<br>"; return; }
 
 	if (intval($building->level) < intval($techtype->buildinglevel))  
 		{ if ($debug) echo "$building->level < $techtype->buildinglevel <br>"; return; }

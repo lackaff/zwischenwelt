@@ -32,7 +32,7 @@ function Login($user,$pass,$usegfx)
 	$o = sqlgetobject("SELECT * FROM `user` WHERE
 		(`pass` = PASSWORD('".addslashes($pass)."') OR `pass` = OLD_PASSWORD('".addslashes($pass)."')) AND
 		`name` = '".addslashes($user)."' LIMIT 1");
-	if (!$o) return 0;
+	if (empty($o)) return 0;
 	
 	if(intval(sqlgetone("SELECT `value` FROM `global` WHERE `name`='liveupdate'"))==1 && $o->admin!=1) return 0;
 	

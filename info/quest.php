@@ -429,7 +429,7 @@ typ = Rettung , Transport , Sammeln , Stehlen :
 	echo "repairing hellholes, ".count($hellholes)." total<br>";
 	foreach ($hellholes as $o) {
 		$building = sqlgetobject("SELECT * FROM `building` WHERE `x` = ".$o->x." AND `y` = ".$o->y);
-		if (!$building) {
+		if (empty($building)) {
 			echo "hellhole at ".pos2txt($o->x,$o->y)." had no building<br>";
 			sql("INSERT INTO `building` SET `type` = ".kBuilding_Hellhole.", `hp` = 100 , `x` = ".$o->x." , `y` = ".$o->y);
 		}

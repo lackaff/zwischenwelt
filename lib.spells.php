@@ -70,7 +70,7 @@ function GetSpellInstance ($spelltype,$o=false) {
 
 function BanSpell ($spell_db_obj,$banner_userid=false) {
 	global $gSpellType;
-	if (!$spell_db_obj) return;
+	if (empty($spell_db_obj)) return;
 	if (!is_object($spell_db_obj)) $spell_db_obj = sqlgetobject("SELECT * FROM `spell` WHERE `id` = ".intval($spell_db_obj));
 	$spell = GetSpellInstance($spell_db_obj->type,$spell_db_obj);
 	$spell->Expire();
@@ -465,7 +465,7 @@ class Spell_Once_Per_User extends Spell_Cron {
 //*********************************************************************************************
 class Spell_Production extends Spell_Cron {	
 	function GetProduced ($dtime) { // override me for non-res (pop,maxpop,maxres,...)
-		if (!$this->targetuser) return 0;
+		if (empty($this->targetuser)) return 0;
 		return ( ((float)$this->targetuser->{"worker_".$this->res}) * 0.01 *
 				 ((float)$this->targetuser->pop)  *
 				 ((float)$this->spelltype->baseeffect) *
@@ -474,7 +474,7 @@ class Spell_Production extends Spell_Cron {
 	
 	function Cron($dtime) {
 		parent::Cron($dtime);
-		if (!$this->targetuser) return;
+		if (empty($this->targetuser)) return;
 		assert($dtime>0);
 		$produced = $this->GetProduced($dtime);
 		global $gVerbose;

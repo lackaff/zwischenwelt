@@ -65,7 +65,7 @@ class cFight {
 		global $gContainerType2Number,$gNumber2ContainerType,$gUnitType,$gBuildingType,$gArmyType;
 		if (is_numeric($containertype)) $containertype = $gNumber2ContainerType[$containertype];
 		if ($containerobj && !is_object($containerobj)) $containerobj = sqlgetobject("SELECT * FROM `".addslashes($containertype)."` WHERE `id` = ".intval($containerobj));
-		if (!$containerobj) return "unknown_unit_container";
+		if (empty($containerobj)) return "unknown_unit_container";
 		if ($containertype == kUnitContainer_Army)		$text = $gArmyType[$containerobj->type]->name." ".$containerobj->name;
 		if ($containertype == kUnitContainer_Building)	$text = $gBuildingType[$containerobj->type]->name." Stufe ".$containerobj->level;
 		$text .= " bei ($containerobj->x,$containerobj->y)";
@@ -91,7 +91,7 @@ class cFight {
 		$attackertype = is_numeric($attackertype)?$gNumber2ContainerType[$attackertype]:$attackertype;
 		$defendertype = is_numeric($defendertype)?$gNumber2ContainerType[$defendertype]:$defendertype;
 		
-		if (!$attackerobj) return false;
+		if (empty($attackerobj)) return false;
 		if ($defendertype == kUnitContainer_Army && $defenderobj && $defenderobj->type != kArmyType_Normal) return false;
 		return true;
 	}
@@ -99,7 +99,7 @@ class cFight {
 	
 	// general shooter intelligence : look for potential targets, start shootings, choose one active shooting, and shoot
 	function ThinkShooting ($attackerobj,$attackertype,$debug=false) {
-		if (!$attackerobj) return false;
+		if (empty($attackerobj)) return false;
 		global $gContainerType2Number,$gNumber2ContainerType;
 		global $gBuildingType,$gArmyType;
 		global $gArmyShootings; // TODO : use this caching if available
@@ -122,7 +122,7 @@ class cFight {
 				$myshootings[$o->defendertype][$o->defender] = $o;
 			}
 		}
-		if (!$myshootings) {
+		if (empty($myshootings)) {
 			$myshootings = sqlgetgrouptable("SELECT * FROM `shooting` WHERE 
 				`attacker` = ".$attackerobj->id." AND 
 				`attackertype` = ".$gContainerType2Number[$attackertype],"defendertype","defender");
@@ -216,7 +216,7 @@ class cFight {
 		foreach ($myshootings as $ctypenum => $arr) foreach ($arr as $o) {
 			$ctype = $gNumber2ContainerType[$ctypenum];
 			$target = sqlgetobject("SELECT * FROM `". $ctype."` WHERE `id` = ".$o->defender);
-			if (!$target) {
+			if (empty($target)) {
 				// dead
 				cFight::EndShooting($o,"Ziel verschwunden");
 				continue;
@@ -274,8 +274,8 @@ class cFight {
 		$shooting->autocancel = intval($autocancel);
 		
 		// hack : unshootable types
-		if (!$attackerobj) $attackerobj = sqlgetobject("SELECT * FROM `".addslashes($attackertype)."` WHERE `id` = ".intval($shooting->attacker));
-		if (!$defenderobj) $defenderobj = sqlgetobject("SELECT * FROM `".addslashes($defendertype)."` WHERE `id` = ".intval($shooting->defender));
+		if (empty($attackerobj)) $attackerobj = sqlgetobject("SELECT * FROM `".addslashes($attackertype)."` WHERE `id` = ".intval($shooting->attacker));
+		if (empty($defenderobj)) $defenderobj = sqlgetobject("SELECT * FROM `".addslashes($defendertype)."` WHERE `id` = ".intval($shooting->defender));
 		if (!cFight::CanShoot($attackerobj,$attackertype,$defenderobj,$defendertype)) return false;
 		
 		// start fightlog
@@ -292,12 +292,12 @@ class cFight {
 		global $gContainerType2Number,$gNumber2ContainerType,$gUnitType,$gBuildingType,$gArmyType;
 		global $gAllUsers;
 		if ($dmg <= 0) return; // todo : autocalc from units in attacker
-		if (!$shooting) return;
+		if (empty($shooting)) return;
 		if (is_numeric($shooting->attackertype)) $shooting->attackertype = $gNumber2ContainerType[$shooting->attackertype];
 		if (is_numeric($shooting->defendertype)) $shooting->defendertype = $gNumber2ContainerType[$shooting->defendertype];
-		if (!$attackerobj) $attackerobj = sqlgetobject("SELECT * FROM `".addslashes($shooting->attackertype)."` WHERE `id` = ".intval($shooting->attacker));
-		if (!$defenderobj) $defenderobj = sqlgetobject("SELECT * FROM `".addslashes($shooting->defendertype)."` WHERE `id` = ".intval($shooting->defender));
-		if (!$attackerobj || !$defenderobj) {
+		if (empty($attackerobj)) $attackerobj = sqlgetobject("SELECT * FROM `".addslashes($shooting->attackertype)."` WHERE `id` = ".intval($shooting->attacker));
+		if (empty($defenderobj)) $defenderobj = sqlgetobject("SELECT * FROM `".addslashes($shooting->defendertype)."` WHERE `id` = ".intval($shooting->defender));
+		if (empty($attackerobj) || empty($defenderobj)) {
 			cFight::EndShooting($o,"Ziel verschwunden");
 			return; // error
 		}
@@ -386,8 +386,8 @@ class cFight {
 				// send fight report
 				if (is_numeric($shooting->attackertype)) $shooting->attackertype = $gNumber2ContainerType[$shooting->attackertype];
 				if (is_numeric($shooting->defendertype)) $shooting->defendertype = $gNumber2ContainerType[$shooting->defendertype];
-				if (!$attackerobj) $attackerobj = sqlgetobject("SELECT * FROM `".addslashes($shooting->attackertype)."` WHERE `id` = ".intval($shooting->attacker));
-				if (!$defenderobj) $defenderobj = sqlgetobject("SELECT * FROM `".addslashes($shooting->defendertype)."` WHERE `id` = ".intval($shooting->defender));
+				if (empty($attackerobj)) $attackerobj = sqlgetobject("SELECT * FROM `".addslashes($shooting->attackertype)."` WHERE `id` = ".intval($shooting->attacker));
+				if (empty($defenderobj)) $defenderobj = sqlgetobject("SELECT * FROM `".addslashes($shooting->defendertype)."` WHERE `id` = ".intval($shooting->defender));
 				//echo "sending fight report...<br>\n";
 				cFight::SendFightReport($fightlog,$attackerobj,$defenderobj,$why,true,$shooting->attackertype,$shooting->defendertype);
 			}
@@ -415,7 +415,7 @@ class cFight {
 		if (!cArmy::inPillageRange($army->x-$x,$army->y-$y)) 
 			{ if ($debug) echo "StartPillage : out of range<br>"; return false; }
 		$building = sqlgetobject("SELECT * FROM `building` WHERE `x` = ".intval($x)." AND `y` = ".intval($y));
-		if (!$building) 
+		if (empty($building)) 
 			{ if ($debug) echo "StartPillage : no building<br>"; return false; }
 			
 		// starting pillage
@@ -463,7 +463,7 @@ class cFight {
 		//if ($debug) vardump2($pillage);
 		$army = sqlgetobject("SELECT * FROM `army` WHERE `id` = ".$pillage->army);
 		$building = sqlgetobject("SELECT * FROM `building` WHERE `id` = ".$pillage->building);
-		if (!$building || !$army) {
+		if (empty($building) || empty($army)) {
 			warning("BUG : $building , $army<br>");
 			sql("DELETE FROM `pillage` WHERE `id`=".$pillage->id);
 			return;
@@ -565,7 +565,7 @@ class cFight {
 		if (!cArmy::inSiegeRange($army->x-$x,$army->y-$y)) 
 			{ if ($debug) echo "StartSiege : out of range<br>"; return false; }
 		$building = sqlgetobject("SELECT * FROM `building` WHERE `x` = ".intval($x)." AND `y` = ".intval($y));
-		if (!$building) 
+		if (empty($building)) 
 			{ if ($debug) echo "StartSiege : no building<br>"; return false; }
 			
 			
@@ -621,7 +621,7 @@ class cFight {
 	function SiegeStep ($siege,$debug=false) {
 		$army = sqlgetobject("SELECT * FROM `army` WHERE `id` = ".$siege->army);
 		$building = sqlgetobject("SELECT * FROM `building` WHERE `id` = ".$siege->building);
-		if (!$army || !$building) {
+		if (empty($army) || empty($building)) {
 			warning("BUG ! $army $building<br>");
 			sql("DELETE FROM `siege` WHERE `id`=".$siege->id);
 			return;
@@ -701,7 +701,7 @@ class cFight {
 	// $attacker,$defender must be army-objects
 	// $attacker->units and $defender->units must be set
 	function FightPossible ($attacker,$defender,$debug=false) {
-		if (!$defender)		{ if ($debug) echo "FightPossible : no enemy<br>"; return false; }
+		if (empty($defender))		{ if ($debug) echo "FightPossible : no enemy<br>"; return false; }
 		$ma = cUnit::GetUnitsMovableMask($attacker->units);
 		$md = cUnit::GetUnitsMovableMask($defender->units);
 		if (($ma & $md) == 0)	{ if ($debug) echo "FightPossible : movable-mismatch $ma & $md<br>"; return false; }
@@ -1042,7 +1042,7 @@ class cFight {
 		$arr = array(array($attacker,$attackertype),array($defender,$defendertype));
 		foreach ($arr as $pair) {
 			list($container,$containertype) = $pair;
-			if (!$container) continue;
+			if (empty($container)) continue;
 			$containernametext = cFight::GetContainerText($container,$containertype);
 			
 			$report .= "<b>".$containernametext."</b> ".($container->destroyed?"<font color='red'><b>(ausgelöscht)</b></font>":"")."<br>";

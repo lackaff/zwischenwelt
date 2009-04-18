@@ -185,11 +185,11 @@ class cText {
 // plaintext, format not reliable, for debugging only, don't scan, might change at any time
 function army2txt ($army) {
 	// name[id,u=user,size=size](x,y)
-	if (!$army) return "no_army";
+	if (empty($army)) return "no_army";
 	return $army->name."[".$army->id.(isset($army->size)?(",size=".floor($army->size)):"").",u=".user2txt($army->user)."]"."($army->x,$army->y)"; 
 }
 function building2txt ($building) { 
-	if (!$building) return "no_building";
+	if (empty($building)) return "no_building";
 	// type->name[u=user](x,y)
 	global $gBuildingType;
 	return $gBuildingType[$building->type]->name."[u=".user2txt($building->user)."]"."($building->x,$building->y)";
@@ -202,11 +202,11 @@ function user2txt ($user) {
 		else if (isset($gAllUsers)) 
 				$user = $gAllUsers[$user];
 		else	$user = sqlgetobject("SELECT * FROM `user` WHERE `id` = ".intval($user));
-	if (!$user) return "<font color='red'>user_not_found</font>";
+	if (empty($user)) return "<font color='red'>user_not_found</font>";
 	return $user->name."[".$user->id.",pop=".floor($user->pop)."]";
 }
 function item2txt ($item) {
-	if (!$item) return "no_item";
+	if (empty($item)) return "no_item";
 	if ($item->army) { $army = sqlgetobject("SELECT * FROM `army` WHERE `id` = ".$item->army); $item->x = $army->x; $item->y = $army->y; }
 	// name[id](a=army)
 	// name[id](x,y)
@@ -230,12 +230,12 @@ function oposinfolink ($o,$text=false) {
 	return posinfolink($o->x,$o->y,$text);
 }
 function quest2txt ($quest) {
-	if (!$quest) return "no_quest";
+	if (empty($quest)) return "no_quest";
 	global $gQuestTypeNames;
 	return $quest->name."[".$quest->id.",t=".$gQuestTypeNames[$quest->type]."]"."($quest->x,$quest->y)";
 }
 function usermsglink ($user) { // obj or id
-	if (!$user) return "admin";
+	if (empty($user)) return "admin";
 	global $gUser;
 	if (!is_object($user)) $user = sqlgetobject("SELECT `id`,`name` FROM `user` WHERE `id` = ".intval($user));
 	return "<a href='".query("../info/msg.php?sid=?&show=compose&to=".urlencode($user->name))."'>".GetFOFtxt($gUser->id,$user->id,$user->name)."</a>";
@@ -244,7 +244,7 @@ function usermsglink ($user) { // obj or id
 
 function GetUserLink ($user,$guildinfo=true,$msglink=true,$specialcolor=false) {
 	if ($user && !is_object($user)) $user = sqlgetobject("SELECT * FROM `user` WHERE `id` = ".intval($user)); 
-	if (!$user) return false; // no fallback in here
+	if (empty($user)) return false; // no fallback in here
 	global $gUser;
 	$hq = sqlgetobject("SELECT * FROM `building` WHERE `type` = ".kBuilding_HQ." AND `user` = ".$user->id);
 	$guild = ($guildinfo && $user->guild)?sqlgetobject("SELECT * FROM `guild` WHERE `id` = ".$user->guild):false;
@@ -265,7 +265,7 @@ function cost2txt ($costarr,$user=false) {
 	foreach ($gRes as $n=>$f) {
 		$cost = $costarr?$costarr[$i++]:0;
 		if ($cost <= 0) continue;
-		$color = (!$user)?"black":(($user->{$f} >= $cost)?"green":"red");
+		$color = (empty($user))?"black":(($user->{$f} >= $cost)?"green":"red");
 		$out .= "<img src='".g("res_$f.gif")."' alt='$n' title='$n'><font color='$color'>".ktrenner($cost)."</font>";
 	}
 	if (empty($out)) $out = "0";

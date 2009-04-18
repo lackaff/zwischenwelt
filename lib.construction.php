@@ -247,7 +247,7 @@ function CancelConstruction ($id,$user=false) {
 	// returns canceled construction, for x,y read
 
 	$con = sqlgetobject("SELECT * FROM `construction` WHERE `id` = ".$id);
-	if (!$con) return false;
+	if (empty($con)) return false;
 	if ($user && $con->user != $user) return false;
 	sql("DELETE FROM `construction` WHERE `id` = ".intval($id));
 	sql("UPDATE `construction` SET `priority` = `priority` - 1 WHERE 
@@ -260,7 +260,7 @@ function CancelConstruction ($id,$user=false) {
 //returns percent 0.0 - 1.0 of construction progress
 function GetConstructionProgress($building) {
 	if(!is_object($building)) $building = sqlgetobject("SELECT * FROM `building` WHERE `id`=".intval($building));
-	if (!$building) return 0;
+	if (empty($building)) return 0;
 	$timeleft = max(0,$building->construction - time());
 	$buildtime = max(1,GetBuildTime($building->x,$building->y,$building->type,0,$building->user)); // prevent div by zero
 	return 1.0 - min(1.0,$timeleft / $buildtime);

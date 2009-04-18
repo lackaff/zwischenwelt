@@ -19,7 +19,7 @@ $gQuestTypeAlias = array(2=>1,3=>1,4=>1); // 1,2,3,4 funktionieren identisch
 $gQuestItems = false; // singleton
 function &GetQuestItems() { 
 	global $gQuestItems;
-	if (!$gQuestItems)
+	if (empty($gQuestItems))
 		$gQuestItems = sqlgetgrouptable("SELECT * FROM `item` WHERE `quest` > 0","army","id");
 	return $gQuestItems; 
 }
@@ -27,7 +27,7 @@ function &GetQuestItems() {
 $gRunningQuests = false; // singleton
 function &GetRunningQuests() { 
 	global $gRunningQuests;
-	if (!$gRunningQuests) {
+	if (empty($gRunningQuests)) {
 		$gRunningQuests = sqlgettable("SELECT * FROM `quest` WHERE `running` = 1","id");
 		array_walk($gRunningQuests,"QuestSplit");
 	}
@@ -193,13 +193,13 @@ function QuestTrigger_ArmyMove(&$army,$x,$y) { // called very often, non-monster
 	
 	if (!isset($army->id) || !isset($gQuestItems[$army->id])) return;
 	$items =& $gQuestItems[$army->id];
-	if (!$items) return;
+	if (empty($items)) return;
 	// execute only when this army has quest items
 	
 	$gRunningQuests =& GetRunningQuests();
 	foreach ($items as $item) {
 		$quest =& $gRunningQuests[$item->quest];
-		if (!$quest) continue;
+		if (empty($quest)) continue;
 		switch ($quest->realtype) {
 			case 1: // Rettung : itemtypes#startpos#endpos#itemsetmode
 				foreach ($quest->params[2] as $pos) {

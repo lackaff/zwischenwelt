@@ -151,11 +151,11 @@ class Hellhole_1 extends Hellhole_0 {
 		$movablemask = intval($gUnitType[$this->type]->movable_flag) & intval($gUnitType[$this->type2]->movable_flag);
 		$building = Reachable($this->x,$this->y,$this->x+rand(-$r,$r),$this->y+rand(-$r,$r),$movablemask,true);
 		//if ($building && $building !== true) vardump2($building);
-		if (!$building || $building === true || $building->user == 0) return false; // no building found
+		if ($building || $building === true || $building->user == 0) return false; // no building found
 		echo "found building ".opos2txt($building)." of ".nick($building->user)."<br>";
 		if (sqlgetone("SELECT `general_pts` FROM `user` WHERE `id` = ".$building->user) < $this->victim_minpts) return false; // too weak
 		$silo = SearchNearestBuilding($building->x,$building->y,$this->search_silo_rad,kBuilding_Silo,$building->user);
-		if (!$silo) return false;
+		if (empty($silo)) return false;
 		echo "found new target : ".opos2txt($silo)." of ".nick($silo->user)."<br>"; 
 		return $silo;
 	}
@@ -172,9 +172,9 @@ class Hellhole_1 extends Hellhole_0 {
 		$data = ($this->ai_data && $this->ai_data != "") ? explode(",",$this->ai_data) : false;
 		if ($data && count($data) < kHellHole1_Data_Count) $data = false;
 		$building = $data ? sqlgetobject("SELECT * FROM `building` WHERE `x` = ".intval($data[0])." AND `y` = ".intval($data[1])) : false;
-		if (!$building || $building->type != kBuilding_Silo) {
+		if (empty($building) || $building->type != kBuilding_Silo) {
 			$building = $this->SearchNewTarget();
-			if (!$building) return;
+			if (empty($building)) return;
 			$data = array($building->x,$building->y,0,0,0,kHellHole1_Mode_Plan); // initialize data
 			$this->SaveData($data);
 		}
@@ -217,7 +217,7 @@ class Hellhole_1 extends Hellhole_0 {
 				
 		if ($data[kHellHole1_Data_Mode] == kHellHole1_Mode_Siege) {
 			echo "mode:siege<br>";
-			if (!$ramme) {
+			if (empty($ramme)) {
 				// increment siege counter
 				if (++$data[kHellHole1_Data_SiegeCount] > $this->maxcount_siege)
 					 { $this->SaveData(); return; }
@@ -227,7 +227,7 @@ class Hellhole_1 extends Hellhole_0 {
 				echo "start new siege<br>";
 				$ramme = cArmy::SpawnArmy($this->x,$this->y,cUnit::Simple($this->type2,$this->armysize2),
 					false,-1,0,0,$this->id,false,kArmyFlag_SiegeBlockingBuilding);
-				if (!$ramme) return;
+				if (empty($ramme)) return;
 				
 				// exit the base, and then siege to one step bevore the target and then return, so the path back is also cleared
 				echo "sending ramme to ".$epos[0].",".$epos[1]."<br>";
@@ -251,7 +251,7 @@ class Hellhole_1 extends Hellhole_0 {
 			// only the first(=oldest,order_by_id) non-ramme monster is going on raids, to ensure the way back is free =)
 			$raider = false;
 			foreach ($monsters as $o) if ($o->id != $ramme->id) { $raider = $o; break; }
-			if (!$raider) break;
+			if (empty($raider)) break;
 			
 			if (!sqlgetone("SELECT 1 FROM `waypoint` WHERE `army` = ".intval($raider->id))) {
 				// increment raid counter
@@ -319,7 +319,7 @@ class Hellhole_2 extends Hellhole_0 {
 		
 		// check for boss
 		$boss = ($this->ai_data!="") ? sqlgetobject("SELECT * FROM `army` WHERE `id` = ".intval($this->ai_data)) : false;
-		if (!$boss) { $this->BossDied(); return; }
+		if (empty($boss)) { $this->BossDied(); return; }
 		
 		// boss dies randomly about once every month, and is checked about every day for being still on the map
 		if (rand(0,60*24) == 0) {
@@ -445,12 +445,12 @@ class Hellhole_3 extends Hellhole_0 {
 	
 	function BuildNewHellhole ($king) {
 		global $gBuildingType;
-		if (!$king) return;
+		if (empty($king)) return;
 		cArmy::DeleteArmy($king,true,"Ein neuer Ameisenbau wurde gegründet....");
 		
 		// DESIGN-PATTERN : PROTOTYPE =)
 		$oldbuilding = sqlgetobject("SELECT * FROM `building` WHERE `x` = ".intval($this->x)." AND `y` = ".intval($this->y));
-		if (!$oldbuilding) return;
+		if (empty($oldbuilding)) return;
 		
 		$newbuilding = $oldbuilding;
 		unset($newbuilding->id);
@@ -460,7 +460,7 @@ class Hellhole_3 extends Hellhole_0 {
 		sql("INSERT INTO `building` SET ".obj2sql($newbuilding));
 		
 		$oldhellhole = sqlgetobject("SELECT * FROM `hellhole` WHERE `id` = ".intval($this->id));
-		if (!$oldhellhole) return;
+		if (empty($oldhellhole)) return;
 		
 		$newhellhole = $oldhellhole;
 		unset($newhellhole->id);
@@ -540,7 +540,7 @@ class Hellhole_3 extends Hellhole_0 {
 				echo "raider is coming back<br>";
 			}*/
 		}
-		if (!$raider) if (count($potential_raiders) > 0) {
+		if (empty($raider)) if (count($potential_raiders) > 0) {
 			// take ressources of potential raiders
 			foreach ($potential_raiders as $army) {
 				// put res onto bughole
@@ -611,7 +611,7 @@ class Hellhole_3 extends Hellhole_0 {
 		// king-code
 		$kingtick = true; // todo : only every x hours...
 		if ($kingtick) {
-			if (!$king) {
+			if (empty($king)) {
 				if (count($gRes2ItemType) > 0)
 						$myresitems = sqlgettable("SELECT * FROM `item` WHERE `x` = ".intval($x)." AND `y` = ".intval($y)." AND `type` IN (".implode(",",$gRes2ItemType).")");
 				else	$myresitems = array();

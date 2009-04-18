@@ -120,8 +120,8 @@ class cItem {
 		if (!is_object($item)) $item = sqlgetobject("SELECT * FROM `item` WHERE `id`=".intval($item));
 		if (!is_object($army)) $army = sqlgetobject("SELECT * FROM `army` WHERE `id`=".intval($army));
 		if (itemspawn_debugout) echo "pickupItem($item->type [$item->id],$army->name,$limitamount=-1)<br>";
-		if (itemspawn_debugout) if (!$item || !$army) echo "armee oder item nicht gefunden<br>";
-		if (!$item || !$army) return false;
+		if (itemspawn_debugout) if (empty($item) || empty($army)) echo "armee oder item nicht gefunden<br>";
+		if (empty($item) || empty($army)) return false;
 		if (itemspawn_debugout) if ($item->amount < 1.0) echo "zuwenig vom item da<br>";
 		if ($item->amount < 1.0) return false;
 		if (intval($gItemType[$item->type]->flags) & kItemFlag_NoPickup) echo "nicht aufhebbar<br>";
@@ -188,7 +188,7 @@ class cItem {
 		if (!is_object($item)) $item = sqlgetobject("SELECT * FROM `item` WHERE `id`=".intval($item));
 		if (!is_object($army)) $army = sqlgetobject("SELECT * FROM `army` WHERE `id`=".intval($army));
 		if (itemspawn_debugout) echo "dropItem($item->type [$item->id],$army->name,$dropamount=-1)<br>";
-		if (!$item || !$army) return false;
+		if (empty($item) || empty($army)) return false;
 		if ($item->army != $army->id) return false;
 		if ($dropamount == -1) $dropamount = $item->amount;
 		$item->x = $army->x;
@@ -212,7 +212,7 @@ class cItem {
 	//drops all items , used by escape
 	function dropAll($army){
 		if (!is_object($army)) $army = sqlgetobject("SELECT * FROM `army` WHERE `id`=".intval($army));
-		if (!$army) return;
+		if (empty($army)) return;
 		$items = sqlgettable("SELECT * FROM `item` WHERE `army`=".$army->id);
 		foreach ($items as $item) 
 			cItem::dropItem($item,$army,-1);
@@ -264,7 +264,7 @@ class cItem {
 	function canUseItem ($item,$army) {
 		if (!is_object($item)) $item = sqlgetobject("SELECT * FROM `item` WHERE `id`=".intval($item));
 		if (!is_object($army)) $army = sqlgetobject("SELECT * FROM `army` WHERE `id`=".intval($army));
-		if (!$item || !$army) return false;
+		if (empty($item) || empty($army)) return false;
 		if ($item->army != $army->id) return false;
 		global $gItemType; 
 		if (intval($gItemType[$item->type]->flags) & kItemFlag_UseGivesCost) return true;
@@ -306,7 +306,7 @@ class cItem {
 		if (!is_object($item))$item = sqlgetobject("SELECT * FROM `item` WHERE `id`=".intval($item));
 		if (!is_object($army))$army = sqlgetobject("SELECT * FROM `army` WHERE `id`=".intval($army));
 		if (itemspawn_debugout) echo "useItem($item->type [$item->id],$army->name)<br>";
-		if (!$item || !$army) return false;
+		if (empty($item) || empty($army)) return false;
 		if (!cItem::canUseItem($item,$army)) return false;
 		$x = $army->x;
 		$y = $army->y;
@@ -385,7 +385,7 @@ class cItem {
 			break;
 			case kItem_Osterei0+5:
 				$ramme = sqlgetobject("SELECT * FROM `army` WHERE `type` = ".kArmyType_Siege." AND `user` = ".$army->user);
-				if (!$ramme) return false;
+				if (empty($ramme)) return false;
 				$ramme->units = cUnit::GetUnits($ramme->id);
 				$pos = cArmy::FindExit($x,$y,$army->user,$ramme->units);
 				if (!$pos) return false;

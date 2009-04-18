@@ -124,7 +124,7 @@ $xylimit = "`x` >= ".($gLeft-1)." AND `x` < ".($gLeft+$gCX+1)." AND
 // produce session-independent querry, to enable caching
 $jsparam = "v2=".(intval(kJSMapVersion)+intval($gGlobal["typecache_version_adder"]));
 $styleparam = "?v=".(8+intval($gGlobal["typecache_version_adder"]));
-$gfxpackactive = $gUser && !empty($gUser->gfxpath) && (!$gSessionObj || $gSessionObj->usegfx);
+$gfxpackactive = $gUser && !empty($gUser->gfxpath) && (empty($gSessionObj) || $gSessionObj->usegfx);
 if ($gfxpackactive || $gUser->race != 1)
 	$styleparam .= "&uid=".$gUser->id;
 if ($gfxpackactive) 

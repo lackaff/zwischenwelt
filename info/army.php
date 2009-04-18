@@ -59,7 +59,7 @@ class cInfoArmy extends cInfoBase {
 			break;
 			case "itemtrade_market":
 				$trade = sqlgetobject("SELECT * FROM `itemtrade` WHERE `id` = ".intval($f_itemtrade));
-				if (!$trade) break;
+				if (empty($trade)) break;
 				$tradebuilding = sqlgetobject("SELECT * FROM `building` WHERE `id` = ".intval($trade->building));
 				if (!cArmy::ArmyAtDiag($army,$tradebuilding->x,$tradebuilding->y)) break;
 				// todo : trade between armies
@@ -138,21 +138,21 @@ class cInfoArmy extends cInfoBase {
 			break;
 			case "cancelpillage":
 				$pillage = sqlgetobject("SELECT * FROM `pillage` WHERE `id` = ".intval($f_id));
-				if (!$pillage || $pillage->army != $army->id) break;
+				if (empty($pillage) || $pillage->army != $army->id) break;
 				cFight::EndPillage($pillage,"Die Plünderung wurde abgebrochen.",true);
 			break;
 			case "shootinglist":
 				global $gContainerType2Number,$gNumber2ContainerType;
 				if (isset($f_cancel)) foreach ($f_sel as $id) {
 					$o = sqlgetobject("SELECT * FROM `shooting` WHERE `id` = ".intval($id));
-					if (!$o || $o->attacker != $army->id) continue;
+					if (empty($o) || $o->attacker != $army->id) continue;
 					if ($gNumber2ContainerType[$o->attackertype] != kUnitContainer_Army) continue;
 					cFight::EndShooting($o,"Abbruch");
 				}
 			break;
 			case "cancelsiege":
 				$siege = sqlgetobject("SELECT * FROM `siege` WHERE `id`=".intval($f_id));
-				if (!$siege || $siege->army != $army->id) return;
+				if (empty($siege) || $siege->army != $army->id) return;
 				cFight::EndSiege($siege,"Die Belagerung wurde abgebrochen.",true);
 			break;
 			case "returnwaypoints":
@@ -175,7 +175,7 @@ class cInfoArmy extends cInfoBase {
 				$f_y = intval($f_y);
 				$army->units = cUnit::GetUnits($army->id);
 				$lastwp = sqlgetobject("SELECT * FROM `waypoint` WHERE `army` = ".$army->id." ORDER BY `priority` DESC LIMIT 1");
-				if (!$lastwp) { $lastwp->x = $army->x; $lastwp->y = $army->y; }
+				if (empty($lastwp)) { $lastwp->x = $army->x; $lastwp->y = $army->y; }
 				if ($f_gfxbuttonmode == "wp") $f_button_wp = 1;
 				if ($f_gfxbuttonmode == "route") $f_button_route = 1;
 				$old_wpmaxprio = isset($f_wpmaxprio)?intval($f_wpmaxprio):-1; // jsmap can pass its oldest known maxprio and not wait for feedback before adding new wps
@@ -191,7 +191,7 @@ class cInfoArmy extends cInfoBase {
 					echo "<h3><font color=red>Fehler bei der Wegfindung</font></h3>";
 					echo "(vielleicht nicht erreichbar, oder zu komplex)<br><br>";
 					break;
-				} else if (!$newwps) {
+				} else if (empty($newwps)) {
 					echo "<h3><font color=red>Entfernung zu gross für Wegfindung</font></h3>";
 					echo "(maximal 30 Felder in jede Richtung, hier waren es ".max(abs($f_x-$lastwp->x),abs($f_y-$lastwp->y)).")<br><br>";
 					break;
@@ -271,7 +271,7 @@ class cInfoArmy extends cInfoBase {
 				else if (isset($f_deposit))	$t->cmd = ARMY_ACTION_DEPOSIT;
 				else break;
 				$building = sqlgetobject("SELECT * FROM `building` WHERE `id` = ".intval($f_target));
-				if (!$building) break;
+				if (empty($building)) break;
 				$t->army = $f_army;
 				$t->param1 = $building->x;
 				$t->param2 = $building->y;
@@ -294,7 +294,7 @@ class cInfoArmy extends cInfoBase {
 			break;
 			case "siege":
 				$building = sqlgetobject("SELECT * FROM `building` WHERE `id` = ".intval($f_target));
-				if (!$building) break;
+				if (empty($building)) break;
 				
 				if (!isset($army->units)) $army->units = cUnit::GetUnits($army->id);
 				$rangedsiegedmg = cUnit::GetUnitsRangedSiegeDamage($army->units);
@@ -386,7 +386,7 @@ class cInfoArmy extends cInfoBase {
 				
 		$gArmies = sqlgettable("SELECT * FROM `army` WHERE `user` = ".$gUser->id,"id");
 		$gArmy = $gObject;
-		if (!$gArmy) exit(error("nonexistant object"));
+		if (empty($gArmy)) exit(error("nonexistant object"));
 		$gArmy->units = cUnit::GetUnits($gArmy->id);
 		$gCanControllArmy =	cArmy::CanControllArmy($gArmy,$gUser);
 		$gArmyAction = sqlgettable("SELECT * FROM `armyaction` WHERE `army` = ".$gArmy->id." ORDER BY `id`");
@@ -469,7 +469,7 @@ class cInfoArmy extends cInfoBase {
 				<?php
 					$ctype = $gNumber2ContainerType[$o->defendertype];
 					$defenderobj = sqlgetobject("SELECT * FROM `". $ctype."` WHERE `id` = ".$o->defender);
-					if (!$defenderobj) continue;
+					if (empty($defenderobj)) continue;
 					$defendernametext = cFight::GetContainerText($defenderobj,$o->defendertype);
 				?>
 				<tr>

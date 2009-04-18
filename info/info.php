@@ -40,9 +40,9 @@ function RegisterInfoTab ($head,$content,$select_priority=false) {
 
 function JSRefreshArmy ($army) {
 	global $gJSCommands;
-	if (!$army) return;
+	if (empty($army)) return;
 	if (!is_object($army)) $army = sqlgetobject("SELECT * FROM `army` WHERE `id` = ".intval($army));
-	if (!$army) return;
+	if (empty($army)) return;
 	$gJSCommands[] = "parent.map.JSArmyUpdate(".cArmy::GetJavaScriptArmyData($army).");";
 	$gJSCommands[] = "parent.map.JSActivateArmy(".$army->id.",true);";
 }

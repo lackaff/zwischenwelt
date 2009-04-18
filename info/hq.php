@@ -418,7 +418,7 @@ class cInfoHQ extends cInfoBuilding {
 	function PrintTitles () {
 		global $gObject;
 		$t = sqlgettable("SELECT * FROM `title` WHERE `user`=".$gObject->user);
-		if (!$t || count($t) == 0) return false;
+		if (empty($t) || count($t) == 0) return false;
 		rob_ob_start(); 
 		?>
 		<!-- titel -->

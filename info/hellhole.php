@@ -28,7 +28,7 @@ class cInfoHellHole extends cInfoBuilding {
 		if ($gUser->admin) {
 			$gMonsterType = sqlgettable("SELECT * FROM `unittype` WHERE `flags` & ".kUnitFlag_Monster,"id");
 			
-			if (!$hellhole) {
+			if (empty($hellhole)) {
 				$hellhole->x = $gObject->x;
 				$hellhole->y = $gObject->y;
 				$hellhole->type = 0;

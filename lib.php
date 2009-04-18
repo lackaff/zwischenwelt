@@ -344,7 +344,7 @@ function copyobj ($obj) {
 // generate save xml attribute from object
 function obj2attr ($obj)
 {
-	if (!$obj) return "";
+	if (empty($obj)) return "";
 	$arr = get_object_vars($obj);
 	$parts = array();
 	foreach($arr as $key => $val)
@@ -356,7 +356,7 @@ function obj2attr ($obj)
 // return an object with only certain fields set
 function filterfields ($obj,$fields)
 {
-	if (!$obj) return false;
+	if (empty($obj)) return false;
 	$newobj = false;
 	$arr = get_object_vars($obj);
 	foreach($arr as $key => $val)
@@ -369,7 +369,7 @@ function filterfields ($obj,$fields)
 
 // generate save sql assignment from object `c` = '6' , `d` = '7'
 function obj2sql ($obj,$div=" , ") {
-	if (!$obj) return "";
+	if (empty($obj)) return "";
 	return arr2sql(get_object_vars($obj),$div);
 }
 
@@ -639,14 +639,14 @@ function UpdateSession ($sid)
 		sql("DELETE FROM `session` WHERE `lastuse` < ".(time()-kSessionTimeout));
 
 	$gSessionObj = sqlgetobject("SELECT * FROM `session` WHERE `sid` = '".addslashes($sid)."' AND `lastuse` > ".(time()-kSessionTimeout));
-	if (!$gSessionObj)
+	if (empty($gSessionObj))
 		exit(error("no session found (timeout), please log in again"));
 	$gUser = sqlgetobject("SELECT * FROM `user` WHERE `id` = '".$gSessionObj->userid."'");
 	if ($gSessionObj->ip != $ip && $gUser->iplock == 1)
 		exit(error("ip changed during session, please log in again"));
 
 	$gUID = $gSessionObj->userid;
-	if (!$gUser)
+	if (empty($gUser))
 		exit(error("session user deleted : access denied"));
 
 	if (!$fastsession)

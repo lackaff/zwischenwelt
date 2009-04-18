@@ -11,7 +11,7 @@ class cInfoBuilding extends cInfoBase {
 	// todo : replace all those "$gObject->user == $gUser->id" by this function, to enable urlaubsvertretung
 	function cancontroll ($user=false) { 
 		global $gObject,$gUser;
-		if (!$user) $user = $gUser;
+		if (empty($user)) $user = $gUser;
 		return cBuilding::CanControllBuilding($gObject,$user);
 	} 
 	
@@ -20,7 +20,7 @@ class cInfoBuilding extends cInfoBase {
 		if (!isset($f_building)) return;
 		if (!isset($f_id)) warning("buildingcommand : buildingid not set !");
 		$gObject = sqlgetobject("SELECT * FROM `building` WHERE `id` = ".intval($f_id));
-		if (!$gObject) return;
+		if (empty($gObject)) return;
 		if ($gObject->construction == 0) parent::command();
 	}
 	
@@ -275,7 +275,7 @@ class cInfoBuilding extends cInfoBase {
 				case "shootinglist":
 					if (isset($f_cancel)) foreach ($f_sel as $id) {
 						$o = sqlgetobject("SELECT * FROM `shooting` WHERE `id` = ".intval($id));
-						if (!$o || $o->attacker != $gObject->id) continue;
+						if (empty($o) || $o->attacker != $gObject->id) continue;
 						if ($gNumber2ContainerType[$o->attackertype] != kUnitContainer_Building) continue;
 						cFight::EndShooting($o,"Abbruch");
 					}
@@ -741,7 +741,7 @@ class cInfoBuilding extends cInfoBase {
 							$ctype = $gNumber2ContainerType[$o->defendertype];
 							$target = sqlgetobject("SELECT * FROM `". $ctype."` WHERE `id` = ".$o->defender);
 							$defenderobj = $target;
-							if (!$target) continue;
+							if (empty($target)) continue;
 							if ($shooting->defendertype == $gContainerType2Number[kUnitContainer_Army])		$defendernametext = $gArmyType[$defenderobj->type]->name." ".$defenderobj->name;
 							if ($shooting->defendertype == $gContainerType2Number[kUnitContainer_Building])	$defendernametext = $gBuildingType[$defenderobj->type]->name." ".$defenderobj->name;
 							$defendernametext .= " bei ($defenderobj->x,$defenderobj->y)";

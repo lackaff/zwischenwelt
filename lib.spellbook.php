@@ -34,7 +34,7 @@ class Spell_LoveAndJoy extends Spell_Production {
 	}  
 	function Spell_LoveAndJoy() { $this->res = "pop"; $this->restext = "<img src='".g("pop-r%R%.png")."'>"; }  
 	function GetProduced ($dtime) { // override for non-res boosting
-		if (!$this->targetuser) return 0;
+		if (empty($this->targetuser)) return 0;
 		return ($dtime*40.0/3600.0+$this->level*0.005*$this->targetuser->pop*$dtime/3600.0)*$this->mod;
 	}
 }
@@ -89,7 +89,7 @@ class Spell_Pest extends Spell_Production {
 	}
 	function GetDifficulty ($spelltype,$mages,$userid) { return 8; }
 	function GetProduced ($dtime) { 
-		if (!$this->targetuser) return 0;
+		if (empty($this->targetuser)) return 0;
 		return -($dtime*40.0/3600.0+$this->level*0.01*$this->targetuser->pop*$dtime/3600.0)*$this->mod; 
 	}
 }
@@ -250,7 +250,7 @@ class Spell_Spinnennetz extends Spell_Cron {
 	function Birth ($success) {
 		if (!parent::Birth($success)) return false;
 		$army = sqlgetobject("SELECT * FROM `army` WHERE `type` = ".kArmyType_Normal." AND `x` = ".$this->x." AND `y` = ".$this->y);
-		if (!$army) {
+		if (empty($army)) {
 			$this->Expire();
 			echo "Kein Opfer in Sicht, das Spinnennetz sinkt auf den Boden.<br>";
 			return false;
@@ -312,7 +312,7 @@ class Spell_Hoellenauge extends Spell {
 		$hellhole = sqlgetobject("SELECT * FROM `hellhole` WHERE `x` = ".intval($this->x)." AND `y` = ".intval($this->y));
 		$building = sqlgetobject("SELECT * FROM `building` WHERE `x` = ".intval($this->x)." AND `y` = ".intval($this->y));
 		$army = sqlgetobject("SELECT * FROM `army` WHERE `x` = ".intval($this->x)." AND `y` = ".intval($this->y));
-		if (!$building && !$army) { echo "hier gibts nichts zu sehen<br>"; return false; }
+		if (empty($building) && empty($army)) { echo "hier gibts nichts zu sehen<br>"; return false; }
 		
 		$targetuser = false;
 		if ($building) $targetuser = sqlgetobject("SELECT * FROM `user` WHERE `id` = ".intval($building->user));
@@ -694,7 +694,7 @@ class Spell_Strike extends Spell {
 			}
 			
 			$result = true;
-		} else if (!$o) echo "Kein Gebäude beschädigt<br>";
+		} else if (empty($o)) echo "Kein Gebäude beschädigt<br>";
 		else if ($o->type != kBuilding_HQ) echo "Strike ist wirkungslos gegen Haupthäuser !<br>";
 		TablesUnlock();
 		return $result;

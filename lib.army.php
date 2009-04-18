@@ -12,7 +12,7 @@ require_once("lib.unit.php");
 class cArmy {
 	function GetJavaScriptArmyData ($army,$gLeft=false,$gTop=false,$gCX=false,$gCY=false) {
 		if (!is_object($army)) $army = sqlgetobject("SELECT * FROM `army` WHERE `id` = ".intval($army));
-		if (!$army) exit();
+		if (empty($army)) exit();
 		global $gRes2ItemType,$gRes,$gUser,$gContainerType2Number;
 		$units = cUnit::GetUnits($army->id);
 		$army->unitstxt = ""; 
@@ -101,7 +101,7 @@ class cArmy {
 		if (is_object($armyid)) $armyid = $armyid->id;
 		if (!is_object($building)) $building = sqlgetobject("SELECT * FROM `building` WHERE `id` = ".intval($building));
 		if (!$armyid) return false;
-		if (!$building) return false;
+		if (empty($building)) return false;
 		$t = false;
 		$t->cmd = ARMY_ACTION_SIEGE;
 		$t->army = intval($armyid);
@@ -152,10 +152,10 @@ class cArmy {
 		if (!is_object($portal))	$portal = sqlgetobject("SELECT * FROM `building` WHERE `id`=".intval($portal));
 		if (!is_object($army))		$army = sqlgetobject("SELECT * FROM `army` WHERE `id`=".intval($army));
 		$item = sqlgetobject("SELECT * FROM `item` WHERE `army` = ".$army->id." AND `type` = ".kItem_Portalstein_Blau);
-		if (!$portal) return false;
+		if (empty($portal)) return false;
 		global $gUser;
 		if ($portal->user > 0 && !cBuilding::CanControllBuilding($portal,$gUser)) return false;
-		if (!$item) return false;
+		if (empty($item)) return false;
 		return cItem::canUseItem($item,$army);
 	}
 	
@@ -165,7 +165,7 @@ class cArmy {
 		global $gUser;
 		if ($user === false) $user = $gUser;
 		if (!is_object($user)) $user = sqlgetobject("SELECT * FROM `user` WHERE `id`=".intval($user));
-		if (!$user) return array();
+		if (empty($user)) return array();
 		$isgc = HasGuildRight($user,kGuildRight_GuildCommander);
 		if ($isgc) 
 				return sqlgettable("SELECT `army`.*,`user`.`name` as `username` FROM `army`,`user` WHERE 
@@ -184,9 +184,9 @@ class cArmy {
 		$deposit = sqlgetobject("SELECT * FROM `army` WHERE `type` = ".kArmyType_Fleet." AND `flags` & ".kArmyFlag_Captured." AND `user` = ".$army->user."
 			AND `x` >= ".($army->x-1)." AND `x` <= ".($army->x+1)."
 			AND `y` >= ".($army->y-1)." AND `y` <= ".($army->y+1));
-		if (!$deposit) {
+		if (empty($deposit)) {
 			$deposit = cArmy::SpawnArmy($army->x,$army->y,$captured,"gekapert",kArmyType_Fleet,$army->user,$army->quest,$army->hellhole,false,kArmyFlag_Captured);
-			if (!$deposit) return false; // no room for new army
+			if (empty($deposit)) return false; // no room for new army
 			return true; // deposit created with correct units
 		}
 		$units = cUnit::GetUnits($deposit->id);
@@ -251,7 +251,7 @@ class cArmy {
 	// uses $army->units and $army->transport (sailors) if available
 	function GetArmySpeed ($army) {
 		if (!is_object($army)) $army = sqlgetobject("SELECT * FROM `army` WHERE `id` = ".intval($army));
-		if (!$army) return 0;
+		if (empty($army)) return 0;
 		if (!isset($army->units)) $army->units = cUnit::GetUnits($army->id);
 		
 		$maxweight = cUnit::GetMaxArmyWeight($army->type);
@@ -378,7 +378,7 @@ class cArmy {
 	function DeleteArmy ($army,$no_resdrop=false,$why=false) {
 		TablesLock();
 		if (!is_object($army)) $army = sqlgetobject("SELECT * FROM `army` WHERE `id` = ".intval($army));
-		if (!$army) { TablesUnlock(); return; }
+		if (empty($army)) { TablesUnlock(); return; }
 		$armyid = intval($army->id);
 			
 		cItem::dropAll($armyid);
@@ -405,13 +405,13 @@ class cArmy {
 	
 	function ArmyAt ($army,$x,$y) { // obj or id
 		if (!is_object($army)) $army = sqlgetobject("SELECT * FROM `army` WHERE `id` = ".intval($army));
-		if (!$army) return false;
+		if (empty($army)) return false;
 		return abs($army->x-$x) + abs($army->y-$y) <= 1;
 	}
 	
 	function ArmyAtDiag ($army,$x,$y) { // obj or id
 		if (!is_object($army)) $army = sqlgetobject("SELECT * FROM `army` WHERE `id` = ".intval($army));
-		if (!$army) return false;
+		if (empty($army)) return false;
 		return abs($army->x-$x) <= 1 && abs($army->y-$y) <= 1;
 	}
 	
@@ -636,7 +636,7 @@ class cArmy {
 	function ArmyCancelWaypoint($army,$wp) {
 		if (!is_object($wp))	$wp = sqlgetobject("SELECT * FROM `waypoint` WHERE `id` = ".intval($wp));
 		if (!is_object($army))	$army = sqlgetobject("SELECT * FROM `army` WHERE `id` = ".intval($army));
-		if (!$wp || !$army || $wp->army != $army->id) return;
+		if (empty($wp) || empty($army) || $wp->army != $army->id) return;
 		
 		$wps = sqlgettable("SELECT * FROM `waypoint` WHERE `army` = ".$wp->army." ORDER BY `priority` LIMIT 3");
 		if (count($wps) > 2) {

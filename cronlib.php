@@ -7,7 +7,7 @@ require_once("lib.hook.php");
 
 
 function StartBuild ($con) {
-	if (!$con) return false;
+	if (empty($con)) return false;
 	global $gBuildingType,$gVerbose,$gAllUsers;
 	
 	// param : construction object
@@ -79,7 +79,7 @@ function StartBuild ($con) {
 }
 
 function CompleteBuild ($building,$bAutomaticUpgradeBuildingTo=true) { // object
-	if (!$building) return;
+	if (empty($building)) return;
 	global $gBuildingType;
 	
 	if($gBuildingType[$building->type]->convert_into_terrain>0){

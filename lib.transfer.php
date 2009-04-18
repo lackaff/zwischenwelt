@@ -39,11 +39,11 @@ class cTransfer {
 	function ArmyTransferVisible ($transfer,$sourcebuilding,$sourcearmy,$user) {
 		global $gArmyTransfer;
 		if (!is_object($transfer)) $transfer = $gArmyTransfer[$transfer];
-		if (!$transfer) return false;
+		if (empty($transfer)) return false;
 		if ($sourcebuilding && !$transfer->sourcebuildingtype) return false;
 		if ($sourcebuilding && !is_object($sourcebuilding)) $sourcebuilding = sqlgetobject("SELECT * FROM `building` WHERE `id` = ".intval($sourcebuilding));
 		if ($sourcearmy && !is_object($sourcearmy)) $sourcearmy = sqlgetobject("SELECT * FROM `army` WHERE `id` = ".intval($sourcearmy));
-		if (!$sourcebuilding && !$sourcearmy) return false;
+		if (empty($sourcebuilding) && empty($sourcearmy)) return false;
 		if ($sourcebuilding && $sourcearmy) return false;
 		if ($sourcebuilding && !cBuilding::CanControllBuilding($sourcebuilding,$user)) return false;
 		if ($sourcearmy && !cArmy::CanControllArmy($sourcearmy,$user)) return false;
@@ -198,7 +198,7 @@ class cTransfer {
 		if ($sourcebuilding && !is_object($sourcebuilding)) $sourcebuilding = sqlgetobject("SELECT * FROM `building` WHERE `id` = ".intval($sourcebuilding));
 		if ($sourcearmy && !is_object($sourcearmy)) $sourcearmy = sqlgetobject("SELECT * FROM `army` WHERE `id` = ".intval($sourcearmy));
 		if (!is_object($user)) $user = sqlgetobject("SELECT * FROM `user` WHERE `id` = ".intval($user));
-		if (!$user) return false;
+		if (empty($user)) return false;
 		$transfer = $gArmyTransfer[intval($transfer)];
 		if (!cTransfer::ArmyTransferVisible($transfer,$sourcebuilding,$sourcearmy,$user)) return false;
 		if ($sourcearmy && ceil($transfer->idlemod-$sourcearmy->idle/60) > 0) return false;
@@ -236,8 +236,8 @@ class cTransfer {
 		if ($sourcearmy && !$sourcearmy->counttolimit) return "Geschenkarmee";
 		$sourceuserid = $sourcearmy ? $sourcearmy->user : $sourcebuilding->user;
 		if ($sourcearmy && $sourcearmy->id == $targetarmy->id) return "Quelle=Ziel";
-		if (!$targetarmy && !cArmy::CanCreateNewArmy($sourceuserid,$transfer->targetarmytype)) return "ArmeeLimit";
-		if (!$targetarmy && $transfer->transportarmytype) return "Gründung durch Besatzung allein nicht möglich"; 
+		if (empty($targetarmy) && !cArmy::CanCreateNewArmy($sourceuserid,$transfer->targetarmytype)) return "ArmeeLimit";
+		if (empty($targetarmy) && $transfer->transportarmytype) return "Gründung durch Besatzung allein nicht möglich"; 
 		if ($targetarmy && !cArmy::CanControllArmy($targetarmy,$user)) return "nicht steuerbar"; 
 		if ($targetarmy && $targetarmy->type != $transfer->targetarmytype) return "typ passt nicht"; 
 		if ($targetarmy) {
@@ -245,7 +245,7 @@ class cTransfer {
 			if ($targetarmy->type == kArmyType_Fleet && $sourcebuilding)
 					$mynear = cArmy::ArmyAtPier($targetarmy,$sourceobj->x,$sourceobj->y,$sourceuserid);
 			else	$mynear = cArmy::ArmyAtDiag($targetarmy,$sourceobj->x,$sourceobj->y);
-			if (!$mynear) return "nicht hier";
+			if (empty($mynear)) return "nicht hier";
 		}
 		if ($targetarmy) {
 			$myidlewait = ceil($transfer->idlemod-$targetarmy->idle/60);
@@ -275,7 +275,7 @@ class cTransfer {
 	function ArmyTransfer ($transfer,$sourcebuilding,$sourcearmy,$targetarmy,$desiredunits,$newname) {
 		// TODO : LOCK TABLES...
 		global $gUnitType,$gArmyType;
-		if (!$targetarmy && array_sum($desiredunits) <= 0) return true; // do not create empty army
+		if (empty($targetarmy) && array_sum($desiredunits) <= 0) return true; // do not create empty army
 		$debug = false;
 		
 		// container/id info
@@ -370,7 +370,7 @@ class cTransfer {
 						$spawnunits = arr2obj(array("amount"=>$totarget,"type"=>$o->type,"user"=>$o->user,"spell"=>$o->spell));
 						$newarmyflags = $sourcearmy ? $sourcearmy->flags : 0;
 						$targetarmy = cArmy::SpawnArmy($sourceobj->x,$sourceobj->y,array(0=>$spawnunits),$newname,$transfer->targetarmytype,$sourceobj->user,0,0,false,$newarmyflags);
-						if (!$targetarmy) {
+						if (empty($targetarmy)) {
 							// create failed, return units to source
 							cUnit::AddUnits($sourceid,$o->type,$totarget,$sourcecontainer,$o->user,$o->spell);
 							echo $gArmyType[$transfer->targetarmytype]->name." konnte nicht gegründet werden, kein Ausgang gefunden !";

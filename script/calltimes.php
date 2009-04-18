@@ -292,7 +292,7 @@ function uid2txt ($uid) {
 	global $gAllUsers;
 	global $gAllGuilds;
 	$user = $gAllUsers[$uid];
-	if (!$user) return "unknown_user[".$uid."]";
+	if (empty($user)) return "unknown_user[".$uid."]";
 	$guild = $gAllGuilds[$user->guild];
 	return $user->name."[".$uid."](".($guild?$guild->name:"").")";
 }

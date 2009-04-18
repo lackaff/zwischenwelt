@@ -157,7 +157,7 @@ function GetZWStylePath () {
 	global $gGlobal;
 	global $gUser,$gSessionObj;
 	
-	if($gUser && $gUser->localstyles && !empty($gUser->gfxpath) && (!$gSessionObj || $gSessionObj->usegfx)){
+	if($gUser && $gUser->localstyles && !empty($gUser->gfxpath) && (empty($gSessionObj) || $gSessionObj->usegfx)){
 		if($gUser->gfxpath{strlen($gUser->gfxpath)-1} != '/')$base = $gUser->gfxpath . "/";
 		else $base = $gUser->gfxpath;
 	} else $base = kGfxServerPath;
@@ -190,11 +190,11 @@ function ClearBParam ($buildingid,$name) {
 }
 // false for guild 0, (user->guild==user->guild) otherwise
 function IsInSameGuild	($masteruser,$otheruser) { // obj or id
-	if (!$masteruser || !$otheruser) return false;
+	if (empty($masteruser) || empty($otheruser)) return false;
 	$masterguild = is_object($masteruser)?$masteruser->guild:sqlgetone("SELECT `guild` FROM `user` WHERE `id` = ".intval($masteruser));
-	if (!$masterguild) return false;
+	if (empty($masterguild)) return false;
 	$otherguild = is_object($otheruser)?$otheruser->guild:sqlgetone("SELECT `guild` FROM `user` WHERE `id` = ".intval($otheruser));
-	if (!$otherguild) return false;
+	if (empty($otherguild)) return false;
 	return $otherguild == $masterguild;
 }
 
@@ -238,7 +238,7 @@ function GetFOF ($masteruserid,$otheruserid) {
 }
 function IsFriendlyServerBuilding ($building) {
 	if (!is_object($building)) $building = sqlgetobject("SELECT * FROM `building` WHERE `id` = ".intval($building));
-	if (!$building) return false;
+	if (empty($building)) return false;
 	if ($building->user != 0) return false;
 	if (sqlgetone("SELECT 1 FROM `hellhole` WHERE `x` = ".$building->x." AND `y` = ".$building->y)) return false;
 	return true;
@@ -704,7 +704,7 @@ function GetProductionSlots ($uid,$buildings=false) {
 	
 	$schichtarbeit = GetTechnologyLevel(kTech_SchichtArbeit,$uid)*0.5;//schichtarbeit
 	
-	if (!$buildings) // precalced in cron
+	if (empty($buildings)) // precalced in cron
 		$buildings = sqlgettable("SELECT count( `id` ) AS `count` , `type` AS `type` , sum(`supportslots`) as `supportslots`, sum( `level` ) AS `level` 
 						FROM `building` WHERE `construction`=0 AND `user`=".intval($uid)." GROUP BY `type`","type");
 	if (!isset($buildings[kBuilding_HQ])) {
@@ -1079,7 +1079,7 @@ function g($path,$nwse="ns",$level="0",$race="0",$moral="100",$random=0){
 	$moral = round($moral/200*4);
 	if(is_numeric($nwse))$nwse = NWSECodeToStr($nwse);
 	if($race == 0) $race = $gUser?$gUser->race:1;
-	if($gUser && !empty($gUser->gfxpath) && (!$gSessionObj || $gSessionObj->usegfx)){
+	if($gUser && !empty($gUser->gfxpath) && (empty($gSessionObj) || $gSessionObj->usegfx)){
 		if($gUser->gfxpath{strlen($gUser->gfxpath)-1} != '/')$base = $gUser->gfxpath . "/";
 		else $base = $gUser->gfxpath;
 	} else $base = kGfxServerPath;
