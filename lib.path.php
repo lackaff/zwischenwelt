@@ -4,7 +4,7 @@ require_once("lib.army.php");
 require_once("lib.unit.php");
 
 class cPath {
-	function ArmySetRouteTo($armyid,$x,$y){
+	static function ArmySetRouteTo($armyid,$x,$y){
 		$army = sqlgetobject("SELECT * FROM `army` WHERE `id`=".intval($armyid));
 		if(empty($army))return array();
 		
@@ -29,11 +29,11 @@ class cPath {
 	 
 	//cArmy::GetPosSpeed($x,$y,$userid,$units,$armyblock);
 	 
-	function GetHeuristic($srcx,$srcy,$dstx,$dsty){
+	static function GetHeuristic($srcx,$srcy,$dstx,$dsty){
 		return 60*(abs($srcx-$dstx)+abs($srcy-$dsty));
 	}
 	 
-	function GetNeighbours($userid,$units,$x,$y,$dstx,$dsty,$g){
+	static function GetNeighbours($userid,$units,$x,$y,$dstx,$dsty,$g){
 		//echo "GetNeighbours($userid,$units,$x,$y,$dstx,$dsty,$g)\n";
 		$list = array();
 		$parent = $x."_".$y;
@@ -53,7 +53,7 @@ class cPath {
 		return $list;
 	}
 	 
-	function FindBest($list){
+	static function FindBest($list){
 		$minfound = false;
 		foreach($list as $id=>$a){
 			$f = $a["g"]+$a["h"];
@@ -67,7 +67,7 @@ class cPath {
 		return $minid;
 	}
 	
-	function GetDirection($current,$parent){
+	static function GetDirection($current,$parent){
 		if(empty($parent))return 0;
 		list($cx,$cy) = explode("_",$current);
 		list($px,$py) = explode("_",$parent);
@@ -81,7 +81,7 @@ class cPath {
 		}
 	}
 	
-	function ReconstructPath($dstx,$dsty,$list){
+	static function ReconstructPath($dstx,$dsty,$list){
 		//echo "[list]";
 		//print_r($list);
 		$path = array();
@@ -112,7 +112,7 @@ class cPath {
 		return $path;
 	}
 	
-	function FindPath($userid,$units,$srcx,$srcy,$dstx,$dsty,$maxsteps=512){
+	static function FindPath($userid,$units,$srcx,$srcy,$dstx,$dsty,$maxsteps=512){
 		$lOpen = array();
 		$lClose = array();
 
@@ -172,7 +172,7 @@ class cPath {
 	
 	//insert wps before prio wp at army
 	// used only by cPath::ArmyRecalcNextWP(), for the new-path-if-blocked behavior
-	function ArmyInsertWPBeforePrio($army,$priority,$wps){
+	static function ArmyInsertWPBeforePrio($army,$priority,$wps){
 		//echo "ArmyInsertWPBeforePrio($army->id,$priority,".sizeof($wps).")<br>";
 		$size = sizeof($wps);
 		sql("UPDATE `waypoint` SET `priority`=`priority`+$size WHERE `army`=".intval($army->id)." AND `priority`>=".intval($priority));
@@ -193,7 +193,7 @@ class cPath {
 
 	//try to find a route from army to the next wp
 	// used only by cPath::ArmyRecalcNextWP(), for the new-path-if-blocked behavior
-	function ArmyRecalcNextWP($army,&$wps){
+	static function ArmyRecalcNextWP($army,&$wps){
 		for($i=0;$i<sizeof($wps) && $wps[$i]->x == $army->x && $wps[$i]->y == $army->y;++$i);
 		if($i<sizeof($wps) && ($wps[$i]->x != $army->x || $wps[$i]->y != $army->y)){
 			if(empty($army))return array();

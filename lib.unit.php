@@ -12,17 +12,17 @@ function cmpUnit ($a,$b) {
 }
 
 class cUnit {
-	function Simple ($type,$amount=1,$userid=0,$spellid=0) { 
+	static function Simple ($type,$amount=1,$userid=0,$spellid=0) { 
 		return array(0=>arr2obj(array("type"=>$type,"amount"=>$amount,"user"=>$userid,"spell"=>$spellid))); 
 	}
 	
 	// $container_type is one of kUnitContainer_Army,kUnitContainer_Transport,kUnitContainer_Building
-	function GetUnits ($container_id,$container_type=kUnitContainer_Army) {
+	static function GetUnits ($container_id,$container_type=kUnitContainer_Army) {
 		return sqlgettable("SELECT * FROM `unit` WHERE `$container_type` = ".intval($container_id));
 	}
 	
 	// $container_type is one of kUnitContainer_Army,kUnitContainer_Transport,kUnitContainer_Building, ignore amount<0
-	function SetUnits ($units,$container_id,$container_type=kUnitContainer_Army) {
+	static function SetUnits ($units,$container_id,$container_type=kUnitContainer_Army) {
 		// $gAllArmyUnits[$enemy->id] = $enemy->units; // TODO : update cache ??
 		sql("DELETE FROM `unit` WHERE `$container_type` = ".intval($container_id));
 		$units = cUnit::GroupUnits($units);
@@ -38,7 +38,7 @@ class cUnit {
 	}
 	
 	// groups together equal unittype-spell-user combos, so you can simply push new units onto the array, even works with negative amounts
-	function GroupUnits ($units) {
+	static function GroupUnits ($units) {
 		$res = array();
 		foreach ($units as $add2) if ($add2->amount != 0) {
 			$add = copyobj($add2);
@@ -54,7 +54,7 @@ class cUnit {
 	// $container_type is one of kUnitContainer_Army,kUnitContainer_Transport,kUnitContainer_Building
 	// almost atomary, $add can be negative, $field in (army,transport,building) returns true for success
 	// racecondition minimized by "`amount` = `amount` + $add WHERE `amount` + $add > 0"
-	function AddUnits ($container_id,$typeid,$add,$container_type=kUnitContainer_Army,$uid=0,$spellid=0,$force=false) {
+	static function AddUnits ($container_id,$typeid,$add,$container_type=kUnitContainer_Army,$uid=0,$spellid=0,$force=false) {
 		if ($add == 0) return true;
 		if (is_object($container_id)) $container_id = $container_id->id;
 		if (is_object($typeid)) $typeid = $typeid->id;
@@ -80,7 +80,7 @@ class cUnit {
 	
 	
 	// $type_mult can be a,v,last,pillage,weight or false for 1
-	function GetUnitsSum ($units,$type_mult=false) {
+	static function GetUnitsSum ($units,$type_mult=false) {
 		$sum = 0;
 		global $gUnitType;
 		foreach ($units as $o) {
@@ -90,19 +90,19 @@ class cUnit {
 	}
 	
 	// (baseattack + techbonus) * chaosfaktor
-	function GetUnitsAttack ($units,$uid=0) {
+	static function GetUnitsAttack ($units,$uid=0) {
 		return (cUnit::GetUnitsSum($units,"a") + cUnit::GetUnitsBonusSum($units,$uid,"a")) * cUnit::GetUnitsChaosFaktor($units);
 	}
 	
 	// CHAOSFACTOR for decreasing attack in large armies
 	// todo : improve system, this is one maxed out at 1500 units...
-	function GetUnitsChaosFaktor ($units) {
+	static function GetUnitsChaosFaktor ($units) {
 		return max(0.7,1.0 - 0.1*max(0,cUnit::GetUnitsSum($units)-100)/500.0);
 	}
 	
 	// TECHBONUS for units
 	// $cat = a,v  TODO : maybe f,r
-	function GetUnitsBonusSum ($units,$uid,$cat) {
+	static function GetUnitsBonusSum ($units,$uid,$cat) {
 		if (!$uid) return 0;
 		$sum = 0.0;
 		foreach ($units as $o) $sum += $o->amount * cUnit::GetUnitBonus($o->type,$uid,$cat);
@@ -111,7 +111,7 @@ class cUnit {
 	
 	// TECHBONUS for specific type
 	// $cat = a,v  TODO : maybe f,r
-	function GetUnitBonus ($unittypeid,$uid,$cat) {
+	static function GetUnitBonus ($unittypeid,$uid,$cat) {
 		if (!$uid) return 0;
 		$sum = 0;
 		global $gUnitType;
@@ -121,7 +121,7 @@ class cUnit {
 	}
 	
 	// CAPTURE in SEAFIGHT
-	function GetUnitsCaptureAttack ($units,$uid) {
+	static function GetUnitsCaptureAttack ($units,$uid) {
 		if (!$uid) return 0;
 		$sum = 0.0;
 		global $gUnitType;
@@ -132,7 +132,7 @@ class cUnit {
 	}
 	
 	// FIGHTONDECK in SEAFIGHT
-	function GetUnitsFightOnDeckAttack ($units,$uid) {
+	static function GetUnitsFightOnDeckAttack ($units,$uid) {
 		if (!$uid) return 0;
 		$sum = 0.0;
 		global $gUnitType;
@@ -143,7 +143,7 @@ class cUnit {
 	}
 	
 	// Siege-attack
-	function GetUnitsSiegeAttack ($units,$uid) {
+	static function GetUnitsSiegeAttack ($units,$uid) {
 		$sum = 0.0;
 		global $gUnitType;
 		foreach ($units as $o) 
@@ -153,7 +153,7 @@ class cUnit {
 	}
 	
 	// SAILORS for SHIPSPEED
-	function GetUnitsSailors ($units) {
+	static function GetUnitsSailors ($units) {
 		$sum = 0;
 		global $gUnitType;
 		foreach ($units as $o) $sum += $o->amount * $gUnitType[$o->type]->eff_sail * $gUnitType[$o->type]->weight;
@@ -161,7 +161,7 @@ class cUnit {
 	}
 	
 	//generates a minimum movable_flag mask that all units of army have in common
-	function GetUnitsMovableMask ($units) {
+	static function GetUnitsMovableMask ($units) {
 		$mask = 0;
 		$maskset = false;
 		global $gUnitType;
@@ -175,14 +175,14 @@ class cUnit {
 	
 	
 	// return units that can walk on $mask
-	function FilterUnitsMovable ($units,$mask) {
+	static function FilterUnitsMovable ($units,$mask) {
 		$res = array();
 		global $gUnitType;
 		foreach ($units as $o) if (intval($gUnitType[$o->type]->movable_flag) & $mask) $res[] = $o;
 		return $res;
 	}
 	// return units that can walk on $mask
-	function FilterUnitsType ($units,$type) {
+	static function FilterUnitsType ($units,$type) {
 		$res = array();
 		foreach ($units as $o) if ($o->type == $type) $res[] = $o;
 		return $res;
@@ -194,7 +194,7 @@ class cUnit {
 	// gets a total of 3 item66 , and the rest of the load available is completely filled with item22,item33,item44 and item55
 	// if there are n item33, there will be n item44 , (2*n) item55 and a random amount of item22
 	// probably much more than n, because -1 is simply replaced by a random number between 0 and 100
-	function GetUnitsTreasure ($units) {
+	static function GetUnitsTreasure ($units) {
 		global $gUnitType,$gItemType;
 		$res = array();
 		foreach ($units as $o) {
@@ -228,17 +228,17 @@ class cUnit {
 	}
 	
 	// EXP for units
-	function GetUnitsExp ($units) {
+	static function GetUnitsExp ($units) {
 		return (cUnit::GetUnitsSum($units,"a") + cUnit::GetUnitsSum($units,"v")) / kArmy_AW_for_one_exp;
 	}
 	
 	// FOOD usage per hour
-	function GetUnitsEatSum ($units) {
+	static function GetUnitsEatSum ($units) {
 		return round(cUnit::GetUnitsSum($units) / 24,1);
 	}
 	
 	// RANGED damage
-	function GetDistantDamage ($units,$dx,$dy) {
+	static function GetDistantDamage ($units,$dx,$dy) {
 		global $gUnitType;
 		$r = floor(sqrt($dx*$dx+$dy*$dy));
 		$dmg = 0;
@@ -250,7 +250,7 @@ class cUnit {
 	}
 	
 	// RANGED siege damage
-	function GetUnitsRangedSiegeDamage ($units,$dx=0,$dy=0) {
+	static function GetUnitsRangedSiegeDamage ($units,$dx=0,$dy=0) {
 		global $gUnitType;
 		$r = floor(sqrt($dx*$dx+$dy*$dy));
 		$dmg = 0;
@@ -261,7 +261,7 @@ class cUnit {
 	}
 	
 	// RANGED attack range
-	function GetUnitsMaxRange ($units) {
+	static function GetUnitsMaxRange ($units) {
 		global $gUnitType;
 		$r = 0;
 		foreach ($units as $o) 
@@ -271,7 +271,7 @@ class cUnit {
 	}
 	
 	// RANGED Cooldown
-	function GetDistantCooldown($units) {
+	static function GetDistantCooldown($units) {
 		global $gUnitType;
 		$maxcd = 0;
 		foreach ($units as $o)
@@ -281,7 +281,7 @@ class cUnit {
 	}
 	
 	// MAP-PICTURE
-	function GetUnitsMaxType($units) {
+	static function GetUnitsMaxType($units) {
 		$maxtypeid = 0;
 		$maxamount = 0;
 		foreach ($units as $o) if ($o->amount > $maxamount) {
@@ -292,14 +292,14 @@ class cUnit {
 	}
 	
 	// ARMYLIMIT
-	function GetMaxArmyWeight ($armytype) {
+	static function GetMaxArmyWeight ($armytype) {
 		global $gArmyType;
 		return $gArmyType[$armytype]->weightlimit;
 		// TODO : techbonus/malus from ->addtechs ->subtechs
 	}
 	
 	// BUILDINGLIMIT
-	function GetMaxBuildingWeight ($buildingtypeid) {
+	static function GetMaxBuildingWeight ($buildingtypeid) {
 		global $gBuildingType;
 		$limit = $gBuildingType[$buildingtypeid]->weightlimit;
 		if ($limit <= 0) return -1;
@@ -310,7 +310,7 @@ class cUnit {
 	}
 	
 	// used in cArmy::getArmySpeed()
-	function GetUnitsSpeed ($units) {
+	static function GetUnitsSpeed ($units) {
 		global $gUnitType;
 		if (count($units) == 0) return 0;
 		$max = 0;
@@ -319,14 +319,14 @@ class cUnit {
 	}
 	
 	// serializes units to string, for storage in fightlog
-	function Units2Text ($units) {
+	static function Units2Text ($units) {
 		$res = array();
 		foreach ($units as $o) $res[] = implode(",",array($o->type,$o->amount,$o->spell,$o->user));
 		return implode("#",$res);
 	}
 	
 	// unserializes units to string, for storage in fightlog
-	function Text2Units ($text) {
+	static function Text2Units ($text) {
 		$units = array();
 		if ($text == "") return $units;
 		$arr = explode("#",$text);
@@ -346,7 +346,7 @@ class cUnit {
 	
 	
 	// sort units for damaging by orderval of unittype
-	function GetUnitsAfterDamage ($units,$damage,$uid,$mod_v=1.0) {
+	static function GetUnitsAfterDamage ($units,$damage,$uid,$mod_v=1.0) {
 		global $gUnitType;
 		usort($units,"cmpUnit");
 		$res = array();
@@ -378,14 +378,14 @@ class cUnit {
 	}
 	
 	// escape damage
-	function GetUnitsAfterEscape ($units,$uid) {
+	static function GetUnitsAfterEscape ($units,$uid) {
 		$totaldef = cUnit::GetUnitsSum($units,"v") + cUnit::GetUnitsBonusSum($units,$uid,"v");
 		return cUnit::GetUnitsAfterDamage($units,$totaldef/2,$uid); 
 	}
 	
 	// if neg, negative amounts are returned, otherwise they are clamped to zero
-	function GetUnitsDiff ($before,$after,$neg=false) {
-		// TODO : this is function not PHP5 compatible
+	static function GetUnitsDiff ($before,$after,$neg=false) {
+		// TODO : this is static function not PHP5 compatible
 		$diff = array();
 		$debug = true;
 		foreach ($before as $lost2) if ($lost2->amount > 0) {
@@ -411,7 +411,7 @@ class cUnit {
 	}
 	
 	// train units into elites based on the achieved experience
-	function TrainElites ($units,$exp) {
+	static function TrainElites ($units,$exp) {
 		global $gUnitType;
 		
 		// count untrained units total
@@ -438,7 +438,7 @@ class cUnit {
 	// returns array($transport,$captured) after capturing
 	// $transport is the crew containing the pirates
 	// $lost are the units that the enemy lost in this battle, some of them will be captured
-	function CaptureShips ($transport,$lostunits) {
+	static function CaptureShips ($transport,$lostunits) {
 		// capture
 		$captured = array();
 		foreach ($lostunits as $lost2) {

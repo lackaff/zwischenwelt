@@ -12,11 +12,11 @@ require_once("lib.fight.php");
 
 class cBuilding {
 
-	function Think ($building,$debug=false) {
+	static function Think ($building,$debug=false) {
 		if (cFight::ThinkShooting($building,kUnitContainer_Building,$debug)) return;
 	}
 	
-	function GetJavaScriptBuildingData ($building,$userid=false,$quote='"') {
+	static function GetJavaScriptBuildingData ($building,$userid=false,$quote='"') {
 		global $gUser,$gBuildingType,$gContainerType2Number;
 		if ($userid === false) $userid = $gUser->id;
 		$building->jsflags = 0;
@@ -51,25 +51,25 @@ class cBuilding {
 		return obj2jsparams($building,"x,y,type,user,level,hp,construction,jsflags,unitstxt,id,burning_since",$quote); // end
 	}
 	
-	function CanControllBuilding ($building,$user) {
+	static function CanControllBuilding ($building,$user) {
 		return $user->id == $building->user || ($building->user == 0 && $user->admin);
 	}
 	
-	function getPortalConCost ($building,$target=false) {
+	static function getPortalConCost ($building,$target=false) {
 		// currently target is not important, passed as false
 		if ($building->user == 0)
 				return array(1000,1000,1000,1000,0);  	// TODO :unhardcode
 		else	return array(1000,1000,1000,1000,1500); // TODO :unhardcode
 	}
 	
-	function getPortalFetchArmyCost ($building) {
+	static function getPortalFetchArmyCost ($building) {
 		// currently target is not important, passed as false
 		if ($building->user == 0)
 				return array(1000,1000,1000,1000,0);  	// TODO :unhardcode
 		else	return array(1000,1000,1000,1000,1500); // TODO :unhardcode
 	}
 	
-	function getPortalConTax ($building,$target,$userid) {
+	static function getPortalConTax ($building,$target,$userid) {
 		if (is_object($userid)) $userid = $userid->id;
 		$outtax = cBuilding::BuildingTaxForUser($building,$userid)?GetBParam($building->id,"tax"):false;
 		$intax = cBuilding::BuildingTaxForUser($target,$userid)?GetBParam($target->id,"tax"):false;
@@ -80,7 +80,7 @@ class cBuilding {
 		return $intax;
 	}
 	
-	function BuildingOpenForUser ($building,$userid) {
+	static function BuildingOpenForUser ($building,$userid) {
 		if (is_object($userid)) $userid = $userid->id;
 		if (!is_object($building)) $building = sqlgetobject("SELECT * FROM `building` WHERE `id`=".intval($building));
 		global $gOpenableBuildingTypes;
@@ -97,7 +97,7 @@ class cBuilding {
 		return (intval($building->flags) & kBuildingFlag_Open_Stranger) != 0;
 	}
 	
-	function BuildingTaxForUser ($building,$userid) {
+	static function BuildingTaxForUser ($building,$userid) {
 		if (is_object($userid)) $userid = $userid->id;
 		if (!is_object($building)) $building = sqlgetobject("SELECT * FROM `building` WHERE `id`=".intval($building));
 		if ($building->user == $userid) return false;
@@ -113,7 +113,7 @@ class cBuilding {
 		return (intval($building->flags) & kBuildingFlag_Tax_Stranger) != 0;
 	}
 	
-	function calcMaxBuildingHp($type,$level){
+	static function calcMaxBuildingHp($type,$level){
 		global $gBuildingType;
 		$maxhp = $gBuildingType[$type]->maxhp;
 		$newmaxhp = ceil($maxhp + $maxhp/100*1.5*$level);  // TODO :unhardcode
@@ -121,14 +121,14 @@ class cBuilding {
 		return $newmaxhp;
 	}
 	
-	function SetBuildingUpgrades($buildingid,$num) {
+	static function SetBuildingUpgrades($buildingid,$num) {
 		$building = sqlgetobject("SELECT * FROM `building` WHERE `id` = ".intval($buildingid));
 		if (empty($building)) return;
 		$num = max(($building->upgradetime == 0)?0:1,intval($num));
 		sql("UPDATE `building` SET `upgrades` = ".$num." WHERE `id` = ".intval($buildingid));
 	}
 	
-	function calcUpgradeCostsMod($level){ // todo : document in wiki...
+	static function calcUpgradeCostsMod($level){ // todo : document in wiki...
 		$n=$level;
 		if($n>3){
 			if($n>7)$t=2.9;
@@ -146,7 +146,7 @@ class cBuilding {
 	}
 	
 	 
-	function calcUpgradeTime($btypeid,$level=0) {
+	static function calcUpgradeTime($btypeid,$level=0) {
 		global $gBuildingType;
 		if ($btypeid != kBuilding_HQ)
 				$base = $gBuildingType[$btypeid]->buildtime;
@@ -158,7 +158,7 @@ class cBuilding {
 	}
 	
 	//removes a bulding, but only the one of the user that is logged in
-	function removeBuilding($building,$userid=0,$noruin=false,$report_css_change=false) { // obj or id
+	static function removeBuilding($building,$userid=0,$noruin=false,$report_css_change=false) { // obj or id
 		global $gBuildingType,$gUser;
 		if (!is_object($building))
 			$building = sqlgetobject("SELECT * FROM `building` WHERE `id`=".intval($building));
@@ -226,9 +226,9 @@ class cBuilding {
 				sql("DELETE FROM `construction` WHERE `user` = ".$userid);
 				sql("DELETE FROM `technology` WHERE `user` = ".$userid); // neuanfang ist wichtig ;) ausserdem mit blick in die zukunft ...
 				sql("UPDATE `user` SET `guildpoints` = 0 WHERE `id`=".$userid); // waere sonst unfair
-				// WARNING : require_once in function is only save, when :
-				// a) you know the function is only called once, and the inlcude not neeeded otherwise (tear down building)
-				// b) the include file is included bevore this function anyway (cron)
+				// WARNING : require_once in static function is only save, when :
+				// a) you know the static function is only called once, and the inlcude not neeeded otherwise (tear down building)
+				// b) the include file is included bevore this static function anyway (cron)
 				// otherwise all the "globals" from this include file won't be accesssible outside this function
 		
 				$allarmies = sqlgettable("SELECT * FROM `army` WHERE `user` = ".$userid);
@@ -251,7 +251,7 @@ class cBuilding {
 	
 	
 			
-	function listAllKaserneTargets($building) {
+	static function listAllKaserneTargets($building) {
 		$x = $building->x;
 		$y = $building->y;
 		return sqlgettable("SELECT *,SQRT((`x`-($x))*(`x`-($x)) + (`y`-($y))*(`y`-($y))) as `dist` FROM `building` WHERE 
@@ -259,7 +259,7 @@ class cBuilding {
 	}
 			
 	//list all possible portal targets
-	function listAllPortalTargets($building,$user) {
+	static function listAllPortalTargets($building,$user) {
 		if (!is_object($building)) $building = sqlgetobject("SELECT * FROM `building` WHERE `id`=".intval($building));
 		if (!is_object($user)) $user = sqlgetobject("SELECT * FROM `user` WHERE `id`=".intval($user));
 		

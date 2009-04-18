@@ -5,7 +5,7 @@ define("kHelpIcon",g('help2.png'));
 class cText {
 
 	/// by darian
-	function justifiedtext($text,$width=70)  { 
+	static function justifiedtext($text,$width=70)  { 
 	  $text=preg_replace("/[\t ]+/"," ",$text); 
 	  $text=preg_replace("/[\r\n]+/","\r\n\r\n",$text); 
 	  $text=trim($text); 
@@ -44,7 +44,7 @@ class cText {
 
 
 	// platziert ein kleines fragezeichen, das auf eine wikiseite zeigt
-	function Wiki ($topic,$typeid=0,$forceshow=false) {
+	static function Wiki ($topic,$typeid=0,$forceshow=false) {
 		global $gUser,$gUnitType,$gBuildingType,$gTechnologyType,$gTerrainType,$gItemType;
 		if($typeid>0)
 		switch($topic){
@@ -68,7 +68,7 @@ class cText {
 		else return " <a href='".kURL_Wiki.$topic."' target='_blank'><img src='".kHelpIcon."' border=0></a> ";
 	}
 	
-	function UnitsList ($units,$userid,$header="",$drawcost=true,$armyidle=false) {
+	static function UnitsList ($units,$userid,$header="",$drawcost=true,$armyidle=false) {
 		global $gRes,$gUnitType,$gTerrainType,$gUser,$gMovableFlagMainTerrain;
 		// $units ein array mit objekten, wie in lib.units.php, $o->cell = htmltext für die extra zelle
 		// $userid is used for upraded a,v etc

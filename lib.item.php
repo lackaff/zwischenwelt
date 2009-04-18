@@ -12,7 +12,7 @@ define("itemspawn_debugout",false);
 
 class cItem {
 	
-	function GetUserTotalItemAmount ($itemtypeid,$userid) {
+	static function GetUserTotalItemAmount ($itemtypeid,$userid) {
 		global $gItemType,$gRes,$gRes2ItemType;
 		$sum = 0;
 		$myres = $gRes;
@@ -26,7 +26,7 @@ class cItem {
 		return $sum;
 	}
 	
-	function GetMaxTrade ($army,$tradetext) {
+	static function GetMaxTrade ($army,$tradetext) {
 		if (!is_array($tradetext)) $tradetext = explode2(",",":",$tradetext);
 		$max = -1;
 		foreach ($tradetext as $component) if ($component[1] > 0) {
@@ -37,7 +37,7 @@ class cItem {
 		return ($max>0)?$max:0;
 	}
 	
-	function CountArmyItem	($armyid,$itemtypeid) { // works with item-res translation
+	static function CountArmyItem	($armyid,$itemtypeid) { // works with item-res translation
 		if (is_object($armyid)) $armyid = $armyid->id;
 		if (is_object($itemtypeid)) $itemtypeid = $itemtypeid->id;
 		global $gRes2ItemType;
@@ -48,7 +48,7 @@ class cItem {
 			`army` = ".intval($armyid)." AND `type` = ".intval($itemtypeid)." LIMIT 1"));
 	}
 	
-	function ArmyPayItem	($armyid,$itemtypeid,$payamount) { // works with item-res translation
+	static function ArmyPayItem	($armyid,$itemtypeid,$payamount) { // works with item-res translation
 		if (is_object($armyid)) $armyid = $armyid->id;
 		if (is_object($itemtypeid)) $itemtypeid = $itemtypeid->id;
 		global $gRes2ItemType;
@@ -65,9 +65,9 @@ class cItem {
 		return $success;
 	}
 	
-	// WARNING ! DON'T CALL THIS FUNCTION WITHIN A "foreach ($gRes ..)" LOOP ! use "$myres = $gRes;" or sth like that !
+	// WARNING ! DON'T CALL THIS static function WITHIN A "foreach ($gRes ..)" LOOP ! use "$myres = $gRes;" or sth like that !
 	// returns if the item has been picked up completely (true) or if the army has been full, and could only get a part (false)
-	function SpawnArmyItem	($army,$typeid,$amount=1.0,$quest=0,$param=0) { // creates an item and gives it to the army as reward
+	static function SpawnArmyItem	($army,$typeid,$amount=1.0,$quest=0,$param=0) { // creates an item and gives it to the army as reward
 		if ($amount < 1) return;
 		if (!is_object($army)) $army = sqlgetobject("SELECT * FROM `army` WHERE `id`=".intval($army));
 		// echo "SpawnArmyItem($army->id,$typeid,$amount)<br>";
@@ -76,7 +76,7 @@ class cItem {
 		return $armynotfull;
 	}
 	
-	function SpawnItem		($x,$y,$typeid,$amount=1.0,$quest=0,$param=0) {
+	static function SpawnItem		($x,$y,$typeid,$amount=1.0,$quest=0,$param=0) {
 		if ($amount < 1) return;
 		if (itemspawn_debugout) echo "SpawnItem($x,$y,$typeid,$amount=1.0,$quest=0,$param=0)<br>";
 		global $gItemType;
@@ -112,7 +112,7 @@ class cItem {
 	
 	//pick up item, item/army are id/object
 	// overridepos is for workers loading ressources into an adjacted army
-	function pickupItem($item,$army,$limitamount=-1,$overridepos=false) {
+	static function pickupItem($item,$army,$limitamount=-1,$overridepos=false) {
 		// todo : army item limit,
 		// todo : army weight limit
 		// todo : item unify in army, item unify in terrain , item unify in building
@@ -184,7 +184,7 @@ class cItem {
 	}
 	
 	//drop an item at army position, item/army are id/object
-	function dropItem($item,$army,$dropamount=1) { // dropamount = -1 -> drop all
+	static function dropItem($item,$army,$dropamount=1) { // dropamount = -1 -> drop all
 		if (!is_object($item)) $item = sqlgetobject("SELECT * FROM `item` WHERE `id`=".intval($item));
 		if (!is_object($army)) $army = sqlgetobject("SELECT * FROM `army` WHERE `id`=".intval($army));
 		if (itemspawn_debugout) echo "dropItem($item->type [$item->id],$army->name,$dropamount=-1)<br>";
@@ -210,7 +210,7 @@ class cItem {
 	}
 	
 	//drops all items , used by escape
-	function dropAll($army){
+	static function dropAll($army){
 		if (!is_object($army)) $army = sqlgetobject("SELECT * FROM `army` WHERE `id`=".intval($army));
 		if (empty($army)) return;
 		$items = sqlgettable("SELECT * FROM `item` WHERE `army`=".$army->id);
@@ -219,7 +219,7 @@ class cItem {
 	}
 	
 	//pickup all items
-	function pickupall($army){
+	static function pickupall($army){
 		if (!is_object($army)) $army = sqlgetobject("SELECT * FROM `army` WHERE `id`=".intval($army));
 		$items = sqlgettable("SELECT * FROM `item` WHERE `x`=".$army->x." AND `y`=".$army->y." AND `army` = 0 AND `building` = 0");
 		foreach ($items as $item) {
@@ -229,14 +229,14 @@ class cItem {
 		return $army;
 	}
 	
-	function getArmyItemsWeight ($armyid) {
+	static function getArmyItemsWeight ($armyid) {
 		// todo : check if array and using $gItemType[..]->weight is faster ??
 		return sqlgetone("SELECT SUM(`itemtype`.`weight` * `item`.`amount`) FROM `item`,`itemtype` WHERE 
 			`item`.`type` = `itemtype`.`id` AND `item`.`army` = ".intval($armyid));
 	}
 	
 	
-	function generateSoftTerrain ($x,$y,$newtype) {
+	static function generateSoftTerrain ($x,$y,$newtype) {
 		// used by osterei
 		global $gTerrainType;
 		$type = cMap::StaticGetTerrainAtPos(intval($x),intval($y));
@@ -245,7 +245,7 @@ class cItem {
 		return true;
 	}
 	
-	function generateSoftTerrainWBorder ($x,$y,$newtype,$newbordertype=0) {
+	static function generateSoftTerrainWBorder ($x,$y,$newtype,$newbordertype=0) {
 		// used by osterei
 		require_once("lib.map.php");
 		if ($newbordertype == 0) $newbordertype = $newtype;
@@ -261,7 +261,7 @@ class cItem {
 		RegenAreaNWSE($x-2,$y-2,$x+2,$y+2,true);
 	}
 		
-	function canUseItem ($item,$army) {
+	static function canUseItem ($item,$army) {
 		if (!is_object($item)) $item = sqlgetobject("SELECT * FROM `item` WHERE `id`=".intval($item));
 		if (!is_object($army)) $army = sqlgetobject("SELECT * FROM `army` WHERE `id`=".intval($army));
 		if (empty($item) || empty($army)) return false;
@@ -302,7 +302,7 @@ class cItem {
 		return false;
 	}
 	
-	function useItem ($item,$army) {
+	static function useItem ($item,$army) {
 		if (!is_object($item))$item = sqlgetobject("SELECT * FROM `item` WHERE `id`=".intval($item));
 		if (!is_object($army))$army = sqlgetobject("SELECT * FROM `army` WHERE `id`=".intval($army));
 		if (itemspawn_debugout) echo "useItem($item->type [$item->id],$army->name)<br>";
@@ -406,7 +406,7 @@ class cItem {
 		return $res;
 	}
 	
-	function TeleportToFirstInList($army,$list) {
+	static function TeleportToFirstInList($army,$list) {
 		if(!is_object($army))$army = sqlgetobject("SELECT * FROM `army` WHERE `id`=".intval($army));
 		if (!isset($army->units)) $army->units = cUnit::GetUnits($army->id);
 		foreach ($list as $o) {

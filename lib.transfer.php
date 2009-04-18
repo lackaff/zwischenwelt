@@ -9,7 +9,7 @@ class cTransfer {
 	// ##### ##### ##### ##### ##### ##### ##### #####
 	
 	// used in adminarmytype and adminarmytransfer
-	function GetArmyTransferName ($id) {
+	static function GetArmyTransferName ($id) {
 		global $gArmyTransfer,$gBuildingType,$gArmyType,$gUnitType;
 		$t = $gArmyTransfer[$id];
 		$sourcename = $t->sourcebuildingtype?$gBuildingType[$t->sourcebuildingtype]->name:$gArmyType[$t->sourcearmytype]->name;
@@ -23,12 +23,12 @@ class cTransfer {
 	}
 	
 	// $sourcebuilding XOR $sourcearmy , exactly one of them is not false
-	function display_armytransfer($sourcebuilding,$sourcearmy) {
+	static function display_armytransfer($sourcebuilding,$sourcearmy) {
 		global $gArmyTransfer;
 		foreach ($gArmyTransfer as $transfer) 
 			cTransfer::ArmyTransferBox($transfer,$sourcebuilding,$sourcearmy);
 	}
-	function has_armytransfer($sourcebuilding,$sourcearmy) {
+	static function has_armytransfer($sourcebuilding,$sourcearmy) {
 		global $gArmyTransfer,$gUser;
 		foreach ($gArmyTransfer as $transfer) 
 			if (cTransfer::ArmyTransferVisible($transfer,$sourcebuilding,$sourcearmy,$gUser)) return true;
@@ -36,7 +36,7 @@ class cTransfer {
 	}
 	
 	// check if displayed , $user must be object !
-	function ArmyTransferVisible ($transfer,$sourcebuilding,$sourcearmy,$user) {
+	static function ArmyTransferVisible ($transfer,$sourcebuilding,$sourcearmy,$user) {
 		global $gArmyTransfer;
 		if (!is_object($transfer)) $transfer = $gArmyTransfer[$transfer];
 		if (empty($transfer)) return false;
@@ -53,7 +53,7 @@ class cTransfer {
 	}
 	
 	// $transfer must be object, $unitarr = array(typeid => amount) 
-	function FilterUnitArr($transfer,$unitarr) {
+	static function FilterUnitArr($transfer,$unitarr) {
 		global $gUnitType;
 		$unitsarmytype = $transfer->transportarmytype ? $transfer->transportarmytype : $transfer->targetarmytype;
 		$res = array();
@@ -71,7 +71,7 @@ class cTransfer {
 		
 	// $sourcebuilding XOR $sourcearmy
 	// $transfer,$sourcebuilding,$sourcearmy must be objects
-	function ArmyTransferBox ($transfer,$sourcebuilding,$sourcearmy) {
+	static function ArmyTransferBox ($transfer,$sourcebuilding,$sourcearmy) {
 		global $gUnitType,$gArmyType,$gUser;
 		assert(is_object($sourcearmy) || is_object($sourcebuilding));
 		if (!cTransfer::ArmyTransferVisible($transfer,$sourcebuilding,$sourcearmy,$gUser)) return;
@@ -193,7 +193,7 @@ class cTransfer {
 	
 	// check if building-army or army-army transfer is allowed, called from info/info.php
 	// see below : ArmyTransfer()
-	function TryArmyTransfer ($transfer,$sourcebuilding,$sourcearmy,$names,$unitarrs,$user) {
+	static function TryArmyTransfer ($transfer,$sourcebuilding,$sourcearmy,$names,$unitarrs,$user) {
 		global $gArmyTransfer;
 		if ($sourcebuilding && !is_object($sourcebuilding)) $sourcebuilding = sqlgetobject("SELECT * FROM `building` WHERE `id` = ".intval($sourcebuilding));
 		if ($sourcearmy && !is_object($sourcearmy)) $sourcearmy = sqlgetobject("SELECT * FROM `army` WHERE `id` = ".intval($sourcearmy));
@@ -231,7 +231,7 @@ class cTransfer {
 	
 	// returns false if possible, or a readable error message if not
 	// parameters must be objects
-	function CheckArmyTransfer ($transfer,$sourcearmy,$sourcebuilding,$targetarmy,$user) {
+	static function CheckArmyTransfer ($transfer,$sourcearmy,$sourcebuilding,$targetarmy,$user) {
 		if ($targetarmy && !$targetarmy->counttolimit) return "Geschenkarmee";
 		if ($sourcearmy && !$sourcearmy->counttolimit) return "Geschenkarmee";
 		$sourceuserid = $sourcearmy ? $sourcearmy->user : $sourcebuilding->user;
@@ -272,7 +272,7 @@ class cTransfer {
 	// $sourcebuilding XOR $sourcearmy
 	// $transfer,$sourcebuilding,$sourcearmy must be objects
 	// raceconditions minimized by using "`amount` = `amount` + $add WHERE `amount` + $add > 0" in cUnit::AddUnits()
-	function ArmyTransfer ($transfer,$sourcebuilding,$sourcearmy,$targetarmy,$desiredunits,$newname) {
+	static function ArmyTransfer ($transfer,$sourcebuilding,$sourcearmy,$targetarmy,$desiredunits,$newname) {
 		// TODO : LOCK TABLES...
 		global $gUnitType,$gArmyType;
 		if (empty($targetarmy) && array_sum($desiredunits) <= 0) return true; // do not create empty army

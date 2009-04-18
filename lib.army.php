@@ -10,7 +10,7 @@ require_once("lib.item.php");
 require_once("lib.unit.php");
 
 class cArmy {
-	function GetJavaScriptArmyData ($army,$gLeft=false,$gTop=false,$gCX=false,$gCY=false) {
+	static function GetJavaScriptArmyData ($army,$gLeft=false,$gTop=false,$gCX=false,$gCY=false) {
 		if (!is_object($army)) $army = sqlgetobject("SELECT * FROM `army` WHERE `id` = ".intval($army));
 		if (empty($army)) exit();
 		global $gRes2ItemType,$gRes,$gUser,$gContainerType2Number;
@@ -71,7 +71,7 @@ class cArmy {
 	}
 	
 	/// $wps = sqlgettable("SELECT * FROM `waypoint` WHERE `army` = ".intval($armyid)." ORDER BY `priority`");
-	function GetJavaScriptWPs ($wps,$gLeft=false,$gTop=false,$gCX=false,$gCY=false) {
+	static function GetJavaScriptWPs ($wps,$gLeft=false,$gTop=false,$gCX=false,$gCY=false) {
 		$res = "";
 		// foreach connection between 2 waypoints
 		$curvisible = false;
@@ -97,7 +97,7 @@ class cArmy {
 	}
 	
 	
-	function GiveSiegeCommand ($armyid,$building) {
+	static function GiveSiegeCommand ($armyid,$building) {
 		if (is_object($armyid)) $armyid = $armyid->id;
 		if (!is_object($building)) $building = sqlgetobject("SELECT * FROM `building` WHERE `id` = ".intval($building));
 		if (!$armyid) return false;
@@ -114,7 +114,7 @@ class cArmy {
 	}
 					
 	
-	function CanCreateNewArmy ($userid,$armytype) {
+	static function CanCreateNewArmy ($userid,$armytype) {
 		global $gArmyType;
 		if ($gArmyType[$armytype]->limit < 0) return true;
 		$count = intval(sqlgetone("SELECT COUNT(*) FROM `army` WHERE `counttolimit` > 0 AND `user` = ".intval($userid)." AND `type` = ".intval($armytype)));
@@ -123,7 +123,7 @@ class cArmy {
 	
 	// also returns hellhole-pos if possible
 	// TODO : OBSOLETE : replace by cFight::GetContainerText
-	function GetArmyOwnerName ($army) {
+	static function GetArmyOwnerName ($army) {
 		if (!is_object($army)) $army = sqlgetobject("SELECT * FROM `army` WHERE `id` = ".intval($army));
 		if ($army->user) return sqlgetone("SELECT `name` FROM `user` WHERE `id`=".$army->user);
 		if ($army->hellhole) {
@@ -133,11 +133,11 @@ class cArmy {
 		return "Server";
 	}
 
-	function escapearmyname ($name) {
+	static function escapearmyname ($name) {
 		return ereg_replace("[&<>]","_",$name);// html security
 	}
 	
-	function CanControllArmy ($army,$user) {
+	static function CanControllArmy ($army,$user) {
 		if(!is_object($army))$army = sqlgetobject("SELECT * FROM `army` WHERE `id`=".intval($army));
 		if(!is_object($user))$user = sqlgetobject("SELECT * FROM `user` WHERE `id`=".intval($user));
 		if ($army->user == 0) return $user->admin != 0;
@@ -148,7 +148,7 @@ class cArmy {
 	}
 	
 	// army must also be controllable, and portal must be open for user, not checked in here
-	function CanFetchArmyToPortal ($portal,$army) {
+	static function CanFetchArmyToPortal ($portal,$army) {
 		if (!is_object($portal))	$portal = sqlgetobject("SELECT * FROM `building` WHERE `id`=".intval($portal));
 		if (!is_object($army))		$army = sqlgetobject("SELECT * FROM `army` WHERE `id`=".intval($army));
 		$item = sqlgetobject("SELECT * FROM `item` WHERE `army` = ".$army->id." AND `type` = ".kItem_Portalstein_Blau);
@@ -161,7 +161,7 @@ class cArmy {
 	
 	// returns a list of all armies, that can be controlled by a specific user,
 	// the list is ordered by "armytype,user", contains an extra field `username`, and is indexed by armyid
-	function ListControllableArmies ($user=false) {
+	static function ListControllableArmies ($user=false) {
 		global $gUser;
 		if ($user === false) $user = $gUser;
 		if (!is_object($user)) $user = sqlgetobject("SELECT * FROM `user` WHERE `id`=".intval($user));
@@ -179,7 +179,7 @@ class cArmy {
 	}
 	
 	// save the capture calc in cUnit::CaptureShips
-	function Capture ($army,$captured) {
+	static function Capture ($army,$captured) {
 		// tables should be locked when this is called...
 		$deposit = sqlgetobject("SELECT * FROM `army` WHERE `type` = ".kArmyType_Fleet." AND `flags` & ".kArmyFlag_Captured." AND `user` = ".$army->user."
 			AND `x` >= ".($army->x-1)." AND `x` <= ".($army->x+1)."
@@ -199,7 +199,7 @@ class cArmy {
 	// ext=FALSE: returns all armies a user is able to control
 	// ext=TRUE: returns all armies owned by user + all guildarmies if user is gc
 	
-	function getMyArmies($ext=FALSE,$user=0){
+	static function getMyArmies($ext=FALSE,$user=0){
 		if($user==0){
 			global $gUser;
 			$user=$gUser;
@@ -236,7 +236,7 @@ class cArmy {
 	
 	
 	
-	function DrawPillageRes($mask) {
+	static function DrawPillageRes($mask) {
 		global $gRes;
 		if ($mask == -1) $mask = 255; // TODO : unhardcode
 		$i = 0; 
@@ -249,7 +249,7 @@ class cArmy {
 	
 	// returns the maximum speed="waiting time" of the units
 	// uses $army->units and $army->transport (sailors) if available
-	function GetArmySpeed ($army) {
+	static function GetArmySpeed ($army) {
 		if (!is_object($army)) $army = sqlgetobject("SELECT * FROM `army` WHERE `id` = ".intval($army));
 		if (empty($army)) return 0;
 		if (!isset($army->units)) $army->units = cUnit::GetUnits($army->id);
@@ -298,7 +298,7 @@ class cArmy {
 	
 	// if ($x,$y) is free, use it, else FindExit() or FindPierExit() if type=fleet
 	// $treasure can be true (get from unittype), or an array(itemid=>amount,itemid=>amount)
-	function SpawnArmy ($x,$y,$units,$name=false,$armytype=-1,$userid=0,$quest=0,$hellhole=0,$treasure=false,$flags=0) {
+	static function SpawnArmy ($x,$y,$units,$name=false,$armytype=-1,$userid=0,$quest=0,$hellhole=0,$treasure=false,$flags=0) {
 		global $gUnitType;
 		
 		foreach ($units as $k => $o) if (!$o->user) $units[$k]->user = $userid;
@@ -375,7 +375,7 @@ class cArmy {
 		return $army;
 	}
 	
-	function DeleteArmy ($army,$no_resdrop=false,$why=false) {
+	static function DeleteArmy ($army,$no_resdrop=false,$why=false) {
 		TablesLock();
 		if (!is_object($army)) $army = sqlgetobject("SELECT * FROM `army` WHERE `id` = ".intval($army));
 		if (empty($army)) { TablesUnlock(); return; }
@@ -403,13 +403,13 @@ class cArmy {
 		TablesUnlock();
 	}
 	
-	function ArmyAt ($army,$x,$y) { // obj or id
+	static function ArmyAt ($army,$x,$y) { // obj or id
 		if (!is_object($army)) $army = sqlgetobject("SELECT * FROM `army` WHERE `id` = ".intval($army));
 		if (empty($army)) return false;
 		return abs($army->x-$x) + abs($army->y-$y) <= 1;
 	}
 	
-	function ArmyAtDiag ($army,$x,$y) { // obj or id
+	static function ArmyAtDiag ($army,$x,$y) { // obj or id
 		if (!is_object($army)) $army = sqlgetobject("SELECT * FROM `army` WHERE `id` = ".intval($army));
 		if (empty($army)) return false;
 		return abs($army->x-$x) <= 1 && abs($army->y-$y) <= 1;
@@ -422,44 +422,44 @@ class cArmy {
 	// ##### ##### ##### ##### ##### ##### ##### #####
 	
 	
-	function hasDistantAttack ($army) {
+	static function hasDistantAttack ($army) {
 		if (!is_object($army)) $army = sqlgetobject("SELECT * FROM `army` WHERE `id` = ".intval($army));
 		if (!isset($army->units)) $army->units = cUnit::GetUnits($army->id);
 		return $army->type == kArmyType_Normal && cUnit::GetUnitsSum($army->units,"f") > 0;
 	}
 	
-	function hasMeleeAttack($army) { // obj or id
+	static function hasMeleeAttack($army) { // obj or id
 		if (!is_object($army)) $army = sqlgetobject("SELECT `type` FROM `army` WHERE `id`=".intval($army));
 		return $army->type == kArmyType_Normal || $army->type == kArmyType_Fleet;
 	}
 	
-	function hasPillageAttack($army)  { // obj or id
+	static function hasPillageAttack($army)  { // obj or id
 		if (!is_object($army)) $army = sqlgetobject("SELECT `type` FROM `army` WHERE `id`=".intval($army));
 		return $army->type == kArmyType_Normal;
 	}
 	
-	function hasSiegeAttack($army)  { // obj or id
+	static function hasSiegeAttack($army)  { // obj or id
 		if (!is_object($army)) $army = sqlgetobject("SELECT `type` FROM `army` WHERE `id`=".intval($army));
 		if (!isset($army->units)) $army->units = cUnit::GetUnits($army->id);
 		$rangedsiegedmg = cUnit::GetUnitsRangedSiegeDamage($army->units);
 		return cUnit::GetUnitsSiegeAttack($army->units,$army->user) > 0 || $rangedsiegedmg; 
 	}
 	
-	function inMeleeRange($dx,$dy) {
+	static function inMeleeRange($dx,$dy) {
 		return abs($dx)+abs($dy) <= 1;
 	}
 	
-	function inPillageRange($dx,$dy) {
+	static function inPillageRange($dx,$dy) {
 		return abs($dx)+abs($dy) <= 1;
 	}
 	
-	function inSiegeRange($dx,$dy) {
+	static function inSiegeRange($dx,$dy) {
 		return abs($dx)+abs($dy) <= 1;
 	}
 	
 	//@param: army hybrid, army=id oder army object
 	//@param: dx,dy ist der abstand in reichweite?
-	function inDistantRange($dx,$dy,$army) {
+	static function inDistantRange($dx,$dy,$army) {
 		if (!is_object($army)) $army = sqlgetobject("SELECT * FROM `army` WHERE `id` = ".intval($army));
 		if (!isset($army->units)) $army->units = cUnit::GetUnits($army->id);
 		return cUnit::GetDistantDamage($army->units,$dx,$dy) > 0;
@@ -471,7 +471,7 @@ class cArmy {
 	// ##### ##### ##### ##### ##### ##### ##### #####
 	
 	
-	function ArmyGetRes($armyid,$userid,$lumber,$stone,$food,$metal,$runes = 0) {
+	static function ArmyGetRes($armyid,$userid,$lumber,$stone,$food,$metal,$runes = 0) {
 		global $gRes;
 		sql("LOCK TABLES	`user` WRITE, `phperror` WRITE,
 							`guild` WRITE,
@@ -553,7 +553,7 @@ class cArmy {
 	//@param x x-position
 	//@param y y-position
 	//@return array filled with the modifications ie. array("a"=>attack,"v"=>defense,"f"=>range)
-	function GetFieldMod($x,$y){
+	static function GetFieldMod($x,$y){
 		global $gBuildingType,$gTerrainType;
 		$mod = array("a"=>1.0,"v"=>1.0,"f"=>1.0);
 		
@@ -579,7 +579,7 @@ class cArmy {
 	
 	//calculates the multiplication modifier for distant damage
 	//ie. less damage if you shoot through mountains
-	function GetDistantMod($sx,$sy,$dx,$dy){
+	static function GetDistantMod($sx,$sy,$dx,$dy){
 		global $gBuildingType,$gTerrrainType;
 		$mod = 1;
 		$x = $sx;
@@ -605,7 +605,7 @@ class cArmy {
 	
 	
 	
-	function ArmySetWaypoint ($army,$x,$y,$waypointmaxprio=-1) {  // object or id
+	static function ArmySetWaypoint ($army,$x,$y,$waypointmaxprio=-1) {  // object or id
 		if (!is_object($army)) $army = sqlgetobject("SELECT * FROM `army` WHERE `id`=".intval($army));
 		if(empty($army)) return false;
 		echo "ArmySetWaypoint($army->name,$x,$y)<br>";
@@ -633,7 +633,7 @@ class cArmy {
 	}
 	
 	
-	function ArmyCancelWaypoint($army,$wp) {
+	static function ArmyCancelWaypoint($army,$wp) {
 		if (!is_object($wp))	$wp = sqlgetobject("SELECT * FROM `waypoint` WHERE `id` = ".intval($wp));
 		if (!is_object($army))	$army = sqlgetobject("SELECT * FROM `army` WHERE `id` = ".intval($army));
 		if (empty($wp) || empty($army) || $wp->army != $army->id) return;
@@ -665,7 +665,7 @@ class cArmy {
 	
 	
 	
-	function GetArmyCollectTime($army,$terraintype) {
+	static function GetArmyCollectTime($army,$terraintype) {
 		switch ($terraintype) {
 			case kTerrain_Forest :	return 60*10; break; // TODO :unhardcode
 			case kTerrain_Rubble :	return 60*10; break; // TODO :unhardcode
@@ -674,7 +674,7 @@ class cArmy {
 		return 0;
 	}
 	
-	function ArmyCollect($army,$terraintype) {
+	static function ArmyCollect($army,$terraintype) {
 		switch ($terraintype) {
 			case kTerrain_Forest :
 				cItem::SpawnArmyItem($army,kResItemType_lumber,kHarvestAmount);
@@ -704,7 +704,7 @@ class cArmy {
 	
 	
 	
-	function GetArmyTotalWeight ($army) {
+	static function GetArmyTotalWeight ($army) {
 		if (!is_object($army)) $army = sqlgetobject("SELECT * FROM `army` WHERE `id`=".intval($army));
 		$load = $army->lumber + $army->stone + $army->food + $army->metal + $army->runes;
 		$load += cItem::getArmyItemsWeight($army->id);
@@ -713,7 +713,7 @@ class cArmy {
 		return $load;
 	}
 	
-	function DropExcessCargo ($army,$receipient_army=false,$maxcargoweight=-1) {
+	static function DropExcessCargo ($army,$receipient_army=false,$maxcargoweight=-1) {
 		if (!is_object($army)) $army = sqlgetobject("SELECT * FROM `army` WHERE `id` = ".intval());
 		if (!isset($army->units)) $army->units = cUnit::GetUnits($army->id);
 		if (!isset($army->transport)) $army->transport = cUnit::GetUnits($army->id,kUnitContainer_Transport);
@@ -777,7 +777,7 @@ class cArmy {
 	
 	
 
-	function AddSteps ($x,$y,$steps) {
+	static function AddSteps ($x,$y,$steps) {
 		if ($steps == 0) return;
 		sql("UPDATE `terrain` SET `steps`=`steps`+".intval($steps)." WHERE `x`=".intval($x)." AND `y`=".intval($y));
 		if (mysql_affected_rows() <= 0) {
@@ -789,7 +789,7 @@ class cArmy {
 	// $userid for BuildingOpenForUser()
 	// $units for GetUnitsMovableMask()
 	// $building = -1 : if building has already been read out, it can be passed here, used in ArmyThink
-	function GetPosSpeed ($x,$y,$userid=0,$units=false,$armyblock=true,$building=-1) {
+	static function GetPosSpeed ($x,$y,$userid=0,$units=false,$armyblock=true,$building=-1) {
 		global $gTerrainType,$gBuildingType;
 		$debug = false;
 		
@@ -860,7 +860,7 @@ class cArmy {
 	
 	// find a valid exit for an army (kaserne ausgang)
 	 // randomizes exit
-	function FindExit ($x,$y,$userid=0,$units=false) {
+	static function FindExit ($x,$y,$userid=0,$units=false) {
 		$arr = array(0,1,2,3);
 		shuffle($arr);
 		for ($i=0;$i<4;++$i) {
@@ -873,7 +873,7 @@ class cArmy {
 	}
 	
 	// for harbour
-	function FindPierExit ($x,$y,$userid,$units) {
+	static function FindPierExit ($x,$y,$userid,$units) {
 		$x = intval($x);
 		$y = intval($y);
 		$r = 7;  // TODO :unhardcode
@@ -889,7 +889,7 @@ class cArmy {
 		return FALSE;
 	}
 	
-	function ArmyAtPier ($army,$x,$y,$userid) {
+	static function ArmyAtPier ($army,$x,$y,$userid) {
 		$x = intval($x);
 		$y = intval($y);
 		$r = 7;  // TODO :unhardcode
@@ -902,7 +902,7 @@ class cArmy {
 		return FALSE;
 	}
 	
-	function AddArmyFrags ($army,$frags) {
+	static function AddArmyFrags ($army,$frags) {
 		sql("UPDATE `army` SET `frags`= `frags` + ".floatval($frags)." WHERE `id` = ".intval($army));
 	}
 }

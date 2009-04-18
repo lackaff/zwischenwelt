@@ -7,9 +7,9 @@ require_once("lib.spells.php");
 class cFight {
 
 	//simply increase the amount of registered kills of one unittype of the user with userid
-	function AddUserkills($userid,$unittypeid,$kills){
+	static function AddUserkills($userid,$unittypeid,$kills){
 		if($unittypeid == 0 || $kills == 0)return;
-		echo "function AddUserkills($userid,$unittypeid,$kills)<br>\n";
+		echo "static function AddUserkills($userid,$unittypeid,$kills)<br>\n";
 		$userid = intval($userid);
 		$unittypeid = intval($unittypeid);
 		$kills = floatval($kills);
@@ -21,13 +21,13 @@ class cFight {
 	}
 
 	//increase the kills for a user (userid), units is a list of killed unittypes
-	function AddUserkillsFromKilledUnits($userid,$units){
+	static function AddUserkillsFromKilledUnits($userid,$units){
 		foreach($units as $x)
 			cFight::AddUserkills($userid,$x->type,$x->amount);
 	}
 
 	// $army must be object, replaces _ARMYNAME_ and _ARMYOWNERNAME_ in $why
-	function StopAllArmyFights ($army,$why) {
+	static function StopAllArmyFights ($army,$why) {
 		global $gNumber2ContainerType,$gContainerType2Number;
 		$armyownername = cArmy::GetArmyOwnerName($army);
 		$why = strtr($why,array("_ARMYNAME_"=>$army->name,"_ARMYOWNERNAME_"=>$armyownername));
@@ -44,7 +44,7 @@ class cFight {
 	}
 	
 	// $building must be object, replaces _BUILDINGTYPE_ , _x_ , _y_ , _BUILDINGOWNERNAME_ in $why
-	function StopAllBuildingFights ($building,$why) {
+	static function StopAllBuildingFights ($building,$why) {
 		global $gContainerType2Number,$gNumber2ContainerType,$gUnitType,$gBuildingType,$gArmyType;
 		$buildingownername = $building->user ? sqlgetone("SELECT `name` FROM `user` WHERE `id` = ".$building->user) : "Server";
 		$why = strtr($why,array("_BUILDINGTYPE_"=>$gBuildingType[$building->type]->name,
@@ -61,7 +61,7 @@ class cFight {
 	
 	// get a textual representation of army/building, used for ShootingStep,SendFightReport
 	// todo : replace GetArmyOwnerName with me
-	function GetContainerText ($containerobj,$containertype=kUnitContainer_Army) {
+	static function GetContainerText ($containerobj,$containertype=kUnitContainer_Army) {
 		global $gContainerType2Number,$gNumber2ContainerType,$gUnitType,$gBuildingType,$gArmyType;
 		if (is_numeric($containertype)) $containertype = $gNumber2ContainerType[$containertype];
 		if ($containerobj && !is_object($containerobj)) $containerobj = sqlgetobject("SELECT * FROM `".addslashes($containertype)."` WHERE `id` = ".intval($containerobj));
@@ -86,7 +86,7 @@ class cFight {
 	
 	// only performs type-check, not range check (damage-based)
 	// leave defenderobj = false and set to test if attackerobj can shoot at anything of ctype $defendertype (building or army)
-	function CanShoot ($attackerobj,$attackertype=kUnitContainer_Army,$defenderobj=false,$defendertype=kUnitContainer_Army) {
+	static function CanShoot ($attackerobj,$attackertype=kUnitContainer_Army,$defenderobj=false,$defendertype=kUnitContainer_Army) {
 		global $gContainerType2Number,$gNumber2ContainerType;
 		$attackertype = is_numeric($attackertype)?$gNumber2ContainerType[$attackertype]:$attackertype;
 		$defendertype = is_numeric($defendertype)?$gNumber2ContainerType[$defendertype]:$defendertype;
@@ -98,7 +98,7 @@ class cFight {
 	
 	
 	// general shooter intelligence : look for potential targets, start shootings, choose one active shooting, and shoot
-	function ThinkShooting ($attackerobj,$attackertype,$debug=false) {
+	static function ThinkShooting ($attackerobj,$attackertype,$debug=false) {
 		if (empty($attackerobj)) return false;
 		global $gContainerType2Number,$gNumber2ContainerType;
 		global $gBuildingType,$gArmyType;
@@ -260,7 +260,7 @@ class cFight {
 	
 	
 	
-	function StartShooting ($attacker,$attackertype,$defender,$defendertype,$autocancel=false,$attackerobj=false,$defenderobj=false) {
+	static function StartShooting ($attacker,$attackertype,$defender,$defendertype,$autocancel=false,$attackerobj=false,$defenderobj=false) {
 		global $gContainerType2Number,$gNumber2ContainerType;
 		$shooting = false;
 		$shooting->attacker = $attacker;
@@ -288,7 +288,7 @@ class cFight {
 	}
 	
 	// fire one shot
-	function ShootingStep ($shooting,$attackerobj=false,$defenderobj=false,$dmg=0,$debug=true) {
+	static function ShootingStep ($shooting,$attackerobj=false,$defenderobj=false,$dmg=0,$debug=true) {
 		global $gContainerType2Number,$gNumber2ContainerType,$gUnitType,$gBuildingType,$gArmyType;
 		global $gAllUsers;
 		if ($dmg <= 0) return; // todo : autocalc from units in attacker
@@ -376,7 +376,7 @@ class cFight {
 		}
 	}
 	
-	function EndShooting ($shooting,$why=0,$attackerobj=false,$defenderobj=false) {
+	static function EndShooting ($shooting,$why=0,$attackerobj=false,$defenderobj=false) {
 		global $gContainerType2Number,$gNumber2ContainerType;
 		//echo "EndShooting : $why<br>\n";
 		if ($shooting->lastshot > 0) {
@@ -401,7 +401,7 @@ class cFight {
 	
 	
 	// $army,$building must be objects
-	function PillagePossible ($army,$debug=false) {
+	static function PillagePossible ($army,$debug=false) {
 		if (!cArmy::hasPillageAttack($army))
 			{ if ($debug) echo "PillagePossible : army has no pillage attack<br>"; return false; }
 		return true;
@@ -409,7 +409,7 @@ class cFight {
 	
 
 	// $army,$building must be objects
-	function StartPillage ($army,$x,$y,$restypes,$debug=false) {
+	static function StartPillage ($army,$x,$y,$restypes,$debug=false) {
 		if (!cFight::PillagePossible($army,$debug)) 
 			{ if ($debug) echo "StartPillage : not possible<br>"; return true; }
 		if (!cArmy::inPillageRange($army->x-$x,$army->y-$y)) 
@@ -457,7 +457,7 @@ class cFight {
 	}
 	
 	
-	function PillageStep ($pillage,$debug=false) {
+	static function PillageStep ($pillage,$debug=false) {
 		global $gResFields;
 		//if ($debug) echo "pillage<br>";
 		//if ($debug) vardump2($pillage);
@@ -527,7 +527,7 @@ class cFight {
 		}
 	}
 	
-	function EndPillage ($pillage,$why,$aborted=false) {
+	static function EndPillage ($pillage,$why,$aborted=false) {
 		echo "EndPillage : $why<br>";
 		$army = sqlgetobject("SELECT * FROM `army` WHERE `id` = ".$pillage->army);
 		$building = sqlgetobject("SELECT * FROM `building` WHERE `id` = ".$pillage->building);
@@ -551,7 +551,7 @@ class cFight {
 	
 	
 	// $army,$building must be objects
-	function SiegePossible ($army,$debug=false) {
+	static function SiegePossible ($army,$debug=false) {
 		if (!cArmy::hasSiegeAttack($army))
 			{ if ($debug) echo "SiegePossible : army has no siege attack<br>"; return false; }
 		return true;
@@ -559,7 +559,7 @@ class cFight {
 	
 	
 	// $army,$building must be objects
-	function StartSiege ($army,$x,$y,$debug=false) {
+	static function StartSiege ($army,$x,$y,$debug=false) {
 		if (!cFight::SiegePossible($army,$debug)) 
 			{ if ($debug) echo "StartSiege : not possible<br>"; return true; }
 		if (!cArmy::inSiegeRange($army->x-$x,$army->y-$y)) 
@@ -618,7 +618,7 @@ class cFight {
 		return true;
 	}
 	
-	function SiegeStep ($siege,$debug=false) {
+	static function SiegeStep ($siege,$debug=false) {
 		$army = sqlgetobject("SELECT * FROM `army` WHERE `id` = ".$siege->army);
 		$building = sqlgetobject("SELECT * FROM `building` WHERE `id` = ".$siege->building);
 		if (empty($army) || empty($building)) {
@@ -676,7 +676,7 @@ class cFight {
 		}
 	}
 	
-	function EndSiege ($siege,$why,$aborted=false) {
+	static function EndSiege ($siege,$why,$aborted=false) {
 		echo "EndSiege : $why<br>";
 		// todo : messages
 		$army = sqlgetobject("SELECT * FROM `army` WHERE `id` = ".$siege->army);
@@ -700,7 +700,7 @@ class cFight {
 	
 	// $attacker,$defender must be army-objects
 	// $attacker->units and $defender->units must be set
-	function FightPossible ($attacker,$defender,$debug=false) {
+	static function FightPossible ($attacker,$defender,$debug=false) {
 		if (empty($defender))		{ if ($debug) echo "FightPossible : no enemy<br>"; return false; }
 		$ma = cUnit::GetUnitsMovableMask($attacker->units);
 		$md = cUnit::GetUnitsMovableMask($defender->units);
@@ -714,7 +714,7 @@ class cFight {
 
 	// $army,$enemy must be army-objects
 	// $army->units and $enemy->units must be set
-	function StartFight ($army,$enemy,$debug=false) {
+	static function StartFight ($army,$enemy,$debug=false) {
 		if (!cFight::FightPossible($army,$enemy,$debug)) 
 			{ if ($debug) echo "StartFight : fight not possible<br>"; return true; }
 		if (!cArmy::inMeleeRange($army->x-$enemy->x,$army->y-$enemy->y)) 
@@ -764,7 +764,7 @@ class cFight {
 	}
 	
 	
-	function FightStep ($fight) {
+	static function FightStep ($fight) {
 		//sets fighting army idle=0 so no one can move an do stuff like this
 		sql("UPDATE `army` SET `idle`=0 WHERE `id`=".intval($fight->attacker)." OR `id`=".intval($fight->defender));
 		
@@ -788,7 +788,7 @@ class cFight {
 		foreach ($spells as $o) echo "spell:".$o->spelltype->name.",";
 		echo "<br>";
 		
-		// todo : optimize this ? maybe as param, since where this function is called, we hava a complete fight-list
+		// todo : optimize this ? maybe as param, since where this static function is called, we hava a complete fight-list
 		$army1->fightcount = intval(sqlgetone("SELECT COUNT(`id`) FROM `fight` WHERE `attacker` = ".intval($army1->id)." OR `defender` = ".intval($army1->id)));
 		$army2->fightcount = intval(sqlgetone("SELECT COUNT(`id`) FROM `fight` WHERE `attacker` = ".intval($army2->id)." OR `defender` = ".intval($army2->id)));
 		
@@ -845,7 +845,7 @@ class cFight {
 		}
 	}
 	
-	function FightCalcStep (&$army1,&$army2,$m1,$m2,$spells,$showverlauf) {
+	static function FightCalcStep (&$army1,&$army2,$m1,$m2,$spells,$showverlauf) {
 		if (!isset($army1->flags)) $army1->flags = 0; // kampfsim
 		if (!isset($army2->flags)) $army2->flags = 0; // kampfsim
 		
@@ -931,7 +931,7 @@ class cFight {
 	}
 	
 	
-	function EndFight ($fight,$why) {
+	static function EndFight ($fight,$why) {
 		echo "EndFight : $why<br>";
 		if ($fight->fightlog == 0) { // temporary hack while changing database, the `fightlog`.`fight` field is not used anymore, can be dropped
 			$fight->fightlog = sqlgetone("SELECT `id` FROM `fightlog` WHERE `fight` = ".intval($fight->id)); // this line can savely be removed
@@ -941,7 +941,7 @@ class cFight {
 	}
 	
 	// used for StartFight and StartShooting
-	function StartFightLog ($attacker,$defender,$attackertype=kUnitContainer_Army,$defendertype=kUnitContainer_Army) {
+	static function StartFightLog ($attacker,$defender,$attackertype=kUnitContainer_Army,$defendertype=kUnitContainer_Army) {
 		if (!is_object($attacker)) $attacker = sqlgetobject("SELECT * FROM `$attackertype` WHERE `id` = ".intval($attacker));
 		if (!is_object($defender)) $defender = sqlgetobject("SELECT * FROM `$defendertype` WHERE `id` = ".intval($defender));
 		if (!isset($attacker->units)) $attacker->units = cUnit::GetUnits($attacker->id,$attackertype);
@@ -962,7 +962,7 @@ class cFight {
 	}
 		
 	// used for EndFight and EndShooting
-	function SendFightReport ($fightlog,$attacker,$defender,$why,$is_shooting=false,$attackertype=kUnitContainer_Army,$defendertype=kUnitContainer_Army) {
+	static function SendFightReport ($fightlog,$attacker,$defender,$why,$is_shooting=false,$attackertype=kUnitContainer_Army,$defendertype=kUnitContainer_Army) {
 		global $gUnitType,$gAllUsers,$gRes,$gItemType,$gRes2ItemType;
 		
 		// army1 == attacker, army2 == defender
@@ -1125,7 +1125,7 @@ class cFight {
 	
 	
 	// $army must be object, $x,$y are the coordinates to flee to...
-	function Flee ($army,$x,$y) {
+	static function Flee ($army,$x,$y) {
 		if (abs($x-$army->x) + abs($y-$army->y) > 1) return false;
 		$army->units = cUnit::GetUnits($army->id);
 		if (cArmy::GetPosSpeed($x,$y,$army->user,$army->units) <= 0) return false;
@@ -1147,7 +1147,7 @@ class cFight {
 	
 	// TODO : include ranged fight here, send warning messages for fof-state-change
 	// notify parties of new fof state
-	function ActOfWar ($attacker_uid,$defender_uid,$what,$x,$y) {
+	static function ActOfWar ($attacker_uid,$defender_uid,$what,$x,$y) {
 		if (!$attacker_uid || !$defender_uid) return;
 		if ($attacker_uid == $defender_uid) return;
 		$topic = "Kriegerischer Akt";
