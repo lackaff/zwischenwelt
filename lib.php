@@ -309,6 +309,14 @@ function sqlglobalslist ($searchprefix,$fieldprefix) {
 	return $res;
 }
 
+function TableExists($table) {
+	$l = sqlgetonetable("SHOW TABLES");
+	foreach($l as $t){
+		if($t == $table)return true;
+	}
+	return false;
+}
+
 class EmptyObject{}
 
 function &array2object ($arr)

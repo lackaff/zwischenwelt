@@ -2966,3 +2966,5 @@ DROP TABLE `guild_right`;
 ALTER TABLE `user` ADD `dont_delete` TINYINT UNSIGNED NOT NULL;
 
 ALTER TABLE `phperror` ADD UNIQUE( `scriptname`, `scriptlinenum`);
+
+DROP TABLE `buildinglevel`;

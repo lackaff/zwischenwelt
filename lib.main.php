@@ -1,8 +1,11 @@
 <?php
 
 require_once("lib.php");
+require_once("lib.dbversion.php");
+
 $gGlobal = sqlgettable("SELECT `name`,`value` FROM `global`","name","value");
 
+if (!defined("CHECK_ZW_DB_VERSION")) define("CHECK_ZW_DB_VERSION",true);
 if (!defined("CHECK_ZW_CONFIG")) define("CHECK_ZW_CONFIG",true);
 if (CHECK_ZW_CONFIG) {
 	// check defines.mysql.php
@@ -68,6 +71,18 @@ if (CHECK_ZW_CONFIG) {
 	}
 }
 
+if (CHECK_ZW_DB_VERSION) {
+	$curv = GetCurDBVersion();
+	$maxv = kCheckDBMaxVersion;
+	if ($curv < $maxv) {
+		$gDBNeedsUpdate = true;
+		echo "Die Datenbank ist veraltet, bitte dem Admin bescheidsagen (cur:$curv max:$maxv).<br>";
+		if ($gUser && $gUser->admin) {
+			echo "Admin Rechte beim eingeloggten user vorhanden, für genauere Infos siehe : ";
+			echo  "<a href='".Query(kCheckDBVersionScript."?sid=?")."'>".kCheckDBVersionScript."</a><br>";
+		}
+	}
+}
 
 if (ZW_ENABLE_CALLLOG) {
 	function calllog_postvar ($o) {

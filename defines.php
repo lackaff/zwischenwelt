@@ -6,6 +6,9 @@ if(!defined("CONTENT_TYPE") && !defined("NO_CONTENT_TYPE")){
 	header("Content-Type: ".CONTENT_TYPE);
 }
 
+define("kCheckDBMaxVersion",1);
+define("kCheckDBVersionScript","checkdbversion.php");
+
 //verursachte zu viel cpu last
 //if ( extension_loaded('zlib') )ob_start('ob_gzhandler');
 
