@@ -774,6 +774,11 @@ if (!isset($f_blind)) if ($gUser->admin) {
 	
 	rob_ob_start();
 	?>
+	<form method="post" action="<?=Query("?sid=?&x=?&y=?")?>">
+		<input type="hidden" name="do" value="adminfinishalljobs">
+		<input type="submit" name="new" value="finish all jobs">
+	</form>
+
 	<?php if (count($gPHP_Errors) > 0) { echo "<h3>PHP-ERRORS</h3>";vardump2($gPHP_Errors); }?>
 	<hr>
 	<form method="post" action="<?=Query("?sid=?&x=?&y=?")?>">

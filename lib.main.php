@@ -2,6 +2,10 @@
 
 require_once("lib.php");
 require_once("lib.dbversion.php");
+require_once("jobs/job.php");
+
+// global page start time
+define("T", time());
 
 $gGlobal = sqlgettable("SELECT `name`,`value` FROM `global`","name","value");
 
@@ -293,6 +297,26 @@ function SetGlobal ($name,$val) {
 			sql("UPDATE `global` SET `value`='".addslashes($val)."' WHERE `name`='".addslashes($name)."'");
 	else	sql("REPLACE INTO `global` SET `value`='".addslashes($val)."' , `name`='".addslashes($name)."'");
 	$gGlobal[$name] = $val;
+}
+
+function ExistGlobal ($name){
+	global $gGlobal;
+	if (isset($gGlobal[$name])){
+		return true;
+	} else {
+		return sqlgetone("SELECT 1 WHERE `name`='".mysql_real_escape_string($name)."' LIMIT 1") == 1;
+	}
+}
+
+function GetGlobal ($name) {
+	global $gGlobal;
+	if (isset($gGlobal[$name])){
+		return $gGlobal[$name];
+	} else {
+		$val = sqlgetone("SELECT `value` FROM `global` WHERE `name`='".mysql_real_escape_string($name)."' LIMIT 1");
+		$gGlobal[$name] = $val;
+		return $val;
+	}	
 }
 
 
@@ -1591,6 +1615,11 @@ function FirePutOutBurnedDown($x,$y){
 				//echo "[FirePutOutBurnedDown($x,$y) to $t]\n";
 				if($t > 0)setTerrain($x,$y,$t);
 		}
+}
+
+// execute jobs in userspace
+if(NUMBER_OF_JOBS_TO_RUN_IN_USERSPACE > 0){
+	Job::runJobs(NUMBER_OF_JOBS_TO_RUN_IN_USERSPACE);
 }
 
 ?>

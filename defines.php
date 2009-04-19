@@ -6,7 +6,7 @@ if(!defined("CONTENT_TYPE") && !defined("NO_CONTENT_TYPE")){
 	header("Content-Type: ".CONTENT_TYPE);
 }
 
-define("kCheckDBMaxVersion",1);
+define("kCheckDBMaxVersion",2);
 define("kCheckDBVersionScript","checkdbversion.php");
 
 //verursachte zu viel cpu last
@@ -19,6 +19,7 @@ if (!defined("ZW_NEWREGISTRATION_NOTIFY")) define("ZW_NEWREGISTRATION_NOTIFY",fa
 if (!defined("ZW_ENABLE_CALLLOG")) define("ZW_ENABLE_CALLLOG",false); // logs every page-call with parameters
 if (!defined("ZW_ENABLE_PROFILING")) define("ZW_ENABLE_PROFILING",false); // time and memory usage profiling, disable for better performance
 if (!defined("IGNORE_PASSWORD")) define("IGNORE_PASSWORD",false);
+if (!defined("NUMBER_OF_JOBS_TO_RUN_IN_USERSPACE")) define("NUMBER_OF_JOBS_TO_RUN_IN_USERSPACE",0);
 
 //define("MYSQL_ERROR_LOG",BASEPATH."sqlerror.log");
 define("PHP_ERROR_LOG",BASEPATH."phperror.log");

@@ -18,4 +18,5 @@ define("IGNORE_PASSWORD", false);	// wenn das eingeschaltet ist, kann man sich o
 // wenn showlink true ist, dann wird der bestätigungslink für die anmeldung direkt angezeigt.
 // wenn man fertig mit debuggen und testen ist, sollte man dies auf false stellen.
 define("ZW_NEWREGISTRATION_SHOWLINK",true);
+define("JOB_LOG_FILE",BASEPATH."/tmp/job.log");
 ?>

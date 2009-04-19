@@ -38,6 +38,20 @@ require_once("lib.spells.php");
 require_once("lib.score.php");
 require_once("lib.hook.php");
 
+// ---------- queue necessary jobs ---------------
+Job::queueIfNonQueued("Stats");
+Job::queueIfNonQueued("Firefix");
+Job::queueIfNonQueued("RemoveGuildRequests");
+Job::queueIfNonQueued("PurgeOldJobs");
+Job::queueIfNonQueued("Bier");
+Job::queueIfNonQueued("ResCalc");
+Job::queueIfNonQueued("RuinCorruption");
+Job::queueIfNonQueued("Fire");
+//Job::queueIfNonQueued("ItemCorruption");
+
+// run the pending jobs
+while(Job::runJobs(10, true) > 0);
+
 $time = time();
 
 if (1) {
@@ -103,133 +117,10 @@ if(true){
 	}
 }
 
-//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-profile_page_start("cron.php - fire",true);
-//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-if (true) {
-
-	    
-//fire spreading neighbours
-$n = array();
-$n[] = array("x"=>-1,	"y"=>0);
-$n[] = array("x"=>+1,	"y"=>0);
-$n[] = array("y"=>-1,	"x"=>0);
-$n[] = array("y"=>+1,	"x"=>0);
-
-//delete old fires, those fields count as totaly burned down
-$t = sqlgettable("SELECT * FROM `fire` WHERE `created`<".time()."-".kFireLivetime);
-foreach($t as $x)FirePutOutBurnedDown($x->x,$x->y);
-
-//reads out the fire fields that cause damage and do it, hahahaha
-$f = sqlgettable("SELECT * FROM `fire` WHERE `nextdamage`<".time());
-foreach($f as $x){
-		sql("UPDATE `fire` SET `nextdamage`=".(time()+kFireDamageTimeout)." WHERE `x`=$x->x AND `y`=$x->y");
-		echo "fire at ($x->x,$x->y) cause damage<br>\n";
-		sql("UPDATE `building` SET `hp`=`hp`-".kFireDamage." WHERE `x`=$x->x AND `y`=$x->y");
-		if(mysql_affected_rows() > 0){
-				echo "building gets ".kFireDamage." damage<br>\n";
-				$b = sqlgetobject("SELECT * FROM `building` WHERE `x`=$x->x AND `y`=$x->y");
-				if($b->hp <= 0){
-						//destroy burned down buildings
-						cBuilding::removeBuilding($b,$b->user);
-						echo "building destroyed<br>\n";
-						FirePutOutObj($x);
-				}
-		}
-}
-//fire spread  and putout handling
-$f = sqlgettable("SELECT * FROM `fire` WHERE `nextspread`<".time());
-foreach($f as $x){
-		//random outout check
-		echo "fire at ($x->x,$x->y) put out?<br>\n";
-		$r = rand(0,100);
-		if($r < $x->putoutprob){
-				echo "***** oki this fire was put out<br>\n";
-				FirePutOutObj($x);
-				continue;
-		}
-		
-		//random spread check
-		echo "fire at ($x->x,$x->y) tries to spread<br>\n";
-		shuffle($n);
-		foreach($n as $y){
-				$r = rand(0,100);
-				if($r < kFireSpreadProbability){
-						$r = rand(0,100);
-						//oki this fire spreads
-						$px = (int)($y["x"] + $x->x);
-						$py = (int)($y["y"] + $x->y);
-						
-						$spread = false;
-						//is there a burnable building?
-						$b = sqlgetone("SELECT `type` FROM `building` WHERE `x`=$px AND `y`=$py LIMIT 1");
-						if(empty($b)){
-								//echo "check terrain<br>\n";
-								//no building, so check the terrain
-								$t = cMap::StaticGetTerrainAtPos($px,$py);
-								if($gTerrainType[$t]->flags & kTerrainTypeFlag_CanBurn && $r < $gTerrainType[$t]->fire_prob)$spread = true;
-						} else {
-								//echo "check building<br>\n";
-								//check the building burnable flag
-								if($gBuildingType[$b]->flags & kBuildingTypeFlag_CanBurn && $r < $gBuildingType[$b]->fire_prob)$spread = true;
-						}
-						if($spread){
-								echo "***** fire at ($x->x,$x->y) spreads to ($px,$py)<br>\n";
-								FireSetOn($px,$py);
-								//set time for next spread test
-								sql("UPDATE `fire` SET `nextspread`=".(time()+kFireSpreadTimeout)." WHERE `x`=$x->x AND y=$x->y");
-						}
-				}
-		}
-}
-}
-//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-profile_page_start("cron.php - bier",true);
-//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-$t = sqlgetone("SELECT 1 FROM `title` WHERE `title`='Brauereimeister'");
-if(empty($t)){
-	$o = null;
-	$o->title = "Brauereimeister";
-	$o->time = time();
-	$o->image = "title/title-bier.png";
-	$o->text = "Der König der Biere";
-	sql("INSERT INTO `title` SET ".obj2sql($o));
-}
-$u = sqlgetone("SELECT t.`user` FROM `technology` t,`user` u WHERE u.`id`=t.`user` AND u.`admin`=0 AND t.`level`>0 AND `type`=".kTech_Bier." ORDER BY `level` DESC LIMIT 1");
-if($u>0)sql("UPDATE `title` SET `user`=".intval($u)." WHERE `title`='Brauereimeister'");
-
-//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-profile_page_start("cron.php - gammel items",true);
-//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-if (0) {
-	sql("LOCK TABLES	
-						`sqlerror` WRITE, `phperror` WRITE,
-						`item` WRITE,
-						`itemtype` READ");
-	$gammelitems = sqlgettable("SELECT `item`.`id` FROM `item`,`itemtype` WHERE `itemtype`.`id` = `item`.`type` AND
-		 `itemtype`.`gammeltime` > 0 AND `item`.`param` > 0 AND `item`.`param` <= $time");
-	foreach ($gammelitems as $o) {
-		echo "item bei $o->x,$o->y vergammelt<br>";
-		/*
-		if ($gItemType[$o->type]->gammeltype == 0)
-				sql("DELETE FROM `item` WHERE `id` = ".$o->id." LIMIT 1");
-		else	sql("UPDATE `item` SET `type` = ".$gItemType[$o->type]->gammeltype." WHERE `id` = ".$o->id." LIMIT 1");
-		*/
-	}
-	sql("UNLOCK TABLES");
-	unset($gammelitems);
-}
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 profile_page_start("cron.php - build buildings",true);
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-
-// reset resources if <0
-$res = Array("lumber","food","stone","metal","runes");
-foreach($res as $r) sql("UPDATE `user` SET `$r`=0 WHERE `$r`<0");
 
 
 $cons = sqlgettable("SELECT * FROM `building` WHERE `construction` > 0","user");
@@ -339,108 +230,6 @@ echo "<br>\ne=".($count_end++)."<br>\n";
 mysql_free_result($mysqlresult);
 unset($sieges);
 unset($hqlevels);
-
-//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-profile_page_start("cron.php - user",true);
-//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-
-
-
-$zeroset_btypes = array($gGlobal["building_hq"],$gGlobal["building_house"],$gGlobal["building_store"],$gGlobal["building_runes"]);
-
-$gAllUsers = sqlgettable("SELECT * FROM `user` ORDER BY `id`","id");
-foreach($gAllUsers as $u) {
-	$b = sqlgettable("SELECT count( `id` ) AS `count` , `type` AS `type` , sum( `level` ) AS `level` , sum(`supportslots`) as `supportslots` FROM `building` WHERE `construction`=0 AND `user`=".$u->id." GROUP BY `type`","type");
-		
-	foreach ($zeroset_btypes as $key) if (!isset($b[$key])) {
-		$b[$key]->count = 0;
-		$b[$key]->level = 0;
-		$b[$key]->supportslots = 0;
-	}
-	
-	// calc max pop
-	$maxpop =	$gGlobal["pop_slots_hq"]	* ($b[$gGlobal["building_hq"]]->count + $b[$gGlobal["building_hq"]]->level) +
-				$gGlobal["pop_slots_house"]	* ($b[$gGlobal["building_house"]]->count + $b[$gGlobal["building_house"]]->level);
-	//echo "user=".$u->id." ".$u->name.": maxpop=$maxpop/".$u->maxpop."<br>";
-	$usersets = "`maxpop`=$maxpop";
-	
-	if($b[$gGlobal["building_hq"]]->count == 0) {
-		// no haupthaus -> new player start ressources
-		$sr = $gGlobal["store"];
-		switch($u->race){
-			case kRace_Gnome:
-				$usersets .= ",	`max_lumber`=$sr,`lumber`=$sr,
-								`max_stone`=$sr,`stone`=$sr,
-								`max_food`=$sr,`food`=$sr,
-								`max_metal`=$sr,`metal`=$sr,
-								`max_runes`=$sr, `runes`=$sr ";
-			break;
-			default:
-				$usersets .= ",	`max_lumber`=$sr,`lumber`=$sr,
-								`max_stone`=$sr,`stone`=$sr,
-								`max_food`=$sr,`food`=$sr,
-								`max_metal`=$sr,`metal`=$sr,
-								`max_runes`=0, `runes`=0 ";
-			break;
-		}
-	} else {
-		// haupthaus -> normale berechnung // TODO : unhardcode
-		$store =	$gGlobal["store"] * ($b[$gGlobal["building_hq"]]->count + $b[$gGlobal["building_hq"]]->level) + 
-					$gGlobal["store"] * ($b[$gGlobal["building_store"]]->count + $b[$gGlobal["building_store"]]->level);
-		
-		$rstore = 	2500			  * ($b[$gGlobal["building_runes"]]->count + $b[$gGlobal["building_runes"]]->level);
-		
-		// WARNING : all changes to user ressources within this lock that are not operating on $gPayCache_Users or $gAllUsers, are overwritten here
-		switch($u->race){
-			case kRace_Gnome:
-				$usersets .= ",	`max_lumber`=$store,
-								`max_stone`=$store,
-								`max_food`=$store,
-								`max_metal`=$store,
-								`max_runes`=$store";
-			break;
-			default:
-				$usersets .= ",	`max_lumber`=$store,
-								`max_stone`=$store,
-								`max_food`=$store,
-								`max_metal`=$store, 
-								`max_runes`=$rstore";
-			break;
-		}
-		$prodfaktoren = GetProductionFaktoren($u->id);
-		$gAllUsers[$u->id]->prodfaktoren = $prodfaktoren; // for later use
-		$slots = GetProductionSlots($u->id,$b);
-		foreach($gRes as $resname=>$resfield) {
-			$btype = $gGlobal["building_".$resfield];
-			$prod_factor = $prodfaktoren[$resfield];
-			$w = $u->pop * $u->{"worker_".$resfield} / 100; // anzahl zugewiesene arbeiter
-			$s = $slots[$resfield]; // anzahl slots
-			$p = (min($w,$s) + max(($w - $s),0) * $gGlobal["prod_faktor_slotless"]) * ($gGlobal["prod_faktor"]) * $prod_factor; // produktion
-			
-			// Grundproduktion
-			if (isset($gGrundproduktion[$u->race]) && isset($gGrundproduktion[$u->race][$resfield]))
-				$p += $gGrundproduktion[$u->race][$resfield];
-				
-			$usersets .= ",`prod_$resfield`=$p";
-		}
-	}
-	sql("UPDATE `user` SET ".$usersets." WHERE `id`=".$u->id);
-	
-	//check if there is enough food for the population
-	$foodneed = calcFoodNeed($u->pop,$dtime);
-	$food = $gAllUsers[$u->id]->food;
-	$food -= $foodneed;
-	if($food <= 0){
-		//people die
-		$gAllUsers[$u->id]->pop = max(0,$gAllUsers[$u->id]->pop-$foodneed);
-		echo "$foodneed units food in $dtime needed by ".$u->name."\n<br>";
-	}
-	$gAllUsers[$u->id]->food = max(0,$food);
-	sql("UPDATE `user` SET `food`=".($gAllUsers[$u->id]->food).",`pop`=".($gAllUsers[$u->id]->pop)." WHERE `id`=".$u->id);
-	
-	unset($b);
-}
 
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -1028,31 +817,9 @@ if(($gGlobal["ticks"] % 60*24) == 0 || !file_exists(GetMiniMapFile("user",GetMin
 */
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-profile_page_start("cron.php - collapse buildings",true);
-//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-// collapse probability
-$r = rand(0,100);
-// number of buildings to collapse
-$n = 100;
-$t = sqlgettable("SELECT b.* FROM `buildingtype` t LEFT JOIN `building` b ON b.type=t.id WHERE `collapse_prob`>0 AND `collapse_prob` < ".intval($r)." ORDER BY RAND() LIMIT ".intval($n));
-foreach($t as $b){
-	print "collapse building $b->id<br>\n";
-	cBuilding::removeBuilding($b,$b->user,true,false);
-}
-
-//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 profile_page_start("cron.php - misc",true);
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-
-echo "remove guild requests if user has a guild...<br>";
-$t = sqlgettable("SELECT r.`id`,u.`name` FROM `guild_request` r,`user` u WHERE r.`user`=u.`id` AND u.`guild`>0");
-foreach($t as $x){
-	echo "remove request from $x->name<br>";
-	sql("DELETE FROM `guild_request` WHERE `id`=".intval($x->id));
-}
-echo "done<br>";
 
 /*
 echo "grow cornfields ...<br>";
@@ -1111,42 +878,8 @@ TablesUnlock();
 profile_page_end();
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-
-
 sql("UPDATE `global` SET `value`='".intval(time() - $time)."' WHERE `name`='crontime'");
 
-// generating stats for cute little diagrams
-$dt = $gGlobal["stats_nexttime"] - time();
-if($dt <= 0)
-{
-	profile_page_start("cron.php - stats",true);
-	echo "collection stats ...";
-	include("stats.php");
-	sql("UPDATE `global` SET `value`=".(time()+kStats_dtime)." WHERE `name`='stats_nexttime' LIMIT 1");
-	echo "done\n\n";
-	profile_page_end();
-	
-	
-	//TODO remove me cause i am a ugly quickfix
-	if (1) {
-		profile_page_start("cron.php - firecount workaround",true);
-		//recalc fire count
-		$t_fires = sqlgettable("SELECT COUNT( * ) AS `count` , b.`user`
-		FROM `fire` f, `building` b
-		WHERE f.`x` = b.`x`
-		AND f.`y` = b.`y`
-		GROUP BY b.`user`");
-
-		sql("UPDATE `user` SET `buildings_on_fire`=0");
-		foreach($t_fires as $x){
-				echo "player $x->user has $x->count fires<br>\n";
-			sql("UPDATE `user` SET `buildings_on_fire`=$x->count WHERE `id`=$x->user");
-		}
-		unset($t_fires);
-		profile_page_end();
-	}
-}
-else echo $dt."sec left to net stats collection.\n\n";
 ?>
 </body>
 </html>

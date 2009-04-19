@@ -38,6 +38,57 @@ function GetUpgradeLink ($vfrom) {
 		SetDoRegenTypeCache();
 	}
 
+	function UpgradeDB_1_to_2 () {
+		RequireExactDBVersion(1);
+		
+		sql("
+			CREATE TABLE `joblog` (
+				`id` INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY ,
+				`time` INT UNSIGNED NOT NULL ,
+				`name` VARCHAR( 255 ) NOT NULL ,
+				`payload` VARCHAR( 255 ) NOT NULL
+			) ENGINE = MYISAM ;
+		");
+		
+		sql("
+			ALTER TABLE  `joblog` ADD  `starttime` INT UNSIGNED NOT NULL ,
+			ADD  `endtime` INT UNSIGNED NOT NULL
+		");
+		
+		sql("
+			CREATE TABLE  `job` (
+				`id` INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY ,
+				`time` INT UNSIGNED NOT NULL ,
+				`prio` INT UNSIGNED NOT NULL ,
+				`name` VARCHAR( 255 ) NOT NULL ,
+				`payload` VARCHAR( 255 ) NOT NULL ,
+				`locked` TINYINT UNSIGNED NOT NULL ,
+				INDEX (  `time` )
+			) ENGINE = MYISAM ;
+		");
+		
+		sql("
+			ALTER TABLE  `job` ADD  `starttime` INT UNSIGNED NOT NULL ,
+			ADD  `endtime` INT UNSIGNED NOT NULL
+		");
+		
+		sql("
+			ALTER TABLE  `joblog` ADD  `jobid` INT UNSIGNED NOT NULL
+		");
+		
+		sql("
+			ALTER TABLE  `job` ADD  `tries` TINYINT NOT NULL
+		");
+		
+		sql("
+			ALTER TABLE `joblog` CHANGE `starttime` `starttime` FLOAT( 10 ) UNSIGNED NOT NULL ,
+			CHANGE `endtime` `endtime` FLOAT( 10 ) UNSIGNED NOT NULL 
+		");
+		
+		UpgradeDBVersion(2);
+		SetDoRegenTypeCache();
+	}
+
 // command line like user interface
 
 	if (isset($_REQUEST["upgradefrom"]) && !isset($_REQUEST["sure"])) {

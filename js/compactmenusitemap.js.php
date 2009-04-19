@@ -108,7 +108,8 @@ compactmenusitemap=new Array
 $dev = sqlgetobject("SELECT * FROM `building` WHERE `type` = 10 LIMIT 1"); ?>
   'Admin | <a href="<?=Query("info/info.php?sid=?&x=".$dev->x."&y=".$dev->y)?>" target=info>Admin</a>',
   '- Admin | <a href="<?=Query("info/info.php?sid=?&x=".$dev->x."&y=".$dev->y)?>" target=info>Admin</a>',
-  '- Alles auflisten| <a href="<?=Query("info/listall.php?sid=?")?>" target=info>Alles auflisten</a>',
+  '- Alles auflisten | <a href="<?=Query("info/listall.php?sid=?")?>" target=info>Alles auflisten</a>',
+  '- Jobs | <a href="<?=Query("info/jobs.php?sid=?")?>" target=info>Jobs</a>',
 <?php } ?>
   'Umfrage | <a href="info/poll.php?'+phpsid+'" target="info"><span id="pollnotify">Umfragen</span></a>',
   '- offene Umfragen | <a href="info/poll.php?'+phpsid+'" target="info"><span id="pollnotify">offene Umfragen</span></a>',

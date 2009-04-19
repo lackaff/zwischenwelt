@@ -457,8 +457,6 @@ function sql	($query) {
 		$sqlerror->error = $errormsg;
 		$sqlerror->stacktrace = stacktrace();
 		mysql_query("INSERT INTO `sqlerror` SET ".obj2sql($sqlerror));
-
-		exit($s);
 	}
 	return $r;
 }
@@ -914,6 +912,14 @@ function rob_ob_end () {
 	array_pop($gRob_ob_stack);
 	return $res;
 }
+
+// t + d days as timestamp
+function in_day($t,$d){ return $t+60*60*24*$d; }
+// t + h hours as timestamp
+function in_hours($t,$h){ return $t+60*60*$h; }
+// t + m min as timestamp
+function in_mins($t,$m){ return $t+60*$m; }
+
 /*
 echo "_START_";
 rob_ob_start();

@@ -199,6 +199,10 @@ if (!isset($f_building) && !isset($f_army) && isset($f_do)) switch ($f_do) {
 			cArmy::DeleteArmy($army);
 			JSRefreshCell($f_x,$f_y);
 		break;
+		case "adminfinishalljobs":
+			if (!$gUser->admin) break;
+			Job::requeueJobsToBeFinished();
+			break;
 		case "adminteleportarmy":// admin command (geb&auml;ude in ruine verwandeln)
 			if (!$gUser->admin)break;
 			$tarmies = sqlgettable("SELECT * FROM `army` WHERE `x`=".intval($f_x)." AND `y`=".intval($f_y));
