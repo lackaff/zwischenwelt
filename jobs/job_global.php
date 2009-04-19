@@ -1,5 +1,7 @@
 <?php
 
+require_once("lib.score.php");
+
 class Job_CalcPoints extends Job {
 	protected function _run(){
 	echo "generate points...<br>";

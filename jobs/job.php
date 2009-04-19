@@ -113,7 +113,7 @@ class Job {
 				'".intval($this->_starttime)."',
 				'".intval($this->_endtime)."',
 				".intval($this->_id).",
-				'".round($t2 - $t1 * 1000)."'				
+				'".round($t2 * 1000 - $t1 * 1000)."'				
 			)");
 		}
 	}
