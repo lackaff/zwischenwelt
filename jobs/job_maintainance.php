@@ -61,21 +61,29 @@ class Job_PurgeOldJobs extends Job {
 	}
 }
 
-class Job_Bier extends Job {
+class Job_PurgeOldLogs extends Job {
 	protected function _run(){
-		$t = sqlgetone("SELECT 1 FROM `title` WHERE `title`='Brauereimeister'");
-		if(empty($t)){
-			$o = null;
-			$o->title = "Brauereimeister";
-			$o->time = time();
-			$o->image = "title/title-bier.png";
-			$o->text = "Der König der Biere";
-			sql("INSERT INTO `title` SET ".obj2sql($o));
-		}
-		$u = sqlgetone("SELECT t.`user` FROM `technology` t,`user` u WHERE u.`id`=t.`user` AND u.`admin`=0 AND t.`level`>0 AND `type`=".kTech_Bier." ORDER BY `level` DESC LIMIT 1");
-		if($u>0)sql("UPDATE `title` SET `user`=".intval($u)." WHERE `title`='Brauereimeister'");
-
+	echo "remove old log<br>";
+		sql("DELETE FROM `newlog` WHERE $time-`time`>60*60*24");  // TODO : unhardcode
+		
 		$this->requeue(in_hours(time(),1));
+	}
+}
+
+class Job_UpgradesFix extends Job {
+	protected function _run(){
+		sql("UPDATE `building` SET `upgrades`=255 WHERE `upgrades`>255");
+		
+		$this->requeue(in_mins(time(),10));
+	}
+}
+
+class Job_RemoveZeroItems extends Job {
+	protected function _run(){
+		//remove zero items
+		sql("DELETE FROM `item` WHERE `amount` = 0");
+		
+		$this->requeue(in_mins(time(),30));
 	}
 }
 

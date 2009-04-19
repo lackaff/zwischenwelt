@@ -67,14 +67,15 @@ class Job {
 	 * log the given job output into the logfile
 	 * @param $output
 	 */
-	private function logOutput($output){
+	private function logOutput($output,$dt){
+		$dt = round($dt * 1000);
 		$f = fopen(JOB_LOG_FILE, "a");
 		if($f){
 			$output = trim($output);
 			if(empty($output)){
-				fwrite($f, "===[ $this->_id : $this->_name : $this->_time ]===\n");
+				fwrite($f, "===[ $this->_id : $this->_name : $this->_time : $dt ms ]===\n");
 			} else {
-				fwrite($f, "===[ $this->_id : $this->_name : $this->_time ]===\n$output\n");
+				fwrite($f, "===[ $this->_id : $this->_name : $this->_time : $dt ms ]===\n$output\n");
 			}
 			fclose($f);
 		}
@@ -96,7 +97,7 @@ class Job {
 			$this->_endtime = time();
 			$output = rob_ob_end(); 
 			
-			$this->logOutput($output);
+			$this->logOutput($output,$t2-$t1);
 			
 			// update job
 			sql("UPDATE `job` SET 
@@ -105,13 +106,14 @@ class Job {
 				WHERE `id`=".intval($this->_id));
 			
 			// and add log entry
-			sql("INSERT INTO `joblog` (`time`,`name`,`payload`,`starttime`,`endtime`,`jobid`) VALUES (
+			sql("INSERT DELAYED INTO `joblog` (`time`,`name`,`payload`,`starttime`,`endtime`,`jobid`,`dt`) VALUES (
 				".intval($this->_time).",
 				'".mysql_real_escape_string($this->_name)."',
 				'".mysql_real_escape_string(serialize($this->_payload))."',
-				".floatval($t1).",
-				".floatval($t2).",
-				".intval($this->_id)."				
+				'".intval($this->_starttime)."',
+				'".intval($this->_endtime)."',
+				".intval($this->_id).",
+				'".round($t2 - $t1 * 1000)."'				
 			)");
 		}
 	}
@@ -234,5 +236,7 @@ class Job {
 include_once("job_maintainance.php");
 include_once("job_user.php");
 include_once("job_map.php");
+include_once("job_monster.php");
+include_once("job_global.php");
 
 ?>

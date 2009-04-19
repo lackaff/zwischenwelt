@@ -47,6 +47,16 @@ Job::queueIfNonQueued("Bier");
 Job::queueIfNonQueued("ResCalc");
 Job::queueIfNonQueued("RuinCorruption");
 Job::queueIfNonQueued("Fire");
+Job::queueIfNonQueued("UpgradesFix");
+Job::queueIfNonQueued("SeamonsterSpawn");
+Job::queueIfNonQueued("RemoveZeroItems");
+Job::queueIfNonQueued("GrowWood");
+Job::queueIfNonQueued("GrowCorn");
+Job::queueIfNonQueued("CalcPoints");
+Job::queueIfNonQueued("PurgeOldLogs");
+Job::queueIfNonQueued("YoungForest");
+Job::queueIfNonQueued("Weather");
+Job::queueIfNonQueued("Spells");
 //Job::queueIfNonQueued("ItemCorruption");
 
 // run the pending jobs
@@ -81,41 +91,6 @@ if($gGlobal["ticks"] > 30000)$gGlobal["ticks"] = 0; // todo : unhardcode
 sql("UPDATE `global` SET `value`=".intval($gGlobal["ticks"])." WHERE `name`='ticks' LIMIT 1");
 
 echo "dtime = $dtime<br><br>";
-
-
-//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-profile_page_start("cron.php - seemonster spawnen",true);
-//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-if(true){
-	$players = sqlgetone("SELECT COUNT(*) FROM `user` LIMIT 1");
-	// TODO unhardcode me
-	$seemonsterids = "(59,60,61,62,63)";
-	$watertypeids = "(2,6,18)";
-	$seemonsterunits_per_player = 1000;
-	
-	$seemonsteramount = sqlgetone("SELECT SUM(`amount`) FROM `unit` WHERE `type` IN $seemonsterids LIMIT 1");
-	if(empty($seemonsteramount))$seemonsteramount = 0;
-	
-	$spawnpos = sqlgetobject("SELECT `x`,`y` FROM `terrain` WHERE `type` IN $watertypeids ORDER BY RAND() LIMIT 1");
-	echo "[players=$players seemonsteramount=$seemonsteramount x=$spawnpos->x y=$spawnpos->y]<br>\n";
-	// should i spawn monsters, master?
-	if($seemonsteramount < ($players * $seemonsterunits_per_player)){
-		echo "from the deep they shall come!<br>\n";
-		
-		// randomly select type
-		$spawntype = 59 + rand(0,4);
-		// and amount
-		$spawncount = rand($seemonsterunits_per_player / 2, $seemonsterunits_per_player);
-		
-		$flags = kArmyFlag_Wander | kArmyFlag_RunToEnemy | kArmyFlag_AutoAttack;
-		
-		$newmonster = cArmy::SpawnArmy($spawnpos->x,$spawnpos->y,cUnit::Simple($spawntype,$spawncount),
-			false,kArmyType_Normal,0,0,0,true,$flags);
-		if ($newmonster) echo "Spawned $spawncount ".$gUnitType[$spawntype]->name." at $newmonster->x,$newmonster->y <br>";
-		else echo "spawn of $spawncount ".$gUnitType[$spawntype]->name." failed<br>";
-
-	}
-}
 
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -232,17 +207,7 @@ unset($sieges);
 unset($hqlevels);
 
 
-//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-if (($gGlobal["ticks"] % 30) == 0 || empty($gGlobal["weather"])){  // TODO : unhardcode
-	profile_page_start("cron.php - weather",true);
-	SetGlobal("weather",GetWeather($gWeatherUrl));
-}
-
-//remove zero items
-if (($gGlobal["ticks"] % 30) == 0)sql("DELETE FROM `item` WHERE `amount` = 0");
-
-$gSupportslotsFrequency = 5*60; // TODO : unhardcode  5 hours makes it less probable to fall together with 6h backup
- 
+$gSupportslotsFrequency = 5*60; // TODO : unhardcode  5 hours makes it less probable to fall together with 6h backup 
 //update support slots (braucht recht viel rechenzeit, und produziert tonnen von querries (2 pro produktionsgebauede))
 // muss nur sehr selten berechnet werden
 // todo : wenn das spaeter mal kritisch wird, update bei erzeugen der felder statt hier
@@ -262,65 +227,6 @@ if($gGlobal["ticks"] % $gSupportslotsFrequency == 0) {
 		foreach($t as $x) getSlotAddonFromSupportFields($x);
 	}
 }
-
-
-
-
-//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-profile_page_start("cron.php - rarestuff",true);
-//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-
-
-if(($gGlobal["ticks"] % 60) == 0){  // TODO : unhardcode
-	echo "remove old log<br>";
-	sql("DELETE FROM `newlog` WHERE $time-`time`>60*60*24");  // TODO : unhardcode
-}
-
-//if(($gGlobal["ticks"] % (60*6)) == 0)$gGlobal["ticks"] % 60 == 0){
-
-echo "generate points...<br>";
-$gAllUsers = sqlgettable("SELECT * FROM `user` ORDER BY `id`","id");
-$range=ceil(count($gAllUsers)/10);
-//echo "tick ".$gGlobal["ticks"]." / %10 ".($gGlobal["ticks"]%10)."<br>";
-
-$e = array_slice($gAllUsers,$range*($gGlobal["ticks"]%10),$range);
-echo "fetched $range users from \$gAllUsers<br>";
-$bpar = sqlgettable("SELECT `id`,`cost_stone`+`cost_food`+`cost_lumber`+`cost_metal`+`cost_runes` AS `costs` FROM `buildingtype` WHERE 1",'id');
-$upar = sqlgettable("SELECT `id`,`cost_stone`+`cost_food`+`cost_lumber`+`cost_metal`+`cost_runes` AS `costs` FROM `unittype` WHERE 1 ORDER BY `id`","id");
-$tpar = sqlgettable("SELECT `id`,`increment`,`basecost_stone`+`basecost_food`+`basecost_lumber`+`basecost_metal`+`basecost_runes` AS `costs` FROM `technologytype` WHERE 1 ORDER BY `id`","id");
-
-foreach ($e as $id=>$u){
-	$gpts=getBuildingPts($u->id,$bpar);
-	$mpts=getBasePts($u->id);
-	$tpts=getTechPts($u->id,$tpar);
-	$apts=getArmyPts($u->id,$upar);
-	if ($gVerbose) echo "score uid ".$u->id." : buildingpoints=$gpts,miscpts=$mpts,techpts=$tpts,armypts=$apts<br>";
-	$gpts+=$mpts;
-	$gpts+=$tpts;
-	sql("UPDATE `user` SET `general_pts`=".$gpts." , `army_pts`=".$apts." WHERE `id`=".$u->id);
-	if($u->guildpoints<0)
-		$gp=abs($u->guildpoints/intval($gGlobal['gp_pts_ratio']));
-	else
-		$gp=0;
-	if($u->guild==kGuild_Weltbank && ($gpts+$apts+$gp)>intval($gGlobal['wb_max_gp']) && $u->id != kGuild_Weltbank_Founder){
-		leaveGuild($u->id);
-	}
-}
-
-
-
-//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-profile_page_start("cron.php - magic",true);
-//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-$spells = sqlgettable("SELECT * FROM `spell`");
-foreach($spells as $o) {
-	$spell = GetSpellInstance($o->type,$o);
-	$spell->Cron($dtime);
-	unset($spell);
-}
-unset($spells);
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 profile_page_start("cron.php - production and population",true);
@@ -756,28 +662,6 @@ if (count($sieges) > 0) {
 unset($sieges);
 
 
-
-//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-profile_page_start("cron.php - young forest",true);
-//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-define("kStumpToYoung",1.0/(60*24));
-define("kYoungToForest",1.0/(60*24));
-// array(from,to,probability)
-$growarr = array(0=>array(kTerrain_TreeStumps,kTerrain_YoungForest,kStumpToYoung),
-					array(kTerrain_YoungForest,kTerrain_Forest,kYoungToForest));
-foreach ($growarr as $arr) {
-	$c = 0;
-	$r = sql("SELECT * FROM `terrainsegment4` WHERE `type` = ".$arr[0]);
-	while ($seg = mysql_fetch_object($r)) for ($y=0;$y<4;++$y) for ($x=0;$x<4;++$x) if (rand() <  $arr[2]*getrandmax()) {
-		if (sqlgetone("SELECT 1 FROM `terrain` WHERE `x` = ".($seg->x*4 + $x)." AND `y` = ".($seg->y*4 + $y))) continue;
-		sql("REPLACE INTO `terrain` SET `type` = ".$arr[1]." , `x` = ".($seg->x*4 + $x)." , `y` = ".($seg->y*4 + $y));
-		++$c;
-	}
-	mysql_free_result($r);
-	sql("UPDATE `terrain` SET `type` = ".$arr[1]." WHERE `type` = ".$arr[0]." AND RAND() < ".$arr[2]);
-	echo (mysql_affected_rows()+$c)." units of ".$gTerrainType[$arr[0]]->name." turned to ".$gTerrainType[$arr[1]]->name."<br>";
-}
 /*
 $growwood = sqlgettable("SELECT * FROM `terrain` WHERE `type` = ".kTerrain_YoungForest." AND RAND() < ".kYoungToForest);
 echo count($growwood)." units of YoungForest turned to Forest<br>";
@@ -815,63 +699,6 @@ if(($gGlobal["ticks"] % 60*24) == 0 || !file_exists(GetMiniMapFile("user",GetMin
 	}
 }
 */
-
-//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-profile_page_start("cron.php - misc",true);
-//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-
-/*
-echo "grow cornfields ...<br>";
-$farm = sqlgetobject("SELECT * FROM `building` WHERE `type`=".$gGlobal["building_food"]." ORDER BY RAND() LIMIT 1");
-if($farm && (rand()%10==0)){ // TODO : unhardcode
-	echo "grow!!! ";
-	$radius = 1;
-	$done = false;
-	for($x=-$radius;$x<=$radius;++$x)
-		for($y=-$radius;$y<=$radius;++$y)if(!$done){
-			$b = sqlgetobject("SELECT * FROM `building` WHERE `x`=(".($x+$farm->x).") AND `y`=(".($y+$farm->y).")");
-			$t = sqlgetobject("SELECT * FROM `terrain` WHERE `x`=(".($x+$farm->x).") AND `y`=(".($y+$farm->y).")");
-			if(empty($b) && (empty($t) || $t->type == kTerrain_Grass)){
-				sql("DELETE FROM `terrain` WHERE `x`=(".($x+$farm->x).") AND `y`=(".($y+$farm->y).")");
-				$o = null;
-				$o->x = $x+$farm->x;
-				$o->y = $y+$farm->y;
-				$o->type = kTerrain_Field;
-				sql("INSERT INTO `terrain` SET ".obj2sql($o));
-				echo " field crow at (".$o->x."|".$o->y.")<br>";
-				$done = true;
-			}
-		}
-}
-echo "done<br><br>";
-*/
-
-//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-/*
-echo "grow wood ...<br>";
-TablesLock();
-$wood = sqlgetobject("SELECT `x`,`y` FROM `terrain` WHERE `type`=".kTerrain_Forest." ORDER BY RAND() LIMIT 1");
-if ($wood){
-	echo "grow!!! ";
-	$radius = 2; // TODO : unhardcode
-	$done = false;
-	$x = rand(-$radius,$radius)+$wood->x;
-	$y = rand(-$radius,$radius)+$wood->y;
-
-	$b = sqlgetobject("SELECT `id` FROM `building` WHERE `x`=(".($x).") AND `y`=(".($y).")");
-	$t = sqlgetobject("SELECT `id`,`type` FROM `terrain` WHERE `x`=(".($x).") AND `y`=(".($y).")");
-	if(empty($b) && (empty($t) || $t->type == kTerrain_Grass)) {
-		echo " wood grow at ($x|$y)<br>";
-		setTerrain($x,$y,kTerrain_YoungForest);
-		$done = true;
-	}
-}
-echo "done<br>";
-TablesUnlock();
-*/
-
 
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

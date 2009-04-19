@@ -81,9 +81,10 @@ function GetUpgradeLink ($vfrom) {
 		");
 		
 		sql("
-			ALTER TABLE `joblog` CHANGE `starttime` `starttime` FLOAT( 10 ) UNSIGNED NOT NULL ,
-			CHANGE `endtime` `endtime` FLOAT( 10 ) UNSIGNED NOT NULL 
+			ALTER TABLE `joblog` ADD `dt` INT UNSIGNED NOT NULL 
 		");
+		
+		
 		
 		UpgradeDBVersion(2);
 		SetDoRegenTypeCache();

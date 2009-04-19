@@ -12,7 +12,7 @@ class Job_RuinCorruption extends Job {
 			cBuilding::removeBuilding($b,$b->user,true,false);
 		}
 
-		$this->requeue(in_mins(time(),1));
+		$this->requeue(in_mins(time(),5));
 	}	
 }
 
@@ -112,6 +112,85 @@ class Job_Fire extends Job {
 				}
 		}		
 
+		$this->requeue(in_mins(time(),2));
+	}	
+}
+
+class Job_GrowWood extends Job {
+	protected function _run(){
+		echo "grow wood ...<br>";
+		$wood = sqlgetobject("SELECT `x`,`y` FROM `terrain` WHERE `type`=".kTerrain_Forest." ORDER BY RAND() LIMIT 1");
+		if ($wood){
+			echo "grow!!! ";
+			$radius = 2; // TODO : unhardcode
+			$done = false;
+			$x = rand(-$radius,$radius)+$wood->x;
+			$y = rand(-$radius,$radius)+$wood->y;
+		
+			$b = sqlgetobject("SELECT `id` FROM `building` WHERE `x`=(".($x).") AND `y`=(".($y).")");
+			$t = sqlgetobject("SELECT `id`,`type` FROM `terrain` WHERE `x`=(".($x).") AND `y`=(".($y).")");
+			if(empty($b) && (empty($t) || $t->type == kTerrain_Grass)) {
+				echo " wood grow at ($x|$y)<br>";
+				setTerrain($x,$y,kTerrain_YoungForest);
+				$done = true;
+			}
+		}
+		echo "done<br>";
+		
+		$this->requeue(in_hours(time(),1));
+	}	
+}
+
+class Job_GrowCorn extends Job {
+	protected function _run(){
+		echo "grow cornfields ...<br>";
+		$farm = sqlgetobject("SELECT * FROM `building` WHERE `type`=".GetGlobal("building_food")." ORDER BY RAND() LIMIT 1");
+		if($farm && (rand()%10==0)){ // TODO : unhardcode
+			echo "grow!!! ";
+			$radius = 1;
+			$done = false;
+			for($x=-$radius;$x<=$radius;++$x)
+				for($y=-$radius;$y<=$radius;++$y)if(!$done){
+					$b = sqlgetobject("SELECT * FROM `building` WHERE `x`=(".($x+$farm->x).") AND `y`=(".($y+$farm->y).")");
+					$t = sqlgetobject("SELECT * FROM `terrain` WHERE `x`=(".($x+$farm->x).") AND `y`=(".($y+$farm->y).")");
+					if(empty($b) && (empty($t) || $t->type == kTerrain_Grass)){
+						sql("DELETE FROM `terrain` WHERE `x`=(".($x+$farm->x).") AND `y`=(".($y+$farm->y).")");
+						$o = null;
+						$o->x = $x+$farm->x;
+						$o->y = $y+$farm->y;
+						$o->type = kTerrain_Field;
+						sql("INSERT INTO `terrain` SET ".obj2sql($o));
+						echo " field crow at (".$o->x."|".$o->y.")<br>";
+						$done = true;
+					}
+				}
+		}
+		echo "done<br><br>";
+		
+		$this->requeue(in_hours(time(),1));
+	}	
+}
+
+class Job_YoungForest extends Job {
+	protected function _run(){
+		define("kStumpToYoung",1.0/(60*24));
+		define("kYoungToForest",1.0/(60*24));
+		// array(from,to,probability)
+		$growarr = array(0=>array(kTerrain_TreeStumps,kTerrain_YoungForest,kStumpToYoung),
+							array(kTerrain_YoungForest,kTerrain_Forest,kYoungToForest));
+		foreach ($growarr as $arr) {
+			$c = 0;
+			$r = sql("SELECT * FROM `terrainsegment4` WHERE `type` = ".$arr[0]);
+			while ($seg = mysql_fetch_object($r)) for ($y=0;$y<4;++$y) for ($x=0;$x<4;++$x) if (rand() <  $arr[2]*getrandmax()) {
+				if (sqlgetone("SELECT 1 FROM `terrain` WHERE `x` = ".($seg->x*4 + $x)." AND `y` = ".($seg->y*4 + $y))) continue;
+				sql("REPLACE INTO `terrain` SET `type` = ".$arr[1]." , `x` = ".($seg->x*4 + $x)." , `y` = ".($seg->y*4 + $y));
+				++$c;
+			}
+			mysql_free_result($r);
+			sql("UPDATE `terrain` SET `type` = ".$arr[1]." WHERE `type` = ".$arr[0]." AND RAND() < ".$arr[2]);
+			echo (mysql_affected_rows()+$c)." units of ".$gTerrainType[$arr[0]]->name." turned to ".$gTerrainType[$arr[1]]->name."<br>";
+		}
+		
 		$this->requeue(in_mins(time(),1));
 	}	
 }
