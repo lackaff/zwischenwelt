@@ -460,10 +460,10 @@ function LogMe($user,$topic,$type,$i1,$i2,$i3,$s1,$s2,$bStackMessages=true)
 	if($bStackMessages){
 		//try to stack messages
 		$id = sqlgetone("SELECT `id` FROM `newlog` WHERE 
-			`count`<100 AND `type`=".intval($type)." AND 
-			`topic`=".intval($topic)." AND 
 			`user`=".intval($user)." AND
 			`time`>=(".time()."-(60*60*1)) AND
+			`topic`=".intval($topic)." AND 
+			`count`<100 AND `type`=".intval($type)." AND 
 			`i1`=(".intval($i1).") AND 
 			`i2`=(".intval($i2).") AND 
 			`i3`=(".intval($i3).") AND 
@@ -477,7 +477,7 @@ function LogMe($user,$topic,$type,$i1,$i2,$i3,$s1,$s2,$bStackMessages=true)
 	}
 
 	//no merging of log so post a new entry
-	$o = null;
+	$o = new EmptyObject();
 	$o->user = $user;
 	$o->topic = $topic;
 	$o->type = $type;
@@ -981,7 +981,7 @@ function profile_page_start($page,$echo=false){
 		$gProfilPagePage = $page;
 	}
 	if ($echo)
-		echo "------------------<br>$page<br>-------------------<br>";
+		echo "<br>\n------------------ $page -------------------<br>\n";
 }
 
 // profiler

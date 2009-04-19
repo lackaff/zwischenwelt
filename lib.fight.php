@@ -262,7 +262,7 @@ class cFight {
 	
 	static function StartShooting ($attacker,$attackertype,$defender,$defendertype,$autocancel=false,$attackerobj=false,$defenderobj=false) {
 		global $gContainerType2Number,$gNumber2ContainerType;
-		$shooting = false;
+		$shooting = new EmptyObject();
 		$shooting->attacker = $attacker;
 		$shooting->defender = $defender;
 		$shooting->attackertype = is_numeric($attackertype)?$attackertype:$gContainerType2Number[$attackertype];
@@ -622,7 +622,7 @@ class cFight {
 		$army = sqlgetobject("SELECT * FROM `army` WHERE `id` = ".$siege->army);
 		$building = sqlgetobject("SELECT * FROM `building` WHERE `id` = ".$siege->building);
 		if (empty($army) || empty($building)) {
-			warning("BUG ! $army $building<br>");
+			warning("BUG ! army_empty=".empty($army)." building_empty=".empty($building)."<br>");
 			sql("DELETE FROM `siege` WHERE `id`=".$siege->id);
 			return;
 		}
@@ -772,8 +772,8 @@ class cFight {
 		$army2 = sqlgetobject("SELECT * FROM `army` WHERE `id` = ".$fight->defender);
 		
 		if(empty($army1) || empty($army2)) {
-			warning("BUG : $army1 , $army2<br>");
 			sql("DELETE FROM `fight` WHERE `id`=".$fight->id);
+			warning("BUG : $army1 , $army2<br>");
 			return;
 		}
 		
@@ -951,7 +951,7 @@ class cFight {
 		if ($attackertype == kUnitContainer_Army && !isset($attacker->transport)) $attacker->transport = cUnit::GetUnits($attacker->id,kUnitContainer_Transport);
 		if ($defendertype == kUnitContainer_Army && !isset($defender->transport)) $defender->transport = cUnit::GetUnits($defender->id,kUnitContainer_Transport);
 		
-		$fightlog = false;
+		$fightlog = new EmptyObject();
 		$fightlog->startunits1 = cUnit::Units2Text($attacker->units);
 		$fightlog->startunits2 = cUnit::Units2Text($defender->units);
 		$fightlog->starttransport1 = cUnit::Units2Text($attacker->transport);

@@ -72,7 +72,7 @@ include("../stats/header.php");
 
 	<?php
 	$t = sqlgettable("SELECT * FROM `stats` WHERE `type`=".kStats_SysInfo_Misc." AND `time`+60*60*24*7*4>".time()." ORDER BY `time`");
-
+	
 	$x = Array();
 	$y = Array();
 	$title = Array();
@@ -99,7 +99,7 @@ include("../stats/header.php");
 	for($i=1;$i<=6;++$i){ ImgBorderStart(); ?>
 	<b><?=$title[$i]?></b><br>
 	<?php 	if(count($x) == 0){
-			echo "zu wenig Daten";
+			echo "keine Daten";
 		} else { ?>
 	<img src="../plot.php?title=<?=$title[$i]?>&x=<?=implode(",",$x)?>&y=<?=implode(",",$y[$i])?>">
 	<?php } ?>
@@ -129,7 +129,7 @@ include("../stats/header.php");
 	for($i=1;$i<=3;++$i){ ImgBorderStart(); ?>
 	<b><?=$title[$i]?></b><br>
 	<?php 	if(count($x) == 0){
-			echo "zu wenig Daten";
+			echo "keine Daten";
 		} else { ?>
 	<img src="../plot.php?title=<?=$title[$i]?>&x=<?=implode(",",$x)?>&y=<?=implode(",",$y[$i])?>">
 	<?php } ?>
@@ -161,7 +161,7 @@ include("../stats/header.php");
 	for($i=1;$i<=4;++$i){ ImgBorderStart(); ?>
 	<b><?=$title[$i]?></b><br>
 	<?php 	if(count($x) == 0){
-			echo "zu wenig Daten";
+			echo "keine Daten";
 		} else { ?>
 	<img src="../plot.php?title=<?=$title[$i]?>&x=<?=implode(",",$x)?>&y=<?=implode(",",$y[$i])?>">
 	<?php } ?>
@@ -195,7 +195,7 @@ include("../stats/header.php");
 	for($i=1;$i<=5;++$i){ ImgBorderStart(); ?>
 	<b><?=$title[$i]?></b><br>
 	<?php 	if(count($x) == 0){
-			echo "zu wenig Daten";
+			echo "keine Daten";
 		} else { ?>
 	<img src="../plot.php?title=<?=$title[$i]?>&x=<?=implode(",",$x)?>&y=<?=implode(",",$y[$i])?>">
 	<?php } ?>
@@ -226,7 +226,7 @@ include("../stats/header.php");
 	for($i=1;$i<=1;++$i){ ImgBorderStart(); ?>
 	<b><?=$title[$i]?></b><br>
 	<?php 	if(count($x) == 0){
-			echo "zu wenig Daten";
+			echo "keine Daten";
 		} else { ?>
 	<img src="../plot.php?title=<?=$title[$i]?>&x=<?=implode(",",$x)?>&y=<?=implode(",",$y[$i])?>">
 	<?php } ?>

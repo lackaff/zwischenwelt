@@ -2964,3 +2964,5 @@ ALTER TABLE `user` ADD `dont_delete` TINYINT NOT NULL ;
 DROP TABLE `guild_right`;
 
 ALTER TABLE `user` ADD `dont_delete` TINYINT UNSIGNED NOT NULL;
+
+ALTER TABLE `phperror` ADD UNIQUE( `scriptname`, `scriptlinenum`);

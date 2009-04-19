@@ -131,14 +131,14 @@ function userErrorHandler($errno, $errmsg, $filename, $linenum, $vars)
    
    $err->code = file($filename);
    $err->code = shorttrace(2).":<br>\n".$err->code[$linenum-1].$err->code[$linenum].$err->code[$linenum+1];
-   sql("INSERT INTO `phperror` SET ".obj2sql($err));
+   sql("REPLACE INTO `phperror` SET ".obj2sql($err));
    global $gPHP_Errors;
    $gPHP_Errors[] = $err;
 }
 
 // we will do our own error handling
 //error_reporting(0);
-//$gOldErrorHandler = set_error_handler("userErrorHandler");
+$gOldErrorHandler = set_error_handler("userErrorHandler");
 //##########################################################################################
 //##########################################################################################
 //##########################################################################################
@@ -309,9 +309,11 @@ function sqlglobalslist ($searchprefix,$fieldprefix) {
 	return $res;
 }
 
+class EmptyObject{}
+
 function &array2object ($arr)
 {
-	$r = false;
+	$r = new EmptyObject();
 	foreach($arr as $key => $val)
 		$r->{$key} = $val;
 	return $r;
@@ -336,7 +338,7 @@ function obj2arr ($obj)
 
 function copyobj ($obj) { 
 	$arr = get_object_vars($obj); 
-	$res = false;
+	$res = new EmptyObject();
 	foreach ($arr as $k => $v) $res->$k = $v;
 	return $res;
 }

@@ -187,7 +187,7 @@ foreach($f as $x){
 profile_page_start("cron.php - bier",true);
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-$t = sqlgettable("SELECT * FROM `title` WHERE `title`='Brauereimeister'");
+$t = sqlgetone("SELECT 1 FROM `title` WHERE `title`='Brauereimeister'");
 if(empty($t)){
 	$o = null;
 	$o->title = "Brauereimeister";
@@ -288,7 +288,7 @@ $sieges = sqlgettable("SELECT `building` FROM `siege`","building");
 $count_start = 0;
 $count_end = 0;
 //$buildings = sqlgettable("SELECT * FROM `building` WHERE `upgrades` > 0 ORDER BY `level`");  OLD
-$mysqlresult = sql("SELECT * FROM `building` WHERE `upgrades` > 0");
+$mysqlresult = sql("SELECT * FROM `building` WHERE `upgrades` > 0 AND upgradetime < $time");
 echo "testing ".mysql_num_rows($mysqlresult)." buildings for upgrades<br>\n";
 while ($o = mysql_fetch_object($mysqlresult)) {
 	if ($o->upgradetime > 0 && ($o->upgradetime < $time || kZWTestMode)) {
@@ -1034,7 +1034,7 @@ profile_page_start("cron.php - collapse buildings",true);
 // collapse probability
 $r = rand(0,100);
 // number of buildings to collapse
-$n = 10;
+$n = 100;
 $t = sqlgettable("SELECT b.* FROM `buildingtype` t LEFT JOIN `building` b ON b.type=t.id WHERE `collapse_prob`>0 AND `collapse_prob` < ".intval($r)." ORDER BY RAND() LIMIT ".intval($n));
 foreach($t as $b){
 	print "collapse building $b->id<br>\n";
@@ -1113,7 +1113,7 @@ profile_page_end();
 
 
 
-sql("UPDATE `global` SET `value`='".((time() - $time + 2 * (float)($gGlobal["crontime"])) / 3)."' WHERE `name`='crontime'");
+sql("UPDATE `global` SET `value`='".intval(time() - $time)."' WHERE `name`='crontime'");
 
 // generating stats for cute little diagrams
 $dt = $gGlobal["stats_nexttime"] - time();
