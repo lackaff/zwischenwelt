@@ -18,6 +18,7 @@ if (!defined("ZW_MAIL_SENDER")) define("ZW_MAIL_SENDER","no-reply@zwischenwelt.o
 if (!defined("ZW_NEWREGISTRATION_NOTIFY")) define("ZW_NEWREGISTRATION_NOTIFY",false);
 if (!defined("ZW_ENABLE_CALLLOG")) define("ZW_ENABLE_CALLLOG",false); // logs every page-call with parameters
 if (!defined("ZW_ENABLE_PROFILING")) define("ZW_ENABLE_PROFILING",false); // time and memory usage profiling, disable for better performance
+if (!defined("IGNORE_PASSWORD")) define("IGNORE_PASSWORD",false);
 
 //define("MYSQL_ERROR_LOG",BASEPATH."sqlerror.log");
 define("PHP_ERROR_LOG",BASEPATH."phperror.log");

@@ -13,6 +13,7 @@ define("BASEURL","http://localhost/");
 define("ZW_MAIL_SENDER","zwischenwelt@localhost"); // anmelde und passwort vergessen mails haben diese addy als absender
 define("ZW_NEWREGISTRATION_NOTIFY",false); // wenn das hier auf nicht false gesetzt wird, wird an diese mail adresse eine nachricht geschickt, wenn sich ein neuer spieler anmeldet
 // define("ZW_NEWREGISTRATION_NOTIFY",ZW_MAIL_SENDER);
+define("IGNORE_PASSWORD", false);	// wenn das eingeschaltet ist, kann man sich ohne passwort einloggen
 
 // wenn showlink true ist, dann wird der bestätigungslink für die anmeldung direkt angezeigt.
 // wenn man fertig mit debuggen und testen ist, sollte man dies auf false stellen.
