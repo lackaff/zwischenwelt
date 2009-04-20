@@ -120,4 +120,55 @@ class Job_ResCalc extends Job {
 	}
 }
 
+class Job_UserProdPop extends Job {
+	protected function _run(){
+		if(!ExistGlobal("last_prod_calc")){
+			SetGlobal("last_prod_calc",T);
+		}
+		
+		$last = GetGlobal("last_prod_calc");
+		
+		if(T - $last > 0){
+			$dtime = (T - $last);
+			echo "calc res,pop mana... ".($dtime/3600)."<br>";
+			echo "DT: $dtime\n";
+			
+			//sql("UPDATE `user` SET `pop`=`maxpop` WHERE `pop`>`maxpop`");
+			
+			sql("UPDATE `user` SET	`pop`=LEAST(`maxpop`,`pop`+".($dtime/300).") ,
+									`lumber`=LEAST(`max_lumber`, `lumber`+`prod_lumber`*".($dtime/3600).") , 
+									`stone`=LEAST(`max_stone`, `stone`+`prod_stone`*".($dtime/3600).") ,
+									`food`=LEAST(`max_food`, `food`+`prod_food`*".($dtime/3600).") ,
+									`metal`=LEAST(`max_metal`, `metal`+`prod_metal`*".($dtime/3600).")");
+			
+			//gnome:
+			sql("UPDATE `user` SET `runes`=`runes`+`prod_runes`*".($dtime/3600)." WHERE `race`=".kRace_Gnome); // TODO : unhardcode					
+			
+			SetGlobal("last_res_calc",T);
+		}
+
+		$this->requeue(in_secs(time(),10));
+	}	
+}
+
+class Job_SupportSlots extends Job {
+	protected function _run(){
+		$supportslotbuildings = sqlgetgrouptable("SELECT * FROM `building` WHERE (
+			`type`=".GetGlobal("building_lumber")." OR 
+			`type`=".GetGlobal("building_stone")." OR 
+			`type`=".GetGlobal("building_food")." OR 
+			`type`=".GetGlobal("building_runes")." OR 
+			`type`=".GetGlobal("building_metal").")","user");
+		
+		$gAllUsers = sqlgettable("SELECT * FROM `user` ORDER BY `id`","id");
+		foreach($gAllUsers as $u) {
+			if(!isset($supportslotbuildings[$u->id]))continue;
+			$t = $supportslotbuildings[$u->id];
+			foreach($t as $x) getSlotAddonFromSupportFields($x);
+		}
+
+		$this->requeue(in_hours(time(),6));
+	}	
+}
+
 ?>

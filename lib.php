@@ -919,6 +919,8 @@ function in_day($t,$d){ return $t+60*60*24*$d; }
 function in_hours($t,$h){ return $t+60*60*$h; }
 // t + m min as timestamp
 function in_mins($t,$m){ return $t+60*$m; }
+// t + m sec as timestamp
+function in_secs($t,$s){ return $t+$s; }
 
 /*
 echo "_START_";

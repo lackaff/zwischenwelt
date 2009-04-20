@@ -57,6 +57,7 @@ Job::queueIfNonQueued("PurgeOldLogs");
 Job::queueIfNonQueued("YoungForest");
 Job::queueIfNonQueued("Weather");
 Job::queueIfNonQueued("Spells");
+Job::queueIfNonQueued("UserProdPop");
 //Job::queueIfNonQueued("ItemCorruption");
 
 // run the pending jobs
@@ -213,37 +214,12 @@ $gSupportslotsFrequency = 5*60; // TODO : unhardcode  5 hours makes it less prob
 // todo : wenn das spaeter mal kritisch wird, update bei erzeugen der felder statt hier
 if($gGlobal["ticks"] % $gSupportslotsFrequency == 0) {
 	profile_page_start("cron.php - supportslots",true);
-	$supportslotbuildings = sqlgetgrouptable("SELECT * FROM `building` WHERE (
-	`type`=".$gGlobal["building_lumber"]." OR 
-	`type`=".$gGlobal["building_stone"]." OR 
-	`type`=".$gGlobal["building_food"]." OR 
-	`type`=".$gGlobal["building_runes"]." OR 
-	`type`=".$gGlobal["building_metal"].")","user");
-	
-	$gAllUsers = sqlgettable("SELECT * FROM `user` ORDER BY `id`","id");
-	foreach($gAllUsers as $u) {
-		if(!isset($supportslotbuildings[$u->id]))continue;
-		$t = $supportslotbuildings[$u->id];
-		foreach($t as $x) getSlotAddonFromSupportFields($x);
-	}
+
 }
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 profile_page_start("cron.php - production and population",true);
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-echo "calc res,pop mana... ".($dtime/3600)."<br>";
-
-//sql("UPDATE `user` SET `pop`=`maxpop` WHERE `pop`>`maxpop`");
-
-sql("UPDATE `user` SET	`pop`=LEAST(`maxpop`,`pop`+".($dtime/300).") ,
-						`lumber`=`lumber`+`prod_lumber`*".($dtime/3600)." , 
-						`stone`=`stone`+`prod_stone`*".($dtime/3600)." ,
-						`food`=`food`+`prod_food`*".($dtime/3600)." ,
-						`metal`=`metal`+`prod_metal`*".($dtime/3600));
-
-//gnome:
-sql("UPDATE `user` SET `runes`=`runes`+`prod_runes`*".($dtime/3600)." WHERE `race`=".kRace_Gnome); // TODO : unhardcode
 
 // todo : optimize by select max with group by guild ??
 //calc guild max resources
