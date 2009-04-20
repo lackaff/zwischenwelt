@@ -201,7 +201,7 @@ class Job {
 	 * @return true if there is one
 	 */
 	public static function isQueuedWithName($name){
-		return sqlgetone("SELECT 1 FROM `job` WHERE `name`='".mysql_real_escape_string($name)."' AND `locked`=0 AND `endtime`=0 AND `starttime`=0") == 1;
+		return sqlgetone("SELECT 1 FROM `job` WHERE `name`='".mysql_real_escape_string($name)."' AND `endtime`=0 AND `starttime`=0") == 1;
 	}
 	
 	/**

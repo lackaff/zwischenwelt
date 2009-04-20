@@ -191,7 +191,7 @@ class Job_YoungForest extends Job {
 			echo (mysql_affected_rows()+$c)." units of ".$gTerrainType[$arr[0]]->name." turned to ".$gTerrainType[$arr[1]]->name."<br>";
 		}
 		
-		$this->requeue(in_mins(time(),1));
+		$this->requeue(in_mins(time(),5));
 	}	
 }
 

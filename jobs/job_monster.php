@@ -30,7 +30,7 @@ class Job_SeamonsterSpawn extends Job {
 			else echo "spawn of $spawncount ".$gUnitType[$spawntype]->name." failed<br>";
 		}
 		
-		$this->requeue(in_mins(time(),1));
+		$this->requeue(in_mins(time(),5));
 	}
 }
 
