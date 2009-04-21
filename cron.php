@@ -1,3 +1,4 @@
+<?php define("NO_CONTENT_TYPE"); ?>
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
@@ -58,6 +59,16 @@ Job::queueIfNonQueued("YoungForest");
 Job::queueIfNonQueued("Weather");
 Job::queueIfNonQueued("Spells");
 Job::queueIfNonQueued("UserProdPop");
+Job::queueIfNonQueued("SupportSlots");
+Job::queueIfNonQueued("FinishConstructions");
+Job::queueIfNonQueued("ThinkBuildings");
+Job::queueIfNonQueued("GuildRes");
+Job::queueIfNonQueued("RepairBuildings");
+Job::queueIfNonQueued("Mana");
+Job::queueIfNonQueued("Runes");
+Job::queueIfNonQueued("Weltbank");
+Job::queueIfNonQueued("Hellholes");
+Job::queueIfNonQueued("Quest");
 //Job::queueIfNonQueued("ItemCorruption");
 
 // run the pending jobs
@@ -94,287 +105,10 @@ sql("UPDATE `global` SET `value`=".intval($gGlobal["ticks"])." WHERE `name`='tic
 echo "dtime = $dtime<br><br>";
 
 
-//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-profile_page_start("cron.php - build buildings",true);
-//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-
-$cons = sqlgettable("SELECT * FROM `building` WHERE `construction` > 0","user");
-
-$gAllUsers = sqlgettable("SELECT * FROM `user` ORDER BY `id`","id");
-foreach($gAllUsers as $x) {
-	$o = isset($cons[$x->id])?$cons[$x->id]:false;
-	if($o) { 
-		if($time > $o->construction || kZWTestMode) {
-			if ($gVerbose) echo "fertiggestellt : ".$gBuildingType[$o->type]->name."(".$o->x.",".$o->y.")<br>";
-			
-			$now = microtime_float();
-			CompleteBuild($o,($x->flags & kUserFlags_AutomaticUpgradeBuildingTo)>0);
-			echo "Profile CompleteBuild : ".sprintf("%0.3f",microtime_float()-$now)."<br>\n";
-		}
-	} else {
-		$mycon = sqlgetobject("SELECT * FROM `construction` WHERE `user`=".$x->id." ORDER BY `priority` LIMIT 1");
-		if ($mycon) {
-			$now = microtime_float();
-			if (startBuild($mycon))
-				if ($gVerbose) echo "gestartet : ".$gBuildingType[$mycon->type]->name."(".$mycon->x.",".$mycon->y.")<br>";
-			echo "Profile startBuild : ".sprintf("%0.3f",microtime_float()-$now)."<br>\n";
-		}
-	}
-}
-unset($cons);
-
-
-//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-profile_page_start("cron.php - think buildings",true);
-//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-if (true) {
 $time = time();
-if (!isset($gGlobal["nextbuildingthink"]) || $time >= $gGlobal["nextbuildingthink"]) {
-	SetGlobal("nextbuildingthink",$time + 60*11); // next think in 5 minutes
-	echo "step<br>";
-	$typelist = array_merge($gFlaggedBuildingTypes[kBuildingTypeFlag_CanShootArmy],$gFlaggedBuildingTypes[kBuildingTypeFlag_CanShootBuilding]);
-	if (count($typelist) > 0) {
-		$buildings = sqlgettable("SELECT * FROM `building` WHERE `type` IN (".implode(",",$typelist).")");
-		foreach ($buildings as $o) {
-			cBuilding::Think($o);
-		}
-	}
-}
-}
-
-//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-profile_page_start("cron.php - upgrade buildings",true);
-//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-$time = time();
-$hqlevels = sqlgettable("SELECT `user`,`level` FROM `building` WHERE `type`=".kBuilding_HQ,"user");
-$sieges = sqlgettable("SELECT `building` FROM `siege`","building");
-
-$count_start = 0;
-$count_end = 0;
-//$buildings = sqlgettable("SELECT * FROM `building` WHERE `upgrades` > 0 ORDER BY `level`");  OLD
-$mysqlresult = sql("SELECT * FROM `building` WHERE `upgrades` > 0 AND upgradetime < $time");
-echo "testing ".mysql_num_rows($mysqlresult)." buildings for upgrades<br>\n";
-while ($o = mysql_fetch_object($mysqlresult)) {
-	if ($o->upgradetime > 0 && ($o->upgradetime < $time || kZWTestMode)) {
-		$count_end++;
-		// upgrade finished
-		if (isset($sieges[$o->id])) continue;
-		$maxhp = cBuilding::calcMaxBuildingHp($o->type,$o->level+1);
-		$up = $maxhp - cBuilding::calcMaxBuildingHp($o->type,$o->level);
-		$heal = $maxhp/100*2.0;
-		
-		sql("UPDATE `building` SET
-			`level` = `level` + 1 ,
-			`upgrades` = GREATEST(0,`upgrades` - 1) ,
-			`hp` = LEAST(`hp`+".($up+$heal)." , $maxhp),
-			`upgradetime` = 0 WHERE `id` = ".$o->id." LIMIT 1");
-		// echo "upgrade auf ".($o->level+1)." fertig : ".$gBuildingType[$o->type]->name."(".$o->x."|".$o->y."), hpup=".$up.", hpheal=".$heal."<br>\n";
-		LogMe($o->user,NEWLOG_TOPIC_BUILD,NEWLOG_UPGRADE_FINISHED,$o->x,$o->y,$o->level+1,$gBuildingType[$o->type]->name,"",false);
-		//$o = sqlgetobject("SELECT * FROM `building` WHERE `id`=".$o->id." LIMIT 1");
-		$o->level++;
-		$o->upgrades = max(0,$o->upgrades-1);
-		$o->hp = min($o->hp+$up+$heal,$maxhp);
-		$o->upgradetime = 0;
-		Hook_UpgradeBuilding($o);
-	} else if ($o->upgradetime == 0) {
-		$count_start++;
-		// test if upgrade can be started
-		if (!isset($hqlevels[$o->user])) continue;
-		if (isset($sieges[$o->id])) continue;
-		$hqlevel = $hqlevels[$o->user]->level;
-		$level = $o->level + 1;
-		if($level <= (3*($hqlevel+1))) { // TODO : unhardcode
-			$mod = cBuilding::calcUpgradeCostsMod($level);
-			if (UserPay($o->user,
-				$mod * $gBuildingType[$o->type]->cost_lumber,
-				$mod * $gBuildingType[$o->type]->cost_stone,
-				$mod * $gBuildingType[$o->type]->cost_food,
-				$mod * $gBuildingType[$o->type]->cost_metal,
-				$mod * $gBuildingType[$o->type]->cost_runes)) {
-				// echo "upgrade auf $level gestartet : ".$gBuildingType[$o->type]->name."(".$o->x."|".$o->y.")<br>\n";
-				$finishtime = $time + cBuilding::calcUpgradeTime($o->type,$level);
-				sql("UPDATE `building` SET `upgradetime` = ".$finishtime." WHERE `id` = ".intval($o->id)." LIMIT 1");
-			}
-		}
-	}
-}
-echo "<br>\ns=".($count_start++);
-echo "<br>\ne=".($count_end++)."<br>\n";
-mysql_free_result($mysqlresult);
-unset($sieges);
-unset($hqlevels);
 
 
-$gSupportslotsFrequency = 5*60; // TODO : unhardcode  5 hours makes it less probable to fall together with 6h backup 
-//update support slots (braucht recht viel rechenzeit, und produziert tonnen von querries (2 pro produktionsgebauede))
-// muss nur sehr selten berechnet werden
-// todo : wenn das spaeter mal kritisch wird, update bei erzeugen der felder statt hier
-if($gGlobal["ticks"] % $gSupportslotsFrequency == 0) {
-	profile_page_start("cron.php - supportslots",true);
-
-}
-
-//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-profile_page_start("cron.php - production and population",true);
-//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-// todo : optimize by select max with group by guild ??
-//calc guild max resources
-echo "calc guild max res...<br>";
-$gGuilds = sqlgettable("SELECT * FROM `guild`");
-foreach($gGuilds as $x){
-	$s = "";
-	foreach($gResFields as $r)$s .= ", sum(`max_$r`) as `max_$r`";
-	$s{0} = ' ';
-	$s = "SELECT".$s;
-	$s .= " FROM `user` WHERE `guild`=".$x->id;
-	$o = sqlgetobject($s);
-	sql("UPDATE `guild` SET ".obj2sql($o)." WHERE `id`=".$x->id);
-	if ($gVerbose) echo "Guild ".$x->id." res max set to ".implode("|",obj2array($o))."<br>";
-}
-echo "enforcing guild max res ....<br>";
-$set="";
-// todo : single query
-foreach($gRes as $f=>$r)
-	sql("UPDATE `guild` SET `$r`=`max_$r` WHERE `$r`>`max_$r");
-echo "done<br><br>";
-
-//repairs broken buildings if user want this
-echo "calc guild max res...<br>";
-
-echo "repair buildings...<br>";
 //MAXHP: ceil($maxhp + $maxhp/100*1.5*$level);  // NOTE: see also lib.building.php calcMaxBuildingHp
-
-profile_page_start("cron.php - repairing",true);
-
-TablesLock();
-$t = sqlgettable("SELECT `user`.`id` as `id`, COUNT( * ) as `broken`,`user`.`pop` as `pop`,`user`.`worker_repair` as `worker_repair`
-FROM `user`, `building`, `buildingtype`
-WHERE 
-	`building`.`construction`=0 AND `buildingtype`.`id` = `building`.`type` AND `building`.`user` = `user`.`id` AND `user`.`worker_repair`>0 AND 
-	`building`.`hp`<CEIL(`buildingtype`.`maxhp`+`buildingtype`.`maxhp`/100*1.5*`building`.`level`)
-GROUP BY `user`.`id`");
-foreach($t as $x){
-	//one worker should be able to repair one hp in one day and consume 100 wood and 100 stone for this
-	if($x->broken == 0)continue;
-	$worker = $x->pop * $x->worker_repair/100;
-	$broken = $x->broken;
-	$all = $worker*$dtime/(24*60*60);
-	$plus = $all / $broken;
-	$wood = $all * 100;
-	$stone = $all * 100;
-	
-	echo "$worker worker repair $all, $plus hp in $broken buildings of user $x->id consuming $wood wood and $stone stone\n<br>";
-	if(!UserPay($x->id,$wood,$stone,0,0,0))continue;
-	sql("UPDATE `building`, `buildingtype` SET `building`.`hp` = LEAST(
-		`building`.`hp`+($plus),
-		CEIL(`buildingtype`.`maxhp`+`buildingtype`.`maxhp`/100*1.5*`building`.`level`)
-		) WHERE 
-		`building`.`construction`=0 AND `building`.`user`=".intval($x->id)." AND `building`.`type`=`buildingtype`.`id` AND
-		`building`.`hp`<CEIL(`buildingtype`.`maxhp`+`buildingtype`.`maxhp`/100*1.5*`building`.`level`)");
-	echo mysql_affected_rows()." buildings updated\n<br>";
-}
-sql("UPDATE `building`, `buildingtype` SET `building`.`hp` = CEIL(`buildingtype`.`maxhp`+`buildingtype`.`maxhp`/100*1.5*`building`.`level`) WHERE 
-	`building`.`construction`=0 AND `building`.`type`=`buildingtype`.`id` AND
-	`building`.`hp`>CEIL(`buildingtype`.`maxhp`+`buildingtype`.`maxhp`/100*1.5*`building`.`level`)");
-echo mysql_affected_rows()." buildings had to much hp and were reduced to maxhp\n<br>";
-TablesUnlock();
-
-profile_page_start("cron.php - mana generation",true);
-
-$basemana=$gBuildingType[$gGlobal['building_runes']]->basemana;
-// TODO : unhardcode
-sql("UPDATE `building` SET `mana`=LEAST((`level`+1)*$basemana,`mana`+($basemana*(`level`+1)/(10+`level`/20)*".($dtime/3600).")) WHERE `type`=".$gGlobal['building_runes']);
-
-profile_page_start("cron.php - runes production",true);
-
-$gAllUsers = sqlgettable("SELECT * FROM `user` ORDER BY `id`","id");
-foreach($gAllUsers as $u){
-	switch($u->race){
-		default:
-			$rpfs = (0.8 + 
-				(isset($gTechnologyLevelsOfAllUsers[$u->id][kTech_MagieMeisterschaft])?$gTechnologyLevelsOfAllUsers[$u->id][kTech_MagieMeisterschaft]:0)*0.6)/2;
-		   if($u->worker_runes>0){
-				if(($u->lumber+$u->prod_lumber*($dtime/3600)) >= ($rpfs*($u->worker_runes*$u->pop/100*$gGlobal['lc_prod_runes'])*($dtime/3600))){
-					$l=$rpfs*1;
-				}else{
-					$l=$rpfs*($u->lumber+$u->prod_lumber*($dtime/3600))/($u->worker_runes*$u->pop/100*$gGlobal['lc_prod_runes']*($dtime/3600));
-				}
-				if(($u->metal+$u->prod_metal*($dtime/3600)) >= ($rpfs*($u->worker_runes*$u->pop/100*$gGlobal['mc_prod_runes'])*($dtime/3600))){
-					$m=$rpfs*1;
-				}else{
-					$m=$rpfs*($u->metal+$u->prod_metal*($dtime/3600))/($u->worker_runes*$u->pop/100*$gGlobal['mc_prod_runes']*($dtime/3600));
-				}
-				if(($u->stone+$u->prod_stone*($dtime/3600)) >= ($rpfs*($u->worker_runes*$u->pop/100*$gGlobal['sc_prod_runes']*($dtime/3600)))){
-					$s=$rpfs*1;
-				}else{
-					$s=$rpfs*($u->stone+$u->prod_stone*($dtime/3600))/($u->worker_runes*$u->pop/100*$gGlobal['sc_prod_runes']*($dtime/3600));
-				}
-				if(($u->food+$u->prod_food*($dtime/3600)) >= ($rpfs*($u->worker_runes*$u->pop/100*$gGlobal['fc_prod_runes']*($dtime/3600)))){
-					$f=$rpfs*1;
-				}else{
-					$f=$rpfs*($u->food+$u->prod_food*($dtime/3600))/($u->worker_runes*$u->pop/100*$gGlobal['fc_prod_runes']*($dtime/3600));
-				}
-				$factor=round(min($l,$m,$s,$f),3);
-				sql("UPDATE `user` SET `runes`=`runes`+`prod_runes`*".($dtime/3600)."*".$factor." WHERE `id`=".$u->id);
-				UserPay($u->id,	$u->worker_runes*$u->pop/100*$gGlobal['lc_prod_runes']*$factor*($dtime/3600),
-								$u->worker_runes*$u->pop/100*$gGlobal['sc_prod_runes']*$factor*($dtime/3600),
-								$u->worker_runes*$u->pop/100*$gGlobal['fc_prod_runes']*$factor*($dtime/3600),
-								$u->worker_runes*$u->pop/100*$gGlobal['mc_prod_runes']*$factor*($dtime/3600));
-			}
-		break;
-		case kRace_Gnome:
-		break;
-	}
-}
-
-profile_page_start("cron.php - flush res to guild",true);
-
-echo "flush user res to guild... <br>";
-TablesLock();
-foreach($gResFields as $r){
-	$t = sqlgettable("SELECT `id`,`$r`,`max_$r`,`guild` FROM `user` WHERE `guild`>0 AND `$r`>`max_$r`");
-	foreach($t as $x) {
-		$radd = ($x->{$r}) - ($x->{"max_$r"});
-		sql("UPDATE `guild` SET `$r`=`$r`+($radd) WHERE `id`=".$x->guild);
-		sql("UPDATE `user` SET `guildpoints`=`guildpoints`+($radd) WHERE `id`=".$x->id);
-		//echo "add user ".$x->id." res to guild ".$x->guild." [$r] $radd<br>";
-	}
-	unset($t);
-	sql("UPDATE `user` SET `$r`=`max_$r` WHERE `$r`>`max_$r`");
-}
-TablesUnlock();
-
-
-profile_page_start("cron.php - weltbank",true);
-// weltbank
-
-//TODO .. dies produziert zu viele sql querys 
-
-$gAllUsers = sqlgettable("SELECT * FROM `user` ORDER BY `id`","id");
-foreach ($gAllUsers as $id=>$u){
-	$id=$u->id;
-	if(($u->general_pts+$u->army_pts)<intval($gGlobal['wb_paybacklimit']))continue;
-	$w=floatval(sqlgetone("SELECT `value` FROM `guild_pref` WHERE `var`='schulden_".$u->id."'"));
-	if($w==0)continue;
-	foreach ($gResFields as $r){
-		$prod="prod_$r";
-		if($u->{$prod}>0){
-			$radd=intval($gGlobal['wb_payback_perc'])*$u->{$prod}/100/3600*$dtime;
-		}
-		sql("UPDATE `guild` SET `$r`=`$r`+($radd) WHERE `id`=".kGuild_Weltbank);
-		sql("UPDATE `user` SET `guildpoints`=`guildpoints`+($radd) WHERE `id`=".$u->id);
-		if ($gVerbose)  echo "user ".$u->name." (".$u->id.") payes res to guild ".kGuild_Weltbank." [$r] $radd (ressources left to pay: $w)<br>";
-		$w-=$radd;
-	}
-	if($w<1)
-		sql("DELETE FROM `guild_pref` WHERE `guild`=".kGuild_Weltbank." AND `var`='schulden_$id' OR `var`='schulden_$id'");
-	else
-		sql("UPDATE `guild_pref` SET `value`='$w' WHERE `var`='schulden_$id'");
-}
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 profile_page_start("cron.php - army_move",true);
@@ -386,25 +120,6 @@ $gMiniCronFromCron = true;
 include("minicron.php");
 $time = $old_time;
 $dtime = $old_dtime;
-
-//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-profile_page_start("cron.php - hellholes",true);
-//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-$hellholes = sqlgettable("SELECT * FROM `hellhole`");
-foreach($hellholes as $o) {
-	$hellhole = GetHellholeInstance($o);
-	$hellhole->Cron($dtime);
-}
-unset($hellholes);
-
-//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-profile_page_start("cron.php - QuestStep",true);
-//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-
-// called after army_move and hellhole monstermove, so the army cache is usable
-QuestTrigger_CronStep(); // todo : call at start, so triggers can use quest-cache ??
 
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

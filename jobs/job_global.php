@@ -7,9 +7,9 @@ class Job_CalcPoints extends Job {
 	echo "generate points...<br>";
 		$gAllUsers = sqlgettable("SELECT * FROM `user` ORDER BY `id`","id");
 		$range=ceil(count($gAllUsers)/10);
-		//echo "tick ".$gGlobal["ticks"]." / %10 ".($gGlobal["ticks"]%10)."<br>";
+		//echo "tick ".GetGlobal("ticks")." / %10 ".(GetGlobal("ticks")%10)."<br>";
 		
-		$e = array_slice($gAllUsers,$range*($gGlobal["ticks"]%10),$range);
+		$e = array_slice($gAllUsers,$range*(GetGlobal("ticks")%10),$range);
 		echo "fetched $range users from \$gAllUsers<br>";
 		$bpar = sqlgettable("SELECT `id`,`cost_stone`+`cost_food`+`cost_lumber`+`cost_metal`+`cost_runes` AS `costs` FROM `buildingtype` WHERE 1",'id');
 		$upar = sqlgettable("SELECT `id`,`cost_stone`+`cost_food`+`cost_lumber`+`cost_metal`+`cost_runes` AS `costs` FROM `unittype` WHERE 1 ORDER BY `id`","id");
@@ -25,10 +25,10 @@ class Job_CalcPoints extends Job {
 			$gpts+=$tpts;
 			sql("UPDATE `user` SET `general_pts`=".$gpts." , `army_pts`=".$apts." WHERE `id`=".$u->id);
 			if($u->guildpoints<0)
-				$gp=abs($u->guildpoints/intval($gGlobal['gp_pts_ratio']));
+				$gp=abs($u->guildpoints/intval(GetGlobal('gp_pts_ratio')));
 			else
 				$gp=0;
-			if($u->guild==kGuild_Weltbank && ($gpts+$apts+$gp)>intval($gGlobal['wb_max_gp']) && $u->id != kGuild_Weltbank_Founder){
+			if($u->guild==kGuild_Weltbank && ($gpts+$apts+$gp)>intval(GetGlobal('wb_max_gp')) && $u->id != kGuild_Weltbank_Founder){
 				leaveGuild($u->id);
 			}
 		}
@@ -77,6 +77,49 @@ class Job_Bier extends Job {
 		if($u>0)sql("UPDATE `title` SET `user`=".intval($u)." WHERE `title`='Brauereimeister'");
 
 		$this->requeue(in_hours(time(),1));
+	}
+}
+
+class Job_Weltbank extends Job {
+	protected function _run(){
+		global $gResFields;
+		
+		profile_page_start("cron.php - weltbank",true);
+		// weltbank
+		
+		//TODO .. dies produziert zu viele sql querys 
+		
+		$gAllUsers = sqlgettable("SELECT * FROM `user` ORDER BY `id`","id");
+		foreach ($gAllUsers as $id=>$u){
+			$id=$u->id;
+			if(($u->general_pts+$u->army_pts)<intval(GetGlobal('wb_paybacklimit')))continue;
+			$w=floatval(sqlgetone("SELECT `value` FROM `guild_pref` WHERE `var`='schulden_".$u->id."'"));
+			if($w==0)continue;
+			foreach ($gResFields as $r){
+				$prod="prod_$r";
+				if($u->{$prod}>0){
+					$radd=intval(GetGlobal('wb_payback_perc'))*$u->{$prod}/100/3600*$dtime;
+				}
+				sql("UPDATE `guild` SET `$r`=`$r`+($radd) WHERE `id`=".kGuild_Weltbank);
+				sql("UPDATE `user` SET `guildpoints`=`guildpoints`+($radd) WHERE `id`=".$u->id);
+				echo "user ".$u->name." (".$u->id.") payes res to guild ".kGuild_Weltbank." [$r] $radd (ressources left to pay: $w)<br>\n";
+				$w-=$radd;
+			}
+			if($w<1)
+				sql("DELETE FROM `guild_pref` WHERE `guild`=".kGuild_Weltbank." AND `var`='schulden_$id' OR `var`='schulden_$id'");
+			else
+				sql("UPDATE `guild_pref` SET `value`='$w' WHERE `var`='schulden_$id'");
+		}
+				
+		$this->requeue(in_mins(time(),5));
+	}
+}
+
+class Job_Quest extends Job {
+	protected function _run(){
+		QuestTrigger_CronStep();
+				
+		$this->requeue(in_mins(time(),1));
 	}
 }
 

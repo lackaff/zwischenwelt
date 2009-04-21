@@ -34,4 +34,17 @@ class Job_SeamonsterSpawn extends Job {
 	}
 }
 
+class Job_Hellholes extends Job {
+	protected function _run(){
+		$hellholes = sqlgettable("SELECT * FROM `hellhole`");
+		foreach($hellholes as $o) {
+			$hellhole = GetHellholeInstance($o);
+			$hellhole->Cron($dtime);
+		}
+		unset($hellholes);
+		
+		$this->requeue(in_mins(time(),5));
+	}
+}
+
 ?>

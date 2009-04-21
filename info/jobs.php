@@ -16,7 +16,7 @@ if($gUser->admin == 1){
 	}
 	echo "</table>";
 	
-	echo "</td><td>";
+	echo "</td><td valign=\"top\">";
 	
 	$t = sqlgettable("SELECT `name`,`time` FROM `job` WHERE `time`>".time()." ORDER BY `time` ASC");
 	echo "<h1>next jobs</h1>";
@@ -29,7 +29,7 @@ if($gUser->admin == 1){
 	}
 	echo "</table>";
 	
-	echo "</td><td>";
+	echo "</td><td valign=\"top\">";
 	
 	$t = sqlgettable("SELECT `name`,`time` FROM `job` WHERE `time`<".time()." AND `starttime`=0 AND endtime`=0 ORDER BY `time` ASC");
 	echo "<h1>overdue jobs</h1>";
@@ -42,7 +42,7 @@ if($gUser->admin == 1){
 	}
 	echo "</table>";
 	
-	echo "</td></tr><td colspan=3>";
+	echo "</td></tr><td colspan=3 valign=\"top\">";
 	
 	$t = sqlgettable("SELECT `name`,COUNT(`id`) as `count`, (SUM(`endtime`)-SUM(`starttime`)) as `time`, MIN(`starttime`) as `start`, MAX(`endtime`) as `end` FROM `joblog` GROUP BY `name`");
 	echo "<h1>stats of finished jobs</h1>";

@@ -119,9 +119,37 @@ class Job_ResCalc extends Job {
 		$this->requeue(in_mins(time(),1));
 	}
 }
+class Job_Mana extends Job {
+	protected function _run(){
+		if(!ExistGlobal("last_mana_calc")){
+			SetGlobal("last_mana_calc",T);
+		}
+		
+		$last = GetGlobal("last_mana_calc");
+		
+		if(T - $last > 0){
+			$dtime = (T - $last);
+			echo "DT: $dtime\n";
+			
+			TablesLock();
+			
+			$basemana = $gBuildingType[$gGlobal['building_runes']]->basemana;
+			// TODO : unhardcode
+			sql("UPDATE `building` SET `mana`=LEAST((`level`+1)*$basemana,`mana`+($basemana*(`level`+1)/(10+`level`/20)*".($dtime/3600).")) WHERE `type`=".GetGlobal('building_runes'));
+
+			TablesUnlock();
+			
+			SetGlobal("last_mana_calc",T);
+		}
+		
+		$this->requeue(in_mins(time(),1));
+	}
+}
 
 class Job_UserProdPop extends Job {
 	protected function _run(){
+		global $gResFields;
+		
 		if(!ExistGlobal("last_prod_calc")){
 			SetGlobal("last_prod_calc",T);
 		}
@@ -135,15 +163,32 @@ class Job_UserProdPop extends Job {
 			
 			//sql("UPDATE `user` SET `pop`=`maxpop` WHERE `pop`>`maxpop`");
 			
+			TablesLock();
 			sql("UPDATE `user` SET	`pop`=LEAST(`maxpop`,`pop`+".($dtime/300).") ,
-									`lumber`=LEAST(`max_lumber`, `lumber`+`prod_lumber`*".($dtime/3600).") , 
-									`stone`=LEAST(`max_stone`, `stone`+`prod_stone`*".($dtime/3600).") ,
-									`food`=LEAST(`max_food`, `food`+`prod_food`*".($dtime/3600).") ,
-									`metal`=LEAST(`max_metal`, `metal`+`prod_metal`*".($dtime/3600).")");
+									`lumber`=(`lumber`+`prod_lumber`*".($dtime/3600).") , 
+									`stone`=(`stone`+`prod_stone`*".($dtime/3600).") ,
+									`food`=(`food`+`prod_food`*".($dtime/3600).") ,
+									`metal`=(`metal`+`prod_metal`*".($dtime/3600).")");
 			
 			//gnome:
 			sql("UPDATE `user` SET `runes`=`runes`+`prod_runes`*".($dtime/3600)." WHERE `race`=".kRace_Gnome); // TODO : unhardcode					
+			TablesUnlock();
 			
+			echo "flush user res to guild... <br>\n";
+			TablesLock();
+			foreach($gResFields as $r){
+				$t = sqlgettable("SELECT `id`,`$r`,`max_$r`,`guild` FROM `user` WHERE `guild`>0 AND `$r`>`max_$r`");
+				foreach($t as $x) {
+					$radd = ($x->{$r}) - ($x->{"max_$r"});
+					sql("UPDATE `guild` SET `$r`=`$r`+($radd) WHERE `id`=".$x->guild);
+					sql("UPDATE `user` SET `guildpoints`=`guildpoints`+($radd) WHERE `id`=".$x->id);
+					echo "add user ".$x->id." res to guild ".$x->guild." [$r] $radd<br>\n";
+				}
+				unset($t);
+				sql("UPDATE `user` SET `$r`=`max_$r` WHERE `$r`>`max_$r`");
+			}
+			TablesUnlock();
+
 			SetGlobal("last_res_calc",T);
 		}
 
@@ -168,6 +213,95 @@ class Job_SupportSlots extends Job {
 		}
 
 		$this->requeue(in_hours(time(),6));
+	}	
+}
+
+class Job_GuildRes extends Job {
+	protected function _run(){
+		global $gResFields, $gRes;
+		
+		// todo : optimize by select max with group by guild ??
+		//calc guild max resources
+		echo "calc guild max res...<br>\n";
+		$gGuilds = sqlgettable("SELECT * FROM `guild`");
+		foreach($gGuilds as $x){
+			$s = "";
+			foreach($gResFields as $r)$s .= ", sum(`max_$r`) as `max_$r`";
+			$s{0} = ' ';
+			$s = "SELECT".$s;
+			$s .= " FROM `user` WHERE `guild`=".$x->id;
+			$o = sqlgetobject($s);
+			sql("UPDATE `guild` SET ".obj2sql($o)." WHERE `id`=".$x->id);
+			echo "Guild ".$x->id." res max set to ".implode("|",obj2array($o))."<br>\n";
+		}
+		echo "enforcing guild max res ....<br>\n";
+		$set="";
+		// todo : single query
+		foreach($gRes as $f=>$r){
+			sql("UPDATE `guild` SET `$r`=`max_$r` WHERE `$r`>`max_$r");
+		}
+		
+		$this->requeue(in_mins(time(),1));
+	}	
+}
+
+class Job_Runes extends Job {
+	protected function _run(){
+		if(!ExistGlobal("last_runes_calc")){
+			SetGlobal("last_runes_calc",T);
+		}
+		
+		$last = GetGlobal("last_runes_calc");
+		
+		if(T - $last > 0){
+			$dtime = (T - $last);
+			echo "DT: $dtime\n";
+			
+			$gTechnologyLevelsOfAllUsers = sqlgetgrouptable("SELECT `user`,`type`,`level` FROM `technology`","user","type","level");
+			$gAllUsers = sqlgettable("SELECT * FROM `user` ORDER BY `id`","id");
+			foreach($gAllUsers as $u){
+				switch($u->race){
+					default:
+						$rpfs = (0.8 + 
+							(isset($gTechnologyLevelsOfAllUsers[$u->id][kTech_MagieMeisterschaft])?$gTechnologyLevelsOfAllUsers[$u->id][kTech_MagieMeisterschaft]:0)*0.6)/2;
+					   if($u->worker_runes>0){
+							if(($u->lumber+$u->prod_lumber*($dtime/3600)) >= ($rpfs*($u->worker_runes*$u->pop/100*GetGlobal('lc_prod_runes'))*($dtime/3600))){
+								$l=$rpfs*1;
+							}else{
+								$l=$rpfs*($u->lumber+$u->prod_lumber*($dtime/3600))/($u->worker_runes*$u->pop/100*GetGlobal('lc_prod_runes')*($dtime/3600));
+							}
+							if(($u->metal+$u->prod_metal*($dtime/3600)) >= ($rpfs*($u->worker_runes*$u->pop/100*GetGlobal('mc_prod_runes'))*($dtime/3600))){
+								$m=$rpfs*1;
+							}else{
+								$m=$rpfs*($u->metal+$u->prod_metal*($dtime/3600))/($u->worker_runes*$u->pop/100*GetGlobal('mc_prod_runes')*($dtime/3600));
+							}
+							if(($u->stone+$u->prod_stone*($dtime/3600)) >= ($rpfs*($u->worker_runes*$u->pop/100*GetGlobal('sc_prod_runes')*($dtime/3600)))){
+								$s=$rpfs*1;
+							}else{
+								$s=$rpfs*($u->stone+$u->prod_stone*($dtime/3600))/($u->worker_runes*$u->pop/100*GetGlobal('sc_prod_runes')*($dtime/3600));
+							}
+							if(($u->food+$u->prod_food*($dtime/3600)) >= ($rpfs*($u->worker_runes*$u->pop/100*GetGlobal('fc_prod_runes')*($dtime/3600)))){
+								$f=$rpfs*1;
+							}else{
+								$f=$rpfs*($u->food+$u->prod_food*($dtime/3600))/($u->worker_runes*$u->pop/100*GetGlobal('fc_prod_runes')*($dtime/3600));
+							}
+							$factor=round(min($l,$m,$s,$f),3);
+							sql("UPDATE `user` SET `runes`=`runes`+`prod_runes`*".($dtime/3600)."*".$factor." WHERE `id`=".$u->id);
+							UserPay($u->id,	$u->worker_runes*$u->pop/100*GetGlobal('lc_prod_runes')*$factor*($dtime/3600),
+											$u->worker_runes*$u->pop/100*GetGlobal('sc_prod_runes')*$factor*($dtime/3600),
+											$u->worker_runes*$u->pop/100*GetGlobal('fc_prod_runes')*$factor*($dtime/3600),
+											$u->worker_runes*$u->pop/100*GetGlobal('mc_prod_runes')*$factor*($dtime/3600));
+						}
+					break;
+					case kRace_Gnome:
+					break;
+				}
+			}
+				
+			SetGlobal("last_runes_calc",T);
+		}
+		
+		$this->requeue(in_mins(time(),1));
 	}	
 }
 

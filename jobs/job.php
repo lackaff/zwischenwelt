@@ -238,5 +238,7 @@ include_once("job_user.php");
 include_once("job_map.php");
 include_once("job_monster.php");
 include_once("job_global.php");
+include_once("job_army.php");
+include_once("job_building.php");
 
 ?>
