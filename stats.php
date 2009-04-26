@@ -10,7 +10,7 @@ $time = time();
 //--------------------------------
 
 //chat
-$o = null;
+$o = new EmptyObject();
 $o->time = $time;
 $o->type = kStats_SysInfo_Chat;
 $o->i1 = sqlgetone("SELECT COUNT(1) FROM `message`");
@@ -18,14 +18,14 @@ $o->i2 = sqlgetone("SELECT COUNT(1) FROM `guild_forum`")+sqlgetone("SELECT COUNT
 sql("INSERT INTO `stats` SET ".obj2sql($o));
 
 //magic
-$o = null;
+$o = new EmptyObject();
 $o->time = $time;
 $o->type = kStats_SysInfo_Magic;
 $o->i1 = sqlgetone("SELECT COUNT(1) FROM `spell`");
 sql("INSERT INTO `stats` SET ".obj2sql($o));
 
 //misc
-$o = null;
+$o = new EmptyObject();
 $o->time = $time;
 $o->type = kStats_SysInfo_Misc;
 $o->i1 = sqlgetone("SELECT COUNT(1) FROM `user` where `admin`=0");
@@ -37,7 +37,7 @@ $o->f3 = sqlgetone("SELECT COUNT(b.id) FROM `construction` b,`user` u where b.us
 sql("INSERT INTO `stats` SET ".obj2sql($o));
 
 //activity stats
-$o = null;
+$o = new EmptyObject();
 $o->time = $time;
 $o->type = kStats_SysInfo_Activity;
 //aktiv in 2h
@@ -52,7 +52,7 @@ $o->i3 = sqlgetone("SELECT COUNT(`id`) FROM `user` WHERE admin=0 AND `lastlogin`
 sql("INSERT INTO `stats` SET ".obj2sql($o));
 
 //army
-$o = null;
+$o = new EmptyObject();
 $o->time = $time;
 $o->type = kStats_SysInfo_Army;
 $o->i1 = sqlgetone("SELECT COUNT(b.id) FROM `army` b,`user` u where `type`=".kArmyType_Normal." and b.user=u.id and u.admin=0");
@@ -67,7 +67,7 @@ $o->f1 = sqlgetone("SELECT sum(u.amount) FROM unit u, building b, user o WHERE u
 sql("INSERT INTO `stats` SET ".obj2sql($o));
 
 //fight
-$o = null;
+$o = new EmptyObject();
 $o->time = $time;
 $o->type = kStats_SysInfo_Fight;
 $o->i1 = sqlgetone("SELECT COUNT(1) FROM `fight`");
@@ -87,7 +87,7 @@ SetGlobal("stats_trade_sum",0);
 sql("INSERT INTO `stats` SET ".obj2sql($o));
 
 //environment
-$o = null;
+$o = new EmptyObject();
 $o->time = $time;
 $o->type = kStats_SysInfo_Environment;
 $o->i1 = sqlgetone("SELECT COUNT(1) FROM `fire`");

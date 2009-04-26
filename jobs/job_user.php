@@ -108,6 +108,8 @@ class Job_ResCalc extends Job {
 					//people die
 					$users[$u->id]->pop = max(0,$users[$u->id]->pop-$foodneed);
 					echo "$foodneed units food in $dtime needed by ".$u->name."\n<br>";
+				} else {
+					echo "$foodneed people grow in $dtime by ".$u->name."\n";
 				}
 				$users[$u->id]->food = max(0,$food);
 				sql("UPDATE `user` SET `food`=".($users[$u->id]->food).",`pop`=".($users[$u->id]->pop)." WHERE `id`=".$u->id);

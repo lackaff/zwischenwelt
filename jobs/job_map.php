@@ -8,8 +8,13 @@ class Job_RuinCorruption extends Job {
 		$n = 100;
 		$t = sqlgettable("SELECT b.* FROM `buildingtype` t LEFT JOIN `building` b ON b.type=t.id WHERE `collapse_prob`>0 AND `collapse_prob` < ".intval($r)." ORDER BY RAND() LIMIT ".intval($n));
 		foreach($t as $b){
-			print "collapse building $b->id<br>\n";
-			cBuilding::removeBuilding($b,$b->user,true,false);
+			$siege = sqlgetone("SELECT 1 FROM `siege` WHERE `building`=".intval($b->id)) == 1;
+			if($siege){
+				print "under siege so dont collapse ".$b->id."<br>\n";
+			} else {
+				print "collapse building ".$b->id."<br>\n";
+				cBuilding::removeBuilding($b,$b->user,true,false);
+			}
 		}
 
 		$this->requeue(in_mins(time(),5));

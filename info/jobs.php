@@ -5,12 +5,24 @@ Lock();
 require_once("header.php"); 
 
 if($gUser->admin == 1){
+	if(isset($f_show)){
+		$output = sqlgetone("SELECT `output` FROM `joblog` 
+			WHERE `name`='".mysql_real_escape_string($f_show)."' AND LENGTH(`output`)>0
+			ORDER BY `time` DESC LIMIT 1");
+	}
 	if(intval($f_kill) > 0){
 		sql("UPDATE `job` SET `endtime`=".time().", `locked`=2 WHERE `id`=".intval($f_kill));
 	}
 	if(intval($f_removeerror) > 0){
 		sql("UPDATE `joblog` SET `error`=NULL WHERE `id`=".intval($f_removeerror));
 	}
+	
+	echo "<center><a href=\"".Query("?sid=?")."\">reload</a></center>";
+	
+	if(isset($output)){
+		echo "<hr><pre>$output</pre><hr>";
+	}
+	
 	echo "<table><tr><td valign=\"top\">";
 	
 	$t = sqlgettable("SELECT `name`,COUNT(`id`) as `count` FROM `job` WHERE 
@@ -18,7 +30,7 @@ if($gUser->admin == 1){
 	echo "<h1>queued jobs</h1>";
 	echo "<table border=1><tr><th>name</th><th>count</th></tr>";
 	foreach($t as $x){
-		echo "<tr><td>$x->name</td><td>$x->count</td></tr>";
+		echo "<tr><td><a href=\"".Query("?show=$x->name&sid=?")."\">$x->name</a></td><td>$x->count</td></tr>";
 	}
 	echo "</table>";
 	
@@ -44,10 +56,13 @@ if($gUser->admin == 1){
 	echo "<table border=1><tr>";
 	echo "<th>id</th><th>name</th><th>running t in s</th></tr>";
 	foreach($t as $x){
+		$avgt = sqlgetone("SELECT AVG(`endtime`-`starttime`) FROM `joblog` 
+			WHERE `name`='".mysql_real_escape_string($x->name)."'");
 		echo "<tr>";
 		echo "<td>$x->id</td>";
 		echo "<td>$x->name</td>";
 		echo "<td>".round(time() - $x->starttime)."</td>";
+		echo "<td>".round(100 * (time() - $x->starttime) / $avgt)."%</td>";
 		echo "<td><a href=\"".Query("?kill=$x->id&sid=?")."\">kill</a></td>";
 		echo "</tr>";
 	}

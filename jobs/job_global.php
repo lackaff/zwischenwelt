@@ -51,14 +51,27 @@ class Job_Weather extends Job {
 
 class Job_Spells extends Job {
 	protected function _run(){
-		$spells = sqlgettable("SELECT * FROM `spell`");
-		foreach($spells as $o) {
-			$spell = GetSpellInstance($o->type,$o);
-			$spell->Cron($dtime);
-			unset($spell);
+		if(!ExistGlobal("last_spell_calc")){
+			SetGlobal("last_spell_calc",T);
 		}
-		unset($spells);
+		
+		$last = GetGlobal("last_spell_calc");
+		
+		if(T - $last > 0){
+			$dtime = (T - $last);
+			echo "DT: $dtime\n";
 
+			$spells = sqlgettable("SELECT * FROM `spell`");
+			foreach($spells as $o) {
+				$spell = GetSpellInstance($o->type,$o);
+				$spell->Cron($dtime);
+				unset($spell);
+			}
+			unset($spells);
+
+			SetGlobal("last_spell_calc",T);
+		}
+		
 		$this->requeue(in_mins(time(),1));
 	}
 }

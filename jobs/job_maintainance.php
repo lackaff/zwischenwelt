@@ -52,9 +52,7 @@ class Job_RemoveGuildRequests extends Job {
 class Job_PurgeOldJobs extends Job {
 	protected function _run(){
 		sql("DELETE FROM `job` WHERE 
-			`starttime`>0 AND 
-			`endtime`>0 AND 
-			`locked`>0 AND 
+			`locked`=2 AND 
 			`time`<".time());
 
 		$this->requeue(in_hours(time(),1));

@@ -11,6 +11,7 @@ class Job_FinishUnits extends Job {
 		foreach ($running_actions as $action) {
 			$unittype = $gUnitType[$action->param1];
 			
+			$time = time();
 			// has one action cycle completed ?
 			if ($time >= ($action->starttime + $unittype->buildtime) || kZWTestMode) {						
 				if ($action->param2 > 0) {

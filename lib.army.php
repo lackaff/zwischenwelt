@@ -615,7 +615,7 @@ class cArmy {
 		if (!$waypointmaxprio) {
 			// first waypoint set, start move delay
 			sql("UPDATE `army` SET `nextactiontime` = ".(time()+60)." WHERE `id` = ".$army->id." LIMIT 1");  // TODO :unhardcode
-			$wp = false;
+			$wp = new EmptyObject();
 			$wp->x = $army->x;
 			$wp->y = $army->y;
 			$wp->army = $army->id;
