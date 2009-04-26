@@ -24,7 +24,7 @@ if($gUser->admin == 1){
 	
 	echo "</td><td valign=\"top\">";
 	
-	$t = sqlgettable("SELECT `name`,`time` FROM `job` WHERE `time`>".time()." AND `locked`=0 ORDER BY `time` ASC");
+	$t = sqlgettable("SELECT `id`,`name`,`time` FROM `job` WHERE `time`>".time()." AND `locked`=0 ORDER BY `time` ASC");
 	echo "<h1>next jobs</h1>";
 	echo "<table border=1><tr><th>name</th><th>time left in s</th></tr>";
 	foreach($t as $x){

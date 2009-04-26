@@ -74,8 +74,9 @@ Job::queueIfNonQueuedOrRunning("Shooting");
 Job::queueIfNonQueuedOrRunning("Tech");
 Job::queueIfNonQueuedOrRunning("Siege");
 Job::queueIfNonQueuedOrRunning("Pillage");
-Job::queueIfNonQueuedOrRunning("Test");
+Job::queueIfNonQueuedOrRunning("FinishUnits");
 //Job::queueIfNonQueuedOrRunning("ItemCorruption");
+//Job::queueIfNonQueuedOrRunning("Test");
 
 // run the pending jobs
 Job::runJobs(10, true);
@@ -115,106 +116,6 @@ $time = time();
 
 
 //MAXHP: ceil($maxhp + $maxhp/100*1.5*$level);  // NOTE: see also lib.building.php calcMaxBuildingHp
-
-
-//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-profile_page_start("cron.php - actions part1",true);
-//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-
-
-$i_bsteps = kZWTestMode ? kZWTestMode_BuildingActionSteps : 1;
-//for ($kbstep=0;$kbstep<$i_bsteps;$kbstep++) {
-
-	// process running actions
-	$running_actions = sqlgettable("SELECT * FROM `action` WHERE `starttime` > 0 GROUP BY `building`");
-	foreach ($running_actions as $action) {
-		$unittype = $gUnitType[$action->param1];
-		
-		// has one action cycle completed ?
-		if ($time >= ($action->starttime + $unittype->buildtime) || kZWTestMode) {						
-			if ($action->param2 > 0) {
-				// unit complete
-				switch ($action->cmd) {
-					case kActionCmd_Build:
-						$curtargetid = GetBParam($action->building,"target",0);
-						// TODO : der check hier ob das gebaeude existiert geht vermutlich auf die performance, bessere bei gebaeude tot alle stationierungen auf das gebaeude canceln
-						if (!sqlgetone("SELECT 1 FROM `building` WHERE `id` = ".intval($curtargetid))) $curtargetid = 0;
-						if ($curtargetid == 0) $curtargetid = $action->building;
-						
-						// pay pop
-						$actionuserid = intval(sqlgetone("SELECT `user` FROM `building` WHERE `id` = ".intval($action->building)));
-						sql("UPDATE `user` SET `pop`=`pop`-1 WHERE `id`=$actionuserid");
-						
-						cUnit::AddUnits($curtargetid,$action->param1,1,kUnitContainer_Building,$actionuserid);
-					break;
-				}
-				
-				//echo "action ".$action->id." : in building ".$action->building." produced one ".$unittype->name." (".($action->param2-1)." left)<br>";
-
-				if ($action->param2-1 > 0)
-						sql("UPDATE `action` SET `starttime` = 0 , `param2` = `param2` - 1 WHERE `id` = ".$action->id);
-				else	sql("DELETE FROM `action` WHERE `id` = ".$action->id);
-			} else sql("DELETE FROM `action` WHERE `id` = ".$action->id);
-		}
-	}
-	unset($running_actions);
-
-profile_page_start("cron.php - actions part2",true);
-$gAvailableUnitTypesByUser = array();
-
-	// start action where building has nothing to do
-	$waiting_actions = sqlgettable("SELECT *,MAX(`starttime`) as `maxstarttime` FROM `action` GROUP BY `building`");
-	foreach ($waiting_actions as $action) if ($action->maxstarttime == 0) {
-		$unittype = $gUnitType[$action->param1];
-		$actionuserid = intval(sqlgetone("SELECT `user` FROM `building` WHERE `id` = ".intval($action->building)));
-		
-		$availableUnitTypes = false;
-		if (isset($gAvailableUnitTypesByUser[$actionuserid])) {
-			$availableUnitTypes = $gAvailableUnitTypesByUser[$actionuserid];
-		} else {
-			$availableUnitTypes = array();
-			$gAvailableUnitTypesByUser[$actionuserid] = $availableUnitTypes;
-		}
-		
-		$available = false;
-		if (isset($availableUnitTypes[$unittype->id])) {
-			$available = $availableUnitTypes[$unittype->id];
-		} else {
-			$available = HasReq($unittype->req_geb,$unittype->req_tech_a.",".$unittype->req_tech_v,$actionuserid);
-			$gAvailableUnitTypesByUser[$actionuserid][$unittype->id] = $available;
-		}
-		
-		// only build if the technological requirements are met
-		if (!$available) {
-			sql("DELETE FROM `action` WHERE `id` = ".$action->id);
-			continue;
-		}
-		
-		// building weight-limit, used to block ramme
-		$max_weight_left_source = cUnit::GetMaxBuildingWeight($gUnitType[$action->param1]->buildingtype);
-		if ($max_weight_left_source >= 0) {
-			$curtargetid = GetBParam($action->building,"target",0);
-			if ($curtargetid == 0) $curtargetid = $action->building;
-			$max_weight_left_source -= cUnit::GetUnitsSum(cUnit::GetUnits($curtargetid,kUnitContainer_Building),"weight");
-			if ($max_weight_left_source < $gUnitType[$action->param1]->weight) continue;
-		}
-		
-		if (sqlgetone("SELECT `pop` FROM `user` WHERE `id` = ".intval($actionuserid)) <= 0 || 
-			!UserPay($actionuserid,$unittype->cost_lumber,$unittype->cost_stone,
-									$unittype->cost_food,$unittype->cost_metal,$unittype->cost_runes))
-		{
-			//echo "action ".$action->id." : in building ".$action->building." (".$action->param2." ".$unittype->name.") is waiting for ressources<br>";
-			continue;
-		}
-								
-		sql("UPDATE `action` SET `starttime` = ".$time." WHERE `id` = ".$action->id);
-		//echo "action ".$action->id." in building ".$action->building." started<br>";
-	}
-	unset($waiting_actions);
-//}
-
-
 
 /*
 $growwood = sqlgettable("SELECT * FROM `terrain` WHERE `type` = ".kTerrain_YoungForest." AND RAND() < ".kYoungToForest);
