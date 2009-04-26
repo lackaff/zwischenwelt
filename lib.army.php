@@ -12,7 +12,7 @@ require_once("lib.unit.php");
 class cArmy {
 	static function GetJavaScriptArmyData ($army,$gLeft=false,$gTop=false,$gCX=false,$gCY=false) {
 		if (!is_object($army)) $army = sqlgetobject("SELECT * FROM `army` WHERE `id` = ".intval($army));
-		if (empty($army)) exit();
+		if (empty($army)) trigger_error("empty army",E_USER_ERROR);
 		global $gRes2ItemType,$gRes,$gUser,$gContainerType2Number;
 		$units = cUnit::GetUnits($army->id);
 		$army->unitstxt = ""; 
@@ -325,7 +325,7 @@ class cArmy {
 		}
 		
 		// construct army object
-		$army = false;
+		$army = new EmptyObject();
 		$army->name = cArmy::escapearmyname($name);
 		$army->type = $armytype;
 		$army->user = $userid;
@@ -623,7 +623,7 @@ class cArmy {
 			sql("INSERT INTO `waypoint` SET ".obj2sql($wp));
 			$waypointmaxprio = 0;
 		}
-		$wp = false;
+		$wp = new EmptyObject();
 		$wp->x = intval($x);
 		$wp->y = intval($y);
 		$wp->army = $army->id;

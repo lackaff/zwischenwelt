@@ -21,8 +21,8 @@ $t = time();
 <tr>
 	<td>
 <?php
-include("../menu.php");
-include("../stats/header.php");
+include(BASEPATH."/menu.php");
+include(BASEPATH."/stats/header.php");
 ImgBorderStart();
 ?>
 
@@ -59,7 +59,7 @@ test
 </table>
 
 <?php
-include("../stats/footer.php");
+include(BASEPATH."/stats/footer.php");
 ?>
 
 </body>

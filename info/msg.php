@@ -141,7 +141,7 @@ function CheckAll() {
 </head>
 <body>
 
-<?php include("../menu.php");
+<?php include(BASEPATH."/menu.php");
 
 ?>
 <div align=center width=100% style="vertical-align:top;text-align=center;">

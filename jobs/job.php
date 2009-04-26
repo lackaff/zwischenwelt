@@ -39,6 +39,8 @@ class Job {
 	private $_starttime;
 	private $_endtime;
 	private $_sqlentry;
+	private $_locked;
+	private $_error;
 	
 	protected $_payload;
 	
@@ -50,7 +52,9 @@ class Job {
 			$this->_name = $o->name;
 			$this->_payload = empty($o->payload) ? array() : unserialize($o->payload);
 			$this->_time = $o->time;
+			$this->_locked = $o->locked;
 		}
+		$this->_error = array();
 	}
 	/**
 	 * handle locking
@@ -81,6 +85,33 @@ class Job {
 		}
 	}
 	
+	public function error_handler($errno, $errstr, $errfile, $errline, $errcontext){
+	    $line = "[$errfile:$errline] $errstr";
+		switch ($errno) {
+	    case E_USER_ERROR:
+	        $this->_error[] = "Error: $line";
+	        throw new Exception();
+	        break;
+	
+	    case E_WARNING:
+	    case E_USER_WARNING:
+	        $this->_error[] = "Warning: $line";
+	    	break;
+	
+	    case E_NOTICE:
+	    case E_USER_NOTICE:
+	        $this->_error[] = "Notice: $line";
+	        break;
+	
+	    default:
+	        $this->_error[] = "Unknown: [$errno] $line";
+	        break;
+	    }
+	
+	    /* Don't execute PHP internal error handler */
+	    return true;		
+	}
+	
 	/**
 	 * calls the _run body of the job, dont use this directly
 	 */
@@ -88,33 +119,50 @@ class Job {
 		if($this->acquireLock()){
 			// lock ok so run the job
 			rob_ob_start();
+			
+			// overwrite error handler
+			set_error_handler(array(&$this, "error_handler"));
+			
 			$this->_starttime = time();
+			sql("UPDATE `job` SET `starttime`=".intval($this->_starttime)." WHERE `id`=".$this->_id);
 			$t1 = microtime(true);
 			
-			$this->_run();
+			try {
+				$this->_run();
+			} catch(Exception $e){
+				$line = "Exception: [".$e->getFile().":".$e->getLine()."] ".$e->getMessage();
+				$this->_error[] = $line;
+				$this->_on_error();
+			}
 			
 			$t2 = microtime(true);
 			$this->_endtime = time();
+			sql("UPDATE `job` SET `endtime`=".intval($this->_endtime).", `locked`=2 WHERE `id`=".$this->_id);
 			$output = rob_ob_end(); 
+			
+			// restore error handler
+			restore_error_handler();
 			
 			$this->logOutput($output,$t2-$t1);
 			
-			// update job
-			sql("UPDATE `job` SET 
-				`starttime`=".intval($this->_starttime).",
-				`endtime`=".intval($this->_endtime)."
-				WHERE `id`=".intval($this->_id));
+			if(sizeof($this->_error) > 0){
+				$errorsql = "`error` = '".mysql_real_escape_string(implode("|",$this->_error))."', ";
+			} else {
+				$errorsql = "";
+			}
 			
 			// and add log entry
-			sql("INSERT DELAYED INTO `joblog` (`time`,`name`,`payload`,`starttime`,`endtime`,`jobid`,`dt`) VALUES (
-				".intval($this->_time).",
-				'".mysql_real_escape_string($this->_name)."',
-				'".mysql_real_escape_string(serialize($this->_payload))."',
-				'".intval($this->_starttime)."',
-				'".intval($this->_endtime)."',
-				".intval($this->_id).",
-				'".round($t2 * 1000 - $t1 * 1000)."'				
-			)");
+			sql("INSERT DELAYED INTO `joblog` SET
+				`time` = ".intval($this->_time).",
+				`name` = '".mysql_real_escape_string($this->_name)."',
+				`payload` = '".mysql_real_escape_string(serialize($this->_payload))."',
+				`starttime` = '".intval($this->_starttime)."',
+				`endtime` = '".intval($this->_endtime)."',
+				`jobid` = ".intval($this->_id).",
+				`output` = '".mysql_real_escape_string($output)."',
+				$errorsql
+				`dt` = '".round($t2 * 1000 - $t1 * 1000)."'		
+			");
 		}
 	}
 	
@@ -133,6 +181,10 @@ class Job {
 	 * overwrite this with your own job code
 	 */
 	protected function _run(){}
+	/**
+	 * overwrite this with your own error handling code 
+	 */
+	protected function _on_error(){}
 	
 	// -----------------------------------------
 	
@@ -163,8 +215,8 @@ class Job {
 	 * @param $time execute time
 	 * @param $prio priority
 	 */
-	public static function queueIfNonQueued($name, $payload, $time, $prio){
-		if(!self::isQueuedWithName($name)){
+	public static function queueIfNonQueuedOrRunning($name, $payload, $time, $prio){
+		if(!self::isQueuedOrRunningWithName($name)){
 			self::queue($name, $payload, $time, $prio);
 		}
 	}
@@ -182,7 +234,7 @@ class Job {
 	 * @param $limit max number of jobs
 	 */
 	private static function getJobs($limit){
-		$jobs = sqlgettable("SELECT `id`,`time`,`prio`,`name` FROM `job` WHERE `locked`=0 AND `time`<".time()." ORDER BY `tries` ASC, `prio` DESC, `time` ASC LIMIT ".intval($limit));
+		$jobs = sqlgettable("SELECT `id`,`time`,`prio`,`name` FROM `job` WHERE `locked`=0 AND `time`<".time()." AND `endtime`=0 ORDER BY `tries` ASC, `prio` DESC, `time` ASC LIMIT ".intval($limit));
 		return $jobs;
 	}
 	
@@ -191,17 +243,18 @@ class Job {
 	 * this should only be used for debugging and development
 	 */
 	public static function requeueJobsToBeFinished(){
-		sql("UPDATE `job` SET `time`=`time`-".time()." WHERE `locked`=0 AND `endtime`=0 AND `starttime`=0");
+		$t = time();
+		sql("UPDATE `job` SET `time`=`time`-$t WHERE `time`>$t locked`=0");
 		echo "Jobs betroffen: ".mysql_affected_rows();
 	}
 	
 	/**
-	 * checks if there is a job with the given name pending to execute
+	 * checks if there is a job with the given name pending to execute or executing
 	 * @param $name jobname
 	 * @return true if there is one
 	 */
-	public static function isQueuedWithName($name){
-		return sqlgetone("SELECT 1 FROM `job` WHERE `name`='".mysql_real_escape_string($name)."' AND `endtime`=0 AND `starttime`=0") == 1;
+	public static function isQueuedOrRunningWithName($name){
+		return sqlgetone("SELECT 1 FROM `job` WHERE `name`='".mysql_real_escape_string($name)."' AND `locked`!=2") == 1;
 	}
 	
 	/**
@@ -233,12 +286,24 @@ class Job {
 	}
 }
 
-include_once("job_maintainance.php");
-include_once("job_user.php");
-include_once("job_map.php");
-include_once("job_monster.php");
-include_once("job_global.php");
-include_once("job_army.php");
-include_once("job_building.php");
+class Job_Test extends Job {
+	protected function _run(){
+		//sleep(3);
+		//throw new Exception("test1");
+		$this->requeue(in_secs(time(),10));
+	}
+	
+	protected function _on_error(){
+		$this->requeue(in_secs(time(),60));
+	}
+}
+
+require_once(BASEPATH."/jobs/job_maintainance.php");
+require_once(BASEPATH."/jobs/job_user.php");
+require_once(BASEPATH."/jobs/job_map.php");
+require_once(BASEPATH."/jobs/job_monster.php");
+require_once(BASEPATH."/jobs/job_global.php");
+require_once(BASEPATH."/jobs/job_army.php");
+require_once(BASEPATH."/jobs/job_building.php");
 
 ?>

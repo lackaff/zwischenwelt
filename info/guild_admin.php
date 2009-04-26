@@ -140,7 +140,7 @@ if($gUser->guild > 0){
 
 <?php 
 
-include("../menu.php");
+include(BASEPATH."/menu.php");
 echo renderGuildTabbar(4);
 
 //ist der user in einer gilde?

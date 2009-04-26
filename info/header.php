@@ -9,4 +9,4 @@
 
 </head>
 <body>
-<?php include("../menu.php"); ?>
+<?php include(BASEPATH."/menu.php"); ?>

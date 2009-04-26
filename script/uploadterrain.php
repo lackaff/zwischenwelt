@@ -1,5 +1,5 @@
 <?php
-define("NO_CONTENT_TYPE");
+define("NO_CONTENT_TYPE",1);
 
 require_once("../lib.main.php");
 require_once("../lib.map.php");

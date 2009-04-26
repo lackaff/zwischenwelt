@@ -759,6 +759,7 @@ function GetProductionSlots ($uid,$buildings=false) {
 		if(empty($btype))$btype = 0;
 		
 		if (!isset($buildings[$btype])) {
+			$buildings[$btype] = new EmptyObject();
 			$buildings[$btype]->count = 0;
 			$buildings[$btype]->level = 0;
 			$buildings[$btype]->supportslots = 0;

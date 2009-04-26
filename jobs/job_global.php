@@ -1,16 +1,17 @@
 <?php
 
-require_once("lib.score.php");
+require_once(BASEPATH."/lib.score.php");
+require_once(BASEPATH."/lib.weather.php");
 
 class Job_CalcPoints extends Job {
 	protected function _run(){
 	echo "generate points...<br>";
-		$gAllUsers = sqlgettable("SELECT * FROM `user` ORDER BY `id`","id");
-		$range=ceil(count($gAllUsers)/10);
+		$users = sqlgettable("SELECT * FROM `user` ORDER BY `id`","id");
+		$range=ceil(count($users)/10);
 		//echo "tick ".GetGlobal("ticks")." / %10 ".(GetGlobal("ticks")%10)."<br>";
 		
-		$e = array_slice($gAllUsers,$range*(GetGlobal("ticks")%10),$range);
-		echo "fetched $range users from \$gAllUsers<br>";
+		$e = array_slice($users,$range*(GetGlobal("ticks")%10),$range);
+		echo "fetched $range users from \$$users<br>";
 		$bpar = sqlgettable("SELECT `id`,`cost_stone`+`cost_food`+`cost_lumber`+`cost_metal`+`cost_runes` AS `costs` FROM `buildingtype` WHERE 1",'id');
 		$upar = sqlgettable("SELECT `id`,`cost_stone`+`cost_food`+`cost_lumber`+`cost_metal`+`cost_runes` AS `costs` FROM `unittype` WHERE 1 ORDER BY `id`","id");
 		$tpar = sqlgettable("SELECT `id`,`increment`,`basecost_stone`+`basecost_food`+`basecost_lumber`+`basecost_metal`+`basecost_runes` AS `costs` FROM `technologytype` WHERE 1 ORDER BY `id`","id");
@@ -20,7 +21,7 @@ class Job_CalcPoints extends Job {
 			$mpts=getBasePts($u->id);
 			$tpts=getTechPts($u->id,$tpar);
 			$apts=getArmyPts($u->id,$upar);
-			if ($gVerbose) echo "score uid ".$u->id." : buildingpoints=$gpts,miscpts=$mpts,techpts=$tpts,armypts=$apts<br>";
+			echo "score uid ".$u->id." : buildingpoints=$gpts,miscpts=$mpts,techpts=$tpts,armypts=$apts<br>";
 			$gpts+=$mpts;
 			$gpts+=$tpts;
 			sql("UPDATE `user` SET `general_pts`=".$gpts." , `army_pts`=".$apts." WHERE `id`=".$u->id);
@@ -84,31 +85,43 @@ class Job_Weltbank extends Job {
 	protected function _run(){
 		global $gResFields;
 		
-		profile_page_start("cron.php - weltbank",true);
-		// weltbank
+		if(!ExistGlobal("last_weltbank")){
+			SetGlobal("last_weltbank",T);
+		}
 		
-		//TODO .. dies produziert zu viele sql querys 
+		$last = GetGlobal("last_weltbank");
 		
-		$gAllUsers = sqlgettable("SELECT * FROM `user` ORDER BY `id`","id");
-		foreach ($gAllUsers as $id=>$u){
-			$id=$u->id;
-			if(($u->general_pts+$u->army_pts)<intval(GetGlobal('wb_paybacklimit')))continue;
-			$w=floatval(sqlgetone("SELECT `value` FROM `guild_pref` WHERE `var`='schulden_".$u->id."'"));
-			if($w==0)continue;
-			foreach ($gResFields as $r){
-				$prod="prod_$r";
-				if($u->{$prod}>0){
-					$radd=intval(GetGlobal('wb_payback_perc'))*$u->{$prod}/100/3600*$dtime;
+		if(T - $last > 0){
+			$dtime = (T - $last);
+			echo "DT: $dtime\n";
+			
+			// weltbank
+		
+			//TODO .. dies produziert zu viele sql querys 
+			
+			$users = sqlgettable("SELECT * FROM `user` ORDER BY `id`","id");
+			foreach ($users as $id=>$u){
+				$id=$u->id;
+				if(($u->general_pts+$u->army_pts)<intval(GetGlobal('wb_paybacklimit')))continue;
+				$w=floatval(sqlgetone("SELECT `value` FROM `guild_pref` WHERE `var`='schulden_".$u->id."'"));
+				if($w==0)continue;
+				foreach ($gResFields as $r){
+					$prod="prod_$r";
+					if($u->{$prod}>0){
+						$radd=intval(GetGlobal('wb_payback_perc'))*$u->{$prod}/100/3600*$dtime;
+					}
+					sql("UPDATE `guild` SET `$r`=`$r`+($radd) WHERE `id`=".kGuild_Weltbank);
+					sql("UPDATE `user` SET `guildpoints`=`guildpoints`+($radd) WHERE `id`=".$u->id);
+					echo "user ".$u->name." (".$u->id.") payes res to guild ".kGuild_Weltbank." [$r] $radd (ressources left to pay: $w)<br>\n";
+					$w-=$radd;
 				}
-				sql("UPDATE `guild` SET `$r`=`$r`+($radd) WHERE `id`=".kGuild_Weltbank);
-				sql("UPDATE `user` SET `guildpoints`=`guildpoints`+($radd) WHERE `id`=".$u->id);
-				echo "user ".$u->name." (".$u->id.") payes res to guild ".kGuild_Weltbank." [$r] $radd (ressources left to pay: $w)<br>\n";
-				$w-=$radd;
+				if($w<1)
+					sql("DELETE FROM `guild_pref` WHERE `guild`=".kGuild_Weltbank." AND `var`='schulden_$id' OR `var`='schulden_$id'");
+				else
+					sql("UPDATE `guild_pref` SET `value`='$w' WHERE `var`='schulden_$id'");
 			}
-			if($w<1)
-				sql("DELETE FROM `guild_pref` WHERE `guild`=".kGuild_Weltbank." AND `var`='schulden_$id' OR `var`='schulden_$id'");
-			else
-				sql("UPDATE `guild_pref` SET `value`='$w' WHERE `var`='schulden_$id'");
+			
+			SetGlobal("last_weltbank",T);
 		}
 				
 		$this->requeue(in_mins(time(),5));

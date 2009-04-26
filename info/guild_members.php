@@ -31,7 +31,7 @@ if($gGuild){
 
 </head>
 <body>
-<?php include("../menu.php"); ?>
+<?php include(BASEPATH."/menu.php"); ?>
 <?=renderGuildTabbar(1)?>
 <?php
 //ist der user in einer gilde?

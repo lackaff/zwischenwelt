@@ -64,7 +64,7 @@ $armyname = array(1=>"eigene",2=>"Feind");
 </head>
 <body>
 <?php
-include("../menu.php");
+include(BASEPATH."/menu.php");
 ?>
 
 <form method="post" action="<?=Query("?sid=?")?>">

@@ -4,7 +4,7 @@ class Job_Stats extends Job {
 	protected function _run(){
 		profile_page_start("cron.php - stats");
 		echo "collection stats ...";
-		include("stats.php");
+		include(BASEPATH."/stats.php");
 		echo "done\n\n";
 		profile_page_end();
 		
@@ -63,7 +63,8 @@ class Job_PurgeOldJobs extends Job {
 
 class Job_PurgeOldLogs extends Job {
 	protected function _run(){
-	echo "remove old log<br>";
+		echo "remove old log<br>";
+		$time = time();
 		sql("DELETE FROM `newlog` WHERE $time-`time`>60*60*24");  // TODO : unhardcode
 		
 		$this->requeue(in_hours(time(),1));

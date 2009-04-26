@@ -77,7 +77,7 @@ if (isset($f_singleupgrades)) {
 </SCRIPT>
 </head>
 <body>
-<?php include("../menu.php"); ?>
+<?php include(BASEPATH."/menu.php"); ?>
 
 <?php
 $totalbuildings = sqlgetone("SELECT COUNT(*) FROM `building` WHERE `user`=".$gUser->id);

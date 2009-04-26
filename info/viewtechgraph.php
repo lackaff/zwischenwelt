@@ -18,7 +18,7 @@ profile_page_start("viewtechgraph.php");
 </head>
 <body>
 <?php
-include("../menu.php");
+include(BASEPATH."/menu.php");
 ?>
 
 <div style="overflow:auto;max-width:100%;border:solid black 1px;">

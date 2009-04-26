@@ -18,7 +18,7 @@ Lock();
 if(isset($f_fmt))
 	SetUserValue($gUser->id,"resformat",$f_fmt);
 
-include("../menu.php");
+include(BASEPATH."/menu.php");
 
 $fmts = array(
 'VERT G4 TAB RG TAB ACT / MAX TAB (PROZ)',

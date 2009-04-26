@@ -8,7 +8,7 @@ require_once("lib.hook.php");
 
 function StartBuild ($con) {
 	if (empty($con)) return false;
-	global $gBuildingType,$gVerbose,$gAllUsers;
+	global $gBuildingType,$gVerbose;
 	
 	// param : construction object
 	// returns true if the building started successfully
@@ -29,7 +29,7 @@ function StartBuild ($con) {
 		// TODO message to user ?
 	} else if (InBuildCross($con->x,$con->y,$con->user,0)) {
 		$buildingtype = $gBuildingType[$con->type];
-		if (CanBuildHere($con->x,$con->y,$con->type,$gAllUsers[$con->user],0,true) && 
+		if (CanBuildHere($con->x,$con->y,$con->type,false,0,true) && 
 			HasReq($buildingtype->req_geb,$buildingtype->req_tech,$con->user)) {
 
 			// headquater is free
@@ -39,7 +39,7 @@ function StartBuild ($con) {
 			{
 				sql("DELETE FROM `construction` WHERE `id` = ".$con->id." LIMIT 1");
 				sql("UPDATE `construction` SET `priority` = `priority` - 1 WHERE `user` = ".$con->user);
-				$building = false;
+				$building = new EmptyObject();
 				$building->x = $con->x;
 				$building->y = $con->y;
 				$building->flags = kBuildingFlag_AutoShoot_Enemy;

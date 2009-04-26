@@ -386,7 +386,7 @@ class cInfoArmy extends cInfoBase {
 				
 		$gArmies = sqlgettable("SELECT * FROM `army` WHERE `user` = ".$gUser->id,"id");
 		$gArmy = $gObject;
-		if (empty($gArmy)) exit(error("nonexistant object"));
+		if (empty($gArmy)) trigger_error("nonexistant object",E_USER_ERROR);
 		$gArmy->units = cUnit::GetUnits($gArmy->id);
 		$gCanControllArmy =	cArmy::CanControllArmy($gArmy,$gUser);
 		$gArmyAction = sqlgettable("SELECT * FROM `armyaction` WHERE `army` = ".$gArmy->id." ORDER BY `id`");

@@ -49,7 +49,7 @@ if (isset($f_typeup_to)) {
 <title>Zwischenwelt - Übersicht</title>
 </head>
 <body>
-<?php include("../menu.php"); ?>
+<?php include(BASEPATH."/menu.php"); ?>
 
 
 	<h4>Truppen</h4>

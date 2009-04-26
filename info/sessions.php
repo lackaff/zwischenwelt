@@ -12,7 +12,7 @@ Lock();
 </head>
 <body>
 <?php 
-include("../menu.php");
+include(BASEPATH."/menu.php");
 
 $s = sqlgettable("SELECT * FROM `session` WHERE `userid`=".intval($gUser->id)." ORDER BY `id` DESC");
 

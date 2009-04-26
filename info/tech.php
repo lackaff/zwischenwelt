@@ -40,7 +40,7 @@ function listTechThatDependOn($id) {
 </head>
 <body>
 <?php
-include("../menu.php");
+include(BASEPATH."/menu.php");
 
 
 ?>

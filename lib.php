@@ -424,10 +424,10 @@ function sql	($query) {
 	if(!$gConnected) {
 		mysql_connect(MYSQL_HOST,MYSQL_USER,MYSQL_PASS)
 		//	or exit("Could not connect to database");
-			or exit("Could not connect to database ".MYSQL_HOST." with ".MYSQL_USER);
+			or trigger_error("Could not connect to database ".MYSQL_HOST." with ".MYSQL_USER, E_USER_ERROR);
 		mysql_select_db(MYSQL_DB)
 		//	or exit("Could not select database");
-			or exit("Could not select database ".MYSQL_DB);
+			or trigger_error("Could not select database ".MYSQL_DB, E_USER_ERROR);
 		mysql_query("SET NAMES 'utf8'");
 		$gConnected = true;
 	}
@@ -449,10 +449,10 @@ function sql	($query) {
 		}	
 		
 		global $gProfilPagePage;
-		$sqlerror = false;
+		$sqlerror = new EmptyObject();
 		$sqlerror->time = time();
 		$sqlerror->self = $_SERVER['PHP_SELF'].(isset($gProfilPagePage)?(" : ".$gProfilPagePage):"");
-		$sqlerror->query = $_SERVER['QUERY_STRING'];
+		$sqlerror->query = isset($_SERVER['QUERY_STRING']) ? ($_SERVER['QUERY_STRING']) : "";
 		$sqlerror->sqlquery = $query;
 		$sqlerror->error = $errormsg;
 		$sqlerror->stacktrace = stacktrace();
@@ -479,20 +479,20 @@ function sqlgetfieldarray($query){
 
 // get a whole sql table as array of objects
 function sqlgettable ($query,$field=false,$valuefield=false) {
-	$r = sql($query);
-	if ($r === true) return true;
-	if ($r === false) return false;
 	$arr = array();
-	if ($valuefield) {
-		if ($field)
-				while ($o = mysql_fetch_object($r)) $arr[$o->{$field}] = $o->{$valuefield};
-		else	while ($o = mysql_fetch_object($r)) $arr[] = $o->{$valuefield};
-	} else {
-		if ($field)
-				while ($o = mysql_fetch_object($r)) $arr[$o->{$field}] = $o;
-		else	while ($o = mysql_fetch_object($r)) $arr[] = $o;
+	$r = sql($query);
+	if($r){
+		if ($valuefield) {
+			if ($field)
+					while ($o = mysql_fetch_object($r, "EmptyObject")) $arr[$o->{$field}] = $o->{$valuefield};
+			else	while ($o = mysql_fetch_object($r, "EmptyObject")) $arr[] = $o->{$valuefield};
+		} else {
+			if ($field)
+					while ($o = mysql_fetch_object($r, "EmptyObject")) $arr[$o->{$field}] = $o;
+			else	while ($o = mysql_fetch_object($r, "EmptyObject")) $arr[] = $o;
+		}
+		mysql_free_result($r);
 	}
-	mysql_free_result($r);
 	return $arr;
 }
 
@@ -502,21 +502,21 @@ function sqlgetgrouptable ($query,$groupby,$field=false,$valuefield=false) {
 	$arr = array();
 	if ($valuefield) {
 		if ($field)
-				while ($o = mysql_fetch_object($r)) {
+				while ($o = mysql_fetch_object($r, "EmptyObject")) {
 					if (!isset($arr[$o->{$groupby}])) $arr[$o->{$groupby}] = array();
 					$arr[$o->{$groupby}][$o->{$field}] = $o->{$valuefield};
 				}
-		else	while ($o = mysql_fetch_object($r))  {
+		else	while ($o = mysql_fetch_object($r, "EmptyObject"))  {
 					if (!isset($arr[$o->{$groupby}])) $arr[$o->{$groupby}] = array();
 					$arr[$o->{$groupby}][] = $o->{$valuefield};
 				}
 	} else {
 		if ($field)
-				while ($o = mysql_fetch_object($r)) {
+				while ($o = mysql_fetch_object($r, "EmptyObject")) {
 					if (!isset($arr[$o->{$groupby}])) $arr[$o->{$groupby}] = array();
 					$arr[$o->{$groupby}][$o->{$field}] = $o;
 				}
-		else	while ($o = mysql_fetch_object($r))  {
+		else	while ($o = mysql_fetch_object($r, "EmptyObject"))  {
 					if (!isset($arr[$o->{$groupby}])) $arr[$o->{$groupby}] = array();
 					$arr[$o->{$groupby}][] = $o;
 				}
@@ -528,7 +528,7 @@ function sqlgetgrouptable ($query,$groupby,$field=false,$valuefield=false) {
 // get a single sql object
 function sqlgetobject ($query) {
 	$r = sql($query);
-	$o = mysql_fetch_object($r);
+	$o = mysql_fetch_object($r, "EmptyObject");
 	mysql_free_result($r);
 	return $o;
 }

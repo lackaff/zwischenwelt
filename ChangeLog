@@ -6,10 +6,10 @@
 	R9 freigegeben, es ist aber nur ein Bugfix Release (zb. calllog)
 
 17.01.07
-	Es gibt wieder neue Monster (das ist aber noch nicht das große Update)
+	Es gibt wieder neue Monster (das ist aber noch nicht das groÃŸe Update)
 
 29.08.06
-	R8 freigegeben, nun steht der große rewrite an
+	R8 freigegeben, nun steht der groÃŸe rewrite an
 
 15.05.06
 	R7 freigegeben
@@ -23,61 +23,61 @@
 	einige Bugfixes, Layout mit Tabs
 	
 02.01.06 
-	Karte total überarbeitet =)
+	Karte total Ã¼berarbeitet =)
 
 11.12.05
 	Einige Bugfixes wurden gemacht.
-	Der Tempel wurde ein wenig geändert.
+	Der Tempel wurde ein wenig geÃ¤ndert.
 	Es gibt nun den Anfang einer Gesinnung.
 	
 05.12.05
 	Identische Log Nachrichten werden nun gestapelt
 
 22.11.05
-	Es ist nun nur Möglich eine neue
+	Es ist nun nur MÃ¶glich eine neue
 	Siedlung im Kern der Welt zu beginnen.
 	Der automatisch vorgeschlagene Startpunkte
-	sollte aber im gültigen Bereich liegen.
+	sollte aber im gÃ¼ltigen Bereich liegen.
 
 20.11.05
-	ein paar neue Bilder bei den Gebäuden
+	ein paar neue Bilder bei den GebÃ¤uden
 
 06.11.05
-	Höllenauge gibt IGM-Bericht
-	IGMs und Berichte können an andere Spieler weitergeleitet werden
-	Portal listet jetzt Mapmarks auf andere Portale schön auf
+	HÃ¶llenauge gibt IGM-Bericht
+	IGMs und Berichte kÃ¶nnen an andere Spieler weitergeleitet werden
+	Portal listet jetzt Mapmarks auf andere Portale schÃ¶n auf
 
 12.10.05
 	Bugfixe
 
 11.10.05
-	beschädigte Gebäude lassen sich nun reparieren
+	beschÃ¤digte GebÃ¤ude lassen sich nun reparieren
 
 22.09.05
-	Neue überarbeitete Minimap
+	Neue Ã¼berarbeitete Minimap
 
 24.08.05
 	Bugfixe
 
 01.08.05 
-	grösseres update eingespielt. EinheitenAustausch verbessert,
-	Megablob, Orkdorf, MapMarks, Zauber(Brandrodung,ArmeeDerToten:verändert),
+	grÃ¶sseres update eingespielt. EinheitenAustausch verbessert,
+	Megablob, Orkdorf, MapMarks, Zauber(Brandrodung,ArmeeDerToten:verÃ¤ndert),
 	neues Armeeverhalten (Patroullie,automatisches Belagern/Einzahlen,...),
-	MapModus:GebäudeHP, diverse Optimierungen und Aufräumarbeiten im Code,
+	MapModus:GebÃ¤udeHP, diverse Optimierungen und AufrÃ¤umarbeiten im Code,
 	Zahlendarstellung an vielen Stellen mit Tausender-Trenner.
 	BigMap ist jetzt navigierbar.
 	
 08.07.05 
-	6 neue Zauber (Schatzsuche,Spinnennetz,Höllenauge,Bann,Steinschlag,Komet)
+	6 neue Zauber (Schatzsuche,Spinnennetz,HÃ¶llenauge,Bann,Steinschlag,Komet)
 
 07.07.05
 	Bug im Flotten-Transfercode behoben, Transfercode verbessert
-	5 neue Zauber (Dürre,Pest,Regen,Portalstein,7-Meilen-Stiefel)
+	5 neue Zauber (DÃ¼rre,Pest,Regen,Portalstein,7-Meilen-Stiefel)
 
 06.07.05
 	einiges am Zaubersystem-code umgebaut,
 	man kriegt jetzt IGM-Berichte bei Erbeben,Strike 
-	und in der Nähe eigener Truppen gesichteter ArmeeDerToten
+	und in der NÃ¤he eigener Truppen gesichteter ArmeeDerToten
 	
 29.06.05
 	Monsterkampfberichte jetzt mit anderem thema, 
@@ -87,37 +87,37 @@
 	Einheitentranfser im moment wegen
 	Bugsuche deaktiviert --- bug gefunden, wieder aktiv
 	Seefahrt
-	Lagerkapazität verdoppelt
+	LagerkapazitÃ¤t verdoppelt
 
 30.0505
 	Ein neuen Layout ist online
 
 29.05.05
-	überall kleine ? verstreut die auf 
+	Ã¼berall kleine ? verstreut die auf 
 	die passenden Seiten im Wiki zeigen.
 
 27.05.05
-	Kämpfe werden nun von der Umgebung 
-	(Landschaft,Gebäude) beeinflußt
+	KÃ¤mpfe werden nun von der Umgebung 
+	(Landschaft,GebÃ¤ude) beeinfluÃŸt
 
 05.05.05 (cooles Datum)
 	Der Serverumzug ist geschafft und wir haben 
-	nun ein Frühlingslayout.
+	nun ein FrÃ¼hlingslayout.
 
 25.04.05
-	Freundschaften können nun bei einem 
+	Freundschaften kÃ¶nnen nun bei einem 
 	Angriff automatisch beendet werden
 	
 06.04.05
 	R2 Released
 
 02.04.05
-	armee einzahlen überschuss wandert ins gildenlager, 
+	armee einzahlen Ãœberschuss wandert ins gildenlager, 
 	speicherverbrauch optimiert
 	type-cache eingebaut (idee von merlin) 
 	
 01.04.05
-	Übersicht verbessert, Gildenlager entnahme überarbeitet, 
+	Ãœbersicht verbessert, Gildenlager entnahme Ã¼berarbeitet, 
 	karte optimiert
 
 25.03.05
@@ -127,7 +127,7 @@
 	Freund Feind System
 
 02.03.05
-	Kampfberichte in berichte über Schlachten umgewandelt
+	Kampfberichte in berichte Ã¼ber Schlachten umgewandelt
 	hoffentlich alle compose IGM links gefunden, 
 	die noch bugy waren
 	fragbonus ist aufgehoben, dafuer werden 

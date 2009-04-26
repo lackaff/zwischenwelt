@@ -26,7 +26,7 @@ if($gGuild){
 </head>
 <body>
 <?php
-include("../menu.php");
+include(BASEPATH."/menu.php");
 
 ?>
 	

@@ -5,6 +5,7 @@ require_once("lib.army.php");
 require_once("lib.map.php");
 require_once("lib.hook.php");
 require_once("lib.fight.php");
+require_once("lib.hellholes.php");
 
 // todo : lib.main.php  GetBuildingCSS 
 
@@ -165,14 +166,12 @@ class cBuilding {
 		if ($userid == 0 && (empty($building) || $building->user != 0)) $userid = $gUser->id;
 		if (empty($building) || $building->user != $userid) return false;
 		
-		require_once("lib.fight.php");
 		cFight::StopAllBuildingFights($building,"Das Gebäude _BUILDINGTYPE_ bei (_x_,_y_) von _BUILDINGOWNERNAME_ wurde zerstört.");
 		
 		sql("DELETE FROM `building` WHERE `id`=".$building->id);
 		sql("DELETE FROM `action` WHERE `building`=".$building->id);
 		$hellholes = sqlgettable("SELECT * FROM `hellhole` WHERE `x`=".$building->x." AND `y`=".$building->y);
 		foreach ($hellholes as $o) {
-			require_once("lib.hellholes.php");
 			$hellhole = GetHellholeInstance($o);
 			$hellhole->Destroy($userid);
 		}
@@ -189,7 +188,7 @@ class cBuilding {
 				($noruin || $gBuildingType[$building->type]->ruinbtype == 0 || rand(0,1) == 0)
 			) {
 				// schutt
-				$schutt = false;
+				$schutt = new EmptyObject();
 				$schutt->type = (rand(0,1) == 0)?kTerrain_Rubble:kTerrain_Flowers;
 				$schutt->x = $building->x;
 				$schutt->y = $building->y;

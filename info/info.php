@@ -427,7 +427,7 @@ if (!isset($f_building) && !isset($f_army) && isset($f_do)) {
 			} // endif isset
 		break;
 		default:
-			if ($gUser->admin || (intval($gUser->flags) & kUserFlags_TerraFormer)) include("infoadmincmd.php");
+			if ($gUser->admin || (intval($gUser->flags) & kUserFlags_TerraFormer)) include(BASEPATH."/info/infoadmincmd.php");
 			else echo "infocommand : unknown non-building command $f_do<br>";
 		break;
 	}
@@ -1069,7 +1069,7 @@ if (isset($f_blind)) { // blind modus im dummy frame, fuer schnellere map-click-
 }
 ?>
 
-<?php if (!isset($f_blind)) include("../menu.php");?>
+<?php if (!isset($f_blind)) include(BASEPATH."/menu.php");?>
 
 <div id="dynamicinfomessage"></div>
 <?php /* info message */ ?>

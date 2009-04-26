@@ -13,7 +13,7 @@ profile_page_start("highscore.php");
 <title>Zwischenwelt - Übersicht</title>
 </head>
 <body>
-<?php include("../menu.php"); ?>
+<?php include(BASEPATH."/menu.php"); ?>
 <iframe src="../stats/gen_pts.php" width=100% height=370 frameborder=0 marginwidth=0 marginheight=0></iframe>
 </body>
 </html>

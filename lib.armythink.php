@@ -36,7 +36,6 @@ function InitArmyThink () {
 	unset($fights_attacker);
 	unset($fights_defender);
 }
-InitArmyThink();
 
 // what can happen for army actions ?
 // * something succeeds, sets idle to zero, doesn't move anymore this round

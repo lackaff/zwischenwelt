@@ -173,6 +173,8 @@ class Job_GrowCorn extends Job {
 
 class Job_YoungForest extends Job {
 	protected function _run(){
+		global $gTerrainType;
+		
 		define("kStumpToYoung",1.0/(60*24));
 		define("kYoungToForest",1.0/(60*24));
 		// array(from,to,probability)

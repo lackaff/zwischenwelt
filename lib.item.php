@@ -80,7 +80,7 @@ class cItem {
 		if ($amount < 1) return;
 		if (itemspawn_debugout) echo "SpawnItem($x,$y,$typeid,$amount=1.0,$quest=0,$param=0)<br>";
 		global $gItemType;
-		$item = false;
+		$item = new EmptyObject();
 		$item->army = 0;
 		$item->building = 0;
 		$item->x = intval($x);
@@ -161,7 +161,7 @@ class cItem {
 		if (mysql_affected_rows() <= 0) echo "nicht mehr genug vom item da<br>";
 		if (mysql_affected_rows() <= 0) return false;
 		
-		$newitem = false;
+		$newitem = new EmptyObject();
 		$newitem->type = $item->type;
 		$newitem->amount = $takeamount;
 		$newitem->param = $item->param;

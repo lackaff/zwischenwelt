@@ -64,7 +64,7 @@ if (isset($f_repair_unit_owner)) {
 <body>
 <?php 
 
-include("../menu.php");
+include(BASEPATH."/menu.php");
 
 $units = cUnit::GetUnits($f_containerid,$f_containertype);
 $building = ($f_containertype==kUnitContainer_Building)?sqlgetobject("SELECT * FROM `building` WHERE `id` = ".intval($f_containerid)):false;

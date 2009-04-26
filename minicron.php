@@ -36,6 +36,7 @@ if (1) {
 //sql("DELETE FROM `unit` WHERE `amount` < 1.0"); 
 sql("UPDATE `army` SET `idle`=`idle`+$dtime"); // call before including lib.armythink.php
 require_once("lib.armythink.php"); // warning ! generates big globals, called here, so idletime add is in $gAllArmys
+InitArmyThink();
 
 if (kProfileArmyLoop) LoopProfiler_flush();
 

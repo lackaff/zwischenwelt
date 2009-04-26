@@ -18,7 +18,7 @@ profile_page_start("kosten");
 </head>
 <body>
 <?php
-include("../menu.php");
+include(BASEPATH."/menu.php");
 ?>
 
 <?php 

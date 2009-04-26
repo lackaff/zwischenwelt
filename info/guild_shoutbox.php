@@ -33,7 +33,7 @@ $gGuild = sqlgetobject("SELECT g.*,u.`name` as `foundername` FROM `guild` g,`use
 
 </head>
 <body>
-<?php include("../menu.php"); 
+<?php include(BASEPATH."/menu.php"); 
 
 if(!empty($gGuild)){ ?>
 

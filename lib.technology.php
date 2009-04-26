@@ -27,11 +27,11 @@ function GetMaxBuildingLevel ($typeid,$userid=0) {
 }
 
 class cTechnology {
-	function GetUpgradeDuration ($typeid,$level) {
+	static function GetUpgradeDuration ($typeid,$level) {
 		global $gTechnologyType;
 		return $gTechnologyType[$typeid]->basetime * cTechnology::GetUpgradeMod($typeid,$level);
 	}
-	function GetUpgradeMod ($typeid,$level) {
+	static function GetUpgradeMod ($typeid,$level) {
 		global $gTechnologyType;
 		return intval($level)*$gTechnologyType[$typeid]->increment + 1.0;
 	}
@@ -60,7 +60,7 @@ function ParseReq ($req) {
 			//print_r($r);
 			//echo "[element=$element level=$level]";
 		} else if (eregi("([0-9]+)([<>:])(-?[0-9]+)(\\+([0-9.]+))?",$element,$r)) {
-			$newo = false;
+			$newo = new EmptyObject();
 			$newo->type = intval($r[1]);
 			$newo->level = abs(intval($r[3])); // WARNING ! SIGN LOST FOR MAX = 0 !!!
 			$newo->ismax = ($r[2]=="<" || intval($r[3]) < 0)?1:0;

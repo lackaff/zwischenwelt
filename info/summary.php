@@ -18,7 +18,7 @@ profile_page_start("summary.php");
 <title>Zwischenwelt - Übersicht</title>
 </head>
 <body>
-<?php include("../menu.php"); ?>
+<?php include(BASEPATH."/menu.php"); ?>
 
 
 <?php

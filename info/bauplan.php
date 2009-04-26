@@ -55,7 +55,7 @@ $types = array_unique($types);
 </head>
 <body>
 <?php
-include("../menu.php");
+include(BASEPATH."/menu.php");
 ?>
 
 

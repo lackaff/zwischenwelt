@@ -74,7 +74,7 @@ if($gUser->guild > 0)
 </head>
 <body style="font-family:serif">
 
-<?php include("../menu.php"); ?>
+<?php include(BASEPATH."/menu.php"); ?>
 <?=renderGuildTabbar(2)?>
 <?php
 

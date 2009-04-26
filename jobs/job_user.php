@@ -2,6 +2,8 @@
 
 class Job_ResCalc extends Job {
 	protected function _run(){
+		global $gRes;
+		
 		if(!ExistGlobal("last_res_calc")){
 			SetGlobal("last_res_calc",T);
 		}
@@ -19,11 +21,12 @@ class Job_ResCalc extends Job {
 			$zeroset_btypes = array(GetGlobal("building_hq"),GetGlobal("building_house"),GetGlobal("building_store"),GetGlobal("building_runes"));
 		
 			TablesLock();
-			$gAllUsers = sqlgettable("SELECT * FROM `user` ORDER BY `id`","id");
-			foreach($gAllUsers as $u) {
+			$users = sqlgettable("SELECT * FROM `user` ORDER BY `id`","id");
+			foreach($users as $u) {
 				$b = sqlgettable("SELECT count( `id` ) AS `count` , `type` AS `type` , sum( `level` ) AS `level` , sum(`supportslots`) as `supportslots` FROM `building` WHERE `construction`=0 AND `user`=".$u->id." GROUP BY `type`","type");
 					
 				foreach ($zeroset_btypes as $key) if (!isset($b[$key])) {
+					$b[$key] = new EmptyObject();
 					$b[$key]->count = 0;
 					$b[$key]->level = 0;
 					$b[$key]->supportslots = 0;
@@ -61,7 +64,7 @@ class Job_ResCalc extends Job {
 					
 					$rstore = 	2500			  * ($b[GetGlobal("building_runes")]->count + $b[GetGlobal("building_runes")]->level);
 					
-					// WARNING : all changes to user ressources within this lock that are not operating on $gPayCache_Users or $gAllUsers, are overwritten here
+					// WARNING : all changes to user ressources within this lock that are not operating on $gPayCache_Users or $users, are overwritten here
 					switch($u->race){
 						case kRace_Gnome:
 							$usersets .= ",	`max_lumber`=$store,
@@ -79,7 +82,7 @@ class Job_ResCalc extends Job {
 						break;
 					}
 					$prodfaktoren = GetProductionFaktoren($u->id);
-					$gAllUsers[$u->id]->prodfaktoren = $prodfaktoren; // for later use
+					$users[$u->id]->prodfaktoren = $prodfaktoren; // for later use
 					$slots = GetProductionSlots($u->id,$b);
 					foreach($gRes as $resname=>$resfield) {
 						$btype = GetGlobal("building_".$resfield);
@@ -99,15 +102,15 @@ class Job_ResCalc extends Job {
 				
 				//check if there is enough food for the population
 				$foodneed = calcFoodNeed($u->pop,$dtime);
-				$food = $gAllUsers[$u->id]->food;
+				$food = $users[$u->id]->food;
 				$food -= $foodneed;
 				if($food <= 0){
 					//people die
-					$gAllUsers[$u->id]->pop = max(0,$gAllUsers[$u->id]->pop-$foodneed);
+					$users[$u->id]->pop = max(0,$users[$u->id]->pop-$foodneed);
 					echo "$foodneed units food in $dtime needed by ".$u->name."\n<br>";
 				}
-				$gAllUsers[$u->id]->food = max(0,$food);
-				sql("UPDATE `user` SET `food`=".($gAllUsers[$u->id]->food).",`pop`=".($gAllUsers[$u->id]->pop)." WHERE `id`=".$u->id);
+				$users[$u->id]->food = max(0,$food);
+				sql("UPDATE `user` SET `food`=".($users[$u->id]->food).",`pop`=".($users[$u->id]->pop)." WHERE `id`=".$u->id);
 				
 				unset($b);
 			}			
@@ -119,8 +122,11 @@ class Job_ResCalc extends Job {
 		$this->requeue(in_mins(time(),1));
 	}
 }
+
 class Job_Mana extends Job {
 	protected function _run(){
+		global $gBuildingType;
+		
 		if(!ExistGlobal("last_mana_calc")){
 			SetGlobal("last_mana_calc",T);
 		}
@@ -133,7 +139,7 @@ class Job_Mana extends Job {
 			
 			TablesLock();
 			
-			$basemana = $gBuildingType[$gGlobal['building_runes']]->basemana;
+			$basemana = $gBuildingType[GetGlobal('building_runes')]->basemana;
 			// TODO : unhardcode
 			sql("UPDATE `building` SET `mana`=LEAST((`level`+1)*$basemana,`mana`+($basemana*(`level`+1)/(10+`level`/20)*".($dtime/3600).")) WHERE `type`=".GetGlobal('building_runes'));
 
@@ -141,6 +147,87 @@ class Job_Mana extends Job {
 			
 			SetGlobal("last_mana_calc",T);
 		}
+		
+		$this->requeue(in_mins(time(),1));
+	}
+}
+
+class Job_Tech extends Job {
+	protected function _run(){
+		global $gTechnologyType, $gBuildingType;
+
+		$gTechnologyLevelsOfAllUsers = sqlgetgrouptable("SELECT `user`,`type`,`level` FROM `technology`","user","type","level");
+		
+		//$gTechnologyTypes = sqlgettable("SELECT * FROM `technologytype`","id");
+		sql("LOCK TABLES `user` WRITE,`technology` WRITE,`building` READ,`phperror` WRITE,
+								`sqlerror` WRITE, `newlog` WRITE");
+		$technologies = sqlgettable("SELECT * FROM `technology` WHERE `upgrades` > 0 ORDER BY `level`");
+		$time = time();
+		foreach ($technologies as $o) {
+			if ($o->upgradetime > 0 && ($o->upgradetime < $time || kZWTestMode) ){
+				// upgrade finished
+		
+				//only complete the tech if requirenments meet
+				//echo "<br>\nHasReq(".($gTechnologyType[$o->type]->req_geb).",".($gTechnologyType[$o->type]->req_tech).",".($o->user).",".($o->level+1).")<br>\n";
+				if(HasReq($gTechnologyType[$o->type]->req_geb,$gTechnologyType[$o->type]->req_tech,$o->user,$o->level+1)){
+					sql("UPDATE `technology` SET
+						`level` = `level` + 1 ,
+						`upgrades` = `upgrades` - 1 ,
+						`upgradetime` = 0 WHERE `id` = ".$o->id." LIMIT 1");
+						
+					$gTechnologyLevelsOfAllUsers[$o->user][$o->type] = $o->level + 1;
+					
+					$text = $gTechnologyType[$o->type]->name." von user ".$o->user." ist nun Level ".($o->level+1);
+					echo $text."<br>\n";
+					
+					// TODO : neue log meldung machen !
+					LogMe($o->user,NEWLOG_TOPIC_BUILD,NEWLOG_UPGRADE_FINISHED,0,0,$o->level+1,$gBuildingType[$o->type]->name,"",false);
+				} else {
+					sql("UPDATE `technology` SET
+						`upgrades` = 0 ,
+						`upgradetime` = 0 WHERE `id` = ".$o->id." LIMIT 1");
+						
+					$text = $gTechnologyType[$o->type]->name." von user ".$o->user." wurde abgebrochen, da die anforderungen nicht erfüllt wurden";
+					echo $text."<br>\n";
+				}
+			} else if ($o->upgradetime == 0) {
+				// test if upgrade can be started
+				
+				// only one upgrade per building at once
+				$other = sqlgetone("SELECT 1 FROM `technology` WHERE 
+					`upgradetime` > 0 AND `upgradebuilding` = ".$o->upgradebuilding." AND `id` <> ".$o->id);
+				
+				if (!$other) {
+					$techtype = $gTechnologyType[$o->type];
+					$level = GetTechnologyLevel($o->type,$o->user);
+					// only upgrade if the technological requirements are met
+					if (!HasReq($techtype->req_geb,$techtype->req_tech,$o->user,$level+1)) {
+						sql("UPDATE `technology` SET `upgrades` = 0 WHERE `id` = ".$o->id." LIMIT 1");
+						
+						$text = $techtype->name." von user ".$o->user." wurde nicht gestartet, da die anforderungen nicht erfüllt wurden";
+						echo $text."<br>\n";
+						
+						continue;
+					}
+				
+					$upmod = cTechnology::GetUpgradeMod($o->type,$o->level);
+					if (UserPay($o->user,
+						$upmod * $techtype->basecost_lumber,
+						$upmod * $techtype->basecost_stone,
+						$upmod * $techtype->basecost_food,
+						$upmod * $techtype->basecost_metal,
+						$upmod * $techtype->basecost_runes)) {
+						echo $techtype->name." von user ".$o->user." upgrade gestartet<br>\n";
+						$finishtime = $time + cTechnology::GetUpgradeDuration($o->type,$o->level);
+						sql("UPDATE `technology` SET `upgradetime` = ".$finishtime." WHERE `id` = ".$o->id." LIMIT 1");
+						
+						$text = $gTechnologyType[$o->type]->name." von user ".$o->user." wurde gestartet";
+						echo $text."<br>\n";
+					}
+				}
+			}
+		}
+		sql("UNLOCK TABLES");
 		
 		$this->requeue(in_mins(time(),1));
 	}
@@ -198,21 +285,21 @@ class Job_UserProdPop extends Job {
 
 class Job_SupportSlots extends Job {
 	protected function _run(){
-		$supportslotbuildings = sqlgetgrouptable("SELECT * FROM `building` WHERE (
+		$q = sql("SELECT `id` FROM `building` WHERE (
 			`type`=".GetGlobal("building_lumber")." OR 
 			`type`=".GetGlobal("building_stone")." OR 
 			`type`=".GetGlobal("building_food")." OR 
 			`type`=".GetGlobal("building_runes")." OR 
-			`type`=".GetGlobal("building_metal").")","user");
+			`type`=".GetGlobal("building_metal").")");
 		
-		$gAllUsers = sqlgettable("SELECT * FROM `user` ORDER BY `id`","id");
-		foreach($gAllUsers as $u) {
-			if(!isset($supportslotbuildings[$u->id]))continue;
-			$t = $supportslotbuildings[$u->id];
-			foreach($t as $x) getSlotAddonFromSupportFields($x);
+		if($q){
+			while($row = mysql_fetch_row($q)){
+				getSlotAddonFromSupportFields($row[0]);
+			}
+			mysql_free_result($q);
 		}
 
-		$this->requeue(in_hours(time(),6));
+		$this->requeue(in_hours(time(),1));
 	}	
 }
 
@@ -258,8 +345,8 @@ class Job_Runes extends Job {
 			echo "DT: $dtime\n";
 			
 			$gTechnologyLevelsOfAllUsers = sqlgetgrouptable("SELECT `user`,`type`,`level` FROM `technology`","user","type","level");
-			$gAllUsers = sqlgettable("SELECT * FROM `user` ORDER BY `id`","id");
-			foreach($gAllUsers as $u){
+			$users = sqlgettable("SELECT * FROM `user` ORDER BY `id`","id");
+			foreach($users as $u){
 				switch($u->race){
 					default:
 						$rpfs = (0.8 + 

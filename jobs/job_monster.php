@@ -1,5 +1,7 @@
 <?php
 
+require_once(BASEPATH."/lib.hellholes.php");
+
 class Job_SeamonsterSpawn extends Job {
 	protected function _run(){
 		$players = sqlgetone("SELECT COUNT(*) FROM `user` LIMIT 1");
@@ -36,12 +38,25 @@ class Job_SeamonsterSpawn extends Job {
 
 class Job_Hellholes extends Job {
 	protected function _run(){
-		$hellholes = sqlgettable("SELECT * FROM `hellhole`");
-		foreach($hellholes as $o) {
-			$hellhole = GetHellholeInstance($o);
-			$hellhole->Cron($dtime);
+		if(!ExistGlobal("last_hellhole_calc")){
+			SetGlobal("last_hellhole_calc",T);
 		}
-		unset($hellholes);
+		
+		$lastrescalc = GetGlobal("last_hellhole_calc");
+		
+		if(T - $lastrescalc > 0){
+			$dtime = (T - $lastrescalc);
+			echo "DT: $dtime\n";
+		
+			$hellholes = sqlgettable("SELECT * FROM `hellhole`");
+			foreach($hellholes as $o) {
+				$hellhole = GetHellholeInstance($o);
+				$hellhole->Cron($dtime);
+			}
+			unset($hellholes);
+			
+			SetGlobal("last_hellhole_calc",T);
+		}
 		
 		$this->requeue(in_mins(time(),5));
 	}

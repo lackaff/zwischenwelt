@@ -94,7 +94,7 @@ if(isset($f_do)){
 </head>
 <body>
 <?php
-include("../menu.php");
+include(BASEPATH."/menu.php");
 ?>
 
 <!-- Punkte -->

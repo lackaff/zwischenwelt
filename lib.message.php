@@ -29,6 +29,7 @@ function sendMessage($to,$from,$subject,$text,$type=0,$tosent=TRUE)
 		} else $subject = " - KEIN BETREFF - ";
 	}
 	if(!empty($to) && !empty($subject) && !empty($text)){
+		$msg = new EmptyObject();
 		if(is_numeric($to))$msg->to=intval($to);
 		else $msg->to=intval(sqlgetone("SELECT `id` FROM `user` WHERE `name`='".addslashes($to)."'"));
 		if($msg->to==0)return FALSE;
@@ -52,7 +53,10 @@ function sendMessage($to,$from,$subject,$text,$type=0,$tosent=TRUE)
 		if($msg->to > 0){
 			$u = sqlgetobject("SELECT * FROM `user` WHERE `id`=".intval($msg->to)." LIMIT 1");
 			$f = sqlgetobject("SELECT * FROM `user` WHERE `id`=".intval($msg->from)." LIMIT 1");
-			if(empty($f))$f->name = "Server";
+			if(empty($f)){
+				$f = new EmptyObject();
+				$f->name = "Server";
+			}
 			if(!empty($u) && (($u->flags & kUserFlags_SendIgmPerMail)>0) && !empty($u->mail)){
 				//this user wants igms per mail and has set a mail addy
 				mail($u->mail, "[ZW IGM] $msg->subject von $f->name", "$f->name hat Ihnen folgende Nachricht geschickt\n\n   ~~~\n\n".strip_tags($msg->text),"From: ".ZW_MAIL_SENDER."\r\nReply-To: ".ZW_MAIL_SENDER."\r\nX-Mailer: PHP/" . phpversion()); 

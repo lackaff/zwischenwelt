@@ -15,7 +15,9 @@ echo -n "running cron.php at `date` ... "
 LOAD=`cat /proc/loadavg | awk -F. '{print $1}'`
 if [ $LOADLIMIT -gt $LOAD ]
 then 
-	(/usr/bin/php cron.php > lastcron.html) && echo "done"
+	#(/usr/bin/php cron.php > lastcron.html) 
+	/usr/bin/php cron.php
+	echo "done"
 	sleep 20
 else
 	echo "skipping due to high load: $LOAD limit is $LOADLIMIT"

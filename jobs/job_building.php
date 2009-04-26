@@ -1,34 +1,47 @@
 <?php
 
-include_once("../cronlib.php");
+require_once(BASEPATH."/cronlib.php");
 
 class Job_FinishConstructions extends Job {
 	protected function _run(){
-		$cons = sqlgettable("SELECT * FROM `building` WHERE `construction` > 0","user");
+		global $gBuildingType;
 		
-		$gAllUsers = sqlgettable("SELECT * FROM `user` ORDER BY `id`","id");
-		foreach($gAllUsers as $x) {
-			$o = isset($cons[$x->id])?$cons[$x->id]:false;
-			if($o) { 
-				if($time > $o->construction || kZWTestMode) {
-					if ($gVerbose) echo "fertiggestellt : ".$gBuildingType[$o->type]->name."(".$o->x.",".$o->y.")<br>";
-					
-					$now = microtime_float();
-					CompleteBuild($o,($x->flags & kUserFlags_AutomaticUpgradeBuildingTo)>0);
-					echo "Profile CompleteBuild : ".sprintf("%0.3f",microtime_float()-$now)."<br>\n";
-				}
-			} else {
+		// finish building construction
+		$time = time();
+		$cons = sqlgettable("SELECT * FROM `building` WHERE `construction` <= ".intval($time),"user");
+		
+		foreach($cons as $o) {
+			$x = sqlgetobject("SELECT * FROM `user` WHERE `id`=".intval($o->user));
+			if($time >= $o->construction) {
+				echo "fertiggestellt : ".$gBuildingType[$o->type]->name."(".$o->x.",".$o->y.")<br>";
+				
+				$now = microtime_float();
+				echo "\n-----------------------\n";
+				var_dump($o);
+				var_dump($x);
+				echo "-----------------------\n";
+				CompleteBuild($o,($x->flags & kUserFlags_AutomaticUpgradeBuildingTo)>0);
+				echo "Profile CompleteBuild : ".sprintf("%0.3f",microtime_float()-$now)."<br>\n";
+			}
+		}
+		unset($cons);
+		
+		// start new constructions
+		$users = sqlgettable("SELECT * FROM `user` ORDER BY `id`","id");
+		foreach($users as $x) {
+			$cons = sqlgetone("SELECT COUNT(*) FROM `building` WHERE `construction`>0 AND `user`=".intval($x->id));
+			if($cons == 0){
 				$mycon = sqlgetobject("SELECT * FROM `construction` WHERE `user`=".$x->id." ORDER BY `priority` LIMIT 1");
 				if ($mycon) {
 					$now = microtime_float();
 					if (startBuild($mycon))
-						if ($gVerbose) echo "gestartet : ".$gBuildingType[$mycon->type]->name."(".$mycon->x.",".$mycon->y.")<br>";
+						echo "gestartet : ".$gBuildingType[$mycon->type]->name."(".$mycon->x.",".$mycon->y.")<br>";
 					echo "Profile startBuild : ".sprintf("%0.3f",microtime_float()-$now)."<br>\n";
 				}
 			}
 		}
 		unset($cons);
-
+		
 		$this->requeue(in_mins(time(),1));
 	}	
 }
@@ -100,6 +113,8 @@ class Job_UpgradeBuildings extends Job {
 
 class Job_ThinkBuildings extends Job {
 	protected function _run(){
+		global $gFlaggedBuildingTypes;
+		
 		$typelist = array_merge($gFlaggedBuildingTypes[kBuildingTypeFlag_CanShootArmy],$gFlaggedBuildingTypes[kBuildingTypeFlag_CanShootBuilding]);
 		if (count($typelist) > 0) {
 			$buildings = sqlgettable("SELECT * FROM `building` WHERE `type` IN (".implode(",",$typelist).")");
@@ -114,38 +129,51 @@ class Job_ThinkBuildings extends Job {
 
 class Job_RepairBuildings extends Job {
 	protected function _run(){
-		TablesLock();
-		$t = sqlgettable("SELECT `user`.`id` as `id`, COUNT( * ) as `broken`,`user`.`pop` as `pop`,`user`.`worker_repair` as `worker_repair`
-		FROM `user`, `building`, `buildingtype`
-		WHERE 
-			`building`.`construction`=0 AND `buildingtype`.`id` = `building`.`type` AND `building`.`user` = `user`.`id` AND `user`.`worker_repair`>0 AND 
-			`building`.`hp`<CEIL(`buildingtype`.`maxhp`+`buildingtype`.`maxhp`/100*1.5*`building`.`level`)
-		GROUP BY `user`.`id`");
-		foreach($t as $x){
-			//one worker should be able to repair one hp in one day and consume 100 wood and 100 stone for this
-			if($x->broken == 0)continue;
-			$worker = $x->pop * $x->worker_repair/100;
-			$broken = $x->broken;
-			$all = $worker*$dtime/(24*60*60);
-			$plus = $all / $broken;
-			$wood = $all * 100;
-			$stone = $all * 100;
-			
-			echo "$worker worker repair $all, $plus hp in $broken buildings of user $x->id consuming $wood wood and $stone stone\n<br>";
-			if(!UserPay($x->id,$wood,$stone,0,0,0))continue;
-			sql("UPDATE `building`, `buildingtype` SET `building`.`hp` = LEAST(
-				`building`.`hp`+($plus),
-				CEIL(`buildingtype`.`maxhp`+`buildingtype`.`maxhp`/100*1.5*`building`.`level`)
-				) WHERE 
-				`building`.`construction`=0 AND `building`.`user`=".intval($x->id)." AND `building`.`type`=`buildingtype`.`id` AND
-				`building`.`hp`<CEIL(`buildingtype`.`maxhp`+`buildingtype`.`maxhp`/100*1.5*`building`.`level`)");
-			echo mysql_affected_rows()." buildings updated\n<br>";
+			if(!ExistGlobal("last_repair")){
+			SetGlobal("last_repair",T);
 		}
-		sql("UPDATE `building`, `buildingtype` SET `building`.`hp` = CEIL(`buildingtype`.`maxhp`+`buildingtype`.`maxhp`/100*1.5*`building`.`level`) WHERE 
-			`building`.`construction`=0 AND `building`.`type`=`buildingtype`.`id` AND
-			`building`.`hp`>CEIL(`buildingtype`.`maxhp`+`buildingtype`.`maxhp`/100*1.5*`building`.`level`)");
-		echo mysql_affected_rows()." buildings had to much hp and were reduced to maxhp\n<br>";
-		TablesUnlock();
+		
+		$last = GetGlobal("last_repair");
+		
+		if(T - $last > 0){
+			$dtime = (T - $last);
+			echo "DT: $dtime\n";
+				
+			TablesLock();
+			$t = sqlgettable("SELECT `user`.`id` as `id`, COUNT( * ) as `broken`,`user`.`pop` as `pop`,`user`.`worker_repair` as `worker_repair`
+			FROM `user`, `building`, `buildingtype`
+			WHERE 
+				`building`.`construction`=0 AND `buildingtype`.`id` = `building`.`type` AND `building`.`user` = `user`.`id` AND `user`.`worker_repair`>0 AND 
+				`building`.`hp`<CEIL(`buildingtype`.`maxhp`+`buildingtype`.`maxhp`/100*1.5*`building`.`level`)
+			GROUP BY `user`.`id`");
+			foreach($t as $x){
+				//one worker should be able to repair one hp in one day and consume 100 wood and 100 stone for this
+				if($x->broken == 0)continue;
+				$worker = $x->pop * $x->worker_repair/100;
+				$broken = $x->broken;
+				$all = $worker*$dtime/(24*60*60);
+				$plus = $all / $broken;
+				$wood = $all * 100;
+				$stone = $all * 100;
+				
+				echo "$worker worker repair $all, $plus hp in $broken buildings of user $x->id consuming $wood wood and $stone stone\n<br>";
+				if(!UserPay($x->id,$wood,$stone,0,0,0))continue;
+				sql("UPDATE `building`, `buildingtype` SET `building`.`hp` = LEAST(
+					`building`.`hp`+($plus),
+					CEIL(`buildingtype`.`maxhp`+`buildingtype`.`maxhp`/100*1.5*`building`.`level`)
+					) WHERE 
+					`building`.`construction`=0 AND `building`.`user`=".intval($x->id)." AND `building`.`type`=`buildingtype`.`id` AND
+					`building`.`hp`<CEIL(`buildingtype`.`maxhp`+`buildingtype`.`maxhp`/100*1.5*`building`.`level`)");
+				echo mysql_affected_rows()." buildings updated\n<br>";
+			}
+			sql("UPDATE `building`, `buildingtype` SET `building`.`hp` = CEIL(`buildingtype`.`maxhp`+`buildingtype`.`maxhp`/100*1.5*`building`.`level`) WHERE 
+				`building`.`construction`=0 AND `building`.`type`=`buildingtype`.`id` AND
+				`building`.`hp`>CEIL(`buildingtype`.`maxhp`+`buildingtype`.`maxhp`/100*1.5*`building`.`level`)");
+			echo mysql_affected_rows()." buildings had to much hp and were reduced to maxhp\n<br>";
+			TablesUnlock();
+				
+			SetGlobal("last_repair",T);
+		}
 
 		$this->requeue(in_mins(time(),1));
 	}	

@@ -84,7 +84,17 @@ function GetUpgradeLink ($vfrom) {
 			ALTER TABLE `joblog` ADD `dt` INT UNSIGNED NOT NULL 
 		");
 		
+		sql("
+			ALTER TABLE `joblog` ADD `error` VARCHAR( 255 ) NULL 
+		");
 		
+		sql("
+			ALTER TABLE `joblog` ADD `output` TEXT NOT NULL 
+		");
+		
+		sql("
+			ALTER TABLE `joblog` CHANGE `output` `output` TEXT CHARACTER SET utf8 COLLATE utf8_general_ci NULL 
+		");
 		
 		UpgradeDBVersion(2);
 		SetDoRegenTypeCache();

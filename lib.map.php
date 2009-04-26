@@ -280,7 +280,7 @@ function getMapAtPosition($x,$y,$dx,$dy,$onlyterrain=false){
 
 class cMap {
 		//checks if there is no building at the position and the terrain is the default (id=1) terrain (mostly grass)
-		function StaticIsFieldEmpty($x,$y){
+		static function StaticIsFieldEmpty($x,$y){
 				$x = (int)$x;$y = (int)$y;
 				$b = sqlgetone("SELECT COUNT(*) FROM `building` WHERE `x`=$x AND `y`=$y");
 				$t = cMap::StaticGetTerrainAtPos($x,$y);
@@ -290,7 +290,7 @@ class cMap {
 				return $e;
 		}
 	
-	function StaticGetTerrainAtPos ($x,$y) {
+	static function StaticGetTerrainAtPos ($x,$y) {
 		$x = intval($x); $y = intval($y);
 		$type = sqlgetone("SELECT `type` FROM `terrain` WHERE `x` = ".$x." AND `y` = ".$y." LIMIT 1");
 		if ($type) return $type;

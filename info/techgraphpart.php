@@ -16,7 +16,7 @@ require_once("../lib.building.php");
 </head>
 <body>
 <?php
-include("../menu.php");
+include(BASEPATH."/menu.php");
 
 function matchCenter($center,$tleft,$left,$tright,$right){
 	return ($center == "$tleft$left") || ($center == "$tright$right");

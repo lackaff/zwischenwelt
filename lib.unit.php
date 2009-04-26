@@ -331,7 +331,7 @@ class cUnit {
 		if ($text == "") return $units;
 		$arr = explode("#",$text);
 		foreach ($arr as $block) {
-			$o = false;
+			$o = new EmptyObject();
 			list($o->type,$o->amount,$o->spell,$o->user) = explode(",",$block);
 			$units[] = $o;
 		}

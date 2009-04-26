@@ -18,7 +18,7 @@ profile_page_start("waren");
 </head>
 <body>
 <?php
-include("../menu.php");
+include(BASEPATH."/menu.php");
 ?>
 
 <?php if (isset($f_t)) {?>

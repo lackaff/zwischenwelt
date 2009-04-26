@@ -64,7 +64,7 @@ class cText {
 				$topic.="#".$gBuildingType[$typeid]->name;
 			break;
 		}
-		if(!$forceshow && intval($gUser->flags) & kUserFlags_DontShowWikiHelp) return "";
+		if(!$forceshow && $gUser && intval($gUser->flags) & kUserFlags_DontShowWikiHelp) return "";
 		else return " <a href='".kURL_Wiki.$topic."' target='_blank'><img src='".kHelpIcon."' border=0></a> ";
 	}
 	
@@ -128,7 +128,7 @@ class cText {
 					<?php $infourl = Query("?sid=?&x=?&y=?&infounittype=".$o->type);?>
 					<td><a href="<?=$infourl?>"><img style="background-color:<?=$bgcolor?>" title="<?=strip_tags($type->descr)?>" alt="<?=strip_tags($type->descr)?>"  border="1" src="<?=g($type->gfx)?>"></a></td>
 					<td nowrap>
-						<?php if($gUser->admin){ ?>
+						<?php if($gUser && $gUser->admin){ ?>
 							<a href="<?=query("adminunittype.php?id=".$o->type."&sid=?")?>"><img alt=Admin title=Admin src="<?=g("icon/admin.png")?>" border=0></a>
 						<?php } ?>
 						<?=cText::Wiki("unit",$o->type)?><a href="<?=$infourl?>"><?=$type->name?></a>

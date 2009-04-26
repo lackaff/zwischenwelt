@@ -17,7 +17,7 @@ profile_page_start("guild_log.php");
 
 </head>
 <body>
-<?php include("../menu.php"); ?>
+<?php include(BASEPATH."/menu.php"); ?>
 <?=renderGuildTabbar(3)?>
 
 <?php

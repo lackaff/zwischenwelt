@@ -100,7 +100,7 @@ if ($gUser->admin) {
 </head>
 <body>
 <?php
-include("../menu.php");
+include(BASEPATH."/menu.php");
 ?>
 
 

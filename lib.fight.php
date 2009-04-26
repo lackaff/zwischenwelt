@@ -585,7 +585,7 @@ class cFight {
 			
 		// starting siege
 		if ($debug) echo "StartSiege : starting siege<br>";
-		$t = false;
+		$t = new EmptyObject();
 		$t->start = time();
 		$t->army = $army->id;
 		$t->building = $building->id;
