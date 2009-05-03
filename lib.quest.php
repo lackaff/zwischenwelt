@@ -150,7 +150,7 @@ function Quest_Cleanup ($quest) { // called from both Quest_Finish and Quest_Tim
 
 
 function QuestTrigger_CronStep() { // called after army_move and hellhole monstermove, so the army cache is usable
-	global $time;
+	$time = time();
 	echo "QuestTrigger_CronStep $time<br>";
 	
 	// end quests via timeout

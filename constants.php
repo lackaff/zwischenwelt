@@ -7,8 +7,8 @@ define("kURL_Wiki","http://zwischenwelt.milchkind.net/zwwiki/index.php/");
 define("kDefaultResFormat","HOR G2 RG BR AK / MK TAB");
 
 define("kHellholeType_AntNest"		,3);
-define("kHellHoleParam_Ant_MinRunsTillSpread",10);
-define("kHellHoleParam_Ant_KingSizeMult",4); // modifyes the army size for the kings=queens, for balancing
+define("kHellHoleParam_Ant_MinRunsTillSpread",20);
+define("kHellHoleParam_Ant_KingSizeMult",8); // modifyes the army size for the kings=queens, for balancing
 
 define("kMapNaviTool_Look"			,0);
 define("kMapNaviTool_Plan"			,1);
