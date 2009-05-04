@@ -960,7 +960,7 @@ function LoopProfiler_flush ($echo=false) {
 			}
 		}
 		$gLoopProfiler = array();
-		$gLastLoopProfilerName = false;
+		$gLastLoopProfilerName = new EmptyObject();
 		$gLoopProfiler_LastQuerries = $gSqlQueries;
 		$gLoopProfiler_LastTime = $now;
 		$gLoopProfiler_LastFlushTime = $now;
@@ -974,7 +974,7 @@ function LoopProfiler_endlast ($now) {
 		if ($gLastLoopProfilerName) {
 			if (!isset($gLoopProfiler[$gLastLoopProfilerName])) {
 				// create new entry
-				$gLoopProfiler[$gLastLoopProfilerName] = false;
+				$gLoopProfiler[$gLastLoopProfilerName] = new EmptyObject();
 				$o =& $gLoopProfiler[$gLastLoopProfilerName];
 				$o->totaltime = 0; 
 				$o->maxtime = 0; 
@@ -1455,7 +1455,7 @@ function drawRessources($user,$fmt,$showrealcontent=true)
  $reslist = array(); 
  foreach($gRes as $n=>$f) 
  { 
-   $o = false; 
+   $o = new EmptyObject();
    $o->cur = $user->$f; 
    $o->max = $user->{"max_".$f}; 
    $o->name = $n; 
@@ -1465,7 +1465,7 @@ function drawRessources($user,$fmt,$showrealcontent=true)
  } 
  if (1) 
  { 
-   $o = false; 
+   $o = new EmptyObject();
    $o->cur = $user->pop; 
    $o->max = $user->maxpop; 
    $o->name = "Bev&ouml;lkerung"; 

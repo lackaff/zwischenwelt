@@ -729,7 +729,7 @@ class cFight {
 		
 		// starting fight
 		if ($debug) echo "StartFight : starting fight<br>";
-		$fight = false;
+		$fight = new EmptyObject();
 		$fight->fightlog = $fightlog->id;
 		$fight->start = time();
 		$fight->attacker = $army->id;

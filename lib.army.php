@@ -102,7 +102,7 @@ class cArmy {
 		if (!is_object($building)) $building = sqlgetobject("SELECT * FROM `building` WHERE `id` = ".intval($building));
 		if (!$armyid) return false;
 		if (empty($building)) return false;
-		$t = false;
+		$t = new EmptyObject();
 		$t->cmd = ARMY_ACTION_SIEGE;
 		$t->army = intval($armyid);
 		$t->param1 = $building->x;
