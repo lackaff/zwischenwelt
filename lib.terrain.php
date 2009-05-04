@@ -185,7 +185,7 @@ function setTerrain($x,$y,$type){
 	
 	sql("UPDATE `terrain` SET `type`=$type WHERE `x`=($x) AND `y`=($y)");
 	if (mysql_affected_rows() <= 0) {
-		$o = null;
+		$o = new EmptyObject();
 		$o->x = $x;$o->y = $y;$o->type = $type;
 		sql("INSERT INTO `terrain` SET ".obj2sql($o));
 	}

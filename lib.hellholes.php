@@ -415,7 +415,8 @@ class Hellhole_2 extends Hellhole_0 {
 class Hellhole_3 extends Hellhole_0 {
 	function Hellhole_3 () {
 		// $this->spawndelay = 3600; // should be about one hour, so the hellhole can abort siege-pillaging ants
-		$this->raid_rad = 60; // maximal-travel-radius for soldiers
+		$this->raid_rad_min = 10; // minimum-travel-radius for soldiers
+		$this->raid_rad_max = 60; // maximal-travel-radius for soldiers
 		$this->spread_rad = 20; // maximal travel-radius for king
 		$this->spread_mindist = 11; // minimum distance of new base to existing bases
 		$this->victim_minpts = 50000; // don't SPREAD near players below a certain limit
@@ -562,7 +563,7 @@ class Hellhole_3 extends Hellhole_0 {
 			if (isset($gUser)) echo "send out new raider ? ".opos2txt($raider)."<br>";
 			
 			// pick random location
-			$dist = rand ( $this->rad , $this->raid_rad );
+			$dist = rand ( $this->raid_rad_min , $this->raid_rad_max );
 			$ang = 2.0 * M_PI * ((float)rand() / (float)getrandmax());
 			$tx = round($x + $dist * sin($ang));
 			$ty = round($y + $dist * cos($ang));

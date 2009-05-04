@@ -6,7 +6,7 @@ class Job_RuinCorruption extends Job {
 		$r = rand(0,100);
 		// number of buildings to collapse
 		$n = 100;
-		$t = sqlgettable("SELECT b.* FROM `buildingtype` t LEFT JOIN `building` b ON b.type=t.id WHERE `collapse_prob`>0 AND `collapse_prob` < ".intval($r)." ORDER BY RAND() LIMIT ".intval($n));
+		$t = sqlgettable("SELECT b.* FROM `buildingtype` t JOIN `building` b ON b.type=t.id WHERE `collapse_prob`>0 AND `collapse_prob` < ".intval($r)." ORDER BY RAND() LIMIT ".intval($n));
 		foreach($t as $b){
 			$siege = sqlgetone("SELECT 1 FROM `siege` WHERE `building`=".intval($b->id)) == 1;
 			if($siege){
@@ -17,7 +17,7 @@ class Job_RuinCorruption extends Job {
 			}
 		}
 
-		$this->requeue(in_mins(time(),5));
+		$this->requeue(in_mins(time(),15));
 	}	
 }
 

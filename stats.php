@@ -76,13 +76,13 @@ $o->i3 = sqlgetone("SELECT COUNT(1) FROM `siege`");
 sql("INSERT INTO `stats` SET ".obj2sql($o));
 
 //trade
-$o = null;
+$o = new EmptyObject();
 $o->time = $time;
 $o->type = kStats_SysInfo_Trade;
 $o->i1 = sqlgetone("SELECT COUNT(1) FROM `marketplace`");
 $o->i2 = sqlgetone("SELECT SUM(`offer_count`) FROM `marketplace`");
 $o->i3 = sqlgetone("SELECT SUM(`price_count`) FROM `marketplace`");
-$o->f1 = $gGlobal["stats_trade_sum"];
+$o->f1 = GetGlobal("stats_trade_sum");
 SetGlobal("stats_trade_sum",0);
 sql("INSERT INTO `stats` SET ".obj2sql($o));
 
@@ -101,7 +101,7 @@ sql("INSERT INTO `stats` SET ".obj2sql($o));
 $t = sqlgettable("SELECT * FROM `user` where `admin`=0");
 foreach($t as $u)
 {
-	$o = null;
+	$o = new EmptyObject();
 	$o->time = $time;
 	$o->user = $u->id;
 	$o->type = kStats_UserInfo;
