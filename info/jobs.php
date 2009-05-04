@@ -123,7 +123,7 @@ if($gUser->admin == 1){
 
 	echo "</td></td></table>";
 	
-	$t = sqlgettable("SELECT * FROM `joblog` WHERE `error` IS NOT NULL ORDER BY `time` DESC");
+	$t = sqlgettable("SELECT * FROM `joblog` WHERE `error` IS NOT NULL ORDER BY `time` DESC LIMIT 10");
 	echo "<h1><a name=\"errors\">jobs with errors and warnings</a></h1>";
 	echo "<table border=1><tr><th>id</th><th>name</th><th>time</th><th>error/warning</th></tr>";
 	foreach($t as $x){
