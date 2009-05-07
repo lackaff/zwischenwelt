@@ -435,7 +435,7 @@ if (!isset($f_building) && !isset($f_army) && isset($f_do)) {
 }
 
 
-if($f_do == "sendmessage"){
+if(isset($f_do) && $f_do == "sendmessage"){
 	$u = sqlgetone("SELECT `user` FROM `army` WHERE $xylimit");
 	if(!($u > 0))$u = sqlgetone("SELECT `user` FROM `building` WHERE $xylimit");
 	if($u > 0){
@@ -490,10 +490,16 @@ $gArmy = cArmy::getMyArmies(FALSE,$gUser->id);
 
 // create instances
 foreach ($gMapBuilding as $o) {
-	if(!empty($gBuildingType[$o->type]->script))$classname = $gInfoBuildingScriptClassNames[$gBuildingType[$o->type]->script];
-	else $classname = null;
-	if (!empty($classname)) $gInfoObjects[] = new $classname($o);
-	else	$gInfoObjects[] = new cInfoBuilding($o);
+	$classname = null;
+	if(
+		!empty($gBuildingType[$o->type]->script) &&
+		isset($gInfoBuildingScriptClassNames[$gBuildingType[$o->type]->script])
+	){
+		$classname = $gInfoBuildingScriptClassNames[$gBuildingType[$o->type]->script];
+		$gInfoObjects[] = new $classname($o);
+	} else{
+		$gInfoObjects[] = new cInfoBuilding($o);
+	}
 }
 foreach ($gMapArmy as $o)		
 	$gInfoObjects[] = new cInfoArmy($o);

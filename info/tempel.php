@@ -163,7 +163,7 @@ class cInfoTempel extends cInfoBuilding {
 			}
 		?>
 		<div class="sacrifice">
-    <div class="effect"><?=$msg?></div>
+    <div class="effect"><?=isset($msg)?$msg:""?></div>
 		<form method="post" action="<?=query("info.php?sid=?&x=?&y=?")?>">
     <div class="desc">Hier kann man Allerlei opfern, was ein paar interessante Auswirkungen haben kann. 
     Bedenke aber, daß man seine Gesinnung durch das Opfern verändert und es auch keine präzise Wissenschaft ist.</div>

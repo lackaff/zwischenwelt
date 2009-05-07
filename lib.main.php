@@ -2,7 +2,6 @@
 
 require_once("lib.php");
 require_once("lib.dbversion.php");
-require_once("jobs/job.php");
 
 // global page start time
 define("T", time());
@@ -1617,6 +1616,8 @@ function FirePutOutBurnedDown($x,$y){
 				if($t > 0)setTerrain($x,$y,$t);
 		}
 }
+
+require_once("jobs/job.php");
 
 // execute jobs in userspace
 if(NUMBER_OF_JOBS_TO_RUN_IN_USERSPACE > 0){

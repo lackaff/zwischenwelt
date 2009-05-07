@@ -48,8 +48,8 @@ class cBuilding {
 		if (sqlgetone("SELECT 1 FROM `shooting` WHERE `lastshot` > ".(time()-kShootingAlarmTimeout)." AND
 			`defender` = ".$building->id." AND `defendertype` = ".$gContainerType2Number[kUnitContainer_Building]." LIMIT 1"))
 			$building->jsflags |= kJSMapBuildingFlag_BeingShot;
-			
-		return obj2jsparams($building,"x,y,type,user,level,hp,construction,jsflags,unitstxt,id,burning_since",$quote); // end
+
+		return obj2jsparams($building,"x,y,type,user,level,hp,construction,jsflags,unitstxt,id",$quote); // end
 	}
 	
 	static function CanControllBuilding ($building,$user) {

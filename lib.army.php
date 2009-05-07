@@ -207,7 +207,7 @@ class cArmy {
 				$user=intval($user);
 				$user=sqlgetobject("SELECT `guildstatus`,`id`,`guild` FROM `user` WHERE `id`=$user");
 		}
-		if (empty($user) || $user==0 || !is_object($user)) return array();
+		if (empty($user) || !is_object($user)) return array();
 		if (HasGuildRight($user,kGuildRight_GuildCommander)) {
 			$r1 = sqlgettable("SELECT a.*,u.name as owner FROM `army` a,`user` u 
 				WHERE u.`id`=a.`user` AND a.`user`=".$user->id." AND !(a.`flags`& ".kArmyFlag_GuildCommand.")"." ORDER BY `type`,`name`");

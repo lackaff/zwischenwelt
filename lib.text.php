@@ -14,7 +14,7 @@ class cText {
 	  for ($i=count($text)-1;$i>=0;$i--) 
 	  { 
 		$words=preg_split("/[ ]+/",$text[$i]); 
-		if ($text[$i+1]=='' || count($words)<2) 
+		if ((isset($text[$i+1]) && $text[$i+1]=='') || count($words)<2) 
 		{ 
 		  $text[$i]=implode(" ",$words); 
 		  continue; 

@@ -433,7 +433,7 @@ if ($gUser->admin && isset($f_regentypes)) {
 
 <!--mapcontrols-->
 <div class="mapnavigoto">
-<FORM METHOD=GET ACTION="<?=Query(kMapScript."?sid=?&big=?&cx=$gCX&cy=$gCY")?>" target="map" onSubmit="submitgoto()">
+<FORM METHOD=GET ACTION="<?=Query(kMapScript."?sid=?&big=?")?>" target="map" onSubmit="submitgoto()">
 <INPUT TYPE="hidden" NAME="sid" VALUE="<?=$gSID?>">
 <INPUT TYPE="hidden" NAME="searchcounter" VALUE="-1">
 <SELECT NAME="gotocat" onChange="ChangeGotoCat()">
