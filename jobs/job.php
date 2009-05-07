@@ -273,13 +273,15 @@ class Job {
 			if(class_exists($className)){
 				$j = new $className($job->id);
 				$j->run();
-				++$count;
+				return true;
 			} else {
 				if($echo)echo "ERROR: $className does not exist<br>\n";
 			}
 		} else {
 			if($echo)echo "ERROR: there is no unlocked job with id $job->id\n";
 		}
+
+		return false;
 	}
 	
 	/**
@@ -294,7 +296,9 @@ class Job {
 		$count = 0;
 		foreach($jobs as $job){
 			// TODO job gets loaded 2 times
-			self::runJob($job->id, $echo);
+			if(self::runJob($job->id, $echo)){
+				++$count;
+			}
 		}
 		return $count;
 	}

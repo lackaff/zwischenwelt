@@ -11,16 +11,16 @@ if($gUser->admin == 1){
 			WHERE `name`='".mysql_real_escape_string($f_show)."' AND LENGTH(`output`)>0
 			ORDER BY `time` DESC LIMIT 1");
 	}
-	if(intval($f_kill) > 0){
+	if(isset($f_kill) && intval($f_kill) > 0){
 		sql("UPDATE `job` SET `endtime`=".time().", `locked`=2 WHERE `id`=".intval($f_kill));
 	}
-	if(intval($f_run) > 0){
+	if(isset($f_run) && intval($f_run) > 0){
 		Job::runJob(intval($f_run));		
 	}
-	if(intval($f_removeerror) > 0){
+	if(isset($f_removeerror) && intval($f_removeerror) > 0){
 		sql("UPDATE `joblog` SET `error`=NULL WHERE `id`=".intval($f_removeerror));
 	}
-	if(intval($f_removeallerrors) > 0){
+	if(isset($f_removeallerrors) && intval($f_removeallerrors) > 0){
 		$o = sqlgetobject("SELECT * FROM `joblog` WHERE `id`=".intval($f_removeallerrors));
 		if($o !== false){
 			sql("UPDATE `joblog` SET `error`=NULL WHERE 
@@ -77,7 +77,11 @@ if($gUser->admin == 1){
 	foreach($t as $x){
 		$avgt = sqlgetone("SELECT AVG(`endtime`-`starttime`) FROM `joblog` 
 			WHERE `name`='".mysql_real_escape_string($x->name)."'");
-		$p = (time() - $x->starttime) / $avgt;
+		if($avgt > 0){
+			$p = (time() - $x->starttime) / $avgt;
+		} else {
+			$p = 0;
+		}
 		
 		echo "<tr>";
 		echo "<td>$x->id</td>";
