@@ -11,7 +11,7 @@ class cText {
 	  $text=trim($text); 
 	  $text=wordwrap($text,$width); 
 	  $text=preg_split("/[\r]?\n/",$text); 
-	  for ($i=count($text);$i>=0;$i--) 
+	  for ($i=count($text)-1;$i>=0;$i--) 
 	  { 
 		$words=preg_split("/[ ]+/",$text[$i]); 
 		if ($text[$i+1]=='' || count($words)<2) 
