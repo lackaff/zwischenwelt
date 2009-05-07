@@ -12,13 +12,19 @@ $folder_root=sqlgetobject("SELECT `id`,`name` FROM `message_folder` WHERE `type`
 $folder_send=sqlgetobject("SELECT `id`,`name` FROM `message_folder` WHERE `type`=".kFolderTypeSent." AND `parent`=0 AND `user`=".$gUser->id);
 $folder_berichte=sqlgetobject("SELECT `id`,`name` FROM `message_folder` WHERE `type`=".kFolderTypeExtra." AND `parent`=0 AND `user`=".$gUser->id);
 
-if($cpost->num == 0)$newpost = false;
+if(!isset($cpost->num) || $cpost->num == 0)$newpost = false;
 else $newpost = true;
 if($gpost > 0 || $cgpost > 0)$newguild = true;
 else $newguild = false;
 //hat der user unbeantwortete umfragen?
 if(sqlgetone("select p1.`id` from poll as p1 left outer join (SELECT id from poll as p RIGHT JOIN poll_answer as a ON  p.id=a.poll where a.user=".($gUser->id).") as p2 on p1.id=p2.id where ISNULL(p2.id) LIMIT 1")>0)$newpoll = true;
 else $newpoll = false;
+
+if(isset($cpost->folder)){
+	$cpost_folder = $cpost->folder;
+} else {
+	$cpost_folder = "";
+}
 
 ?>
 /*
@@ -98,7 +104,7 @@ compactmenusitemap=new Array
   '- Forum | <a href="info/guild_forum.php?'+phpsid+'" target="info">Forum</a>',
   '- Log | <a href="info/guild_log.php?'+phpsid+'" target="info">Log</a>',
   '- Verwalten | <a href="info/guild_admin.php?'+phpsid+'" target="info">Verwalten</a>',
-  'Post | <a href="<?=Query("info/msg.php?sid=?&folder=".$cpost->folder)?>" target=info title=Post><span id="postnotify">Post</span></a>',
+  'Post | <a href="<?=Query("info/msg.php?sid=?&folder=".$cpost_folder)?>" target=info title=Post><span id="postnotify">Post</span></a>',
   '- Eingang | <a href="info/msg.php?show=content&folder=<?=$folder_root->id?>'+phpsid+'" target="info"><img src="gfx/post/inbox.png" border="0" title="Eingang"></a>',
   '- Ausgang | <a href="info/msg.php?show=content&folder=<?=$folder_send->id?>'+phpsid+'" target="info"><img src="gfx/post/outbox.png" border="0" title="Ausgang"></a>',
   '- Berichte | <a href="info/msg.php?show=content&folder=<?=$folder_berichte->id?>'+phpsid+'" target="info"><img src="gfx/post/berichte.png" border="0" title="Berichte"></a>',

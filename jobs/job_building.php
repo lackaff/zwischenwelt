@@ -111,9 +111,9 @@ class Job_FinishConstructions extends Job {
 				echo "fertiggestellt : ".$gBuildingType[$o->type]->name."(".$o->x.",".$o->y.")<br>";
 				
 				$now = microtime_float();
-				echo "flags2: ".$x["flags"]."\n";
-				var_dump($x["flags"],$o);
-				CompleteBuild($o,(($x["flags"]) & kUserFlags_AutomaticUpgradeBuildingTo)>0);
+				echo "flags2: ".$x->flags."\n";
+				var_dump($x->flags,$o);
+				CompleteBuild($o,(($x->flags) & kUserFlags_AutomaticUpgradeBuildingTo)>0);
 				echo "Profile CompleteBuild : ".sprintf("%0.3f",microtime_float()-$now)."<br>\n";
 			}
 		}

@@ -200,7 +200,7 @@ class Job {
 	 * @param $time execute time
 	 * @param $prio execute priority
 	 */
-	public static function queue($name, $payload, $time, $prio){
+	public static function queue($name, $payload=null, $time=null, $prio=null){
 		$time = empty($time) ? time() : $time;
 		$prio = empty($prio) ? 0 : $prio;
 		
@@ -220,7 +220,7 @@ class Job {
 	 * @param $time execute time
 	 * @param $prio priority
 	 */
-	public static function queueIfNonQueuedOrRunning($name, $payload, $time, $prio){
+	public static function queueIfNonQueuedOrRunning($name, $payload=null, $time=null, $prio=null){
 		if(!self::isQueuedOrRunningWithName($name)){
 			self::queue($name, $payload, $time, $prio);
 		}
@@ -278,7 +278,7 @@ class Job {
 				if($echo)echo "ERROR: $className does not exist<br>\n";
 			}
 		} else {
-			if($echo)echo "ERROR: there is no unlocked job with id $job->id\n";
+			if($echo)echo "ERROR: there is no unlocked job with id $job->id<br>\n";
 		}
 
 		return false;

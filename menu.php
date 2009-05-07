@@ -11,7 +11,7 @@ if($gUser->guild > 0 && HasGuildRight($gUser,kGuildRight_GuildAdmin))
 else $gpost = null;
 $cgpost= sqlgetone("SELECT COUNT(`id`) FROM `guild_forum_read` WHERE `user`=".$gUser->id);
 
-if($cpost->num == 0)$newpost = false;
+if(!isset($cpost->num) || $cpost->num == 0)$newpost = false;
 else $newpost = true;
 if($gpost > 0 || $cgpost > 0)$newguild = true;
 else $newguild = false;
