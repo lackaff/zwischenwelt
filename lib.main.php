@@ -1284,7 +1284,7 @@ function calcFoodNeed($n,$dt){
     $position=round($position);
     if ($position<$min) $position=$min;
     if ($position>$max) $position=$max;
-    if (!$colorset[$position])
+    if (!isset($colorset[$position]))
     {
       $knownpos=array_keys($colorset);
       foreach ($knownpos as $i=>$p)
