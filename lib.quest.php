@@ -172,6 +172,7 @@ function QuestTrigger_CronStep() { // called after army_move and hellhole monste
 }
 
 function QuestTrigger_ArmyMove(&$army,$x,$y) { // called very often, non-monster army , also called from QuestTrigger_TeleportArmy
+	var_dump($army);
 	$gQuestItems =& GetQuestItems();
 	
 	// kArmyFlag_AlwaysCollectItems main function

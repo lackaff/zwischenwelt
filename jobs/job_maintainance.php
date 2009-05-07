@@ -54,6 +54,10 @@ class Job_PurgeOldJobs extends Job {
 		sql("DELETE FROM `job` WHERE 
 			`locked`=2 AND 
 			`time`<".time());
+		echo "purged ".mysql_affected_rows()." old finished jobs\n";
+
+		sql("UPDATE `job` SET `locked`=2 WHERE `locked`=1 AND ".time()."-`starttime` > 60*60*0.5");
+		echo "killed ".mysql_affected_rows()." probably broken and running jobs\n";
 
 		$this->requeue(in_hours(time(),1));
 	}

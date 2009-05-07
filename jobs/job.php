@@ -1,5 +1,10 @@
 <?php
 /*
+TODO 
+errorhandler schmeist exception und ruft on_error auf damit der job auf den fehler reagieren kann
+locked erweitern: 0=free 1=running/locked 2=finished
+errors/exceptions loggen in der joblog
+
 == produktion ==
 *gebäude
 *rohstoffe
@@ -256,6 +261,26 @@ class Job {
 	public static function isQueuedOrRunningWithName($name){
 		return sqlgetone("SELECT 1 FROM `job` WHERE `name`='".mysql_real_escape_string($name)."' AND `locked`!=2") == 1;
 	}
+
+	public static function runJob($id, $echo = false){
+		$job = sqlgetobject("SELECT `id`,`time`,`prio`,`name` FROM `job` WHERE `locked`=0 AND `endtime`=0 AND `id`=".intval($id));
+		
+		if($job){
+			// update try to reduce priority of broken jobs
+			sql("UPDATE `job` SET `tries`=`tries`+1 WHERE `id`=".intval($job->id));
+		
+			$className = self::className($job->name);
+			if(class_exists($className)){
+				$j = new $className($job->id);
+				$j->run();
+				++$count;
+			} else {
+				if($echo)echo "ERROR: $className does not exist<br>\n";
+			}
+		} else {
+			if($echo)echo "ERROR: there is no unlocked job with id $job->id\n";
+		}
+	}
 	
 	/**
 	 * executes jobs that are due to execute
@@ -268,19 +293,8 @@ class Job {
 		$jobs = self::getJobs($limit);
 		$count = 0;
 		foreach($jobs as $job){
-			if($echo)echo "next job is $job->id with name $job->name<br>\n";
-			
-			// update try to reduce priority of broken jobs
-			sql("UPDATE `job` SET `tries`=`tries`+1 WHERE `id`=".intval($job->id));
-			
-			$className = self::className($job->name);
-			if(class_exists($className)){
-				$j = new $className($job->id);
-				$j->run();
-				++$count;
-			} else {
-				if($echo)echo "ERROR: $className does not exist<br>\n";
-			}
+			// TODO job gets loaded 2 times
+			self::runJob($job->id, $echo);
 		}
 		return $count;
 	}

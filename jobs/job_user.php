@@ -183,7 +183,7 @@ class Job_Tech extends Job {
 					echo $text."<br>\n";
 					
 					// TODO : neue log meldung machen !
-					LogMe($o->user,NEWLOG_TOPIC_BUILD,NEWLOG_UPGRADE_FINISHED,0,0,$o->level+1,$gBuildingType[$o->type]->name,"",false);
+					LogMe($o->user,NEWLOG_TOPIC_BUILD,NEWLOG_UPGRADE_FINISHED,0,0,$o->level+1,$gTechnologyType[$o->type]->name,"",false);
 				} else {
 					sql("UPDATE `technology` SET
 						`upgrades` = 0 ,

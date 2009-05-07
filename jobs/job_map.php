@@ -160,7 +160,7 @@ class Job_GrowCorn extends Job {
 					$t = sqlgetobject("SELECT * FROM `terrain` WHERE `x`=(".($x+$farm->x).") AND `y`=(".($y+$farm->y).")");
 					if(empty($b) && (empty($t) || $t->type == kTerrain_Grass)){
 						sql("DELETE FROM `terrain` WHERE `x`=(".($x+$farm->x).") AND `y`=(".($y+$farm->y).")");
-						$o = null;
+						$o = new EmptyObject();
 						$o->x = $x+$farm->x;
 						$o->y = $y+$farm->y;
 						$o->type = kTerrain_Field;

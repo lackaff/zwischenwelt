@@ -1,4 +1,5 @@
 <?php
+require_once("constants.php");
 require_once("lib.technology.php");
 require_once("lib.spells.php");
 require_once("lib.text.php");

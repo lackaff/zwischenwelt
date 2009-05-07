@@ -7,6 +7,7 @@
 </head>
 <body>
 <?php
+set_time_limit(0);
 //exit(0);
 //$gSQL_NOT_FATAL = true; 
 $lock = FALSE;

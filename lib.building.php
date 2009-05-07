@@ -196,7 +196,7 @@ class cBuilding {
 				sql("INSERT INTO `terrain` SET ".obj2sql($schutt));
 			} else if(isset($gBuildingType[$gBuildingType[$building->type]->ruinbtype])){
 				// ruine
-				$ruin = false;
+				$ruin = new EmptyObject();
 				$ruin->type = $gBuildingType[$building->type]->ruinbtype;
 				$ruin->level = $building->level;
 				$ruin->x = $building->x;

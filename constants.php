@@ -147,12 +147,12 @@ define("kTerrain_Flag_Moveable_Mask_OnWater",
 	
 define("kTerrain_Mask_Moveable_Default",kTerrain_Flag_Moveable_Mask_OnLand);
 
-define("kArmy_ExpBonus",$gGlobal["kArmy_ExpBonus"]); //10);
-define("kArmy_AW_for_one_exp",$gGlobal["kArmy_AW_for_one_exp"]); //800.0); 
-define("kPortalTaxUnitNum",$gGlobal["kPortalTaxUnitNum"]); //1000);
-define("kBaracksDestMaxDist",$gGlobal["kBaracksDestMaxDist"]); //30);
-define("kArmy_BigArmyGoSlowLimit",$gGlobal["kArmy_BigArmyGoSlowLimit"]); //10000);
-define("kArmy_BigArmyGoSlowFactorPer1000Units",$gGlobal["kArmy_BigArmyGoSlowFactorPer1000Units"]); //1.01);
+define("kArmy_ExpBonus",GetGlobal("kArmy_ExpBonus")); //10);
+define("kArmy_AW_for_one_exp",GetGlobal("kArmy_AW_for_one_exp")); //800.0); 
+define("kPortalTaxUnitNum",GetGlobal("kPortalTaxUnitNum")); //1000);
+define("kBaracksDestMaxDist",GetGlobal("kBaracksDestMaxDist")); //30);
+define("kArmy_BigArmyGoSlowLimit",GetGlobal("kArmy_BigArmyGoSlowLimit")); //10000);
+define("kArmy_BigArmyGoSlowFactorPer1000Units",GetGlobal("kArmy_BigArmyGoSlowFactorPer1000Units")); //1.01);
 
 define("kTech_Architecture",34);
 
@@ -167,7 +167,7 @@ define("kTech_SchichtArbeit",26);
 define("kTech_Bier",71);
 define("kTech_MagieMeisterschaft",58);
 
-define("kTerraFormer_SicherheitsAbstand",$gGlobal["kTerraFormer_SicherheitsAbstand"]); //25);
+define("kTerraFormer_SicherheitsAbstand",GetGlobal("kTerraFormer_SicherheitsAbstand")); //25);
 
 define("kUserFlags_TerraFormer",				(1<<0)); // set by admin
 define("kUserFlags_DropDownMenu",				(1<<1)); // obsolete
@@ -369,8 +369,8 @@ $gArmyTypeFlagNames = array(
 */
 
 
-define("kArmyRecalcBlockedRoute_Timeout",$gGlobal["kArmyRecalcBlockedRoute_Timeout"]); //5*60);
-define("kArmyAutoAttackRangeMonster_Timeout",$gGlobal["kArmyAutoAttackRangeMonster_Timeout"]); //5*60);
+define("kArmyRecalcBlockedRoute_Timeout",GetGlobal("kArmyRecalcBlockedRoute_Timeout")); //5*60);
+define("kArmyAutoAttackRangeMonster_Timeout",GetGlobal("kArmyAutoAttackRangeMonster_Timeout")); //5*60);
 
 define("kArmyType_Siege",1);
 define("kArmyType_Fleet",3);
@@ -438,7 +438,7 @@ define("kMonster_HyperblobID",kUnitType_HyperBlob);
 define("kMonster_HyperblobCSS","hb_%NWSE%");
 define("kMonster_HyperblobGFX","hyperblob/blob-%NWSE%.png");
 
-$gRandomSpawnTypes = explode(",",$gGlobal["randomspawnmonsters"]);
+$gRandomSpawnTypes = explode(",",GetGlobal("randomspawnmonsters"));
 // array(Baummonster,EisenGolem,SteinGolem,Trollkoenig,Bug,Blob);
 
 define("kUnitFlag_Elite",		(1<<0));

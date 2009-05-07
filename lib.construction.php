@@ -38,7 +38,7 @@ function GetBuildDistance ($x,$y,$userid=0,$priority=-1) {
 	$y = intval($y);
 	
 	$distformula = "((`x`-$x)*(`x`-$x) + (`y`-$y)*(`y`-$y))";
-	$cond = "`user` = ".intval($userid)." AND `type` IN (".implode(",",$gBuildDistanceSources).")";
+	$cond = "`user` = ".intval($userid)." AND `type` IN (".implode(",",array_filter($gBuildDistanceSources)).")";
 	$existing_dist = floatval(sqlgetone("SELECT MIN($distformula) FROM `building` WHERE `construction` = 0 AND $cond"));
 	if ($priority == 0) return sqrt($existing_dist);
 	

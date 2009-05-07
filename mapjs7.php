@@ -308,7 +308,9 @@ if ($gCustomMapCode) {
 
 	// build distance sources
 	// MIN(SQRT((`x`-$x)*(`x`-$x) + (`y`-$y)*(`y`-$y)))
-	$bd_sources = sqlgettable("SELECT * FROM `building` WHERE `user` = ".intval($gUser->id)." AND `construction` = 0 AND `type` IN (".implode(",",$gBuildDistanceSources).")");
+	$bd_sources = sqlgettable("SELECT * FROM `building` 
+		WHERE `user` = ".intval($gUser->id)." AND `construction` = 0 AND 
+		`type` IN (".implode(",",array_filter($gBuildDistanceSources)).")");
 	// now pic out the relevant ones for this map frame...
 	$bd_relevant_sources = array(); // two dimensional [$gCY+2][$gCX+2]
 	$debug_sources = false;

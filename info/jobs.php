@@ -1,5 +1,6 @@
 <?php
 require_once("../lib.main.php");
+require_once("../jobs/job.php");
 Lock();
 
 require_once("header.php"); 
@@ -12,6 +13,9 @@ if($gUser->admin == 1){
 	}
 	if(intval($f_kill) > 0){
 		sql("UPDATE `job` SET `endtime`=".time().", `locked`=2 WHERE `id`=".intval($f_kill));
+	}
+	if(intval($f_run) > 0){
+		Job::runJob(intval($f_run));		
 	}
 	if(intval($f_removeerror) > 0){
 		sql("UPDATE `joblog` SET `error`=NULL WHERE `id`=".intval($f_removeerror));
@@ -58,6 +62,7 @@ if($gUser->admin == 1){
 		echo "<td>$x->name</td>";
 		echo "<td>".round($x->time - time())."</td>";
 		echo "<td><a href=\"".Query("?kill=$x->id&sid=?")."\">kill</a></td>";
+		echo "<td><a href=\"".Query("?run=$x->id&sid=?")."\">run</a></td>";
 		echo "</tr>";
 	}
 	echo "</table>";
@@ -101,6 +106,7 @@ if($gUser->admin == 1){
 		echo "<td>$x->endtime</td>";
 		echo "<td>$x->tries</td>";
 		echo "<td><a href=\"".Query("?kill=$x->id&sid=?")."\">kill</a></td>";
+		echo "<td><a href=\"".Query("?run=$x->id&sid=?")."\">run</a></td>";
 		echo "</tr>";
 	}
 	echo "</table>";
@@ -113,8 +119,8 @@ if($gUser->admin == 1){
 	foreach($t as $x){
 		echo "<tr>";
 		echo "<td>$x->name</td><td>$x->count</td>";
-		echo "<td>".round($x->time / $x->count,3)."</td>";
-		echo "<td>".round(($x->end - $x->start) / $x->count,3)."</td>";
+		echo "<td>".round($x->time / $x->count,1)."</td>";
+		echo "<td>".round(($x->end - $x->start) / $x->count,1)."</td>";
 		echo "<td>".sqlgetone("SELECT COUNT(`id`) FROM `joblog` WHERE 
 			`error` IS NOT NULL AND `name`='".mysql_real_escape_string($x->name)."'")."</td>";
 		echo "</tr>";
@@ -123,7 +129,7 @@ if($gUser->admin == 1){
 
 	echo "</td></td></table>";
 	
-	$t = sqlgettable("SELECT * FROM `joblog` WHERE `error` IS NOT NULL ORDER BY `time` DESC LIMIT 10");
+	$t = sqlgettable("SELECT * FROM `joblog` WHERE `error` IS NOT NULL ORDER BY `time` DESC LIMIT 15");
 	echo "<h1><a name=\"errors\">jobs with errors and warnings</a></h1>";
 	echo "<table border=1><tr><th>id</th><th>name</th><th>time</th><th>error/warning</th></tr>";
 	foreach($t as $x){

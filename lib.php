@@ -438,6 +438,9 @@ function sql	($query) {
 	if (!$r) {	
 		$errormsg = mysql_error();
 		$s = "MYSQL QUERRY FAILED IN DB '".MYSQL_DB."': ####<br>".$query."<br>####".$errormsg." ".shorttrace();
+		
+		trigger_error($s, E_USER_ERROR);
+		
 		if(defined("MYSQL_ERROR_LOG")) {
 			$s = date("r") . " " . $_SERVER['PHP_SELF'] . " " . $_SERVER['QUERY_STRING'] . " " . $s . "\n";
 			$f = fopen(MYSQL_ERROR_LOG,"a");
