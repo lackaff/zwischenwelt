@@ -119,14 +119,15 @@ class Job {
 	
 	/**
 	 * calls the _run body of the job, dont use this directly
+	 * @param $echo true if the output should go to stdout
 	 */
-	private function run(){
+	private function run($echo = false){
 		if($this->acquireLock()){
 			// lock ok so run the job
-			rob_ob_start();
+			if(!$echo)rob_ob_start();
 			
 			// overwrite error handler
-			set_error_handler(array(&$this, "error_handler"));
+			if(!$echo)set_error_handler(array(&$this, "error_handler"));
 			
 			$this->_starttime = time();
 			sql("UPDATE `job` SET `starttime`=".intval($this->_starttime)." WHERE `id`=".$this->_id);
@@ -143,12 +144,14 @@ class Job {
 			$t2 = microtime(true);
 			$this->_endtime = time();
 			sql("UPDATE `job` SET `endtime`=".intval($this->_endtime).", `locked`=2 WHERE `id`=".$this->_id);
-			$output = rob_ob_end(); 
+			
+			$output = "";
+			if(!$echo)$output = rob_ob_end(); 
 			
 			// restore error handler
-			restore_error_handler();
+			if(!$echo)restore_error_handler();
 			
-			$this->logOutput($output,$t2-$t1);
+			if(!$echo)$this->logOutput($output,$t2-$t1);
 			
 			if(sizeof($this->_error) > 0){
 				$errorsql = "`error` = '".mysql_real_escape_string(implode("|",$this->_error))."', ";
@@ -211,6 +214,7 @@ class Job {
 			'".intval($time)."',
 			'".intval($prio)."'
 		)");
+		return mysql_insert_id();
 	}
 	
 	/**
@@ -222,8 +226,9 @@ class Job {
 	 */
 	public static function queueIfNonQueuedOrRunning($name, $payload=null, $time=null, $prio=null){
 		if(!self::isQueuedOrRunningWithName($name)){
-			self::queue($name, $payload, $time, $prio);
+			return self::queue($name, $payload, $time, $prio);
 		}
+		return null;
 	}
 	
 	/**
@@ -272,7 +277,7 @@ class Job {
 			$className = self::className($job->name);
 			if(class_exists($className)){
 				$j = new $className($job->id);
-				$j->run();
+				$j->run($echo);
 				return true;
 			} else {
 				if($echo)echo "ERROR: $className does not exist<br>\n";
@@ -301,6 +306,20 @@ class Job {
 			}
 		}
 		return $count;
+	}
+	
+	/**
+	 * creates a job and directly runs it afterwards
+	 * output goes to stdout. use this for testing purpose
+	 * 
+	 * @param $name
+	 * @param $payload
+	 * @param $time
+	 * @param $prio
+	 */
+	public static function test($name, $payload=null, $time=null, $prio=null){
+		$id = self::queue($name, $payload, $time, $prio);
+		self::runJob($id, true);
 	}
 }
 

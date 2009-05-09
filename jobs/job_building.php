@@ -140,6 +140,7 @@ class Job_FinishConstructions extends Job {
 
 class Job_UpgradeBuildings extends Job {
 	protected function _run(){
+		global $gBuildingType;
 		$time = time();
 		$hqlevels = sqlgettable("SELECT `user`,`level` FROM `building` WHERE `type`=".kBuilding_HQ,"user");
 		$sieges = sqlgettable("SELECT `building` FROM `siege`","building");

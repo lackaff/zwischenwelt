@@ -65,6 +65,7 @@ Job::queueIfNonQueuedOrRunning("FinishConstructions");
 Job::queueIfNonQueuedOrRunning("ThinkBuildings");
 Job::queueIfNonQueuedOrRunning("GuildRes");
 Job::queueIfNonQueuedOrRunning("RepairBuildings");
+Job::queueIfNonQueuedOrRunning("UpgradeBuildings");
 Job::queueIfNonQueuedOrRunning("Mana");
 Job::queueIfNonQueuedOrRunning("Runes");
 Job::queueIfNonQueuedOrRunning("Weltbank");
@@ -77,6 +78,7 @@ Job::queueIfNonQueuedOrRunning("Tech");
 Job::queueIfNonQueuedOrRunning("Siege");
 Job::queueIfNonQueuedOrRunning("Pillage");
 Job::queueIfNonQueuedOrRunning("FinishUnits");
+Job::queueIfNonQueuedOrRunning("GroupItems");
 //Job::queueIfNonQueuedOrRunning("ItemCorruption");
 //Job::queueIfNonQueuedOrRunning("Test");
 

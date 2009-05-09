@@ -149,4 +149,25 @@ class Job_Quest extends Job {
 	}
 }
 
+class Job_GroupItems extends Job {
+	protected function _run(){
+		$t = sqlgettable("SELECT `x`,`y`,`type`,sum(`amount`) as `amount`,
+			count(`id`) as `ids`,
+			`id` FROM `item` WHERE quest=0 GROUP BY x,y,type HAVING ids > 1 LIMIT 50");
+		
+		foreach($t as $x){
+			TablesLock();
+			var_dump($x);
+			sql("DELETE FROM `item` WHERE 
+				`x`=".$x->x." AND 
+				`y`=".$x->y." AND 
+				`quest`=0 AND
+				`type`=".$x->type." AND `id`!=".$x->id);
+			sql("UPDATE `item` SET `amount`=".$x->amount." WHERE `id`=".$x->id);
+			TablesUnlock();
+		}
+		
+		$this->requeue(in_mins(time(),15));
+	}
+}
 ?>
