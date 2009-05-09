@@ -103,7 +103,7 @@ class Job_FinishConstructions extends Job {
 		
 		// finish building construction
 		$time = time();
-		$cons = sqlgettable("SELECT * FROM `building` WHERE `construction` <= ".intval($time),"user");
+		$cons = sqlgettable("SELECT * FROM `building` WHERE `construction`>0 AND `construction` <= ".intval($time),"user");
 		
 		foreach($cons as $o) {
 			$x = sqlgetobject("SELECT * FROM `user` WHERE `id`=".intval($o->user));
@@ -112,7 +112,6 @@ class Job_FinishConstructions extends Job {
 				
 				$now = microtime_float();
 				echo "flags2: ".$x->flags."\n";
-				var_dump($x->flags,$o);
 				CompleteBuild($o,(($x->flags) & kUserFlags_AutomaticUpgradeBuildingTo)>0);
 				echo "Profile CompleteBuild : ".sprintf("%0.3f",microtime_float()-$now)."<br>\n";
 			}

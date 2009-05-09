@@ -29,7 +29,7 @@ function StartBuild ($con) {
 		// TODO message to user ?
 	} else if (InBuildCross($con->x,$con->y,$con->user,0)) {
 		$buildingtype = $gBuildingType[$con->type];
-		if (CanBuildHere($con->x,$con->y,$con->type,false,0,true) && 
+		if (CanBuildHere($con->x,$con->y,$con->type,$con->user,0,true) && 
 			HasReq($buildingtype->req_geb,$buildingtype->req_tech,$con->user)) {
 
 			// headquater is free
