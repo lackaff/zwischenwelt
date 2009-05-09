@@ -365,7 +365,6 @@ class cInfoArmy extends cInfoBase {
 	
 	
 	function mygenerate_tabs () {
-		if ($this->construction > 0) return;
 		foreach ($_REQUEST as $name=>$val) ${"f_".$name} = $val;
 		global $gArmyType; 
 		global $gObject; 

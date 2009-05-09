@@ -71,6 +71,7 @@ Job::queueIfNonQueuedOrRunning("Weltbank");
 Job::queueIfNonQueuedOrRunning("Hellholes");
 Job::queueIfNonQueuedOrRunning("Quest");
 Job::queueIfNonQueuedOrRunning("ArmyThink");
+Job::queueIfNonQueuedOrRunning("Fight");
 Job::queueIfNonQueuedOrRunning("Shooting");
 Job::queueIfNonQueuedOrRunning("Tech");
 Job::queueIfNonQueuedOrRunning("Siege");

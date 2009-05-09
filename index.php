@@ -84,10 +84,12 @@ Aktuelle Neuigkeiten sind immer am Ende dieses Threads hier im Forum zu finden.
 	$cl = file("ChangeLog");
 	$l = array();
 	$hd = $cl[0];
+	$l[$hd] = "";
 	for($i=1;$i<sizeof($cl);++$i){
 		$line = trim($cl[$i]);
 		if(empty($line)){
 			$hd = trim($cl[$i+1]);
+			$l[$hd] = "";
 			++$i;
 		} else $l[$hd] .= $line."<br>";
 	}

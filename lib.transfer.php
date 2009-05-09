@@ -119,8 +119,8 @@ class cTransfer {
 			<FORM METHOD=POST ACTION="<?=Query("?sid=?&x=?&y=?")?>">
 			<INPUT TYPE="hidden" NAME="do" VALUE="armytransfer">
 			<INPUT TYPE="hidden" NAME="transfer" VALUE="<?=$transfer->id?>">
-			<INPUT TYPE="hidden" NAME="sourcebuilding" VALUE="<?=$sourcebuilding->id?>">
-			<INPUT TYPE="hidden" NAME="sourcearmy" VALUE="<?=$sourcearmy->id?>">
+			<INPUT TYPE="hidden" NAME="sourcebuilding" VALUE="<?=isset($sourcebuilding->id)?$sourcebuilding->id:""?>">
+			<INPUT TYPE="hidden" NAME="sourcearmy" VALUE="<?=isset($sourcearmy->id)?$sourcearmy->id:""?>">
 			<b><?=$transfer->name?></b>
 			<table border=1 cellspacing=0>
 			<tr>
@@ -232,32 +232,32 @@ class cTransfer {
 	// returns false if possible, or a readable error message if not
 	// parameters must be objects
 	static function CheckArmyTransfer ($transfer,$sourcearmy,$sourcebuilding,$targetarmy,$user) {
-		if ($targetarmy && !$targetarmy->counttolimit) return "Geschenkarmee";
-		if ($sourcearmy && !$sourcearmy->counttolimit) return "Geschenkarmee";
+		if (!empty($targetarmy) && !$targetarmy->counttolimit) return "Geschenkarmee";
+		if (!empty($sourcearmy) && !$sourcearmy->counttolimit) return "Geschenkarmee";
 		$sourceuserid = $sourcearmy ? $sourcearmy->user : $sourcebuilding->user;
-		if ($sourcearmy && $sourcearmy->id == $targetarmy->id) return "Quelle=Ziel";
+		if (!empty($sourcearmy) && !empty($targetarmy) && $sourcearmy->id == $targetarmy->id) return "Quelle=Ziel";
 		if (empty($targetarmy) && !cArmy::CanCreateNewArmy($sourceuserid,$transfer->targetarmytype)) return "ArmeeLimit";
 		if (empty($targetarmy) && $transfer->transportarmytype) return "Gründung durch Besatzung allein nicht möglich"; 
-		if ($targetarmy && !cArmy::CanControllArmy($targetarmy,$user)) return "nicht steuerbar"; 
-		if ($targetarmy && $targetarmy->type != $transfer->targetarmytype) return "typ passt nicht"; 
-		if ($targetarmy) {
+		if (!empty($targetarmy) && !cArmy::CanControllArmy($targetarmy,$user)) return "nicht steuerbar"; 
+		if (!empty($targetarmy) && $targetarmy->type != $transfer->targetarmytype) return "typ passt nicht"; 
+		if (!empty($targetarmy)) {
 			$sourceobj = $sourcearmy ? $sourcearmy : $sourcebuilding;
 			if ($targetarmy->type == kArmyType_Fleet && $sourcebuilding)
 					$mynear = cArmy::ArmyAtPier($targetarmy,$sourceobj->x,$sourceobj->y,$sourceuserid);
 			else	$mynear = cArmy::ArmyAtDiag($targetarmy,$sourceobj->x,$sourceobj->y);
 			if (empty($mynear)) return "nicht hier";
 		}
-		if ($targetarmy) {
+		if (!empty($targetarmy)) {
 			$myidlewait = ceil($transfer->idlemod-$targetarmy->idle/60);
 			if ($myidlewait > 0) return "erst in $myidlewait Minuten";
 		}
-		if ($targetarmy) {
+		if (!empty($targetarmy)) {
 			if (sqlgetone("SELECT 1 FROM `fight` WHERE `attacker` = ".$targetarmy->id)) return "kämpft gerade";
 			if (sqlgetone("SELECT 1 FROM `fight` WHERE `defender` = ".$targetarmy->id)) return "kämpft gerade";
 			if (sqlgetone("SELECT 1 FROM `pillage` WHERE `army` = ".$targetarmy->id)) return "plündert gerade";
 			if (sqlgetone("SELECT 1 FROM `siege` WHERE `army` = ".$targetarmy->id)) return "belagert gerade";
 		}
-		if ($sourcearmy) {
+		if (!empty($sourcearmy)) {
 			if (sqlgetone("SELECT 1 FROM `fight` WHERE `attacker` = ".$sourcearmy->id)) return "kämpft gerade";
 			if (sqlgetone("SELECT 1 FROM `fight` WHERE `defender` = ".$sourcearmy->id)) return "kämpft gerade";
 			if (sqlgetone("SELECT 1 FROM `pillage` WHERE `army` = ".$sourcearmy->id)) return "plündert gerade";
