@@ -748,7 +748,7 @@ class cArmy {
 		// strange bug, stops after first iteration if dropping while walking directly $gRes
 		$resitems = array();
 		foreach ($gRes as $n=>$f) {
-			$o = false;
+			$o = new EmptyObject();
 			$o->amount = $army->$f;
 			$o->type = $gRes2ItemType[$f];
 			$o->quest = 0;
