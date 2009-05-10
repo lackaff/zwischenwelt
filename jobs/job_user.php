@@ -2,7 +2,7 @@
 
 class Job_ResCalc extends Job {
 	protected function _run(){
-		global $gRes;
+		global $gRes, $gGrundproduktion;
 		
 		if(!ExistGlobal("last_res_calc")){
 			SetGlobal("last_res_calc",T);

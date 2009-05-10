@@ -1,6 +1,7 @@
 <?php
 
 include("lib.php");
+include("lib.main.php");
 include("constants.php");
 Lock();
 if (!$gUser->admin)

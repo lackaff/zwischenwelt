@@ -3,7 +3,7 @@ require_once("lib.main.php");
 Lock();
 
 $hq = sqlgetobject("SELECT * FROM `building` WHERE `user` = ".$gUser->id." AND `type` = ".kBuilding_HQ);
-if ($hq) Redirect(Query("info/info.php?sid=?".($f_fc==1?"&fc=1&":"&")."x=".$hq->x."&y=".$hq->y));
+if ($hq) Redirect(Query("info/info.php?sid=?".((isset($f_fc) && $f_fc==1)?"&fc=1&":"&")."x=".$hq->x."&y=".$hq->y));
 else
 {
 ?>

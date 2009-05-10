@@ -371,7 +371,7 @@ class Spell_Cron extends Spell {
 		$this->accumulated = $this->AccumulationCheck(); // only available in birth !
 		if (!$this->accumulated) {
 			// only produce new object if accumulation into an old object was not possible
-			$newspell = false; // object to be stored database
+			$newspell = new EmptyObject(); // object to be stored database
 			$newspell->x = $this->x;
 			$newspell->y = $this->y;
 			$newspell->type = $this->type;
