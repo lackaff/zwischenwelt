@@ -98,6 +98,7 @@ class Job_ResCalc extends Job {
 						$usersets .= ",`prod_$resfield`=$p";
 					}
 				}
+				
 				sql("UPDATE `user` SET ".$usersets." WHERE `id`=".$u->id);
 				
 				//check if there is enough food for the population
@@ -278,7 +279,7 @@ class Job_UserProdPop extends Job {
 			}
 			TablesUnlock();
 
-			SetGlobal("last_res_calc",T);
+			SetGlobal("last_prod_calc",T);
 		}
 
 		$this->requeue(in_secs(time(),10));
