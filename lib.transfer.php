@@ -103,8 +103,12 @@ class cTransfer {
 		//echo cTransfer::GetArmyTransferName($transfer->id)."<br>";
 		
 		if (count($unittypes) == 0) return;
-		
-		$idlewait = ceil($transfer->idlemod-$sourcearmy->idle/60);
+
+		if($sourcearmy){
+			$idlewait = ceil($transfer->idlemod-$sourcearmy->idle/60);
+		} else {
+			$idlewait = 0;
+		}
 		
 		if ($transfer->targetarmytype == kArmyType_Fleet && $sourcebuilding)
 				$pos = cArmy::FindPierExit($x,$y,$sourceuserid,$units_here);

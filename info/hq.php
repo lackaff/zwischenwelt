@@ -549,7 +549,9 @@ class cInfoHQ extends cInfoBuilding {
 					<td align=right><span id="auslastung_<?=$resfield?>" style="color:<?=(($auslastung>100)?"red":"green")?>"><?=$auslastung?>%</span></td>
 					<td align=right><span id="slots_<?=$resfield?>"><?=round($slots[$resfield])?></span></td>
 					<td></td>
-					<td align=right nowrap><span id="produktion_<?=$resfield?>"><?=round($gUser->{"prod_$resfield"})?> / h</span></td>
+					<td align=right nowrap><span id="produktion_<?=$resfield?>">
+						<?=(isset($gUser->{"prod_$resfield"}))?round($gUser->{"prod_$resfield"})." / h":""?>
+					</span></td>
 				</tr>
 			<?php }?>
 			<tr>
@@ -605,14 +607,17 @@ class cInfoHQ extends cInfoBuilding {
 		`building`.`hp`<CEIL(`buildingtype`.`maxhp`+`buildingtype`.`maxhp`/100*1.5*`building`.`level`)
 	GROUP BY `user`.`id`");
 
-		$worker = $x->pop * $x->worker_repair/100;
-		$broken = $x->broken;
-		if(empty($broken))$broken = 0;
+		if($x){
+			$worker = $x->pop * $x->worker_repair/100;
+			$broken = $x->broken;
+			if(empty($broken))$broken = 0;
+			if($broken > 0)$plus = $all / $broken;
+		} else {
+			$worker = 0;
+			$broken = 0;
+			$plus = 0;
+		}
 		$all = $worker*(60*60)/(24*60*60);
-		
-		if($broken > 0)$plus = $all / $broken;
-		else $plus = 0;
-		
 		$wood = $all * 100;
 		$stone = $all * 100;
 		?>

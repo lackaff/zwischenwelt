@@ -344,14 +344,20 @@ class cUnit {
 	// ##### ##### ##### ##### ##### ##### ##### #####
 	
 	
+	static function dumpUnits($units){
+		foreach($units as $x)
+			if($x->amount > 0)
+				echo "[$x->type $x->amount x]";
+	}
+	
 	
 	// sort units for damaging by orderval of unittype
 	static function GetUnitsAfterDamage ($units,$damage,$uid,$mod_v=1.0) {
 		global $gUnitType;
 		usort($units,"cmpUnit");
 		$res = array();
-		$debug = true;
-		if ($debug) {echo "GetUnitsAfterDamage: dmg=$damage units_vorher_sorted:";vardump2($units);}
+		$debug = false;
+		if ($debug) {echo "GetUnitsAfterDamage: dmg=$damage units_vorher_sorted:";self::dumpUnits($units);echo "<br>\n";}
 		foreach ($units as $o2) {
 			$o = copyobj($o2);
 			if ($damage > 0) {
@@ -359,7 +365,6 @@ class cUnit {
 				if ($debug) echo "unit type ".$o->type." mod_v=$mod_v unitv=".$gUnitType[$o->type]->v." bonusv=".cUnit::GetUnitBonus($o->type,$uid,"v")." totalv=".$v."<br>";
 				if ($damage > $v * $o->amount) {
 					// unit type is completely annihalated, go to next
-					// TODO : this is not PHP5 compatible
 					$damage -= $v * $o->amount;
 					
 					
@@ -367,7 +372,6 @@ class cUnit {
 				} else {
 					if ($debug) echo "survived : $damage / $v = ".($damage / $v)." lost<br>";
 					// unit type is only damaged, n
-					// TODO : this is not PHP5 compatible
 					$o->amount -= $damage / $v;
 					$damage = 0; // no more damage
 					$res[] = $o;
@@ -385,23 +389,19 @@ class cUnit {
 	
 	// if neg, negative amounts are returned, otherwise they are clamped to zero
 	static function GetUnitsDiff ($before,$after,$neg=false) {
-		// TODO : this is static function not PHP5 compatible
 		$diff = array();
-		$debug = true;
-		foreach ($before as $lost2) if ($lost2->amount > 0) {
-			$lost = copyobj($lost2);
+		$debug = false;
+		foreach ($before as $lost) if ($lost->amount > 0) {
 			global $gUnitType;
 			if ($debug) echo "diffing $lost->amount ".$gUnitType[$lost->type]->name." : <br>";
-			foreach ($after as $o2) {
-				$o = copyobj($o2);
+			foreach ($after as $o) {
 				if ($lost->type == $o->type && 
 					(!isset($lost->spell) || !isset($o->spell) || $lost->spell == $o->spell) && 
-					(!isset($lost->user) || !isset($o->user) || $lost->user == $o->user)) {
-					if ($debug) echo "left : ".$o->amount." of $o->user / $lost->user , $o->spell / $lost->spell<br>";
-					// TODO : this is not PHP5 compatible
+					(!isset($lost->user) || !isset($o->user) || $lost->user == $o->user)) 
+				{
 					$lost->amount -= $o->amount;
-					// TODO : this is not PHP5 compatible
 					if (!$neg && $lost->amount < 0) $lost->amount = 0; // clamp
+					if ($debug) echo "left : ".$o->amount."<br>";
 				}
 			}
 			if ($debug) echo "diff = ".$lost->amount."<br>";

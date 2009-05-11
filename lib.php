@@ -137,8 +137,12 @@ function userErrorHandler($errno, $errmsg, $filename, $linenum, $vars)
 }
 
 // we will do our own error handling
-//error_reporting(0);
-$gOldErrorHandler = set_error_handler("userErrorHandler");
+if(defined("SHOW_ALL_ERRORS")){
+	error_reporting(E_ALL);
+	//$gOldErrorHandler = set_error_handler("userErrorHandler");
+} else {
+	$gOldErrorHandler = set_error_handler("userErrorHandler");
+}
 //##########################################################################################
 //##########################################################################################
 //##########################################################################################
@@ -343,12 +347,14 @@ function obj2array ($obj)
 function obj2arr ($obj)
 { return get_object_vars($obj); }
 
-
-function copyobj ($obj) { 
-	$arr = get_object_vars($obj); 
-	$res = new EmptyObject();
-	foreach ($arr as $k => $v) $res->$k = $v;
-	return $res;
+function copyobj ($obj) {
+	if(is_object($obj))return clone $obj;
+	if(is_array($obj)){
+		$res = array();
+		foreach ($obj as $k => $v) $res[$k] = copyobj($v);
+		return $res;
+	}
+	return $obj;
 }
 
 // generate save xml attribute from object

@@ -11,7 +11,7 @@ $techids_v = array();
 $techbuffer = array(1=>array(),2=>array());
 
 $army = isset($f_army)?sqlgetobject("SELECT * FROM `army` WHERE `id` = ".intval($f_army)):false;
-if (!$gUser->admin && $army->user != $gUser->id) $army = false;
+if ($army && !$gUser->admin && $army->user != $gUser->id) $army = false;
 if ($army) $f_frags[1] = intval($army->frags);
 
 // turmzauberer, ramme, schatzkiste nicht
@@ -253,13 +253,16 @@ if (isset($f_calc)) {
 	echo "<h3>Kampfbericht</h3>";
 	$showverlauf = isset($f_showverlauf)?true:false;
 	
-	$army1->anfang_units = $army1->units;
-	$army2->anfang_units = $army2->units;
+	$army1->anfang_units = copyobj($army1->units);
+	$army2->anfang_units = copyobj($army2->units);
+	
 	for ($runde=0;$army1->size > 1.0 && $army2->size > 1.0;$runde++) {
 		/* ***** FIGHT_ROUND_START ***** */
 		$m1 = array("a"=>1.0,"v"=>1.0,"f"=>1.0);
 		$m2 = array("a"=>1.0,"v"=>1.0,"f"=>1.0);
+		echo "<pre>";
 		cFight::FightCalcStep($army1,$army2,$m1,$m2,array(),$showverlauf);
+		echo "</pre>";
 		/* ***** FIGHT_ROUND_END ***** */
 	}
 	$army1->lost_units = cUnit::GroupUnits(cUnit::GetUnitsDiff($army1->anfang_units,$army1->units,true));

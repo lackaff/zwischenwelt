@@ -9,7 +9,7 @@ class cFight {
 	//simply increase the amount of registered kills of one unittype of the user with userid
 	static function AddUserkills($userid,$unittypeid,$kills){
 		if($unittypeid == 0 || $kills == 0)return;
-		echo "static function AddUserkills($userid,$unittypeid,$kills)<br>\n";
+		//echo "static function AddUserkills($userid,$unittypeid,$kills)<br>\n";
 		$userid = intval($userid);
 		$unittypeid = intval($unittypeid);
 		$kills = floatval($kills);
@@ -17,7 +17,7 @@ class cFight {
 		sql("UPDATE `userkills` SET `kills`=`kills`+$kills WHERE `user`=$userid AND `unittype`=$unittypeid");
 		if(mysql_affected_rows()<=0)
 			sql("REPLACE INTO `userkills` SET `kills`=$kills , `user`=$userid , `unittype`=$unittypeid");
-		echo "user $userid gets $kills\n";
+		//echo "user $userid gets $kills\n";
 	}
 
 	//increase the kills for a user (userid), units is a list of killed unittypes
