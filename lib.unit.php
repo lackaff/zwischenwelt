@@ -359,7 +359,7 @@ class cUnit {
 		$debug = false;
 		if ($debug) {echo "GetUnitsAfterDamage: dmg=$damage units_vorher_sorted:";self::dumpUnits($units);echo "<br>\n";}
 		foreach ($units as $o2) {
-			$o = copyobj($o2);
+			$o = clone ($o2);
 			if ($damage > 0) {
 				$v = $mod_v * ($gUnitType[$o->type]->v + cUnit::GetUnitBonus($o->type,$uid,"v"));
 				if ($debug) echo "unit type ".$o->type." mod_v=$mod_v unitv=".$gUnitType[$o->type]->v." bonusv=".cUnit::GetUnitBonus($o->type,$uid,"v")." totalv=".$v."<br>";
@@ -426,7 +426,7 @@ class cUnit {
 			if ($gUnitType[$o->type]->elite) {
 				$train = $exp * 0.4 * $o->amount / $untrained_total;
 				$o->amount -= $train;
-				$res[] = $o; // reduce untrained
+				$res[] = clone $o; // reduce untrained
 				$o->amount = $train;
 				$o->type = $gUnitType[$o->type]->elite;
 				$res[] = $o; // add trained, keep spell and user (it is possible to train spell-bound units, they stay spellbound)
