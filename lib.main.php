@@ -221,18 +221,18 @@ function IsInSameGuild	($masteruser,$otheruser) { // obj or id
 function Moral2HtmlIcon($moral){
 	$moral = round(max(0,min(200,$moral)) / 20);
 	switch($moral){
-		case 0:$title="Uberböse";break;
-		case 1:$title="Sadist";break;
-		case 2:$title="Fiesling";break;
-		case 3:$title="Bengelchen";break;
-		case 4:$title="Gemein";break;
-		case 5:$title="Ausgeglichen";break;
-		case 6:$title="Nett";break;
-		case 7:$title="Hilfsbereit";break;
-		case 8:$title="Engelchen";break;
-		case 9:$title="Gut";break;
-		case 10:$title="Das absolut Gute";break;
-		default:$title="Gesinnungslos";break;
+		case 0:$title="Evil";break;
+		case 1:$title="Sadistic";break;
+		case 2:$title="Nasty";break;
+		case 3:$title="Mean";break;
+		case 4:$title="Unpleasant";break;
+		case 5:$title="Average";break;
+		case 6:$title="Nice";break;
+		case 7:$title="Helpful";break;
+		case 8:$title="Friendly";break;
+		case 9:$title="Good";break;
+		case 10:$title="Really Good";break;
+		default:$title="Angelic";break;
 	}
 	return "<img src='".g("icon/moral/$moral.png")."' title='Gesinnung: $title' alt='Gesinnung: $title'>";
 }

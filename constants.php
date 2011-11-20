@@ -46,12 +46,12 @@ define("kMapNaviGotoCat_Hellhole",10);
 $gMapNaviGotoCatNames = array(
 	kMapNaviGotoCat_Pos			=> "Pos",
 	kMapNaviGotoCat_Mark		=> "MapMark",
-	kMapNaviGotoCat_Own			=> "Einheiten",
-	kMapNaviGotoCat_Guild		=> "Gilde",
-	kMapNaviGotoCat_Friends		=> "Freunde",
-	kMapNaviGotoCat_Enemies		=> "Feinde",
-	kMapNaviGotoCat_Search		=> "Suche",
-	kMapNaviGotoCat_Random		=> "Zufall",
+	kMapNaviGotoCat_Own			=> "Armies",
+	kMapNaviGotoCat_Guild		=> "Guild",
+	kMapNaviGotoCat_Friends		=> "Friends",
+	kMapNaviGotoCat_Enemies		=> "Enemies",
+	kMapNaviGotoCat_Search		=> "Search",
+	kMapNaviGotoCat_Random		=> "Random",
 	kMapNaviGotoCat_Hellhole	=> "Hellhole",
 	);
 $gMapNaviGotoCat_AdminOnly = array(0=>kMapNaviGotoCat_Hellhole);
@@ -324,37 +324,37 @@ define("kArmyFlag_AutoShoot_Strangers",		(1<<28));
 define("kArmyFlag_SiegePillage",			(1<<29)); // army steals ressources while pillaging (used for ants)
 define("kArmyFlag_StopSiegeWhenFull",		(1<<30));
 $gArmyFlagNames = array(
-	kArmyFlag_GuildCommand=>			"unter Gildenkommando",
+	kArmyFlag_GuildCommand=>			"unter Guild command",
 	kArmyFlag_SelfLock=>				"Armee nicht selbst steuern", // blockiert wegpunkt setzen
 	kArmyFlag_RecalcBlockedRoute=>		"ausweichen, wenn blockiert",
-	kArmyFlag_WillingToAbortFight=>		"bereit, den Kampf abzubrechen",
-	kArmyFlag_Patrol=>					"Patrouillenmodus (WP wiederholen)",
-	kArmyFlag_AutoAttack=>				"feindliche Armeen automatisch angreifen",
-	kArmyFlag_AutoAttackRangeMonster =>	"automatisch auf Monster schießen",
-	kArmyFlag_AttackBlockingArmy=>		"blockierende Armeen automatisch angreifen",
-	kArmyFlag_SiegeBlockingBuilding=>	"blockierende Gebäude automatisch belagern",
-	kArmyFlag_CaptureShips => 			"Die Flotte versucht Schiffe zu übernehmen",
-	kArmyFlag_RunToEnemy => 			"Auf Feinde zulaufen",
-	kArmyFlag_Wander => 				"Ziellos umherwandern, wenn kein WP gesetzt ist",
-	kArmyFlag_AlwaysCollectItems=>		"Alle Gegenstände einsammeln",
-	kArmyFlag_HarvestForest => 			"Wald abernten",
-	kArmyFlag_HarvestRubble => 			"Geröll abernten",
-	kArmyFlag_HarvestField => 			"Felder abernten",
-	kArmyFlag_Captured => 				"in Gefangenschaft(systemflag)",
-	kArmyFlag_LastWaypointArrived => 	"letzter wegpunkt wurde erreicht(systemflag)",
-	kArmyFlag_AutoSiege => 				"Feinde automatisch belagern",
-	kArmyFlag_AutoPillage => 			"Feinde automatisch plündern",
-	kArmyFlag_AutoDeposit => 			"automatisch in freundliche Lager einzahlen",
-	kArmyFlag_BuildingWait => 			"wait for wp bevore next auto-building action", // stops kArmyFlag_AutoDeposit
-	kArmyFlag_AutoPillageOff => 		"wait for move bevore next auto-pillage action", // stops kArmyFlag_AutoPillage
-	kArmyFlag_AutoGive_Own => 			"Eigene Armeen/Karawanen automatisch beladen",
-	kArmyFlag_AutoGive_Guild => 		"Gilden-Armeen/Karawanen automatisch beladen",
-	kArmyFlag_AutoGive_Friend => 		"Freundliche Armeen/Karawanen automatisch beladen",
-	kArmyFlag_AutoShoot_Enemy => 		"Automatisch auf Feinde schiessen",
-	kArmyFlag_AutoShoot_Strangers => 	"Automatisch auf Fremde schiessen",
-	kArmyFlag_HoldFire => 				"Feuer einstellen (während dem Schiessen ist man unbeweglich)",
-	kArmyFlag_SiegePillage => 			"Armee erbeutet beim belagern Baumaterial (Ameisen)",
-	kArmyFlag_StopSiegeWhenFull =>		"Armee hört auf zu belagern, wenn sie vollgeladen ist (Ameisen)",
+	kArmyFlag_WillingToAbortFight=>		"willing to abort fight",
+	kArmyFlag_Patrol=>					"patrol mode (retrace waypoints)",
+	kArmyFlag_AutoAttack=>				"automatically attack enemy armies",
+	kArmyFlag_AutoAttackRangeMonster =>	"automatically attack monsters",
+	kArmyFlag_AttackBlockingArmy=>		"automatically attack blocking armies",
+	kArmyFlag_SiegeBlockingBuilding=>	"automatically attack blocking buildings",
+	kArmyFlag_CaptureShips => 			"attempt to capture ships",
+	kArmyFlag_RunToEnemy => 			"run to enemies",
+	kArmyFlag_Wander => 				"wander if no waypoints are set",
+	kArmyFlag_AlwaysCollectItems=>		"always collect items",
+	kArmyFlag_HarvestForest => 			"collect lumber from forests",
+	kArmyFlag_HarvestRubble => 			"collect stone from boulders",
+	kArmyFlag_HarvestField => 			"harvest fields",
+	kArmyFlag_Captured => 				"captured (system flag)",
+	kArmyFlag_LastWaypointArrived => 	"arrived at final waypoint (systemflag)",
+	kArmyFlag_AutoSiege => 				"automatically besiege enemies",
+	kArmyFlag_AutoPillage => 			"automatically pillage enemies",
+	kArmyFlag_AutoDeposit => 			"automatically deposit into friendly storehouses",
+	kArmyFlag_BuildingWait => 			"wait for wp before next auto-building action", // stops kArmyFlag_AutoDeposit
+	kArmyFlag_AutoPillageOff => 		"wait for move before next auto-pillage action", // stops kArmyFlag_AutoPillage
+	kArmyFlag_AutoGive_Own => 			"automatically load own armies/caravans",
+	kArmyFlag_AutoGive_Guild => 		"automatically load guild armies/caravans",
+	kArmyFlag_AutoGive_Friend => 		"automatically load friendly armies/caravans",
+	kArmyFlag_AutoShoot_Enemy => 		"automatically fire at ememies",
+	kArmyFlag_AutoShoot_Strangers => 	"automatically fire at strangers",
+	kArmyFlag_HoldFire => 				"hold fire (während dem Schiessen ist man unbeweglich)",
+	kArmyFlag_SiegePillage => 			"pillaging while besieging (Ameisen)",
+	kArmyFlag_StopSiegeWhenFull =>		"stop besieging when full  (Ameisen)",
 	);
 	
 	
@@ -448,7 +448,7 @@ define("kUnitFlag_AllSet", 		(1<<16)-1); // (at least one above the others)-1
 $gUnitFlagName = array(
 	kUnitFlag_Elite=>"Elite",
 	kUnitFlag_Monster=>"Monster",
-	kUnitFlag_Undead=>"Untot",
+	kUnitFlag_Undead=>"Undead",
 	);
 			
 			
@@ -468,14 +468,14 @@ define("kItem_Spam",103);
 
 
 $gResFields = array("lumber","stone","food","metal","runes");
-$gResNames = array("Holz","Stein","Nahrung","Metall","Runen");
+$gResNames = array("Lumber","Stone","Food","Metal","Runes");
 $gResTypeVars = Array(1 => "lumber",2 => "stone", 3 => "food", 4 => "metal", 5 => "runes");
-$gResTypeNames = Array(1 => "Holz",2 => "Stein", 3 => "Nahrung", 4 => "Metall", 5 => "Runen");
+$gResTypeNames = Array(1 => "Lumber",2 => "Stone", 3 => "Food", 4 => "Metal", 5 => "Runes");
 
 //resource list
 $gRes = my_array_combine($gResNames,$gResFields);
 //list of things that can be done by people, worker adjustment
-$gAdjust = array_merge($gRes,array("Reparieren"=>"repair"));
+$gAdjust = array_merge($gRes,array("Repair"=>"repair"));
 
 define("kSiegePillageEfficiency",2.0); // get a multitude of the damage as ressources, so ants don't have to wait that long...
 
@@ -598,9 +598,9 @@ $gBuildingTypeFlagNames = array(
 	kBuildingTypeFlag_Speedy => 			"Speedy (newbee Faktor betrifft diese Gebäude)",
 	kBuildingTypeFlag_Openable => 			"Openable (absperren : Tor,Portal)",
 	kBuildingTypeFlag_Taxable => 			"Taxable (besteuern : Portal)",
-	kBuildingTypeFlag_CanShootArmy => 		"kann auf Armeen schiessen (Turm)",
-	kBuildingTypeFlag_CanShootBuilding => 	"kann auf Gebäude schiessen (Turm)",
-	kBuildingTypeFlag_OthersCanSeeUnits => 	"fremde Spieler können Einheiten im Gebäude sehen (Turm)",
+	kBuildingTypeFlag_CanShootArmy => 		"can fire on army (Turm)",
+	kBuildingTypeFlag_CanShootBuilding => 	"can fire on building (Turm)",
+	kBuildingTypeFlag_OthersCanSeeUnits => 	"others can see units in tower (Turm)",
 	kBuildingTypeFlag_DrawMaxTypeOnTop => 	"Haupt-EinheitenTyp wird über das Gebäudebild gezeichnet (Kanonen-Turm)",
 	kBuildingTypeFlag_Bodenschatz => 		"Bodenschatz",
 	kBuildingTypeFlag_IsInQuickJump => 		"im Schnellsprung?",
@@ -650,14 +650,14 @@ define("kBodenSchatzIdealWorkers",10000); // maximum workers that are of use whe
 define("kShootingAlarmTimeout",2*3600); // send a new igm when fire is resumed after a longer pause
 define("kSpeedyBuildingsLimit",121*2); // 11*11 = 1 map full
 
-$gBuildingTypeGroupsPics = array("Gebäude"=>"tool_house.png","Infrastruktur"=>"tool_street.png","Deko"=>"tool_brunnen.png"); 
+$gBuildingTypeGroupsPics = array("Buildings"=>"tool_house.png","Infrastructure"=>"tool_street.png","Decoration"=>"tool_brunnen.png"); 
 $gBuildingTypeGroups = array( // used by for mapnavi tabs
-	"Gebäude" => array(0=>kBuilding_House,-1), // -1 is replaced by the whole rest
+	"Buildings" => array(0=>kBuilding_House,-1), // -1 is replaced by the whole rest
 	/*"Produktion" => array(0=>	kBuilding_Farm,
 								kBuilding_Lumberjack,
 								kBuilding_StoneProd,
 								kBuilding_IronMine),*/
-	"Infrastruktur" => array(0=>kBuilding_Path,
+	"Infrastructure" => array(0=>kBuilding_Path,
 								kBuilding_Verteidigungsturm,
 								kBuilding_Wall,
 								kBuilding_Gate,
@@ -669,7 +669,7 @@ $gBuildingTypeGroups = array( // used by for mapnavi tabs
 								kBuilding_SeaWall,
 								kBuilding_SeaGate,
 								kBuilding_Steg),
-	"Deko" => array(0=>			kBuilding_Brunnen,
+	"Decoration" => array(0=>			kBuilding_Brunnen,
 								kBuilding_Chessboard,
 								kBuilding_Tavern,
 								kBuilding_Teehaus,
@@ -721,8 +721,8 @@ $gOwnerBuildingFlags = array(	kBuildingFlag_Open_Stranger			=> $gFlaggedBuilding
 								kBuildingFlag_AutoShoot_Strangers	=> $shootertypelist,
 								);
 								
-$gBuildingFlagNames = array(	kBuildingFlag_AutoShoot_Enemy => "Automatisch auf Feinde schiessen",
-								kBuildingFlag_AutoShoot_Strangers => "Automatisch auf Fremde schiessen",
+$gBuildingFlagNames = array(	kBuildingFlag_AutoShoot_Enemy => "automatically fire on enemies",
+								kBuildingFlag_AutoShoot_Strangers => "automaticaly fire on strangers",
 								);
 
 

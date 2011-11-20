@@ -133,7 +133,7 @@ if($gUser->guild > 0){
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 <link rel="stylesheet" type="text/css" href="<?=GetZWStylePath()?>">
-<title>Zwischenwelt - Gilde</title>
+<title>Zwischenwelt - Guild</title>
 
 </head>
 <body>

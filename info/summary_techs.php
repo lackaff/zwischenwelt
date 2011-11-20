@@ -62,7 +62,7 @@ if (isset($f_techs)) {
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 <link rel="stylesheet" type="text/css" href="<?=GetZWStylePath()?>">
-<title>Zwischenwelt - Übersicht</title>
+<title>Zwischenwelt - Overview</title>
 <SCRIPT LANGUAGE="JavaScript" type="text/javascript">
 <!--
 	function planall (name,maxindex,setvalname) {
@@ -177,7 +177,7 @@ if (isset($f_techs)) {
 							<?=$plannedbuilding?oposinfolink($plannedbuilding):""?>
 							<input type="text" style="width:20px" id="planner_<?=$btype?>_<?=$countplanner++?>" name="plan[<?=$o->id?>]" value="<?=$tech->upgrades+$curlevel?>">
 						<?php } else { // ?>
-							<a href="<?=$detaillink?>"><font color="red"><b>Anforderungen</b></font></a>
+							<a href="<?=$detaillink?>"><font color="red"><b>Requisites</b></font></a>
 						<?php } // endif?>
 					</td>
 				</tr>

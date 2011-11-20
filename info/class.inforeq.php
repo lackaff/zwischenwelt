@@ -131,19 +131,19 @@ class cInfoReq {
 			<h3>ab Level <?=$level?></h3><hr>
 			<table border=0>
 			<?php if (count($need) > 0) {?>
-				<tr><th align="left" nowrap>Benötigt</th><td><?=implode("",$need)?></td></tr>
+				<tr><th align="left" nowrap>Requires</th><td><?=implode("",$need)?></td></tr>
 			<?php } // endforeach?>
 			<?php if (count($where) > 0) {?>
-				<tr><th align="left" nowrap>Erforschbar in</th><td><?=implode("",$where)?></td></tr>
+				<tr><th align="left" nowrap>Researchable in</th><td><?=implode("",$where)?></td></tr>
 			<?php } // endforeach?>
 			<?php if (count($mytechs) > 0) {?>
-				<tr><th align="left" nowrap>Forschungen</th><td><?=implode("",$mytechs)?></td></tr>
+				<tr><th align="left" nowrap>Research</th><td><?=implode("",$mytechs)?></td></tr>
 			<?php } // endforeach?>
 			<?php foreach ($disables as $level => $arr) {?>
-				<tr><th align="left" nowrap>Level <?=$level?> verhindert</th><td><?=implode("",$arr)?></td></tr>
+				<tr><th align="left" nowrap>Level <?=$level?> prevents</th><td><?=implode("",$arr)?></td></tr>
 			<?php } // endforeach?>
 			<?php foreach ($enables as $level => $arr) {?>
-				<tr><th align="left" nowrap>Level <?=$level?> ermöglicht</th><td><?=implode("",$arr)?></td></tr>
+				<tr><th align="left" nowrap>Level <?=$level?> allows</th><td><?=implode("",$arr)?></td></tr>
 			<?php } // endforeach?>
 			</table>
 		

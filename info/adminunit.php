@@ -59,7 +59,7 @@ if (isset($f_repair_unit_owner)) {
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 <link rel="stylesheet" type="text/css" href="<?=GetZWStylePath()?>">
-<title>Zwischenwelt - Armee Administration</title>
+<title>Zwischenwelt - Army Administration</title>
 </head>
 <body>
 <?php 

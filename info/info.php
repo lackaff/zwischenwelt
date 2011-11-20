@@ -201,7 +201,7 @@ if (!isset($f_building) && !isset($f_army) && isset($f_do)) {
 		break;
 		case "build":
 			function JSAddInfoMessage_BuildError($btype,$x,$y,$reason) {
-				JSAddInfoMessage(GetBuildingTypeLink($btype,$x,$y)." konnte bei ".pos2txt($x,$y)." nicht geplant werden : ".$reason."<br>");
+				JSAddInfoMessage(GetBuildingTypeLink($btype,$x,$y)." at ".pos2txt($x,$y)." cannot be planned: ".$reason."<br>");
 			}
 			
 			foreach ($f_build as $typeid => $val) { // this array won't have more than one entry
@@ -236,18 +236,18 @@ if (!isset($f_building) && !isset($f_army) && isset($f_do)) {
 					
 					// check other plans
 					if (OwnConstructionInProcess($f_x,$f_y)) {
-						JSAddInfoMessage_BuildError($btype,$f_x,$f_y,"hier ist bereits ein Bauplan");
+						JSAddInfoMessage_BuildError($btype,$f_x,$f_y,"there is already a plan here");
 						continue;
 					}
 					// check build cross
 					if (!InBuildCross($f_x,$f_y,$gUser->id)) {
-						JSAddInfoMessage_BuildError($btype,$f_x,$f_y,"kein eigenes Gebäude in der Nähe");
+						JSAddInfoMessage_BuildError($btype,$f_x,$f_y,"none of your own buildings are nearby");
 						continue;
 					}
 					// check req
 					if (!HasReq($btype->req_geb,$btype->req_tech,$gUser->id)) {
-						$anforderungen = GetBuildingTypeLink($btype,$f_x,$f_y,"<font color=\"red\"><b>Anforderungen</b></font>");
-						JSAddInfoMessage_BuildError($btype,$f_x,$f_y,"$anforderungen sind nicht erfüllt");
+						$anforderungen = GetBuildingTypeLink($btype,$f_x,$f_y,"<font color=\"red\"><b>Requisites</b></font>");
+						JSAddInfoMessage_BuildError($btype,$f_x,$f_y,"$anforderungen have not been fulfilled");
 						continue;
 					}
 					
@@ -255,12 +255,12 @@ if (!isset($f_building) && !isset($f_army) && isset($f_do)) {
 					$terrain = cMap::StaticGetTerrainAtPos($f_x,$f_y);
 					if ($btype->terrain_needed > 0 && $btype->terrain_needed != $terrain) {
 						$reqpic = "<img border=0 src=\"".g($gTerrainType[$btype->terrain_needed]->gfx)."\">";
-						JSAddInfoMessage_BuildError($btype,$f_x,$f_y,"kann nur auf $reqpic gebaut werden");
+						JSAddInfoMessage_BuildError($btype,$f_x,$f_y,"can only be built on $reqpic");
 						continue;
 					}
 					if ($gTerrainType[$terrain]->buildable == 0 && $btype->terrain_needed != $terrain) {
 						$reqpic = "<img border=0 src=\"".g($gTerrainType[$terrain]->gfx)."\">";
-						JSAddInfoMessage_BuildError($btype,$f_x,$f_y,"Gelände $reqpic ist nicht bebaubar");
+						JSAddInfoMessage_BuildError($btype,$f_x,$f_y,"Terrain $reqpic cannot be built upon");
 						continue;
 					}
 					
@@ -268,7 +268,7 @@ if (!isset($f_building) && !isset($f_army) && isset($f_do)) {
 					$blockerbuilding = sqlgetobject("SELECT * FROM `building` WHERE `x` = ".$f_x." AND `y` = ".$f_y);
 					if ($blockerbuilding) {
 						$reqpic = GetBuildingTypeLink($blockerbuilding->type,$f_x,$f_y,false,$blockerbuilding->user,$blockerbuilding->level);
-						JSAddInfoMessage_BuildError($btype,$f_x,$f_y,"hier befindet sich bereits ein Gebäude : ".$reqpic."");
+						JSAddInfoMessage_BuildError($btype,$f_x,$f_y,"there is already a building here: ".$reqpic."");
 						continue;
 					}
 					
@@ -277,21 +277,21 @@ if (!isset($f_building) && !isset($f_army) && isset($f_do)) {
 						GetNearBuilding($x,$y,$gUser->id,kBuildingRequirenment_ExcludeRadius,$btype->exclude_building)) {
 						$piclist = "";
 						foreach ($btype->exclude_building as $b) $piclist .= GetBuildingTypeLink($b,$f_x,$f_y);
-						JSAddInfoMessage_BuildError($btype,$f_x,$f_y,"$piclist darf nicht direkt daneben sein");
+						JSAddInfoMessage_BuildError($btype,$f_x,$f_y,"$piclist may not be directly adjacent");
 						continue;
 					}
 					if (sizeof($btype->neednear_building)>0 && 
 						!GetNearBuilding($x,$y,$gUser->id,kBuildingRequirenment_NearRadius,$btype->neednear_building)) {
 						$piclist = "";
 						foreach ($btype->neednear_building as $b) $piclist .= GetBuildingTypeLink($b,$f_x,$f_y);
-						JSAddInfoMessage_BuildError($btype,$f_x,$f_y,"$piclist muss in der Nähe sein");
+						JSAddInfoMessage_BuildError($btype,$f_x,$f_y,"$piclist must be nearby");
 						continue;
 					}
 					if (sizeof($btype->require_building)>0 && 
 						!GetNearBuilding($x,$y,$gUser->id,kBuildingRequirenment_NextToRadius,$btype->require_building)) {
 						$piclist = "";
 						foreach ($btype->require_building as $b) $piclist .= GetBuildingTypeLink($b,$f_x,$f_y);
-						JSAddInfoMessage_BuildError($btype,$f_x,$f_y,"$piclist muss direkt daneben sein");
+						JSAddInfoMessage_BuildError($btype,$f_x,$f_y,"$piclist must be directly adjacent");
 						continue;
 					}
 					
@@ -302,21 +302,21 @@ if (!isset($f_building) && !isset($f_army) && isset($f_do)) {
 								if (sizeof($btype->require_building) == 0) $btype->require_building = array(0=>kBuilding_Harbor,kBuilding_Steg);
 								$piclist = "";
 								foreach ($btype->require_building as $b) $piclist .= GetBuildingTypeLink($b,$f_x,$f_y);
-								JSAddInfoMessage_BuildError($btype,$f_x,$f_y,"$piclist muss direkt daneben sein");
+								JSAddInfoMessage_BuildError($btype,$f_x,$f_y,"$piclist must be directly adjacent");
 							break;
 							case kBuilding_SeaWall:
 							case kBuilding_SeaGate:
 								if (sizeof($btype->require_building) == 0) $btype->require_building = array(0=>kBuilding_SeaWall,kBuilding_Wall);
 								$piclist = "";
 								foreach ($btype->require_building as $b) $piclist .= GetBuildingTypeLink($b,$f_x,$f_y);
-								JSAddInfoMessage_BuildError($btype,$f_x,$f_y,"$piclist muss direkt daneben sein");
+								JSAddInfoMessage_BuildError($btype,$f_x,$f_y,"$piclist must be directly adjacent");
 							break;
 							case kBuilding_Harbor:
 								$reqpic = "<img border=0 src=\"".g($gTerrainType[kTerrain_Sea]->gfx)."\">";
-								JSAddInfoMessage_BuildError($btype,$f_x,$f_y,"$reqpic muss in der nähe sein");
+								JSAddInfoMessage_BuildError($btype,$f_x,$f_y,"$reqpic must be nearby");
 							break;
 							default:
-								JSAddInfoMessage_BuildError($btype,$f_x,$f_y,"kann hier nicht gebaut werden");
+								JSAddInfoMessage_BuildError($btype,$f_x,$f_y,"cannot be built here");
 						}
 						continue;
 					}
@@ -679,8 +679,8 @@ if (!isset($f_blind)) foreach($gMapCons as $gObject) {
 		</tr>
 		</table>
 		<?php if (GetBuildNewbeeFactor($gObject->type,$gObject->priority,$gObject->user) < 1.0) {?>
-			NewbeeFaktor: die Bauzeit der ersten <?=kSpeedyBuildingsLimit?> steigt langsam von 0 bis normal an.<br>
-			Dies gilt nur für folgende Gebäudetypen : 
+			New settlement (newbie bonus): the build time for the first <?=kSpeedyBuildingsLimit?> buildings slowly increases from 0 to normal.<br>
+			This applies only to the following building types: 
 			<?php 
 				foreach ($gBuildingType as $o) 
 					if (in_array($o->id,$gSpeedyBuildingTypes)) 
@@ -688,7 +688,7 @@ if (!isset($f_blind)) foreach($gMapCons as $gObject) {
 			?>
 			<br>
 		<?php } // endif?>
-		TechFaktor: kann mit der Forschung "Architektur" (in der Werkstatt) gesenkt werden.<br>
+		Tech factor: this bonus can be increased by researching Architecture (in the Workshop).<br>
 
 		<?php 		
 		$buildingtype = $gBuildingType[$gObject->type];
@@ -703,23 +703,23 @@ if (!isset($f_blind)) foreach($gMapCons as $gObject) {
 		<FORM METHOD=POST ACTION="<?=Query("?sid=?&x=?&y=?")?>">
 		<INPUT TYPE="hidden" NAME="do" VALUE="cancelconstructionplan">
 		<INPUT TYPE="hidden" NAME="id" VALUE="<?=$gObject->id?>">
-		<INPUT TYPE="submit" NAME="buildnext" VALUE="als n&auml;chstes bauen">
-		<INPUT TYPE="submit" NAME="cancelone" VALUE="abbrechen">
+		<INPUT TYPE="submit" NAME="buildnext" VALUE="Build Next">
+		<INPUT TYPE="submit" NAME="cancelone" VALUE="Cancel">
 		</FORM>
-		<a href="<?=Query("bauplan.php?sid=?")?>"><b>Baupl&auml;ne</b></a>&nbsp;
-		<a href="<?=Query("kosten.php?sid=?")?>"><b>Kosten</b></a><br>
+		<a href="<?=Query("bauplan.php?sid=?")?>"><b>Building Plans</b></a>&nbsp;
+		<a href="<?=Query("kosten.php?sid=?")?>"><b>Expenses</b></a><br>
 		<?php if (isset($prevcon)) {?>
-			<a href="<?=Query("?sid=?&x=".$firstcon->x."&y=".$firstcon->y)?>">zum ersten Plan</a><br>
-			<a href="<?=Query("?sid=?&x=".$prevcon->x."&y=".$prevcon->y)?>">zum vorherigen Plan</a><br>
+			<a href="<?=Query("?sid=?&x=".$firstcon->x."&y=".$firstcon->y)?>">to the first plan</a><br>
+			<a href="<?=Query("?sid=?&x=".$prevcon->x."&y=".$prevcon->y)?>">to the previous plan</a><br>
 		<?php }?>
 		<?php if (isset($nextcon)) {?>
-			<a href="<?=Query("?sid=?&x=".$nextcon->x."&y=".$nextcon->y)?>">zum n&auml;chsten Plan</a><br>
+			<a href="<?=Query("?sid=?&x=".$nextcon->x."&y=".$nextcon->y)?>">to the next plan</a><br>
 		<?php }?>
 	<?php }?>
 	<hr>
 	<?php 
 
-	RegisterInfoTab($planpic."Bauplan",rob_ob_end(),1);
+	RegisterInfoTab($planpic."Building Plans",rob_ob_end(),1);
 }
 
 
@@ -730,7 +730,7 @@ if (!isset($f_blind)) {
 	if (count($gMapBuilding) == 0 && !OwnConstructionInProcess($f_x,$f_y) && InBuildCross($f_x,$f_y,$gUser->id)) {
 		$userhashq = UserHasBuilding($gUser->id,kBuilding_HQ);
 		rob_ob_start();
-		$timetip = "Effektive Bauzeit";
+		$timetip = "Actual build time";
 		?>
 		<?php PrintBuildTimeHelp($f_x,$f_y); ?>
 		<FORM METHOD=POST ACTION="<?=Query("?sid=?&x=?&y=?")?>">
@@ -749,8 +749,8 @@ if (!isset($f_blind)) {
 			if (!$userhashq && $o->id != kBuilding_HQ) continue;
 			$hasreq = HasReq($o->req_geb,$o->req_tech,$gUser->id);
 			if (!$hasreq)
-					$bb=GetBuildingTypeLink($o->id,$f_x,$f_y,"<font color='red'>Anforderungen</font>");
-			else	$bb="<INPUT TYPE='submit' NAME='build[".$o->id."]' VALUE='bauen'>";
+					$bb=GetBuildingTypeLink($o->id,$f_x,$f_y,"<font color='red'>Requisites</font>");
+			else	$bb="<INPUT TYPE='submit' NAME='build[".$o->id."]' VALUE='Build'>";
 			$buildtime = GetBuildTime($f_x,$f_y,$o->id);
 			?>
 			<tr>
@@ -1029,7 +1029,7 @@ if (!isset($f_blind)) {
 <script src="<?=BASEURL?>startgauges.js" type="text/javascript"></script>
 <link rel="stylesheet" type="text/css" href="<?=BASEURL?>startgauges.css">
 <link rel="stylesheet" type="text/css" href="<?=GetZWStylePath()?>">
-<title>Zwischenwelt - info</title>
+<title>Zwischenwelt - Info</title>
 <SCRIPT LANGUAGE="JavaScript" type="text/javascript">
 <!--
 	function AddInfoMessage (html) {

@@ -87,7 +87,7 @@ function createGuild($name,$color)
 	
 		if($ok)
 		{
-			$text = "Neue Gilde gegründet: ".$name;
+			$text = "New Guild founded: ".$name;
 			//sql("INSERT INTO `newlog` SET `time`=".time().",`text`='$text',`user`=0");
 		
 			sql("UPDATE `user` SET 
@@ -102,8 +102,8 @@ function createGuild($name,$color)
 			sql("UPDATE `user` SET `guild`=".mysql_insert_id()." WHERE `id`=".$gUser->id);
 			
 			$success = true;
-		} else echo "nicht genug Ressourcen !";
-	} else echo "Gilden-name existiert schon !";
+		} else echo "insufficient resources!";
+	} else echo "The proposed name is already taken!";
 	
 	sql("UNLOCK TABLES");
 	
@@ -232,7 +232,7 @@ function ArmyChangeGC($army,$statenow) {
 	
 	GuildLogMe($army->x,$army->y,$army->user,0,
 		sqlgetone("SELECT `guild` FROM `user` WHERE `id` = ".$army->user),
-		0,($statenow?"GC aktiv":"GC aus"),
+		0,($statenow?"GC active":"GC inactive"),
 		("Die Armee ".$army->name." wurde dem Gildencommando ".($statenow?"unterstellt":"entzogen")));
 }
 

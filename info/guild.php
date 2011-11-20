@@ -83,7 +83,7 @@ $gGuild = sqlgetobject("SELECT g.*,u.`name` as `foundername` FROM `guild` g,`use
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 <link rel="stylesheet" type="text/css" href="<?=GetZWStylePath()?>">
-<title>Zwischenwelt - Gilde</title>
+<title>Zwischenwelt - Guild</title>
 
 </head>
 <body>
@@ -115,17 +115,17 @@ if($gUser->guild == 0)
 else
 {//gilde vorhanden ------------------------------------------------------------
 ?>
-<h4>Gilde '<?=$gGuild->name?>'</h4>
+<h4>Guild '<?=$gGuild->name?>'</h4>
 <form method="post" action="<?=Query("guild.php?sid=?")?>">
 	<div style="padding-top:20px;padding-left:0;padding-right:0;padding-bottom:0;">
 	<table>
 		<tr>
-			<td>Rohstoffe:</td>
+			<td>Resources:</td>
 			<?php foreach($gRes as $n=>$f)echo '<td><img alt="'.$f.'" src="'.g('res_'.$f.'.gif').'"></td><td>'.ktrenner(floor($gGuild->$f)).'</td>'; ?>		
 			<td></td>
 		</tr>
 		<tr>
-			<td>Maximum:</td>
+			<td>Guild Capacity:</td>
 			<?php foreach($gRes as $n=>$f){
 				$name="max_$f";
 				echo '<td></td><td>'.ktrenner(floor($gGuild->$name),"grey");
@@ -163,10 +163,10 @@ else
 	
 	<table width=100% border=0>
 	<tr><td valign="top" style="padding-left:20px;padding-bottom:15px;">
-	Gründer: <?=$gGuild->foundername?><br>
-	Bewerbungen: <?=sqlgetone("SELECT COUNT(`user`) FROM `guild_request` WHERE `guild`=".$gGuild->id)?>
+	Founder: <?=$gGuild->foundername?><br>
+	Applicants: <?=sqlgetone("SELECT COUNT(`user`) FROM `guild_request` WHERE `guild`=".$gGuild->id)?>
 	
-	<p><span style="font-size:14px;font-weight:bold;">* <a style="font-size:14px;" href="<?=Query("guild_forum.php?sid=?")?>">Gildeforum</a></span></p>
+	<p><span style="font-size:14px;font-weight:bold;">* <a style="font-size:14px;" href="<?=Query("guild_forum.php?sid=?")?>">Guild Forum</a></span></p>
 	<?php if(empty($gGuild->forumurl)){ ?>
 	<table border=0 cellspacing=0 cellpadding=0>
 	<?$a=getnewArticles(); foreach ($a as $o){
@@ -175,14 +175,14 @@ else
 	<tr><td style="padding-left:10px;color:<?=($o->new?"red":"black")?>;"> * <a href='<?="".Query("guild_forum.php?sid=?&guild=".$o->guild."&article=".$o->id)."'>".substr($o->head,0,60).(strlen($o->head)>60?"...":"")?></a><?=$neu?></td></tr>
 	<?}?>
 	<tr><td>&nbsp;</td></tr>
-	<tr><td>[<a href="<?=query("?sid=?&do=markallforumread")?>">alles gelesen markieren</a>]</td></tr>
+	<tr><td>[<a href="<?=query("?sid=?&do=markallforumread")?>">Mark all read</a>]</td></tr>
 	</table>
 	<?php } else { ?>
-		Das Gildenforum befindet sich hier:<br><a target="_blank" href="<?=$gGuild->forumurl?>"><?=$gGuild->forumurl?></a>
+		The Guild Forum is here:<br><a target="_blank" href="<?=$gGuild->forumurl?>"><?=$gGuild->forumurl?></a>
 	<?php } ?>
 	</p>
 	
-	<p><span style="font-size:14px;font-weight:bold;">* <a style="font-size:14px;" href="<?=Query("guild_log.php?sid=?")?>">Gildenlog</a></span></p>
+	<p><span style="font-size:14px;font-weight:bold;">* <a style="font-size:14px;" href="<?=Query("guild_log.php?sid=?")?>">Guild Log</a></span></p>
 	<table border=0 cellspacing=0 cellpadding=0>
 	<?$g = sqlgettable("SELECT * FROM `guildlog` WHERE (
 		`guild1` = ".$gGuild->id." OR 
@@ -195,9 +195,9 @@ else
 	<td valign=top>
 	 <form action="<?=Query("?sid=?")?>" method=post>
 	 <table>
-	    <tr><th colspan=2>Schreischachtel (<a href="<?=Query("guild_shoutbox.php?sid=?")?>">7 Tage Archiv</a>)</th></tr>
+	    <tr><th colspan=2>Chatboard (<a href="<?=Query("guild_shoutbox.php?sid=?")?>">7 Tage Archiv</a>)</th></tr>
 
-	    <tr><td><?=$gUser->name?></td><td align="right"><input type="submit" name="send" value="senden"></td></tr>
+	    <tr><td><?=$gUser->name?></td><td align="right"><input type="submit" name="send" value="Chat"></td></tr>
 	    <tr><td colspan=2><textarea name="text" rows=1 cols=20 style="width:400px"></textarea></td></tr>
 	    
 	    <?php
@@ -217,9 +217,9 @@ else
 	
 	<?php ImgBorderStart(); ?>
 		<p align="center"><?=(!empty($gGuild->gfx)?"<img src='".$gGuild->gfx."' align='middle'> ":"")?></p>
-		<p align="center"><span style="font-size:13px;font-weight:bold;" >Internes Profil:</span></p>
+		<p align="center"><span style="font-size:13px;font-weight:bold;" >Internal Profile:</span></p>
 		<?=nl2br(htmlentities($gGuild->internprofile))?>
-		<p align="center"><span style="font-size:13px;font-weight:bold;" >Externes Profil:</span></p>
+		<p align="center"><span style="font-size:13px;font-weight:bold;" >External Profile:</span></p>
 		<?=nl2br(htmlentities($gGuild->profile))?>
 	<?php ImgBorderEnd(); ?>
 	
@@ -235,8 +235,8 @@ else
 		<FORM METHOD=POST ACTION="<?=Query("?sid=?&x=?&y=?")?>">
 			<INPUT TYPE="hidden" NAME="do" VALUE="leaveguild">
 			<INPUT TYPE="hidden" NAME="id" VALUE="<?=$gUser->id?>">
-			<INPUT TYPE="submit" NAME="verlassen" VALUE="verlassen">
-			<INPUT TYPE="checkbox" NAME="sure" VALUE="1">sicher !
+			<INPUT TYPE="submit" NAME="verlassen" VALUE="Leave Guild">
+			<INPUT TYPE="checkbox" NAME="sure" VALUE="1">I'm sure!
 		</FORM>
 		<p></p>	
 <?php

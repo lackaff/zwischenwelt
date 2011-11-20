@@ -13,7 +13,7 @@ profile_page_start("guild_log.php");
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 <link rel="stylesheet" type="text/css" href="<?=GetZWStylePath()?>">
-<title>Zwischenwelt - Gildelog</title>
+<title>Zwischenwelt - Guildlog</title>
 
 </head>
 <body>

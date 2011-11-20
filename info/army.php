@@ -410,7 +410,7 @@ class cInfoArmy extends cInfoBase {
 			else $enemy = $fight->attacker;
 			$enemy = sqlgetobject("SELECT * FROM `army` WHERE `id`=".$enemy);
 			?>
-			<span style="color:red">befindet sich im Kampf mit <a href="<?=Query("?sid=?&x=".$enemy->x."&y=".$enemy->y)?>">'<?=$enemy->name?>'</a></span>
+			<span style="color:red">Is engaged in battle with <a href="<?=Query("?sid=?&x=".$enemy->x."&y=".$enemy->y)?>">'<?=$enemy->name?>'</a></span>
 			<?php if($gUser->admin){ ?>
 				<a href="<?=Query("?sid=?&x=?&y=?&army=$gObject->id&do=admin_fight_step&id=$fight->id&steps=1")?>">(s1)</a>
 				<a href="<?=Query("?sid=?&x=?&y=?&army=$gObject->id&do=admin_fight_step&id=$fight->id&steps=10")?>">(s10)</a>
@@ -423,7 +423,7 @@ class cInfoArmy extends cInfoBase {
 		if ($gPillage) {
 			$target = sqlgetobject("SELECT * FROM `building` WHERE `id`=".$gPillage->building);
 			?>
-			<span style="color:red">plündert gerade <?=cArmy::DrawPillageRes($gPillage->type)?> aus <a href="<?=Query("?sid=?&x=".$target->x."&y=".$target->y)?>">Lager (<?=$target->x?>|<?=$target->y?>)</a></span>
+			<span style="color:red">Is pillaging <?=cArmy::DrawPillageRes($gPillage->type)?> aus <a href="<?=Query("?sid=?&x=".$target->x."&y=".$target->y)?>">Lager (<?=$target->x?>|<?=$target->y?>)</a></span>
 			<?php if($gCanControllArmy) {?><a href="<?=Query("?sid=?&x=?&y=?&army=".$gArmy->id."&do=cancelpillage&id=".$gPillage->id)?>"><img border=0 src="<?=g("icon/cancel.png")?>"></a><?php } ?>
 			<?php if($gUser->admin){ ?>
 				<a href="<?=Query("?sid=?&x=?&y=?&army=$gObject->id&do=admin_pillage_step&id=$gPillage->id&steps=1")?>">(s1)</a>
@@ -439,7 +439,7 @@ class cInfoArmy extends cInfoBase {
 			$target = sqlgetobject("SELECT * FROM `building` WHERE `id` = ".intval($gSiege->building));
 			$btype = $gBuildingType[$target->type];
 			?>
-			<span style="color:red">belagert gerade <a href="<?=Query("?sid=?&x=".$target->x."&y=".$target->y)?>"><?=$btype->name?> (<?=$target->x?>|<?=$target->y?>)</a></span>
+			<span style="color:red">Is besieging <a href="<?=Query("?sid=?&x=".$target->x."&y=".$target->y)?>"><?=$btype->name?> (<?=$target->x?>|<?=$target->y?>)</a></span>
 			<?php if($gCanControllArmy) {?><a href="<?=Query("?sid=?&x=?&y=?&army=".$gArmy->id."&do=cancelsiege&id=".$gSiege->id)?>"><img border=0 src="<?=g("icon/cancel.png")?>"></a><?php } ?>
 			<?php if($gUser->admin){ ?>
 				<a href="<?=Query("?sid=?&x=?&y=?&army=$gObject->id&do=admin_siege_step&id=$gSiege->id&steps=1")?>">(s1)</a>
@@ -937,12 +937,12 @@ class cInfoArmy extends cInfoBase {
 				<?php if (sizeof($melee_list) > 0) {?>
 					<!--armee angreiffen-->
 					<form method="post" action="<?=Query("?sid=?&x=?&y=?&do=attackarmy&target=".$gObject->id)?>">
-					mit <SELECT NAME="army">
+					Attack with <SELECT NAME="army">
 					<?php foreach($melee_list as $o) {?>
 						<OPTION VALUE="<?=$o->id?>" <?=($o->id == $gUser->lastusedarmy)?"selected":""?>><?=$o->name?> <?=($o->user!=$gUser->id)?("(".$o->owner.")"):""?></OPTION>
 					<?php }?>
 					</SELECT>
-					<input type="submit" value="angreifen">
+					<input type="submit" value="Issue Command">
 					</form>
 				<?php }?>
 				<?php 
@@ -951,12 +951,12 @@ class cInfoArmy extends cInfoBase {
 				<?php if (sizeof($dist_list) > 0) {?>
 					<!--armee angreiffen-->
 					<form method="post" action="<?=Query("?sid=?&x=?&y=?&do=rangeattackarmy&target=".$gObject->id)?>">
-					mit <SELECT NAME="army">
+					Fire upon with <SELECT NAME="army">
 					<?php foreach($dist_list as $o) {?>
 						<OPTION VALUE="<?=$o->id?>" <?=($o->id == $gUser->lastusedarmy)?"selected":""?>><?=$o->name?> <?=($o->user!=$gUser->id)?("(".$o->owner.")"):""?></OPTION>
 					<?php }?>
 					</SELECT>
-					<input type="submit" value="beschießen">
+					<input type="submit" value="Issue Command">
 					</form>
 				<?php }?>
 			</td>

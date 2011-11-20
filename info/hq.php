@@ -96,18 +96,18 @@ class cInfoHQ extends cInfoBuilding {
 		<form method="post" action="<?=Query("?sid=?&x=?&y=?")?>">
 		<input type="hidden" name="do" value="setfof">
 		<input type="hidden" name="other" value="<?=$gObject->user?>">
-			Diplomatie : <?=GetFOFtxt($gUser->id,$gObject->user)?>
+			Diplomacy : <?=GetFOFtxt($gUser->id,$gObject->user)?>
 			
 			<?php if (GetFOF($gUser->id,$gObject->user) == kFOF_Friend) {?>
-				<input type="submit" name="delfriend" value="Freundschaft kündigen">
+				<input type="submit" name="delfriend" value="Cancel Friendship">
 			<?php } else { // ?>
-				<input type="submit" name="addfriend" value="Freundschaft schliessen">
+				<input type="submit" name="addfriend" value="Establish Friendship">
 			<?php } // endif?>
 			
 			<?php if (GetFOF($gUser->id,$gObject->user) == kFOF_Enemy) {?>
-				<input type="submit" name="delenemy" value="Feindschaft beenden">
+				<input type="submit" name="delenemy" value="Cancel Hostilities">
 			<?php } else { // ?>
-				<input type="submit" name="addenemy" value="zum Feind erklären">
+				<input type="submit" name="addenemy" value="Declare Enemy">
 			<?php } // endif?>
 		</form>
 		<?php } // endif?>
@@ -160,11 +160,11 @@ class cInfoHQ extends cInfoBuilding {
 		} 
 		profile_page_end(); 
 		*/
-		RegisterInfoTab("Produktion",$this->PrintWorker());
-		RegisterInfoTab("Übersicht",$this->PrintOverview());
+		RegisterInfoTab("Production",$this->PrintWorker());
+		RegisterInfoTab("Overview",$this->PrintOverview());
 		
 		$diplohtml = trim($this->PrintDiplo());
-		if (!empty($diplohtml)) RegisterInfoTab("Diplomatie",$diplohtml);
+		if (!empty($diplohtml)) RegisterInfoTab("Diplomacy",$diplohtml);
 		// RegisterInfoTab("Einstellungen",Query("profile.php?sid=?"));
 	}
 	
@@ -224,13 +224,13 @@ class cInfoHQ extends cInfoBuilding {
 		<?php }?>
 		<td>
 			<?php if ($concount == 0) {?>
-				<font color="red"><b>keine Pl&auml;ne mehr !</b></font>
+				<font color="red"><b>No more building plans!</b></font>
 			<?php } else if ($concount == 1) {?>
-				<a href="<?=Query("bauplan.php?sid=?")?>"><font color="#FF4400"><b>letzter Bauplan !</b></font></a>
+				<a href="<?=Query("bauplan.php?sid=?")?>"><font color="#FF4400"><b>Last building planned!</b></font></a>
 			<?php } else if ($concount < 10) {?>
-				<a href="<?=Query("bauplan.php?sid=?")?>"><font color="#FF4400"><b>nur noch <?=$concount?> Pl&auml;ne !</b></font></a>
+				<a href="<?=Query("bauplan.php?sid=?")?>"><font color="#FF4400"><b>Only <?=$concount?> plans remain!</b></font></a>
 			<?php } else {?>
-				<a href="<?=Query("bauplan.php?sid=?")?>">noch <?=$concount?> Pl&auml;ne</a>
+				<a href="<?=Query("bauplan.php?sid=?")?>">noch <?=$concount?> Plans</a>
 			<?php }?>
 		</td>
 		</tr>
@@ -309,11 +309,11 @@ class cInfoHQ extends cInfoBuilding {
 		$debug_show_all_tips = false;
 		$minbtable = array();
 		$popicon = "<img src=\"".g("pop-r%R%.png","","",$gUser->race)."\">";
-		$minbtable[] = array(kBuilding_Lumberjack,4,", produziert <img src=\"".g("res_lumber.gif")."\">");
-		$minbtable[] = array(kBuilding_StoneProd,4,", produziert <img src=\"".g("res_stone.gif")."\">");
-		$minbtable[] = array(kBuilding_Farm,2,", produziert <img src=\"".g("res_food.gif")."\"> für deine Bevölkerung");
-		$minbtable[] = array(kBuilding_Silo,2,", dort werden deine Rohstoffe gelagert");
-		$minbtable[] = array(kBuilding_House,4,", damit deine Bevölkerung ".$popicon." wachsen kann");
+		$minbtable[] = array(kBuilding_Lumberjack,4,", (produces <img src=\"".g("res_lumber.gif")."\">)");
+		$minbtable[] = array(kBuilding_StoneProd,4,", (produces <img src=\"".g("res_stone.gif")."\">)");
+		$minbtable[] = array(kBuilding_Farm,2,", (produces <img src=\"".g("res_food.gif")."\">)");
+		$minbtable[] = array(kBuilding_Silo,2,", (provides storage of resources)");
+		$minbtable[] = array(kBuilding_House,4,", (allows your population ".$popicon." to grow)");
 		
 		
 		
@@ -330,12 +330,12 @@ class cInfoHQ extends cInfoBuilding {
 		}
 		
 		if ($gUser->guild == kGuild_Weltbank || $debug_show_all_tips) {
-			$tip[] = "Bis du ".kplaintrenner($gGlobal['wb_max_gp'])." Punkte erreicht hast, bist du in der Weltbank (Menupunkt \"Gilde\")";
-			$tip[] = "In der Weltbank kann man sich mit anderen neuen Spielern unterhalten";
-			$tip[] = "<b>In der Weltbank kann man sich Rohstoffe ausleihen, bedien dich und wachse !</b>";
-			$tip[] = "Erst wenn man ".kplaintrenner($gGlobal['wb_paybacklimit'])." Punkte erreicht hat, werden ".$gGlobal['wb_payback_perc']."% der Produktion abgezogen, bis die Weltbank-Schulden bezahlt sind";
-			$tip[] = "Schulden sieht man als negative GildenPunkte in der Mitgliederliste";
-			$tip[] = "Wenn deine Lager überlauffen, fliessen die Rohstoffe in die Weltbank, und werden als GildenPunkte angerechnet";
+			$tip[] = "Until you reach ".kplaintrenner($gGlobal['wb_max_gp'])." points, you are a member of the Weltbank Guild";
+			$tip[] = "You can chat with other players in the Weltbank";
+			$tip[] = "<b>You can borrow resources from the Weltbank to aid your growth.</b>";
+			$tip[] = "When you reach ".kplaintrenner($gGlobal['wb_paybacklimit'])." points, ".$gGlobal['wb_payback_perc']."% of your production will be deducted until you have paid off your debts to the Weltbank.";
+			$tip[] = "Your debts will appear as negative points in the guild member list.";
+			$tip[] = "When your storehouses overflow, the excess resources will go to the Weltbank and reduce your debts.";
 		}
 		
 		$tip[] = "Gebäude können in einem Abstand von bis zu 2 Feldern zu eigenen Gebäuden gebaut werden.<br>";
@@ -343,31 +343,31 @@ class cInfoHQ extends cInfoBuilding {
 		foreach ($minbtable as $o) {
 			$cb = CountUserBuildingType($gUser->id,$o[0]);
 			if (!$debug_show_all_tips && $cb >= $o[1]) continue;
-			$tip[] = "Du solltest noch mind. ".($o[1]-$cb)." ".GetBuildingTypeLink($o[0],$x,$y)." bauen ".$o[2]."<br>";
+			$tip[] = "You should build at least ".($o[1]-$cb)." more ".GetBuildingTypeLink($o[0],$x,$y)." ".$o[2]."<br>";
 		}
 		
 		if (CountUserBuildingType($gUser->id,kBuilding_Wall) < 5 || $debug_show_all_tips) {
-			$tip[] = "Du solltest eine ".GetBuildingTypeLink(kBuilding_Garage,$x,$y)." und ein paar ".GetBuildingTypeLink(kBuilding_Wall,$x,$y)." bauen, um dich vor Angriffen zu schützen.";
+			$tip[] = "You should build ".GetBuildingTypeLink(kBuilding_Garage,$x,$y)." and a few ".GetBuildingTypeLink(kBuilding_Wall,$x,$y).", to defend yourself from attack.";
 		}
 		
 		if (CountUserBuildingType($gUser->id,kBuilding_Baracks) < 1 || 
 			CountUserBuildingType($gUser->id,kBuilding_Smith) < 1 || $debug_show_all_tips) {
-			$tip[] = "Du solltest eine ".GetBuildingTypeLink(kBuilding_Smith,$x,$y)." und ein paar ".GetBuildingTypeLink(kBuilding_Baracks,$x,$y)." bauen, damit du Soldaten ausbilden kannst";
+			$tip[] = "You should build ".GetBuildingTypeLink(kBuilding_Smith,$x,$y)." and a few ".GetBuildingTypeLink(kBuilding_Baracks,$x,$y)." so you can train an army.";
 		}
 		
 		if (CountUserBuildingType($gUser->id,kBuilding_Path) < 5 || 
 			CountUserBuildingType($gUser->id,kBuilding_Gate) < 1 || $debug_show_all_tips) {
-			$tip[] = "Du solltest ein paar ".GetBuildingTypeLink(kBuilding_Path,$x,$y)." und 
-				".GetBuildingTypeLink(kBuilding_Gate,$x,$y)." bauen, damit sich deine Truppen gut bewegen können";
+			$tip[] = "You should build ".GetBuildingTypeLink(kBuilding_Path,$x,$y)." and 
+				".GetBuildingTypeLink(kBuilding_Gate,$x,$y)." so your troops can move more easily.";
 		}
 			
 		if (($allbuildings->minlevel < 5 && $allbuildings->count < 20) || $allbuildings->maxlevel < 5 || $debug_show_all_tips) {
-			$tip[] = "vergiss nicht, deine Gebäude aufzustufen (upgraden)";
-			$tip[] = "eine neue Stufe bringt genausoviel wie ein neues Gebäude";
-			$tip[] = "je höher die Stufe, desto teurer das Upgraden";
-			$tip[] = "es können beliebig viele Gebäude gleichzeitig aufgesfuft werden";
-			$tip[] = "die Stufe von deinem Haupthaus bestimmt, wie hoch die Gebäude aufgestuft werden können";
-			$tip[] = "in der <a href=\"".Query("summary_buildings.php?sid=?")."\">Gebäudeübersicht</a> kann man viele Upgrades auf einmal planen";
+			$tip[] = "don't forget to upgrade your buuildings";
+			$tip[] = "a new level is just as beneficial as a new building";
+			$tip[] = "the higher the leval, the more expensive upgrades become";
+			$tip[] = "many buildings can be upgraded simultaneously";
+			$tip[] = "the level of your Town Center determines the maximum level of other buildings";
+			$tip[] = "several upgrades at once can be planned in the <a href=\"".Query("summary_buildings.php?sid=?");
 		}
 		
 		if (1) {
@@ -435,13 +435,13 @@ class cInfoHQ extends cInfoBuilding {
 		global $gUser;
 		rob_ob_start(); 
 		$overviewtabs = array();
-		$overviewtabs[] = array("Gebäude",			"",Query("summary_buildings.php?sid=?"));
-		$overviewtabs[] = array("Forschung",		"",Query("summary_techs.php?sid=?"));
-		$overviewtabs[] = array("Truppen",			"",Query("summary_units.php?sid=?"));
-		$overviewtabs[] = array("Zauber",			"",Query("summary.php?sid=?"));
-		$overviewtabs[] = array("Waren",			"",Query("waren.php?sid=?"));
-		$overviewtabs[] = array("Kosten",			"",Query("kosten.php?sid=?"));
-		$overviewtabs[] = array("Baupl&auml;ne",	"",Query("bauplan.php?sid=?"));
+		$overviewtabs[] = array("Buildings",			"",Query("summary_buildings.php?sid=?"));
+		$overviewtabs[] = array("Research",		"",Query("summary_techs.php?sid=?"));
+		$overviewtabs[] = array("Armies",			"",Query("summary_units.php?sid=?"));
+		$overviewtabs[] = array("Magic",			"",Query("summary.php?sid=?"));
+		$overviewtabs[] = array("Trade Goods",			"",Query("waren.php?sid=?"));
+		$overviewtabs[] = array("Expenses",			"",Query("kosten.php?sid=?"));
+		$overviewtabs[] = array("Building Plans",	"",Query("bauplan.php?sid=?"));
 		$overviewtabs[] = array("Quests",			"",Query("quest.php?sid=?"));
 		// echo GenerateTabs("overviewtabs",$overviewtabs,"",false);
 		?>
@@ -467,11 +467,11 @@ class cInfoHQ extends cInfoBuilding {
 		<table border=0>
 			<tr>
 				<th align="left">Job</th>
-				<th align="center" colspan="7">Arbeiter</th>
-				<th align="center">Auslastung</th>
+				<th align="center" colspan="7">Workers</th>
+				<th align="center">Utilization</th>
 				<th align="center">Slots</th>
 				<th width="10">&nbsp;</th>
-				<th align="center">Produktion</th>
+				<th align="center">Production</th>
 			</tr>
 					
 			<?php 
@@ -555,7 +555,7 @@ class cInfoHQ extends cInfoBuilding {
 				</tr>
 			<?php }?>
 			<tr>
-				<th>Arbeitslos</th>
+				<th>Unemployed</th>
 				<td></td>
 				<td></td>
 				<td></td>
@@ -565,12 +565,12 @@ class cInfoHQ extends cInfoBuilding {
 				<td></td>
 			</tr>
 		</table>
-		<input type="submit" value="verteilung speichern">
+		<input type="submit" value="Save Changes">
 		</form>
 		
-		<h4>Ressourcenverbrauch durch Bewohner pro Stunde:</h4>
+		<h4>Resource use by peasants, per hour:</h4>
 		
-		<?=kplaintrenner(round($gUser->pop))?> Bewohner verbrauchen <?=kplaintrenner(round(calcFoodNeed($gUser->pop,60*60),1))?> Nahrung / Stunde
+		<?=kplaintrenner(round($gUser->pop))?> peasants use <?=kplaintrenner(round(calcFoodNeed($gUser->pop,60*60),1))?> food per hour.
 		
 		<?php
 		$allarmies = sqlgettable("SELECT * FROM `army` WHERE `user` = ".$gUser->id);
@@ -583,22 +583,22 @@ class cInfoHQ extends cInfoBuilding {
 		}
 		?>
 		<?php if ($eatsum > 0) {?>
-		<h4>Ressourcenverbrauch durch Truppen pro Stunde:</h4>
-		<?=kplaintrenner(round($unitsum))?> Einheiten verbrauchen <?=kplaintrenner(round($eatsum))?> Nahrung / Stunde
+		<h4>Resource use by military units, per hour:</h4>
+		<?=kplaintrenner(round($unitsum))?> units use <?=kplaintrenner(round($eatsum))?> food per hour.
 		<?php } // endif?>
 		
 		<?php if ($gUser->worker_runes > 0) {?>
-		<h4>Ressourcenverbrauch durch Runen Produktion pro Stunde:</h4>
+		<h4>Resource use through rune production, per hour:</h4>
 		<?$pf = GetProductionFaktoren($gUser->id);
 		$rpfs = $pf['runes']/(2+getTechnologyLevel($gUser->id,kTech_EffRunen)*0.2);?>
-			<?=isset($gGlobal['lc_prod_runes'])?round($rpfs*$gUser->worker_runes*$gUser->pop/100*$gGlobal['lc_prod_runes']):0?> Holz / 
-			<?=isset($gGlobal['fc_prod_runes'])?round($rpfs*$gUser->worker_runes*$gUser->pop/100*$gGlobal['fc_prod_runes']):0?> Nahrung /
-			<?=isset($gGlobal['sc_prod_runes'])?round($rpfs*$gUser->worker_runes*$gUser->pop/100*$gGlobal['sc_prod_runes']):0?> Stein /
-			<?=isset($gGlobal['mc_prod_runes'])?round($rpfs*$gUser->worker_runes*$gUser->pop/100*$gGlobal['mc_prod_runes']):0?> Metall <br>
+			<?=isset($gGlobal['lc_prod_runes'])?round($rpfs*$gUser->worker_runes*$gUser->pop/100*$gGlobal['lc_prod_runes']):0?> lumber / 
+			<?=isset($gGlobal['fc_prod_runes'])?round($rpfs*$gUser->worker_runes*$gUser->pop/100*$gGlobal['fc_prod_runes']):0?> food /
+			<?=isset($gGlobal['sc_prod_runes'])?round($rpfs*$gUser->worker_runes*$gUser->pop/100*$gGlobal['sc_prod_runes']):0?> stone /
+			<?=isset($gGlobal['mc_prod_runes'])?round($rpfs*$gUser->worker_runes*$gUser->pop/100*$gGlobal['mc_prod_runes']):0?> metal <br>
 		<?php } // endif?>
 				
 		<?php if ($gUser->worker_repair > 0) {?>
-		<h4>Ressourcenverbrauch durch Reparieren von Gebäuden pro Stunde:</h4>
+		<h4>Resource use for building repair, per hour:</h4>
 		<?
 		$x = sqlgetobject("SELECT `user`.`id` as `id`, COUNT( * ) as `broken`,`user`.`pop` as `pop`,`user`.`worker_repair` as `worker_repair`
 	FROM `user`, `building`, `buildingtype`
@@ -621,7 +621,7 @@ class cInfoHQ extends cInfoBuilding {
 		$wood = $all * 100;
 		$stone = $all * 100;
 		?>
-		<?=$broken?> beschädigte Gebäude zu reparieren verbraucht <?=round($wood,2)?> Holz und <?=round($stone,2)?> Stein /h.<br>
+		<?=$broken?> damaged buildings need <?=round($wood,2)?> lumber and <?=round($stone,2)?> stone for repair /h.<br>
 		Dabei werden bei allen beschädigten Gebäuden jeweils <?=round($plus,2)?> HP /h wiederhergestellt.<br>
 		<?php } // endif?>
 		
@@ -657,14 +657,14 @@ class cInfoHQ extends cInfoBuilding {
 		<?php if ($count > 0) {?>
 			<td valign="top">
 				<table>
-				<tr><th>Freundschafts-angebote</th></tr>
+				<tr><th>Friendship offers</th></tr>
 				<tr><td valign="top">
 					<table>
 					<tr>
 						<th><input type="checkbox" name="dummy" value="1" onChange="setallchecks('sel_friendoffer[]',this.checked)"></th>
 						<th>Name</th>
 						<th>Pos</th>
-						<th>Punkte</th>
+						<th>Points</th>
 					</tr>
 					<?php foreach ($friend_offers as $o) if (!in_array($o->id,$friendids)) {?>
 						<tr>
@@ -677,8 +677,8 @@ class cInfoHQ extends cInfoBuilding {
 					</table>
 				</td></tr>
 				</table>
-				<input type="submit" name="accept" value="annehmen">
-				<input type="submit" name="reject_friend" value="ablehnen">
+				<input type="submit" name="accept" value="Accept">
+				<input type="submit" name="reject_friend" value="Decline">
 			</td>
 		<?php } // endif not all empty?>
 				
@@ -686,14 +686,14 @@ class cInfoHQ extends cInfoBuilding {
 		<?php if (count($friends) > 0) {?>
 			<td valign="top">
 				<table>
-				<tr><th>Freunde</th></tr>
+				<tr><th>Friends</th></tr>
 				<tr><td valign="top">
 					<table>
 					<tr>
 						<th><input type="checkbox" name="dummy" value="1" onChange="setallchecks('sel_friend[]',this.checked)"></th>
 						<th>Name</th>
 						<th>Pos</th>
-						<th>Punkte</th>
+						<th>Points</th>
 					</tr>
 					<?php foreach ($friends as $o) {?>
 						<tr>
@@ -713,14 +713,14 @@ class cInfoHQ extends cInfoBuilding {
 		<?php if (count($enemies) > 0) {?>
 			<td valign="top">
 				<table>
-				<tr><th>Feinde</th></tr>
+				<tr><th>Enemies</th></tr>
 				<tr><td valign="top">
 					<table>
 					<tr>
 						<th><input type="checkbox" name="dummy" value="1" onChange="setallchecks('sel_enemy[]',this.checked)"></th>
 						<th>Name</th>
 						<th>Pos</th>
-						<th>Punkte</th>
+						<th>Points</th>
 					</tr>
 					<?php foreach ($enemies as $o) {?>
 						<tr>

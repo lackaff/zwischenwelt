@@ -65,7 +65,7 @@ if (isset($f_singleupgrades)) {
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 <link rel="stylesheet" type="text/css" href="<?=GetZWStylePath()?>">
-<title>Zwischenwelt - Übersicht</title>
+<title>Zwischenwelt - Overview</title>
 <SCRIPT LANGUAGE="JavaScript" type="text/javascript">
 <!--
 	function planall (name,maxindex,setvalname) {

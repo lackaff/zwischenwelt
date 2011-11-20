@@ -35,45 +35,45 @@ foreach($log as $x)
 	switch($x->type)
 	{
 		case NEWLOG_PILLAGE_ATTACKER_START:
-			$text = "Ihre Armee $s1 hat begonnen das Lager bei <a target='info' href=".query("info/info.php?sid=?&x=$i1&y=$i2").">($i1|$i2)</a> von $s2 zu plündern";break;
+			$text = "Your army $s1 started pillaging ".$s2."'s storehouse at <a target='info' href=".query("info/info.php?sid=?&x=$i1&y=$i2").">($i1|$i2)</a>.";break;
 		case NEWLOG_PILLAGE_ATTACKER_STOP:
-			$text = "Ihre Armee $s1 aufgehört das Lager bei <a target='info' href=".query("info/info.php?sid=?&x=$i1&y=$i2").">($i1|$i2)</a> von $s2 zu plündern";break;
+			$text = "Your army $s1 stopped pillaging ".$s2."'s strorehouse at <a target='info' href=".query("info/info.php?sid=?&x=$i1&y=$i2").">($i1|$i2)</a>.";break;
 		case NEWLOG_PILLAGE_DEFENDER_START:
-			$text = "Die Armee $s1 von $s2 hat begonnen ihr Lager bei <a target='info' href=".query("info/info.php?sid=?&x=$i1&y=$i2").">($i1|$i2)</a> zu plündern";break;
+			$text = $s2."'s army $s1 started pillaging your storehouse at <a target='info' href=".query("info/info.php?sid=?&x=$i1&y=$i2").">($i1|$i2)</a>.";break;
 		case NEWLOG_PILLAGE_DEFENDER_STOP:
-			$text = "Die Armee $s1 von $s2 hat aufgehört ihr Lager bei <a target='info' href=".query("info/info.php?sid=?&x=$i1&y=$i2").">($i1|$i2)</a> zu plündern";break;
+			$text = $s2."'s army $s1 stopped pillaging your storehouse at <a target='info' href=".query("info/info.php?sid=?&x=$i1&y=$i2").">($i1|$i2)</a>.";break;
 		case NEWLOG_PILLAGE_ATTACKER_CANCEL:
-			$text = "Ihre Armee $s1 das plündern von dem Lager bei <a target='info' href=".query("info/info.php?sid=?&x=$i1&y=$i2").">($i1|$i2)</a> von $s2 abgebrochen";break;
+			$text = "Your army $s1 has called of the pillaging of ".$s2."'s storehouse at <a target='info' href=".query("info/info.php?sid=?&x=$i1&y=$i2").">($i1|$i2)</a>.";break;
 		case NEWLOG_PILLAGE_DEFENDER_CANCEL:
-			$text = "Die Armee $s1 von $s2 hat das plündern von ihrem Lager bei <a target='info' href=".query("info/info.php?sid=?&x=$i1&y=$i2").">($i1|$i2)</a> abgebrochen";break;
+			$text = $s2."'s army $s1 has called of the pillaging of your storehouse at <a target='info' href=".query("info/info.php?sid=?&x=$i1&y=$i2").">($i1|$i2)</a>.";break;
 		case NEWLOG_FIGHT_START:
-			$text = "Kampf zwischen den Armeen $s1 und $s2 bei <a target='info' href=".query("info/info.php?sid=?&x=$i1&y=$i2").">($i1|$i2)</a> start";break;
+			$text = "A battle between the armies $s1 and $s2 has started at <a target='info' href=".query("info/info.php?sid=?&x=$i1&y=$i2").">($i1|$i2)</a>.";break;
 		case NEWLOG_FIGHT_STOP:
-			$text = "Kampf bei <a target='info' href=".query("info/info.php?sid=?&x=$i1&y=$i2").">($i1|$i2)</a> beendet : $s1";break;
+			$text = "A battle at <a target='info' href=".query("info/info.php?sid=?&x=$i1&y=$i2").">($i1|$i2)</a> ended : $s1";break;
 		case NEWLOG_TRADE:
-			$text = "Ein Handel wurde mit $s1 abgeschlossen, $i1 $s2 erhalten";break;
+			$text = "A trade with $s1 has been completed, $i1 $s2 received";break;
 		case NEWLOG_UPGRADE_FINISHED:
-			$text = "$s1 an Position <a target='info' href=".query("info/info.php?sid=?&x=$i1&y=$i2").">($i1|$i2)</a> ist nun Level $i3";break;
+			$text = "$s1 at position <a target='info' href=".query("info/info.php?sid=?&x=$i1&y=$i2").">($i1|$i2)</a> is now level $i3";break;
 		case NEWLOG_BUILD_FINISHED:
-			$text = "$s1 an Position <a target='info' href=".query("info/info.php?sid=?&x=$i1&y=$i2").">($i1|$i2)</a> fertiggestellt";break;
+			$text = "$s1 at position <a target='info' href=".query("info/info.php?sid=?&x=$i1&y=$i2").">($i1|$i2)</a> is completed.";break;
 		case NEWLOG_RAMPAGE_ATTACKER_START:
-			$text = "Ihre Ramme $s1 hat begonnen das Gebäude bei <a target='info' href=".query("info/info.php?sid=?&x=$i1&y=$i2").">($i1|$i2)</a> von $s2 zu zerstören";break;
+			$text = "Your ram $s1 started to batter ".$s2."'s building at <a target='info' href=".query("info/info.php?sid=?&x=$i1&y=$i2").">($i1|$i2)</a>.";break;
 		case NEWLOG_RAMPAGE_ATTACKER_CANCEL:
-			$text = "Ihre Ramme $s1 hat aufgehört das Gebäude bei <a target='info' href=".query("info/info.php?sid=?&x=$i1&y=$i2").">($i1|$i2)</a> von $s2 zu zerstören";break;
+			$text = "Your ram $s1 stopped battering ".$s2."'s building at <a target='info' href=".query("info/info.php?sid=?&x=$i1&y=$i2").">($i1|$i2)</a>.";break;
 		case NEWLOG_RAMPAGE_DEFENDER_START:
-			$text = "Die Ramme $s1 von $s2 hat begonnen ihr Gebäude bei <a target='info' href=".query("info/info.php?sid=?&x=$i1&y=$i2").">($i1|$i2)</a> zu zerstören";break;
+			$text = $s2."'s ram $s1 started to batter your building at <a target='info' href=".query("info/info.php?sid=?&x=$i1&y=$i2").">($i1|$i2)</a>.";break;
 		case NEWLOG_RAMPAGE_DEFENDER_CANCEL:
-			$text = "Die Ramme $s1 von $s2 hat aufgehört ihr Gebäude bei <a target='info' href=".query("info/info.php?sid=?&x=$i1&y=$i2").">($i1|$i2)</a> zu zerstören";break;
+			$text = $s2."'s ram $s1 stopped battering your building at <a target='info' href=".query("info/info.php?sid=?&x=$i1&y=$i2").">($i1|$i2)</a>.";break;
 		case NEWLOG_RAMPAGE_ATTACKER_DESTROY:
-			$text = "Ihre Ramme $s1 hat das Gebäude bei <a target='info' href=".query("info/info.php?sid=?&x=$i1&y=$i2").">($i1|$i2)</a> von $s2 zerstört";break;
+			$text = "Your ram $s1 demolished ".$s2."'s building at <a target='info' href=".query("info/info.php?sid=?&x=$i1&y=$i2").">($i1|$i2)</a>.";break;
 		case NEWLOG_RAMPAGE_DEFENDER_DESTROY:
-			$text = "Die Ramme $s1 von $s2 hat ihr Gebäude bei <a target='info' href=".query("info/info.php?sid=?&x=$i1&y=$i2").">($i1|$i2)</a> zerstört";break;
+			$text = $s2."'s ram $s1 demolished your building at <a target='info' href=".query("info/info.php?sid=?&x=$i1&y=$i2").">($i1|$i2)</a>.";break;
 		case NEWLOG_ARMY_RES_PUTDOWN:
-			$text = "Die Armee $s1 hat '$s2' in ihr Lager bei <a target='info' href=".query("info/info.php?sid=?&x=$i1&y=$i2").">($i1|$i2)</a> geladen";break;
+			$text = "The army $s1 unloaded '$s2' into your storehouse at <a target='info' href=".query("info/info.php?sid=?&x=$i1&y=$i2").">($i1|$i2)</a> geladen";break;
 		case NEWLOG_ARMY_RES_GETOUT:
-			$text = "Die Armee $s1 hat '$s2' aus ihrem Lager bei <a target='info' href=".query("info/info.php?sid=?&x=$i1&y=$i2").">($i1|$i2)</a> genommen";break;
+			$text = "The army $s1 loaded '$s2' from your storehouse at <a target='info' href=".query("info/info.php?sid=?&x=$i1&y=$i2").">($i1|$i2)</a> genommen";break;
 		case NEWLOG_GUILD_TRANSFER_ERROR:
-			$text = "Rohstofftransfer mit Gilde $s1 hat nicht geklappt";break;
+			$text = "The resource transfer with $s1 was not successful";break;
 		case NEWLOG_MAGIC_CAST_FAIL:
 			$color= "#8d0000";
 			switch($i3){
@@ -82,11 +82,11 @@ foreach($log as $x)
 				break;
 			
 				case MTARGET_AREA:
-					$target="das umliegende Gebiet";
+					$target="the surrounding area";
 				break;
 			
 				case MTARGET_ARMY:
-					$target="die Armee";
+					$target="the army";
 				break;
 			
 				default:
@@ -94,7 +94,7 @@ foreach($log as $x)
 				break;
 			}
 
-			$text = "Eure Magier haben bei dem Versuch $s1 auf $target bei <a target='info' href=".query("info/info.php?sid=?&x=$i1&y=$i2").">($i1|$i2)</a> zu sprechen versagt";break;
+			$text = "Your wizards attempted to cast $s1 on $target at <a target='info' href=".query("info/info.php?sid=?&x=$i1&y=$i2").">($i1|$i2)</a>, but failed.";break;
 		case NEWLOG_MAGIC_CAST_SUCCESS:
 			$color= "green";
 			switch($i3){
@@ -103,11 +103,11 @@ foreach($log as $x)
 				break;
 			
 				case MTARGET_AREA:
-					$target="das umliegende Gebiet";
+					$target="the surrounding area";
 				break;
 			
 				case MTARGET_ARMY:
-					$target="die Armee";
+					$target="the army";
 				break;
 			
 				default:
@@ -115,39 +115,39 @@ foreach($log as $x)
 				break;
 			}
 
-			$text = "Eure Magier hatten Erfolg bei dem Versuch $s1 auf $target bei <a target='info' href=".query("info/info.php?sid=?&x=$i1&y=$i2").">($i1|$i2)</a> zu sprechen";break;
+			$text = "Your wizards successfully cast $s1 on $target at <a target='info' href=".query("info/info.php?sid=?&x=$i1&y=$i2").">($i1|$i2)</a> zu sprechen";break;
 		case NEWLOG_MAGIC_HELP_TARGET:
 			$color= "darkblue";
 			switch($i3){
 				case MTARGET_PLAYER:
-					$target="euch";
+					$target="you";
 				break;
 			
 				case MTARGET_AREA:
-					$target="das umliegende Gebiet";
+					$target="the surrounding area";
 				break;
 			
 				case MTARGET_ARMY:
-					$target="eure Armee";
+					$target="your army";
 				break;
 			
 				default:
 					$target="?";
 				break;
 			}
-			$text = "Der Spruch $s1 wurde von ".nick($s2)." bei <a target='info' href=".query("info/info.php?sid=?&x=$i1&y=$i2").">($i1|$i2)</a> auf $target gesprochen, er wird euch helfen";break;
+			$text = "The spell $s1 was cast by ".nick($s2)." at <a target='info' href=".query("info/info.php?sid=?&x=$i1&y=$i2").">($i1|$i2)</a> on $target.";break;
 		case NEWLOG_MAGIC_DAMAGE_TARGET:
 			switch(intval($i3)){
 				case MTARGET_PLAYER:
-					$target="euch";
+					$target="you";
 				break;
 			
 				case MTARGET_AREA:
-					$target="euer Haus";
+					$target="your house";
 				break;
 			
 				case MTARGET_ARMY:
-					$target="eure Armee";
+					$target="your army";
 				break;
 			
 				default:
@@ -156,7 +156,7 @@ foreach($log as $x)
 			}
 			
 			$color= "darkred";
-			$text = "Der Spruch $s1 wurde von ".nick($s2)." bei <a target='info' href=".query("info/info.php?sid=?&x=$i1&y=$i2").">($i1|$i2)</a> auf $target gesprochen, es wurde Schaden angerichtet";break;
+			$text = "The curse $s1 was cast by ".nick($s2)." at <a target='info' href=".query("info/info.php?sid=?&x=$i1&y=$i2").">($i1|$i2)</a> on $target.";break;
 		default:
 			//$text = "";break;
 			$text = "unknown log type ".$x->type;break;

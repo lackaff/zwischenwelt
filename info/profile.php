@@ -89,7 +89,7 @@ if(isset($f_do)){
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 <link rel="stylesheet" type="text/css" href="<?=GetZWStylePath()?>">
-<title>Zwischenwelt - Einstellungen</title>
+<title>Zwischenwelt - Settings</title>
 
 </head>
 <body>

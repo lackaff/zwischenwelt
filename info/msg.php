@@ -127,7 +127,7 @@ if(isset($f_do)){
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 <link rel="stylesheet" type="text/css" href="<?=GetZWStylePath()?>">
-<title>Zwischenwelt - Nachrichten</title>
+<title>Zwischenwelt - Messages</title>
 <script>
 function CheckAll() {
   for (var i = 0; i < document.nachrichtenform.elements.length; i++) {
@@ -148,7 +148,7 @@ function CheckAll() {
 <?ImgBorderStart();?>
 <table width=100%>
 <tr>
-<td style="padding:5px;" align=center valign=middel><a href="<?=Query("?sid=?&show=compose")?>"><img title="Neu Mitteilung verfassen" src="<?=g("gildeforum/neu.png")?>" border=0></a></td>
+<td style="padding:5px;" align=center valign=middel><a href="<?=Query("?sid=?&show=compose")?>"><img title="Compose New Message" src="<?=g("gildeforum/neu.png")?>" border=0></a></td>
 <td  style="padding-left:30px;">&nbsp;</td>
 <td style="padding:5px;" align=center><a href="<?=Query("?sid=?&show=content&folder=".$root->id)?>"><img src="<?=g("post/".(sqlgetone("SELECT COUNT(`id`) FROM `message` WHERE (`to`=".intval($gUser->id)." OR `from`=".intval($gUser->id).") AND `folder`=".intval($root->id)." AND `status`=".kMsgStatusUnread)>0?"inbox-new.png":"inbox.png"))?>" border=0 title="<?=$root->name?>"></a></td>
 <td  style="padding-left:30px;">&nbsp;</td>
@@ -158,7 +158,7 @@ function CheckAll() {
 <td  style="padding-left:30px;">&nbsp;</td>
 <td style="padding:5px;" align=center><a href="<?=Query("?sid=?&show=foldertree")?>"><img src="<?=g("post/einstellungen.png")?>" border=0 title=Einstellungen></a></td>
 <td  style="padding-left:30px;">&nbsp;</td>
-<td><form method="post" action="<?=query("?sid=?")?>"><input value=1 type="checkbox" name="preview"<?=($gUser->msgmode==1?" checked":"")?>> Vorschau? <input type="submit" name="saveprev" value="übernehmen"></form></td>
+<td><form method="post" action="<?=query("?sid=?")?>"><input value=1 type="checkbox" name="preview"<?=($gUser->msgmode==1?" checked":"")?>> Preview? <input type="submit" name="saveprev" value="Submit"></form></td>
 </tr>
 </table>
 <?ImgBorderEnd();?>
@@ -180,28 +180,28 @@ switch ($f_show){
 		<input type=hidden name=folder value="<?=$m->folder?>">
 		<table width=500px;>
 		<tr>
-		<td>Absender:</td>
+		<td>From:</td>
 		<td><?=($m->type==kMsgTypeGM?sqlgetone("SELECT g.`name` FROM `guild` g, `user` u WHERE g.`id`=u.`guild` AND u.`id`=".intval($m->from))." (".nick($m->from).")":nick($m->from))?></td>
 		</tr>
 		<tr>
-		<td>Empfänger:</td>
+		<td>To:</td>
 		<td><?=($m->type==kMsgTypeGM?sqlgetone("SELECT g.`name` FROM `guild` g, `user` u WHERE g.`id`=u.`guild` AND u.`id`=".intval($m->to))." (".nick($m->to).")":nick($m->to))?></td>
 		</tr>
-		<tr><td>Datum:</td><td><?=time_output($m->date,"detail")?></td></tr>
-		<tr><td>Betreff:</td><td><?=htmlspecialchars($m->subject)?></td></tr>
+		<tr><td>Date:</td><td><?=time_output($m->date,"detail")?></td></tr>
+		<tr><td>Subject:</td><td><?=htmlspecialchars($m->subject)?></td></tr>
 		<tr><td colspan=2 style="border-top:1px dotted grey;">&nbsp;</td></tr>
 		<tr><td colspan=2><?=magictext($m->from==0 || $m->html==1?str_replace("sid=XXX","sid=".$gSID,$m->text):(($m->text)))?></td></tr>
 		<tr><td colspan=2>&nbsp;</td></tr>
 		<tr><td colspan=2 style="border-top:1px dotted grey;">
 			<table>
 			<tr>
-				<td><input type=submit name=del value="Nachricht L&ouml;schen"></td>
+				<td><input type=submit name=del value="Delete Message"></td>
 				<td style="padding-left:15px;">&nbsp;</td>
 				<td>Nachricht nach </td>
 				<td><select name=target><?=PrintObjOptions(sqlgettable("SELECT * FROM `message_folder` WHERE `user`=".$gUser->id),"id","name",$m->folder)?></select></td>
 				<td><input type=submit name=verschieben value=Verschieben></td>
 				<td style="padding-left:15px;">&nbsp;</td>
-				<td><a href="<?=Query("?sid=?&reply=".$m->id."&show=compose")?>"><img title="Antwort verfassen" border=0 src="<?=g("post/reply.png")?>"></a></td>
+				<td><a href="<?=Query("?sid=?&reply=".$m->id."&show=compose")?>"><img title="Compose Reply" border=0 src="<?=g("post/reply.png")?>"></a></td>
 			</tr>
 			<tr>
 				<td colspan=7 align="right"><a href="<?=Query("?sid=?&fwd=".$m->id."&show=compose")?>">(weiterleiten)</a></td>
@@ -234,8 +234,8 @@ switch ($f_show){
 				<td>
 					<a href='<?=Query("?sid=?&folder=".$k->id."&show=content")?>'><?=$k->name?></a> (<?=($k->nummsg>0?($k->nummsg>1?$k->nummsg." Nachrichten":$k->nummsg. "Nachricht"):"Keine Nachrichten")?>)
 				</td>
-				<td><a href="<?=Query("?sid=?&folder=".$k->id."&show=edit")?>"><img title="Postfach bearbeiten" border=0 src="<?=g("edit.png")?>"></a></td>
-				<td><a href="<?=Query("?sid=?&folder=".$k->id."&show=newsub")?>"><img title="Unterordner" border=0 src="<?=g("qmark.png")?>"></a></td>
+				<td><a href="<?=Query("?sid=?&folder=".$k->id."&show=edit")?>"><img title="Edit" border=0 src="<?=g("edit.png")?>"></a></td>
+				<td><a href="<?=Query("?sid=?&folder=".$k->id."&show=newsub")?>"><img title="New Subfolder" border=0 src="<?=g("qmark.png")?>"></a></td>
 			</tr>
 			<tr>
 				<td colspan=3 style='padding-left:5px;'>
@@ -295,7 +295,7 @@ switch ($f_show){
 			<tr><td colspan="2" align=center>
 			<textarea name="text" cols="75" rows="<?=$m_fwd?4:15?>"></textarea>
 			</td></tr>
-			<tr><td colspan="2" align="right"><input type="submit" name="send" value="Abschicken"></td></tr>
+			<tr><td colspan="2" align="right"><input type="submit" name="send" value="Send"></td></tr>
 		</table>
 		</form>
 		<?php if ($m_fwd) {?>
@@ -349,14 +349,14 @@ switch ($f_show){
 				<?php } else { // ?>
 				&lt;&lt;&lt;
 				<?php } // endif?>
-				Seite <?=$page+1?>/<?=max(1,$pagecount)?>
+				Page <?=$page+1?>/<?=max(1,$pagecount)?>
 				<?php if ($page<$pagecount-1) {?>
 				<a href="<?=Query("?sid=?&show=?&folder=?&page=".($page+1))?>">&gt;&gt;&gt;</a>
 				<?php } else { // ?>
 				&gt;&gt;&gt;
 				<?php } // endif?>
 				</th><th></th><th></th></tr>
-			<tr><th></th><th></th><th><?=$inbox?"Empfänger":"Absender"?></th><th>Betreff</th><th>Datum</th><th></th></tr>
+			<tr><th></th><th></th><th><?=$inbox?"To":"From"?></th><th>Subject</th><th>Date</th><th></th></tr>
 		<?if(count($messages)>0){
 			foreach ($messages as $m){?>
 			<tr>
@@ -402,7 +402,7 @@ switch ($f_show){
 		</td>
 		</tr>
 		<?} else{?>
-			<tr><td colspan=6 align=center>Keine Nachrichten in diesem Ordner</td></tr>
+			<tr><td colspan=6 align=center>No messages in this folder</td></tr>
 		<?}?>
 		</table>
 		</form>

@@ -1,2 +1,0 @@
-image converted
- Rmask Gmask Bmask Gshift Bshift Rloss Gloss Bloss BytesPerPixel BitsPerPixel

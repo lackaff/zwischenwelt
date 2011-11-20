@@ -51,14 +51,14 @@ class cInfoBuilding extends cInfoBase {
 			rob_ob_start();
 			cTransfer::display_armytransfer($this,false);
 			$content = trim(rob_ob_end());
-			if (!empty($content)) RegisterInfoTab("Truppen",$content,3);
+			if (!empty($content)) RegisterInfoTab("Troops",$content,3);
 			
 			// kampfsim link in jedem gebäude in dem man KAMPF-einheiten produzieren kann
 			$units = $this->producable_units();
 			$has_fighters = 0;
 			foreach ($units as $o) if ($o->a > 0) $has_fighters++;
 			global $gInfoTabs;
-			if ($has_fighters > 1) $gInfoTabs[] = array("KampfSim","",Query("kampfsim.php?sid=?"));
+			if ($has_fighters > 1) $gInfoTabs[] = array("Battlesim","",Query("kampfsim.php?sid=?"));
 		}
 	}
 	
@@ -325,22 +325,22 @@ class cInfoBuilding extends cInfoBase {
 				<INPUT TYPE="hidden" NAME="building" VALUE="unit_station">
 				<INPUT TYPE="hidden" NAME="id" VALUE="<?=$gObject->id?>">
 				<INPUT TYPE="hidden" NAME="do" VALUE="set_target">
-				Frisch ausgebildete Truppen
+				Station newly trained units from this barracks
 				<select name="target">
-					<option value="0">- hier -</option>
+					<option value="0">- here -</option>
 					<?php foreach ($possibleTargets as $o) {?>
 					<option value="<?=$o->id?>" <?=$curtargetid==$o->id?"selected":""?>>bei <?="(".$o->x.",".$o->y.")"?></option>
 					<?php } // endforeach?>
 				</select>
-				<input type="submit" name="save" value="stationieren">
+				<input type="submit" name="save" value="Issue Command">
 			</form>
 			
 			<form method="post" action="<?=Query("?sid=?&x=?&y=?")?>">
 			<INPUT TYPE="hidden" NAME="building" VALUE="unit_station">
 			<INPUT TYPE="hidden" NAME="id" VALUE="<?=$gObject->id?>">
 			<INPUT TYPE="hidden" NAME="do" VALUE="set_target_here">
-			Alle umliegenden Truppen hier 
-			<input type="submit" name="save" value="stationieren">
+			Station all newly trained units in this barracks 
+			<input type="submit" name="save" value="Issue Command">
 			</form>
 			<br>
 			
@@ -354,8 +354,8 @@ class cInfoBuilding extends cInfoBase {
 		<INPUT TYPE="hidden" NAME="building" VALUE="unit_producer">
 		<INPUT TYPE="hidden" NAME="id" VALUE="<?=$gObject->id?>">
 		<INPUT TYPE="hidden" NAME="do" VALUE="set_all_tasks_to_this">
-		Den Ausbildungsauftrag von hier für alle gleichen Geb&auml;ude 
-		<input type="submit" name="save" value="Übernehmen">
+		Transfer these training orders to all barracks 
+		<input type="submit" name="save" value="Issue Command">
 		</form>
 		<?php 
 		
@@ -373,7 +373,7 @@ class cInfoBuilding extends cInfoBase {
 		
 			<FORM METHOD=POST ACTION="<?=Query("?sid=?&x=?&y=?&building=unit_producer&id=".$gObject->id."&do=action")?>">
 			<table border=1 cellspacing=0>
-			<tr><th colspan=4>In Ausbildung</th></tr>
+			<tr><th colspan=4>In Training</th></tr>
 			<?php foreach($gActions as $o) switch ($o->cmd) {
 				case kActionCmd_Build:
 					$unittype = $gUnitType[$o->param1];
@@ -416,7 +416,7 @@ class cInfoBuilding extends cInfoBase {
 				$one->cell .= '<INPUT TYPE="submit" NAME="build_'.$o->id.'" VALUE="ausbilden">';
 			} else {
 				$infourl = Query("?sid=?&x=?&y=?&infounittype=".$o->id);
-				$one->cell = '<a style="color:red" href="'.$infourl.'">Anforderungen</a>';
+				$one->cell = '<a style="color:red" href="'.$infourl.'">Requisites</a>';
 			}
 			$typemap[] = $one;
 		}
@@ -438,7 +438,7 @@ class cInfoBuilding extends cInfoBase {
 		}
 		
 		ImgBorderEnd("s1","jpg","#ffffee",32,33);
-		RegisterInfoTab("Ausbildung",rob_ob_end());
+		RegisterInfoTab("Train Units",rob_ob_end());
 	}
 	
 	
@@ -496,7 +496,7 @@ class cInfoBuilding extends cInfoBase {
 				<td><?=cText::Wiki("building",$btype->id)?><a href="<?=$infourl?>"><?=$btype->name?></a> 
 					<?php 
 					$info = array();
-					$info[] = "Stufe:".$gObject->level;
+					$info[] = "Level:".$gObject->level;
 					$info[] = "HP:".ceil($gObject->hp)."/".cBuilding::calcMaxBuildingHp($btype->id,$gObject->level);
 					if ($gObject->type == $gGlobal['building_runes'])
 						$info[] = "Mana:".ceil($gObject->mana)."/".($btype->basemana*(1+$gObject->level));
@@ -553,7 +553,7 @@ class cInfoBuilding extends cInfoBase {
 					if($upgrading > 0) {
 						$time = time();
 						$rest = Duration2Text($upgrading-$time);
-						echo "Upgrade wird gerade ausgef&uuml;hrt, Restzeit: $rest<br>";
+						echo "An upgrade is in progress. Time remaining: $rest<br>";
 					}
 					
 					?>
@@ -570,7 +570,7 @@ class cInfoBuilding extends cInfoBase {
 							<td></td>
 							</tr><tr>
 							<td colspan=3>
-							<a href="<?=Query("summary_buildings.php?sid=?&selbtype=".$gObject->type)?>">(Gebäudeübersicht)</a>
+							<a href="<?=Query("summary_buildings.php?sid=?&selbtype=".$gObject->type)?>">(Building Overview)</a>
 							</td></tr></table>
 							</FORM>
 							
@@ -579,7 +579,7 @@ class cInfoBuilding extends cInfoBase {
 							<?php /* #### KOSTEN AUFLISTUNG #### */ ?>
 							<table border=1 cellspacing=0 rules="all">
 							<tr>
-								<td colspan=2 align="center"><a href="<?=Query("summary_buildings.php?sid=?&selbtype=".$gObject->type)?>">Upgrade auf Stufe</a></td>
+								<td colspan=2 align="center"><a href="<?=Query("summary_buildings.php?sid=?&selbtype=".$gObject->type)?>">Upgrade to level</a></td>
 								<?php foreach($gRes as $n=>$f)echo '<td align="center"><img src="'.g('res_'.$f.'.gif').'"></td>'; ?>
 								<td align="center"><img src="<?=g("sanduhrklein.gif")?>"></td>
 							</tr>
@@ -595,7 +595,7 @@ class cInfoBuilding extends cInfoBase {
 									if($show>0){
 								?>
 								<tr>
-									<td align="right"><?=(!$upgrading || $L > $gObject->level)?"geplant":"wird ausgeführt"?></td>
+									<td align="right"><?=(!$upgrading || $L > $gObject->level)?"Planned":"Underway"?></td>
 									<td align="right">&nbsp;<?=$L+1?>&nbsp;</td>
 									<?php foreach($gRes as $n=>$f) echo '<td align="right">'.ktrenner(round($upmod*$btype->{"cost_".$f},0)).'</td>'; ?>
 									<td align="right"><?=Duration2Text($time)?></td>
@@ -607,7 +607,7 @@ class cInfoBuilding extends cInfoBase {
 							<?php } } ?>
 							<?php if ($upgrades > (($upgrading)?1:0)) {?>
 								<tr>
-									<td align="right"><a href="<?=Query("kosten.php?sid=?")?>"><b>summe</b></a></td>
+									<td align="right"><a href="<?=Query("kosten.php?sid=?")?>"><b>Total</b></a></td>
 									<td align="right"></td>
 									<?php foreach($gRes as $n=>$f) echo '<td align="right"><b>'.ktrenner(round(${"totalcost_".$f},0)).'</b></td>'; ?>
 									<td align="right"><b><?=Duration2Text($timesum)?></b></td>
@@ -628,8 +628,8 @@ class cInfoBuilding extends cInfoBase {
 							<FORM METHOD=POST ACTION="<?=Query("?sid=?&x=?&y=?")?>">
 							<INPUT TYPE="hidden" NAME="do" VALUE="removebuilding">
 							<INPUT TYPE="hidden" NAME="id" VALUE="<?=$gObject->id?>">
-							<INPUT TYPE="submit" VALUE="<?=$gObject->construction?"abbrechen":"abreissen"?>"><br>
-							<INPUT TYPE="checkbox" NAME="sure" VALUE="1">sicher !
+							<INPUT TYPE="submit" VALUE="<?=$gObject->construction?"abbrechen":"Demolish"?>"><br>
+							<INPUT TYPE="checkbox" NAME="sure" VALUE="1">I'm sure !
 							</FORM>
 							
 						</td></tr></table>
@@ -754,7 +754,7 @@ class cInfoBuilding extends cInfoBase {
 						</tr>
 						<?php } // endforeach?>
 						</table>
-						<input type="submit" name="cancel" value="abbrechen">
+						<input type="submit" name="cancel" value="Cancel">
 					</form>
 					<?php
 				}
@@ -776,25 +776,25 @@ class cInfoBuilding extends cInfoBase {
 				(Gebäude-Typ ist vom NewbieFaktor ausgeschlossen)<br>
 				<?php } // endif?>
 				<table>
-				<tr><td>normale Bauzeit</td><td><?=($normalbuildtime>0)?Duration2Text($normalbuildtime):"sofort fertig"?></td></tr>
-				<tr><td>effektive Bauzeit</td><td><?=($buildtime>0)?Duration2Text($buildtime):"sofort fertig"?></td></tr>
-				<tr><td>BauBeginn</td><td><?=date("H:i d.m.Y",$gObject->construction - $buildtime)?></td></tr>
-				<tr><td>BauEnde</td><td><?=date("H:i d.m.Y",$gObject->construction)?>
+				<tr><td>Normal build time</td><td><?=($normalbuildtime>0)?Duration2Text($normalbuildtime):"Finish Now"?></td></tr>
+				<tr><td>Actual build time</td><td><?=($buildtime>0)?Duration2Text($buildtime):"Finish Now"?></td></tr>
+				<tr><td>Build begin</td><td><?=date("H:i d.m.Y",$gObject->construction - $buildtime)?></td></tr>
+				<tr><td>Build end</td><td><?=date("H:i d.m.Y",$gObject->construction)?>
 				<?php if ($gUser->admin == 1){ ?>
 					<FORM METHOD=POST ACTION="<?=Query("?sid=?&x=?&y=?")?>">
 					<INPUT TYPE="hidden" NAME="do" VALUE="completeconstruction">
 					<INPUT TYPE="hidden" NAME="id" VALUE="<?=$gObject->id?>">
-					<INPUT TYPE="submit" VALUE="fertig">
+					<INPUT TYPE="submit" VALUE="Finish">
 					</FORM>
 				<?php } ?>
 				</td></tr>
-				<tr><td>Restzeit</td><td><?=($remaining_time>0)?Duration2Text($remaining_time):"fertig, nur noch aufräumen..."?> (<?=round(100*GetConstructionProgress($gObject))?>%)</td></tr>
+				<tr><td>Time remaining</td><td><?=($remaining_time>0)?Duration2Text($remaining_time):"Finished, just cleaning up..."?> (<?=round(100*GetConstructionProgress($gObject))?>%)</td></tr>
 				</table>
 				<FORM METHOD=POST ACTION="<?=Query("?sid=?&x=?&y=?")?>">
 				<INPUT TYPE="hidden" NAME="do" VALUE="removebuilding">
 				<INPUT TYPE="hidden" NAME="id" VALUE="<?=$gObject->id?>">
-				<INPUT TYPE="submit" VALUE="<?=$gObject->construction?"abbrechen":"abreissen"?>">
-				<INPUT TYPE="checkbox" NAME="sure" VALUE="1">sicher !
+				<INPUT TYPE="submit" VALUE="<?=$gObject->construction?"Cancel":"Demolish"?>">
+				<INPUT TYPE="checkbox" NAME="sure" VALUE="1">I'm sure
 				</FORM>
 				
 			<?php }?>
@@ -840,7 +840,7 @@ class cInfoBuilding extends cInfoBase {
 		rob_ob_start();
 		
 		?>
-		<a href="<?=Query("summary_techs.php?sid=?")?>">(Forschungsübersicht)</a>
+		<a href="<?=Query("summary_techs.php?sid=?")?>">(Research Overview)</a>
 		<?php
 		
 		if($gUser->admin){ ?>
@@ -857,10 +857,10 @@ class cInfoBuilding extends cInfoBase {
 		<?php } ?>
 		<table>
 		<tr>
-			<th colspan=3>Technologie</th>
+			<th colspan=3>Technology</th>
 			<?php foreach($gRes as $n=>$f)echo '<th><img src="'.g('res_'.$f.'.gif').'"></th>'; ?>
 			<th align="center"><img src="<?=g("sanduhrklein.gif")?>"></th>
-			<th colspan=3>Jetzt/Max/Upgrades</th>
+			<th colspan=3>Current/Max/Upgrades</th>
 		</tr>
 		<?php foreach ($localtechtypes as $groupid => $arr) {?>
 		
@@ -929,11 +929,11 @@ class cInfoBuilding extends cInfoBase {
 							<?php } else if ( intval($gObject->level) < intval($o->buildinglevel) ||
 										!HasReq($o->req_geb,$o->req_tech,$gObject->user,GetTechnologyLevel($o->id,$gObject->user)+1)) {?>
 								<?php /* anforderungen nicht erfuellt */ ?>
-								<td colspan=2><a href="<?=$detaillink?>"><font color="red"><b>Anforderungen</b></font></a></td>
+								<td colspan=2><a href="<?=$detaillink?>"><font color="red"><b>Requisites</b></font></a></td>
 							<?php } else if ($upbuilding) {?>
 								<?php /* in anderem gebauede geplant */ ?>
 								<td colspan=2><a href="<?=Query("info.php?sid=?&x=".$upbuilding->x."&y=".$upbuilding->y)?>">
-								<font color="green"><b>geplant</b></font>
+								<font color="green"><b>planned</b></font>
 								</a></td>
 							<?php } else {?>
 								<td><INPUT TYPE="text" NAME="upcount" VALUE="<?=$tech->upgrades?>" style="width:20px"></td>
@@ -941,7 +941,7 @@ class cInfoBuilding extends cInfoBase {
 							<?php }?>
 							
 							<?php if ($tech->level > 0 || $tech->upgradetime > 0) {?>
-							<td><INPUT TYPE="submit" NAME="forget" VALUE="<?=($tech->upgradetime > 0)?"abbrechen":"vergessen"?>"></td>
+							<td><INPUT TYPE="submit" NAME="forget" VALUE="<?=($tech->upgradetime > 0)?"cancel":"forget"?>"></td>
 							<?php } // endif?>
 						</tr>
 						
@@ -966,7 +966,7 @@ class cInfoBuilding extends cInfoBase {
 		</table>
 		<?php
 		ImgBorderEnd("s1","jpg","#ffffee",32,33);
-		RegisterInfoTab("Forschung",rob_ob_end());
+		RegisterInfoTab("Research",rob_ob_end());
 	}
 }
 ?>

@@ -28,17 +28,15 @@ Wegen eines Fehlers im alten Forum gibt es nun ein neues.
 Man muss sich wieder bei dem neuen neu anmelden.
 </span><hr>
 -->
-Das Browsergame <b>Zwischenwelt</b> ist eine Kreuzung aus Civilisation, Master of Magic und SimCity.<br>
-Hier ein paar Features: 
-<ul>
-<li>Forschen</li>
-<li>Gebäude bauen</li>
-<li>Armeen kommandieren</li>
-<li>Zauber sprechen</li>
-<li>Handeln oder einfach nur Monster jagen</li>
-</ul>
-<br>
-Aber am besten einfach [<a href="anmelden.php">anmelden</a>] und testen.<br>
+Zwischenwelt is a browser-based strategy game in a medieval fantasy setting. Players build and manage cities,
+ raise armies to attack enemies and defend their territories, engage in diplomacy, research and cast magic
+ spells, and much more. Although the game is still under development, the game is very playable. Log in and
+ try it out!<br><br> 
+<!--
+Das Browsergame Zwischenwelt ist eine Kreuzung aus Civilisation, Master of Magic und SimCity.
+Mitlerweile sind wir über das Alpha Stadium weit hinaus und man kann schon einiges machen:
+Forschen, Gebäude bauen, Armeen kommandieren, Zauber sprechen, Handel betreiben oder einfach nur Creepen.<br>
+Aber am besten einfach anmelden und testen.<br>
 <br>
 Screenshots gibts [<a href="http://zwischenwelt.org/screenshot/">hier</a>].<br>
 Falls Sie Graphiken oder &auml;hnliches beisteuern wollen, k&ouml;nnen Sie das [<a href="upload.php">hier</a>].<br>
@@ -49,36 +47,16 @@ $lastminimap = sqlgetone("SELECT `value` FROM `global` WHERE `name` = 'lastpngma
 $minimapfile = "tmp/pngmap_".$lastminimap.".png";
 ?>
 <?php if (file_exists($minimapfile)) {?>
-Die Weltkarte (Stand:<?=date("d-m-Y H:i",$lastminimap)?>) kann man sich hier anguggen: [<a target="_blank" href="<?=$minimapfile?>">Weltkarte</a>]<br>
+A map of the Zwischenwelt (dated <?=date("d-m-Y H:i",$lastminimap)?>) can be viewed here: [<a target="_blank" href="<?=$minimapfile?>">World Map</a>]<br>
 <?php } // endif?>
 <br>
 das Zwischenwelt Team
 </div>
 <br>
 
-<?php if (0) {?>
-<pre>
-So sicher ist also der InternetExplorer, hier der Inhalt Ihrer Zwischenablage :
-<textarea name="myclip" cols=50 rows=2></textarea>
-<SCRIPT LANGUAGE="JavaScript" type="text/javascript">
-<!--
-	function showclipboard() {
-		//if (clipboardData) document.getElementsByName('myclip')[0].value = clipboardData.getData("Text");
-		return true;
-	}
-	showclipboard();
-//-->
-</SCRIPT>
-</pre>
-<?php }?>
 
-<hr>
-<b><a style="color:blue;" href="http://zwischenwelt.org/forum/index.php?t=msg&th=1&start=0">
-Aktuelle Neuigkeiten sind immer am Ende dieses Threads hier im Forum zu finden.
-</a></b>
-<hr>
 
-<span id=changelog><h1>ChangeLog</h1></span>
+<span id=changelog><h1>Zwischenwelt Updates</h1></span>
 <div class="changelog">
 <?php
 	$cl = file("ChangeLog");

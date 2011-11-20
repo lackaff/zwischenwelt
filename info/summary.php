@@ -15,7 +15,7 @@ profile_page_start("summary.php");
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 <link rel="stylesheet" type="text/css" href="<?=GetZWStylePath()?>">
-<title>Zwischenwelt - Übersicht</title>
+<title>Zwischenwelt - Overview</title>
 </head>
 <body>
 <?php include(BASEPATH."/menu.php"); ?>

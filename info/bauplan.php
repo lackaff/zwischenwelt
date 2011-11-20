@@ -50,7 +50,7 @@ $types = array_unique($types);
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 <link rel="stylesheet" type="text/css" href="<?=GetZWStylePath()?>">
-<title>Zwischenwelt - Baupläne</title>
+<title>Zwischenwelt - Building Plans</title>
 
 </head>
 <body>
@@ -59,7 +59,7 @@ include(BASEPATH."/menu.php");
 ?>
 
 
-insgesamt <?=count($cps)?> Pläne:
+All <?=count($cps)?> plans:
 <form method="post" action="<?=Query("?sid=?")?>">
 	<table><tr>
 		<?php $i=0; foreach ($cps as $cp) {?>
@@ -72,12 +72,12 @@ insgesamt <?=count($cps)?> Pläne:
 		<?=((($i++)%15)==14)?"</tr><tr>":""?>
 		<?php }?>
 	</tr></table>
-	<input type="submit" name="cp_first" value="Anfang">
-	<input type="submit" name="cp_last" value="Ende">
-	<input type="submit" name="cp_abort" value="Abbrechen">
+	<input type="submit" name="cp_first" value="First">
+	<input type="submit" name="cp_last" value="Last">
+	<input type="submit" name="cp_abort" value="Cancel">
 </form>
 
-Alle von einem Typ auswahlen :<br>
+Select all of a type:<br>
 <?php foreach ($types as $tid) {
 	echo "<a href='".Query("?sid=?&type=".$tid)."'>";
 	echo "<img border=1 src='".g($gBuildingType[$tid]->gfx,"we",0,$gUser->race)."'>";
@@ -87,9 +87,9 @@ Alle von einem Typ auswahlen :<br>
 
 <br>
 <br>
-siehe auch <a href="<?=Query("kosten.php?sid=?")?>"><b>Kosten</b></a><br>
-Auf der Karte kann man sich anzeigen lassen,<br>
-welcher Plan was wird, wenn man den "Pläne" Knopf drückt<br>
+Also see <a href="<?=Query("kosten.php?sid=?")?>"><b>Expenses</b></a><br>
+Selecting the "Plans" view on the map will also show
+which buildings are planned.<br>
 
 <?php profile_page_end();?>
 </body>

@@ -13,7 +13,7 @@ profile_page_start("viewtechgraph.php");
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 <link rel="stylesheet" type="text/css" href="<?=GetZWStylePath()?>">
-<title>Zwischenwelt - Forschungsbaum</title>
+<title>Zwischenwelt - Technology Tree</title>
 
 </head>
 <body>

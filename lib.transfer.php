@@ -117,7 +117,7 @@ class cTransfer {
 		
 		ImgBorderStart("p2","jpg","#f2e7d5","",32,33);
 		if ($idlewait > 0) {
-			?> <?=$transfer->name?> erst in <?=$idlewait?> Minuten möglich <?php
+			?> <?=$transfer->name?> is possible in <?=$idlewait?> minutes. <?php
 		} else {
 			?>
 			<FORM METHOD=POST ACTION="<?=Query("?sid=?&x=?&y=?")?>">
@@ -128,8 +128,8 @@ class cTransfer {
 			<b><?=$transfer->name?></b>
 			<table border=1 cellspacing=0>
 			<tr>
-				<th>armee</th>
-				<th>pos</th>
+				<th>Army</th>
+				<th>Pos</th>
 				<?php foreach($unittypes as $typeid => $here) {?>
 					<th><img border="1" style="background-color:<?=$bgcolor?>" src="<?=g($gUnitType[$typeid]->gfx)?>"></th>
 				<?php }?>
@@ -165,10 +165,10 @@ class cTransfer {
 				<?php $error = cTransfer::CheckArmyTransfer($transfer,$sourcearmy,$sourcebuilding,false,$gUser);?>
 				<?php if ($error) {?>
 					<td align=right colspan=<?=count($unittypes)+2?>>
-						neue <?=$gArmyType[$transfer->targetarmytype]->name?> : <?=$error?>
+						New <?=$gArmyType[$transfer->targetarmytype]->name?> : <?=$error?>
 					</td>
 				<?php } else { // ?>
-					<th><INPUT TYPE="text" NAME="armyname[0]" VALUE="neue <?=$gArmyType[$transfer->targetarmytype]->name?>" style="width:120px"></th>
+					<th><INPUT TYPE="text" NAME="armyname[0]" VALUE="New <?=$gArmyType[$transfer->targetarmytype]->name?>" style="width:120px"></th>
 					<td align=right></td>
 					<?php foreach ($unittypes as $typeid => $here) {?>
 						<td align=right><INPUT TYPE="text" NAME="armyunits[0][<?=$typeid?>]" VALUE="0" style="width:40px"></td>
@@ -179,11 +179,11 @@ class cTransfer {
 			
 			<?php /* #### units in source #### */ ?>
 			<tr>
-				<th colspan=2>hier</th>
+				<th colspan=2>Here</th>
 				<?php foreach ($unittypes as $typeid => $here) {?>
 					<td align=right><?=ktrenner(floor($here))?></td>
 				<?php }?>
-				<td><input type=checkbox name=transfer_remove_here value=1> alle hier töten ?<br>(um eingesperrte Einheiten aus der Truppenübersicht zu entfernen)</td>
+				<td><input type=checkbox name=transfer_remove_here value=1> Delete all units here?</td>
 			</tr>
 			
 			</table>

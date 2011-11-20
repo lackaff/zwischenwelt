@@ -13,7 +13,7 @@ sql("DELETE FROM `pending` WHERE `time`<$time");
 
 include("header.php");
 ?>
-<span id=anmeldung><h1>Anmeldung</h1></span>
+<span id=anmeldung><h1>Register new user</h1></span>
 <?php
 $errstr = '';
 if(isset($f_selfcall))
@@ -22,31 +22,31 @@ if(isset($f_selfcall))
 	if(isset($f_name)) {
 		$f_name = addslashes(trim($f_name));
 		if(ereg('^[a-zA-Z][a-zA-Z0-9 \.-]+$',$f_name) === FALSE)$errstr .= "Der Name enth&auml;lt ung&uumlml;ltige Zeichen. Namen m&uuml;ssen mit Buchstaben beginnen und bestehen nahezu nur aus Buchstaben.<br>";
-	} else $errstr .= 'Bitte einen Loginnamen angeben.<br>';
+	} else $errstr .= 'Please choose a user name.<br>';
 	
 	if(strpos($f_mail,'@') && strpos($f_mail,'.')) $f_mail = addslashes($f_mail);
-	else $errstr .= 'Bitte eine g&uuml;tige E-Mailadresse angeben.<br>';
+	else $errstr .= 'Please provide a valid email address.<br>';
 	
 	$f_from = addslashes($f_from);
 	$f_text = addslashes($f_text);
 	
 	// TODO : unhardcode passlen
 	if((strlen($f_pass1) >= 6) && ($f_pass1 == $f_pass2)) $f_pass = $f_pass1;
-	else $errstr .= 'Das Passwort muss mindestens 6 Zeichen lang sein und im Best&auml;tigungsfeld wiederholt werden.<br>';
+	else $errstr .= 'The password must be at least 6 characters and be typed into both fields.<br>';
 	
 	if ($errstr == '' && $spam == false)
 	{
 		$r = sql("SELECT `id` FROM `user` WHERE `name`='$f_name' OR `mail`='$f_mail'");
 		if(mysql_num_rows($r))
 		{
-			echo "<hr>Sorry, den Usernamen oder die Mailadresse gibt es leider schon.<hr>";
+			echo "<hr>Sorry, that username or email address is already in use.<hr>";
 		}
 		else
 		{
 			$r = sql("SELECT `name` FROM `pending` WHERE `name`='$f_name' OR `mail`='$f_mail'");
 			if(mysql_num_rows($r))
 			{
-				echo "<hr>Sorry, unter dem Usernamen oder der Mailadresse hat sich schon jemand angemeldet.<hr>";
+				echo "<hr>Sorry, that username or email address is already in use.<hr>";
 			}
 			else
 			{
@@ -62,9 +62,9 @@ if(isset($f_selfcall))
 				$newpending->from = $f_from;
 				$newpending->text = $f_text;
 				sql("INSERT INTO `pending` SET ".obj2sql($newpending)." , `pass`=PASSWORD('".addslashes($f_pass)."')");
-				mail($f_mail, "Zwischenwelt Registratur", "Um den Account freizuschalten bitte folgenden Link aufrufen: ".BASEURL."anmelden.php?key=$key","From: ".ZW_MAIL_SENDER."\r\nReply-To: ".ZW_MAIL_SENDER."\r\nX-Mailer: PHP/" . phpversion()); 
+				mail($f_mail, "Zwischenwelt Account Verification", "To activate your new Zwischenwelt account please click the following link: ".BASEURL."anmelden.php?key=$key","From: ".ZW_MAIL_SENDER."\r\nReply-To: ".ZW_MAIL_SENDER."\r\nX-Mailer: PHP/" . phpversion()); 
 				if (ZW_NEWREGISTRATION_NOTIFY) mail(ZW_NEWREGISTRATION_NOTIFY,"neue Anmeldung","name=$f_name\nmail=$f_mail\nfrom=$f_from\ntext=$f_text","From: ".ZW_MAIL_SENDER."\r\nReply-To: ".ZW_MAIL_SENDER."\r\nX-Mailer: PHP/" . phpversion());
-				echo '<hr>Es hat geklappt, sie haben Post :).<hr><b style="color:red">Manchmal kann es mit dem Mails etwas dauern, also keine Panik.</b><hr>';
+				echo '<hr>A verification email has been sent to the email address provided. Please click the link in the email to complete the registration process.<hr>';
 				if(ZW_NEWREGISTRATION_SHOWLINK){
 					echo '<hr>Um den Account freizuschalten, <a href="anmelden.php?key='.$key.'">hier</a> klicken.<hr>';
 				}
@@ -72,7 +72,7 @@ if(isset($f_selfcall))
 				exit;
 			}
 		}
-	} else echo '<hr><p style="color:red">Es sind Fehler aufgetreten:<br>'.$errstr.'</p><hr>';
+	} else echo '<hr><p style="color:red">There was an error:<br>'.$errstr.'</p><hr>';
 }
 else if(isset($f_key))
 {
@@ -125,7 +125,7 @@ else if(isset($f_key))
 		sql("INSERT INTO `building` SET ".obj2sql($o));
 		
 		sql("DELETE FROM `pending` WHERE `key`='$f_key'");
-		echo "<hr>Alles ok, der Account ist nun freigeschaltet. Sie k&ouml;nnen sich nun einloggen.<hr>";
+		echo "<hr>Your account has been activated. You can now log in.<hr>";
 		include("footer.php");
 		exit;
 		/*
@@ -134,9 +134,9 @@ else if(isset($f_key))
 		addDirectory($newuserid,"SEND",$id);
 		*/
 		
-		createFolder("Eingang",0,$newuserid,kFolderTypeRoot);
-		createFolder("Ausgang",0,$newuserid,kFolderTypeSent);
-		createFolder("Berichte",0,$newuserid,kFolderTypeExtra);
+		createFolder("Inbox",0,$newuserid,kFolderTypeRoot);
+		createFolder("Outbox",0,$newuserid,kFolderTypeSent);
+		createFolder("News",0,$newuserid,kFolderTypeExtra);
 		/*$text="So meine lieben Kinder,<br>
 <br>
 Ihr seid nun alle in dieser grossen Gilde gelandet, da ihr alle noch recht klein seid. <br>
@@ -164,7 +164,7 @@ http://zwischenwelt.net-play.de/forum/phpBB2/index.php<br>
 	}
 	else
 	{
-		echo "<hr>Irgendwas ist schiefgelaufen. der Key ist falsch.<hr>";
+		echo "<hr>Something is wrong -- the key is invalid.<hr>";
 		include("footer.php");
 		exit;
 	}
@@ -207,8 +207,8 @@ http://zwischenwelt.net-play.de/forum/phpBB2/index.php<br>
 	</table>
 </FORM>
 <br>
-<b>Mit der Anmeldung stimmt man den <a href="http://zwischenwelt.milchkind.net/zwwiki/index.php/Regeln">Regeln</a> zu!!!</b>
+<b>By registering for an account, you agree to abide by our <a href="http://zwischenwelt.milchkind.net/zwwiki/index.php/Regeln">rules</a>.</b>
 <br>
 <br>
-Wenn bei der Anmeldung etwas nicht geklappt hat, keine Panik, sondern einfach eine eMail an "hagish (&auml;t) schattenkind.net"
+If something goes awry during the registreation, don't panic. Just drop a line to "hagish (&auml;t) schattenkind.net"
 <?php include("footer.php"); ?>

@@ -317,8 +317,8 @@ class cFight {
 			if ($debug) echo "kShootingAlarmTimeout<br>\n";
 			cFight::ActOfWar($attackerobj->user,$defenderobj->user,"Beschuss",$attackerobj->x,$attackerobj->y);
 			
-			$topic = "Beschuss auf $defendernametext";
-			$msg = $defendernametext." wird von ".$attackernametext." beschossen.<br>\n";
+			$topic = "Firing upon $defendernametext";
+			$msg = $defendernametext." has been fired upon by ".$attackernametext.".<br>\n";
 			if ($defenderobj->user) sendMessage($defenderobj->user,0,$topic,$msg,kMsgTypeReport,FALSE);
 			
 			$userflags = isset($gAllUsers) ? $gAllUsers[$attackerobj->user]->flags : sqlgetone("SELECT `flags` FROM `user` WHERE `id` = ".intval($attackerobj->user));
@@ -370,7 +370,7 @@ class cFight {
 		
 		// target killed
 		if ($target_killed) {
-			cFight::EndShooting($shooting,"Ziel wurde vernichtet",$attackerobj,$defenderobj);
+			cFight::EndShooting($shooting,"Target was killed.",$attackerobj,$defenderobj);
 			if ($shooting->defendertype == kUnitContainer_Army) cArmy::DeleteArmy($defenderobj,false,"Vernichtet");
 			if ($shooting->defendertype == kUnitContainer_Building) cBuilding::removeBuilding($defenderobj,$defenderobj->user);
 		}
@@ -498,19 +498,19 @@ class cFight {
 		global $gAllUsers;
 		$armyownername = cArmy::GetArmyOwnerName($army);
 	
-		echo "armee ".$army->name." von spieler ".$armyownername." hat ".
-			intval($pillagetotal)."/".intval($army->pillage)." : ".
+		echo "Army ".$army->name." (".$armyownername.") has pillaged".
+			intval($pillagetotal)."/".intval($army->pillage).": ".
 			intval($army->pillage_lumber).",".
 			intval($army->pillage_stone).",".
 			intval($army->pillage_food).",".
 			intval($army->pillage_metal).",".
-			intval($army->pillage_runes)." von ".
+			intval($army->pillage_runes)." of ".
 			intval($user->lumber).",".
 			intval($user->stone).",".
 			intval($user->food).",".
 			intval($user->metal).",".
-			intval($user->runes)." aus ".
-			"Lager (".$building->x."|".$building->y.") geplündert.<br>";
+			intval($user->runes)." from ".
+			"storehouse (".$building->x."|".$building->y.").<br>";
 			
 		foreach($gResFields as $res){
 			sql("UPDATE `army` SET `$res` = `$res` + ".$army->{"pillage_".$res}." WHERE `id` = ".$army->id);
@@ -519,11 +519,11 @@ class cFight {
 		
 		$army->last += $pillagetotal;
 		
-		if ($debug) echo "auslastung : $army->last / $army->lastmax<br>";
+		if ($debug) echo "Load: $army->last / $army->lastmax<br>";
 		if ($army->last > $army->lastmax - 2) { // TODO : unhardcode
-			cFight::EndPillage($pillage,"Die Plünderer sind vollgeladen.");
+			cFight::EndPillage($pillage,"The pillagers are fully laden.");
 		} else if ($pillagetotal < $army->pillage/2) { // TODO : BUG !!! stops as soon as one of the target res is empty
-			cFight::EndPillage($pillage,"Das Lager ist leer.");
+			cFight::EndPillage($pillage,"The storehouse is empty.");
 		}
 	}
 	
@@ -670,7 +670,7 @@ class cFight {
 		// gebäude tot, oder noch im bau unter 10 prozent..
 		if ($building->hp < 1 || ($building->construction>0 && GetConstructionProgress($building)<0.1)) { // TODO : unhardcode
 			// belagerung beendet
-			cFight::EndSiege($siege,"Das Gebäude wurde vernichtet.");
+			cFight::EndSiege($siege,"The building was destroyed.");
 			cBuilding::removeBuilding($building,$building->user);
 			cArmy::AddArmyFrags($siege->army,1);
 		}
@@ -831,15 +831,15 @@ class cFight {
 		// kampf beenden
 		global $gArmyType,$gRes2ItemType,$gRes;
 		if ($army1->size <= 0 && $army2->size <= 0) {
-			cFight::EndFight($fight,"Beide Armeen wurden vernichtet.");
+			cFight::EndFight($fight,"Both armies were destroyed.");
 			cArmy::DeleteArmy($army1);
 			cArmy::DeleteArmy($army2);
 		} else if ($army1->size <= 0) {
-			cFight::EndFight($fight,"Die ".$gArmyType[$army1->type]->name." $army1->name wurde vernichtet.");
+			cFight::EndFight($fight,$gArmyType[$army1->type]->name." $army1->name was destroyed.");
 			cArmy::DropExcessCargo($army1,$army2,0);
 			cArmy::DeleteArmy($army1,true);
 		} else if ($army2->size <= 0) {
-			cFight::EndFight($fight,"Die ".$gArmyType[$army2->type]->name." $army2->name wurde vernichtet.");
+			cFight::EndFight($fight,$gArmyType[$army2->type]->name." $army2->name was destroyed.");
 			cArmy::DropExcessCargo($army2,$army1,0);
 			cArmy::DeleteArmy($army2,true);
 		}
@@ -1029,13 +1029,13 @@ class cFight {
 			
 		// start report
 		if ($is_shooting)
-				$topic = $monster?"MonsterBeschuss":"Beschuss";
-		else	$topic = $monster?"Monster":"Kampfbericht";
+				$topic = $monster?"Monster Bombardment":"Bombardment";
+		else	$topic = $monster?"Monster":"Battle Report";
 		if ($is_shooting)
-				$report = "Der Beschuss auf (".$defender->x.",".$defender->y.") ist beendet.<br>";
-		else	$report = "Die Schlacht bei (".$attacker->x.",".$attacker->y.") ist beendet.<br>";
+				$report = "The bombardment at (".$defender->x.",".$defender->y.") has ended.<br>";
+		else	$report = "The battle at (".$attacker->x.",".$attacker->y.") has ended.<br>";
 		$report .= $why."<br>";
-		if ($monster) $report .= "Monsterkampfberichte können unter Einstellungen abgeschaltet werden.<br>";
+		if ($monster) $report .= "Monster battle reports can be cancelled on the Settings page.<br>";
 		$report .= "<br>";
 		
 		// report army state
@@ -1069,10 +1069,10 @@ class cFight {
 							$arr_loss[] = $txt;
 					else	$arr_gain[] = $txt;
 				}
-				if (count($arr_loss) > 0) $report .= "<tr><th>Verluste</th>".implode(" ",$arr_loss)."</tr>";
-				if (count($arr_gain) > 0) $report .= "<tr><th>Neuzugänge</th>".implode(" ",$arr_gain)."</tr>";
+				if (count($arr_loss) > 0) $report .= "<tr><th>Casualties</th>".implode(" ",$arr_loss)."</tr>";
+				if (count($arr_gain) > 0) $report .= "<tr><th>New Additions</th>".implode(" ",$arr_gain)."</tr>";
 			} else {
-				$report .= "<font color='red'><b>ausgelöscht</b></font>";
+				$report .= "<font color='red'><b>razed</b></font>";
 			}
 			
 			// verlorene res, items
@@ -1094,11 +1094,11 @@ class cFight {
 					cText::UnitsList($container->units,$container->user,"",false);
 					if (cUnit::GetUnitsSum($container->transport) > 0) cText::UnitsList($container->transport,$container->user,"",false);
 					if ($is_shooting)
-							$report .= "Einheiten nach dem Beschuss :";
-					else	$report .= "Einheiten nach dem Kampf :";
+							$report .= "Units after the bombardment :";
+					else	$report .= "Units after the battle :";
 					$report .= rob_ob_end();
 				} else {
-					$report .= "Keine Verluste";
+					$report .= "No casualties";
 				}
 			}
 			
@@ -1119,7 +1119,7 @@ class cFight {
 				$userflags = isset($gAllUsers) ? $gAllUsers[$uid]->flags : sqlgetone("SELECT `flags` FROM `user` WHERE `id` = ".intval($uid));
 				if (intval($userflags) & kUserFlags_NoMonsterFightReport) continue;
 			}
-			sendMessage($uid,0,$niederlage?"Niederlage!":$topic,$report,kMsgTypeReport,FALSE);
+			sendMessage($uid,0,$niederlage?"Defeat!":$topic,$report,kMsgTypeReport,FALSE);
 		}
 	}
 	
@@ -1139,7 +1139,7 @@ class cFight {
 			// den gegner ein bisschen beschäftigen, damit er nicht gleich nächste runder hinterherrennt und weiterkämpft
 			sql("UPDATE `army` SET `idle` = 0, `nextactiontime` = ".(time()+180)." WHERE `id` = ".$enemy);
 		}
-		cFight::StopAllArmyFights($army,"Die Armee _ARMYNAME_ von _ARMYOWNERNAME_ ist geflohen.");
+		cFight::StopAllArmyFights($army,"Army _ARMYNAME_ (_ARMYOWNERNAME_) has fled.");
 		cArmy::DropExcessCargo($army,$enemy,0);
 		QuestTrigger_EscapeArmy($army,$x,$y);
 	}
@@ -1150,20 +1150,20 @@ class cFight {
 	static function ActOfWar ($attacker_uid,$defender_uid,$what,$x,$y) {
 		if (!$attacker_uid || !$defender_uid) return;
 		if ($attacker_uid == $defender_uid) return;
-		$topic = "Kriegerischer Akt";
+		$topic = "Hostile Activity";
 		if (GetFOF($attacker_uid,$defender_uid) != kFOF_Enemy) {
 			$defender_name = sqlgetone("SELECT `name` FROM `user` WHERE `id` = ".intval($defender_uid));
-			$report = "Durch einen kriegerischen Akt von dir,<br>";
-			$report .= "$what bei ($x,$y), wurde $defender_name zu deinem Feind.<br>";
+			$report = "Because of your hostile activitiy,<br>";
+			$report .= "$what at ($x,$y), $defender_name has declared you an enemy.<br>";
 			SetFOF($attacker_uid,$defender_uid,kFOF_Enemy);
-			sendMessage($attacker_uid,0,"Feind:$defender_name",$report,kMsgTypeReport,FALSE);
+			sendMessage($attacker_uid,0,"Enemy:$defender_name",$report,kMsgTypeReport,FALSE);
 		}
 		if (GetFOF($defender_uid,$attacker_uid) != kFOF_Enemy) {
 			$attacker_name = sqlgetone("SELECT `name` FROM `user` WHERE `id` = ".intval($attacker_uid));
-			$report = "$attacker_name wurde durch einen kriegerischen Akt,<br>";
-			$report .= "$what bei ($x,$y), zu deinem Feind.<br>";
+			$report = "$attacker_name has perpetrated hostilities,<br>";
+			$report .= "$what at ($x,$y), and has been declared an enemy.<br>";
 			SetFOF($defender_uid,$attacker_uid,kFOF_Enemy);
-			sendMessage($defender_uid,0,"Feind:$attacker_name",$report,kMsgTypeReport,FALSE);
+			sendMessage($defender_uid,0,"Enemy:$attacker_name",$report,kMsgTypeReport,FALSE);
 		}
 	}
 }

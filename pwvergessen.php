@@ -16,15 +16,15 @@ if (isset($f_name)) {?>
 		{
 			$newpass = GeneratePassword();
 			sql("UPDATE `user` SET `pass` = PASSWORD('".addslashes($newpass)."') WHERE `id` = ".$u->id);
-			mail($u->mail, "Zwischenwelt Passwort",
-				"Sie haben ein neues Passwort fuer Zwischenwelt angefordert.\n".
+			mail($u->mail, "Zwischenwelt Password",
+				"You have requested a new Zwischenwelt password.\n".
 				"username : ".$u->name."\n".
-				"passwort : ".$newpass."\n".
+				"password : ".$newpass."\n".
 				BASEURL." \n".
 				"Ihr Zwischenwelt team","From: ".ZW_MAIL_SENDER."\r\nReply-To: ".ZW_MAIL_SENDER."\r\nX-Mailer: PHP/" . phpversion()); 
 			?>
-			Sie haben Post ! Ihnen wurde ein neues Passwort zugeschickt.<br>
-			<a href="index.php">zur Startseite</a>
+			You've got mail! A new password has been sent.<br>
+			<a href="index.php">back to the main page</a>
 			<?php
 		} else {
 			?>

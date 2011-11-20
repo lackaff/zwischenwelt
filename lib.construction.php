@@ -220,19 +220,19 @@ function PrintBuildTimeHelp ($x,$y,$type=-1,$priority=-1,$userid=false) {
 	?>
 	<table>
 	<tr>
-		<td>Entfernung zum Haupthaus oder Lager <?=round($dist,2)?></td>
-		<td>Bauzeit * <?=round($faktor_dist,2)?></td>
+		<td>Distance from Town Center or Storehouse <?=round($dist,2)?></td>
+		<td>Build time * <?=round($faktor_dist,2)?></td>
 	</tr><tr>
-		<td>Architekturlevel: <?=GetTechnologyLevel(kTech_Architecture,$userid)?></td>
-		<td>Bauzeit * <?=round($faktor_tech,2)?></td>
+		<td>Architecture level: <?=GetTechnologyLevel(kTech_Architecture,$userid)?></td>
+		<td>Build time * <?=round($faktor_tech,2)?></td>
 	</tr><tr>
 	<?php if ($faktor_newbee < 1.0) {?>	
-		<td>frisch gegründete Siedlung (Newbee)</td>
-		<td>Bauzeit * <?=round($faktor_newbee,2)?></td>
+		<td>New settlement (newbie bonus)</td>
+		<td>Build time * <?=round($faktor_newbee,2)?></td>
 	</tr><tr>
 	<?php } // endif?>
-		<td>Insgesamt</td>
-		<td>Bauzeit * <?=round($faktor_dist * $faktor_tech * $faktor_newbee,2)?></td>
+		<td>Total</td>
+		<td>Build time * <?=round($faktor_dist * $faktor_tech * $faktor_newbee,2)?></td>
 	</tr><tr>
 	</table>
 	<?php

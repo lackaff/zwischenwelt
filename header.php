@@ -15,7 +15,7 @@ else {
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/transitional.dtd">
 <html>
 <head>
-	<title>Zwischenwelt : erschaffe deine Welt</title>
+	<title>Zwischenwelt : create your world</title>
 	<link rel="stylesheet" type="text/css" href="images/<?=$layout?>/pagestyles.css">
 	<link REL="shortcut icon" HREF="favicon.ico" TYPE="image/png">
 	
@@ -24,7 +24,7 @@ else {
 	<META NAME="description" CONTENT="Zwischenwelt - kostenloses realtime online Browsergame, baue, forsche, zaubere, kömpfe : erschaffe deine Welt">
 	<META NAME="robots" CONTENT="index, follow">
 	<META NAME="revisit-after" content="21 days">
-	<META NAME="language" CONTENT="de">
+	<META NAME="language" CONTENT="en">
 	<META NAME="distribution" CONTENT="global">
 	<META NAME="audience" CONTENT="all">
 	<META NAME="author" CONTENT="zwischenwelt team">
