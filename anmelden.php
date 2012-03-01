@@ -21,7 +21,7 @@ if(isset($f_selfcall))
 {
 	if(isset($f_name)) {
 		$f_name = addslashes(trim($f_name));
-		if(ereg('^[a-zA-Z][a-zA-Z0-9 \.-]+$',$f_name) === FALSE)$errstr .= "Der Name enth&auml;lt ung&uumlml;ltige Zeichen. Namen m&uuml;ssen mit Buchstaben beginnen und bestehen nahezu nur aus Buchstaben.<br>";
+		if(preg_match('/^[a-zA-Z][a-zA-Z0-9 \.-]+$/',$f_name) === FALSE)$errstr .= "The name contains illegal charachters. Names must consist only of letters.<br>";
 	} else $errstr .= 'Please choose a user name.<br>';
 	
 	if(strpos($f_mail,'@') && strpos($f_mail,'.')) $f_mail = addslashes($f_mail);

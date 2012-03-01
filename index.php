@@ -2,7 +2,7 @@
 
 if (!file_exists("defines.mysql.php")) {
 	?>
-	Bitte den Installationsanweisungen in der Datei INSTALL folgen,<br>
+	Please follow the instructions in the INSTALL file<br>
 	und eine Kopie von defines.mysql.php.dist names defines.mysql.php anlegen.<br>
 	Dort müssen dann die Zugansdaten und Pfade eingetragen werden.
 	<?php 

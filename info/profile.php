@@ -6,7 +6,7 @@ Lock();
 
 //sets the color of player id, html color value
 function setPlayerColor($id,$color) {
-	if(eregi("^[a-zA-Z]+$",$color) || eregi("#[0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F]$",$color))sql("UPDATE `user` SET `color`='$color' WHERE `id`=".intval($id));
+	if(preg_match("/^[a-zA-Z]+$/i",$color) || preg_match("/#[0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F]$/i",$color))sql("UPDATE `user` SET `color`='$color' WHERE `id`=".intval($id));
 }
 
 function setPlayerProfil($id,$profil) {

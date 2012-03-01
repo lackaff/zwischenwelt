@@ -91,7 +91,7 @@ if (isset($f_gotocat)) {
 	}
 }
 	
-if (isset($f_pos) && $f_pos != "" && eregi("((-|\\+)?[0-9]+)[^0-9+\\-]*((-|\\+)?[0-9]+)",$f_pos,$r)) {
+if (isset($f_pos) && $f_pos != "" && preg_match("/((-|\\+)?[0-9]+)[^0-9+\\-]*((-|\\+)?[0-9]+)/i",$f_pos,$r)) {
 	$f_x = intval($r[1]);
 	$f_y = intval($r[3]);
 }

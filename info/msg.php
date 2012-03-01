@@ -272,12 +272,12 @@ switch ($f_show){
 		}
 		if(!empty($f_reply)){
 			$m=sqlgetobject("SELECT `from`,`subject` FROM `message` WHERE `id`=".intval($f_reply)." AND (`from`=".intval($gUser->id)." OR `to`=".intval($gUser->id).")");
-			if(!eregi("^Re:",$m->subject))$m->subject = "Re: ".$m->subject;
+			if(!preg_match("/^Re:/",$m->subject))$m->subject = "Re: ".$m->subject;
 		}
 		$m_fwd = false;
 		if(!empty($f_fwd)){
 			$m_fwd=sqlgetobject("SELECT * FROM `message` WHERE `id`=".intval($f_fwd)." AND (`from`=".intval($gUser->id)." OR `to`=".intval($gUser->id).")");
-			if(!eregi("^Fwd:",$m_fwd->subject))$m->subject = "Fwd: ".$m_fwd->subject;
+			if(!preg_match("/^Fwd:/",$m_fwd->subject))$m->subject = "Fwd: ".$m_fwd->subject;
 		}
 		if(!empty($f_subject))$m->subject = $f_subject;
 		if(!empty($f_text))$m->text = $f_text;

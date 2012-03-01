@@ -440,7 +440,7 @@ function sql	($query) {
 	$gSqlQueries++;
 	if($gSqlShowQueries)echo "[sqlquery=$query]";
 	$r = mysql_query($query);
-	if (1) if (isset($gUser) && $gUser->admin) if (!eregi("SELECT",$query)) $gSqlLastNonSelectQuery = $query." (".mysql_affected_rows()." affected rows)";
+	if (1) if (isset($gUser) && $gUser->admin) if (!preg_match('/SELECT/', $query)) $gSqlLastNonSelectQuery = $query." (".mysql_affected_rows()." affected rows)";
 	if (!$r) {	
 		$errormsg = mysql_error();
 		$s = "MYSQL QUERRY FAILED IN DB '".MYSQL_DB."': ####<br>".$query."<br>####".$errormsg." ".shorttrace();

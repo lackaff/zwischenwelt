@@ -55,11 +55,11 @@ function ParseReq ($req) {
 	foreach ($arr as $element) {
 		$element = trim($element);
 		if ($element == "") continue;
-		if (eregi('\[([0-9]+)\]',$element,$r)){
+		if (preg_match('/\[([0-9]+)\]/',$element,$r)){
 			$level = $r[1];
 			//print_r($r);
 			//echo "[element=$element level=$level]";
-		} else if (eregi("([0-9]+)([<>:])(-?[0-9]+)(\\+([0-9.]+))?",$element,$r)) {
+		} else if (preg_match("/([0-9]+)([<>:])(-?[0-9]+)(\\+([0-9.]+))?/",$element,$r)) {
 			$newo = new EmptyObject();
 			$newo->type = intval($r[1]);
 			$newo->level = abs(intval($r[3])); // WARNING ! SIGN LOST FOR MAX = 0 !!!
@@ -81,7 +81,7 @@ function ParseReqLevels($req){
 	foreach ($arr as $element) {
 		$element = trim($element);
 		if (empty($element)) continue;
-		if (eregi('\[([0-9]+)\]',$element,$r))$level[] = $r[1];
+		if (preg_match('/\[([0-9]+)\]/',$element,$r))$level[] = $r[1];
 	}
 	
 	return $level;
@@ -95,7 +95,7 @@ function ParseReqForATechLevel($req,$level=0){
 	foreach ($arr as $element) {
 		$element = trim($element);
 		if (empty($element)) continue;
-		if (eregi('\[([0-9]+)\]',$element,$r)){if($r[1]>$level)break;}
+		if (preg_match('/\[([0-9]+)\]/',$element,$r)){if($r[1]>$level)break;}
 		else $res[] = $element;
 	}
 	

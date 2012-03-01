@@ -134,7 +134,7 @@ class cArmy {
 	}
 
 	static function escapearmyname ($name) {
-		return ereg_replace("[&<>]","_",$name);// html security
+		return preg_replace("/[&<>]/","_",$name);// html security
 	}
 	
 	static function CanControllArmy ($army,$user) {
