@@ -207,8 +207,8 @@ http://zwischenwelt.net-play.de/forum/phpBB2/index.php<br>
 	</table>
 </FORM>
 <br>
-<b>By registering for an account, you agree to abide by our <a href="http://zwischenwelt.milchkind.net/zwwiki/index.php/Regeln">rules</a>.</b>
+<b>By registering for an account, you agree to abide by our <a href="">rules</a>.</b>
 <br>
 <br>
-If something goes awry during the registreation, don't panic. Just drop a line to "hagish (&auml;t) schattenkind.net"
+If something goes awry during the registreation, don't panic. Just drop a line to "admin (&auml;t) admin"
 <?php include("footer.php"); ?>

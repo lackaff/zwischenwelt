@@ -24,19 +24,19 @@ if (CHECK_ZW_CONFIG) {
 	*/
 	
 	if (substr(trim(BASEPATH),0,4) == "http") 
-		$configwarnings[] = "BASEPATH soll keine url sein, sondern ein lokaler pfad,".
-			"also z.b. sowas wie /var/www/zw unter linux oder C:/wwwroot/zw unter win";
+		$configwarnings[] = "BASEPATH should be a local path (not a URL),".
+			"e.g. /var/www/zw on Linux or C:/wwwroot/zw on Windows";
 	
 	if (!file_exists(BASEPATH)) {
-		$configwarnings[] = "BASEPATH ist nicht erreichbar, das sollte der lokale, absolute pfad zum spiele verzeichnis sein,".
-			"also z.b. sowas wie /var/www/zw unter linux oder C:/wwwroot/zw unter win";
+		$configwarnings[] = "BASEPATH is not reachable, it must be a local, absolute path,".
+			"e.g. /var/www/zw on Linux or C:/wwwroot/zw on Windows";
 		
 		// suggestions 
-		$sug = "Vorschlag für den BASEPATH : ";
-		$configwarnings[] = $sug.$_SERVER[SCRIPT_FILENAME]." (ohne den php file am ende)";
-		$configwarnings[] = $sug.$_SERVER[PATH_TRANSLATED]." (ohne den php file am ende)";
-		$configwarnings[] = $sug.$_SERVER[DOCUMENT_ROOT].$_SERVER[PHP_SELF]." (ohne den php file am ende)";
-		$configwarnings[] = $sug.$_SERVER[DOCUMENT_ROOT].$_SERVER[SCRIPT_NAME]." (ohne den php file am ende)";
+		$sug = "Suggestions for BASEPATH : ";
+		$configwarnings[] = $sug.$_SERVER[SCRIPT_FILENAME]." (without the .php file at the end)";
+		$configwarnings[] = $sug.$_SERVER[PATH_TRANSLATED]." (without the .php file at the end)";
+		$configwarnings[] = $sug.$_SERVER[DOCUMENT_ROOT].$_SERVER[PHP_SELF]." (without the .php file at the end)";
+		$configwarnings[] = $sug.$_SERVER[DOCUMENT_ROOT].$_SERVER[SCRIPT_NAME]." (without the .php file at the end)";
 			
 		/*
 		vardump2($_SERVER);
@@ -53,23 +53,23 @@ if (CHECK_ZW_CONFIG) {
 	foreach ($slashend_constants as $con) {
 		$v = constant($con);
 		if (substr($v,strlen($v)-1) != "/") 
-			$configwarnings[] = "$con muss mit ein / am Ende haben";
+			$configwarnings[] = "$con must end with /";
 	}
 		
 	$http_constants = array("kGfxServerPath","kStyleServerPath","BASEURL");
 	foreach ($http_constants as $con) if (substr(constant($con),0,7) != "http://") 
-		$configwarnings[] = "$con sollte eine URL sein, also mit http:// anfangen , und im Browser aufrufbar sein";
+		$configwarnings[] = "$con should be a URL starting with http://";
 	
 	// check tmp
 	if (count($configwarnings) == 0) {
 		if (!file_exists(BASEPATH."tmp/")) {
-			$configwarnings[] = "Bitte ein 'tmp' verzeichnis unter BASEPATH anlegen";
+			$configwarnings[] = "Please create a /tmp directory in your BASEPATH";
 		}
 	}
 	
 	if (count($configwarnings) > 0) {
-		echo "Bitte dem Admin melden, dass die Konfiguration in 'defines.mysql.php' eventuell falsch ist<br>";
-		echo "Um diese Warnung hier zu ignorieren einfach define(\"CHECK_ZW_CONFIG\",false); in die defines.mysql.php eintragen<br>";
+		echo "Please advise the admin that the settings in defines.mysql.php are incorrect.<br>";
+		echo "To ignore this warning define(\"CHECK_ZW_CONFIG\",false); in defines.mysql.php<br>";
 		echo implode("<br>",$configwarnings);
 	}
 }
@@ -79,9 +79,9 @@ if (CHECK_ZW_DB_VERSION) {
 	$maxv = kCheckDBMaxVersion;
 	if ($curv < $maxv) {
 		$gDBNeedsUpdate = true;
-		echo "Die Datenbank ist veraltet, bitte dem Admin bescheidsagen (cur:$curv max:$maxv).<br>";
+		echo "The database is outdated, please advise the admin (cur:$curv max:$maxv).<br>";
 		if ($gUser && $gUser->admin) {
-			echo "Admin Rechte beim eingeloggten user vorhanden, für genauere Infos siehe : ";
+			echo "Admin rights available to logged-in user, for detailed info see: ";
 			echo  "<a href='".Query(kCheckDBVersionScript."?sid=?")."'>".kCheckDBVersionScript."</a><br>";
 		}
 	}
@@ -234,7 +234,7 @@ function Moral2HtmlIcon($moral){
 		case 10:$title="Really Good";break;
 		default:$title="Angelic";break;
 	}
-	return "<img src='".g("icon/moral/$moral.png")."' title='Gesinnung: $title' alt='Gesinnung: $title'>";
+	return "<img src='".g("icon/moral/$moral.png")."' title='Alignment: $title' alt='Alignment: $title'>";
 }
 
 //change user moral deltamoral<0 -> bad, deltamoral>0 -> good
@@ -1590,10 +1590,10 @@ function FireSetOn($x,$y){
 						//first burning building, send message to user
 						if($fires == 1){
 								$text = "";
-								$text .= "Das Gebäude and er Position ($x,$y) steht in Flammen. Es besteht die Gefahr, daß ";
-								$text .= "sich das Feuer auf umliegende Felder ausbreitet. Diese Nachricht wird nur bei dem ";
-								$text .= "ersten brennenden Gebäude geschickt.";
-								sendMessage($user,0,"Eines Ihrer Gebäude brennt!",$text,0,false);
+								$text .= "The building at ($x,$y) is burning. There is a danger that ";
+								$text .= "the fire will spread to nearby areas. This message will only be displayed";
+								$text .= "on the first occurance of burning.";
+								sendMessage($user,0,"One of your buildings is aflame!",$text,0,false);
 						}
 				}
 		}

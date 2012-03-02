@@ -177,7 +177,7 @@ class cInfoHQ extends cInfoBuilding {
 		
 		if($gUser->guild>0 && isset($f_fc) && $f_fc==1) {
 			?>
-			<center><span style="font-size:14px;font-weight:bold;">Nachricht des Tages</span><br>
+			<center><span style="font-size:14px;font-weight:bold;">Message of the Day</span><br>
 			<?ImgBorderStart();?>
 			<span style="font-size:12px;font-style:italic;"><?=sqlgetone("SELECT `message` FROM `guild` WHERE `id`=".$gUser->guild)?></span>
 			<?ImgBorderEnd();?></center>
@@ -187,7 +187,7 @@ class cInfoHQ extends cInfoBuilding {
 		
 		if ($gUser->food <= 0) {?>
 			<center><?ImgBorderStart();?>
-			<span style="color:red;font-size:12px;font-style:italic;">Ihre Bevölkerung hungert. Sie benötigen mehr Nahrung!</span>
+			<span style="color:red;font-size:12px;font-style:italic;">Your people are starving. They need more food!</span>
 			<?ImgBorderEnd();?></center>
 			<br>
 		<?php } // endif?>
@@ -248,7 +248,7 @@ class cInfoHQ extends cInfoBuilding {
 		?>
 		
 		
-		<h1>Schnellsprung</h1>
+		<h1>Jump to Building</h1>
 		<?php if (1) {
 			$first = true;
 			/*
@@ -326,7 +326,7 @@ class cInfoHQ extends cInfoBuilding {
 		
 		
 		if (($allbuildings->minlevel < 5 && $allbuildings->count < 20) || $allbuildings->maxlevel < 5 || $debug_show_all_tips) {
-			$tip[] = "Um neu anzufangen und den Startplatz selber zu wählen, einfach das ".GetBuildingTypeLink(kBuilding_HQ,$x,$y)." abreissen";
+			$tip[] = "To start anew and choose a new location, simply demolish your ".GetBuildingTypeLink(kBuilding_HQ,$x,$y);
 		}
 		
 		if ($gUser->guild == kGuild_Weltbank || $debug_show_all_tips) {
@@ -338,7 +338,7 @@ class cInfoHQ extends cInfoBuilding {
 			$tip[] = "When your storehouses overflow, the excess resources will go to the Weltbank and reduce your debts.";
 		}
 		
-		$tip[] = "Gebäude können in einem Abstand von bis zu 2 Feldern zu eigenen Gebäuden gebaut werden.<br>";
+		$tip[] = "A new buildings must be built within two fields of your existing buildings.<br>";
 		
 		foreach ($minbtable as $o) {
 			$cb = CountUserBuildingType($gUser->id,$o[0]);
@@ -373,30 +373,30 @@ class cInfoHQ extends cInfoBuilding {
 		if (1) {
 		
 			if (CountUserUnitType($gUser->id,kUnitType_Kamel) < 1)
-				$tip[] = "Im ".GetBuildingTypeLink(kBuilding_Market,$x,$y)." kann man ".GetUnitTypeLink(kUnitType_Kamel,$x,$y)." ausbilden";
+				$tip[] = "In ".GetBuildingTypeLink(kBuilding_Market,$x,$y)." can one ".GetUnitTypeLink(kUnitType_Kamel,$x,$y)." train";
 			
 			if (CountUserUnitType($gUser->id,kUnitType_Worker) < 1)
-				$tip[] = "Im ".GetBuildingTypeLink(kBuilding_Silo,$x,$y)." kann man ".GetUnitTypeLink(kUnitType_Worker,$x,$y)." ausbilden";
+				$tip[] = "In ".GetBuildingTypeLink(kBuilding_Silo,$x,$y)." can one ".GetUnitTypeLink(kUnitType_Worker,$x,$y)." train";
 			
-			$tip[] = GetUnitTypeLink(kUnitType_Worker,$x,$y)." und Soldaten können ".GetTerrainTypeLink(kTerrain_Forest,$x,$y)."(".cost2txt(array(kHarvestAmount,0,0,0,0)).") und 
-				".GetTerrainTypeLink(kTerrain_Rubble,$x,$y)."(".cost2txt(array(0,kHarvestAmount,0,0,0)).") ernten";
+			$tip[] = GetUnitTypeLink(kUnitType_Worker,$x,$y)." and soldiers can harvest ".GetTerrainTypeLink(kTerrain_Forest,$x,$y)."(".cost2txt(array(kHarvestAmount,0,0,0,0)).") and 
+				".GetTerrainTypeLink(kTerrain_Rubble,$x,$y)."(".cost2txt(array(0,kHarvestAmount,0,0,0)).")";
 			$arr = array();
 			$bstypes = array_unique($gFlaggedBuildingTypes[kBuildingTypeFlag_Bodenschatz]);
 			foreach ($bstypes as $typeid) $arr[] = GetBuildingTypeLink($typeid,$x,$y,false,false,false,false);
-			$tip[] = GetUnitTypeLink(kUnitType_Worker,$x,$y)." können Bodenschätze (".implode(" ",$arr).") abbauen (ein Arbeitertrupp produziert Rohstoffe solange er auf einem Bodenschatz-Feld steht)";
-			$tip[] = "Bodenschätze kann man mit der Suche unter der Karte finden, z.b. \"Kristall\"";
-			$tip[] = "rechts-oberhalb der Karte gibt es ein paar Knöpfe für unterschiedliche Weltkarten";
-			$tip[] = "Zeichen auf den Weltkarten : &nbsp; ".
-							"<img src=\"".kGfxServerPath."/minimap_sample_army.png\">:Armee/Monster &nbsp; ".
-							"<img src=\"".kGfxServerPath."/minimap_sample_portal.png\">:Portal &nbsp; ".
-							"<img src=\"".kGfxServerPath."/minimap_sample_bodenschatz.png\">:Bodenschatz &nbsp; ";
+			$tip[] = GetUnitTypeLink(kUnitType_Worker,$x,$y)." can gather resources (".implode(" ",$arr).") from the map";
+			$tip[] = "Resources can be found by searching the map, e.g. \"Kristall\"";
+			$tip[] = "The buttons above the map provide different views of the world";
+			$tip[] = "Symbols on the world map : &nbsp; ".
+							"<img src=\"".kGfxServerPath."/minimap_sample_army.png\">:Armies/Monsters &nbsp; ".
+							"<img src=\"".kGfxServerPath."/minimap_sample_portal.png\">:Portals &nbsp; ".
+							"<img src=\"".kGfxServerPath."/minimap_sample_bodenschatz.png\">:Resources &nbsp; ";
 		}
 		
 		$cannon_count = CountUserUnitType($gUser->id,kUnitType_Kanone);
 		if ($cannon_count < 1) {
-			$tip[] = "Du solltest noch einen ".GetBuildingTypeLink(kBuilding_Verteidigungsturm,$x,$y).
-				" bauen, und darin eine ".GetUnitTypeLink(kUnitType_Kanone,$x,$y).
-				" aufstellen, um dich gegen ".GetUnitTypeLink(kUnitType_Ameise,$x,$y)." zu schützen<br>";
+			$tip[] = "You should build a  ".GetBuildingTypeLink(kBuilding_Verteidigungsturm,$x,$y).
+				", which can be garrisoned with ".GetUnitTypeLink(kUnitType_Kanone,$x,$y).
+				" to defend against ".GetUnitTypeLink(kUnitType_Ameise,$x,$y)."<br>";
 		}
 		
 		if (count($tip) == 0) return;
@@ -622,7 +622,7 @@ class cInfoHQ extends cInfoBuilding {
 		$stone = $all * 100;
 		?>
 		<?=$broken?> damaged buildings need <?=round($wood,2)?> lumber and <?=round($stone,2)?> stone for repair /h.<br>
-		Dabei werden bei allen beschädigten Gebäuden jeweils <?=round($plus,2)?> HP /h wiederhergestellt.<br>
+		Damaged buildings will regain <?=round($plus,2)?> HP per hour.<br>
 		<?php } // endif?>
 		
 		<?php
