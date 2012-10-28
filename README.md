@@ -1,6 +1,6 @@
 Zwischenwelt
 ============
-Zwischenwelt is a German-language "browser game" that was open-sourced under the GPL2 in 2005. Graphics and all other non-code files were released under [CC Attribution-NonCommercial-ShareAlike 2.0](https://creativecommons.org/licenses/by-nc-sa/2.0/). For more details see COPYING. This Github repo is a partial clone of the original SVN repository located at [http://zwischenwelt.org/svn/zw/](http://zwischenwelt.org/svn/zw/).
+Zwischenwelt is a German-language "browser game" that was open-sourced under the GPL2 in 2005. Graphics and all other non-code files were released under [CC Attribution-NonCommercial-ShareAlike 2.0](https://creativecommons.org/licenses/by-nc-sa/2.0/). For more details see COPYING. This Github repo originated as a partial clone of the original SVN repository located at [http://zwischenwelt.org/svn/zw/](http://zwischenwelt.org/svn/zw/).
 
 The website for the game is still available at [http://zwischenwelt.org](http://zwischenwelt.org).
 
