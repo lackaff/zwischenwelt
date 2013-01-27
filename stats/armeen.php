@@ -25,11 +25,11 @@ ImgBorderStart();
 
 <table border="0">
 	<tr>
-		<th colspan="3">Armeen</th>
+		<th colspan="3">Armies</th>
 	</tr>
 	<tr>
 		<th>Name</th>
-		<th>Besitzer</th>
+		<th>Owner</th>
 		<th>Frags</th>
 	</tr>
 	<?php

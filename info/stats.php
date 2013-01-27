@@ -29,14 +29,14 @@ ImgBorderStart();
 ?>
 
 <table>
-	<tr><td align="left">angemeldete Spieler</td><td><?=sqlgetone("SELECT COUNT(`id`) FROM `user`");?></td></tr>
-	<tr><td align="left">letztes Login &lt; 10min</td><td><?=sqlgetone("SELECT COUNT(`id`) FROM `user` WHERE `lastlogin`>".($t-60*10));?></td></tr>
-	<tr><td align="left">letztes Login &lt; 2h</td><td><?=sqlgetone("SELECT COUNT(`id`) FROM `user` WHERE `lastlogin`>".($t-60*60*2));?></td></tr>
-	<tr><td align="left">letztes Login &lt; 24h</td><td><?=sqlgetone("SELECT COUNT(`id`) FROM `user` WHERE `lastlogin`>".($t-60*60*24));?></td></tr>
-	<tr><td align="left">Armeen</td><td><?=sqlgetone("SELECT COUNT(`id`) FROM `army`");?></td></tr>
-	<tr><td align="left">Gebäude</td><td><?=$maxb=sqlgetone("SELECT COUNT(`id`) FROM `building`");?></td></tr>
-	<tr><td align="left">Gilden</td><td><?=$maxb=sqlgetone("SELECT COUNT(`id`) FROM `guild`");?></td></tr>
-	<tr><td align="left">maximale Population</td><td><?=sqlgetone("SELECT MAX(`pop`) FROM `user`");?></td></tr>
+	<tr><td align="left">Registered Players</td><td><?=sqlgetone("SELECT COUNT(`id`) FROM `user`");?></td></tr>
+	<tr><td align="left">Last Login &lt; 10min</td><td><?=sqlgetone("SELECT COUNT(`id`) FROM `user` WHERE `lastlogin`>".($t-60*10));?></td></tr>
+	<tr><td align="left">Last Login &lt; 2h</td><td><?=sqlgetone("SELECT COUNT(`id`) FROM `user` WHERE `lastlogin`>".($t-60*60*2));?></td></tr>
+	<tr><td align="left">Last Login &lt; 24h</td><td><?=sqlgetone("SELECT COUNT(`id`) FROM `user` WHERE `lastlogin`>".($t-60*60*24));?></td></tr>
+	<tr><td align="left">Armies</td><td><?=sqlgetone("SELECT COUNT(`id`) FROM `army`");?></td></tr>
+	<tr><td align="left">Buildings</td><td><?=$maxb=sqlgetone("SELECT COUNT(`id`) FROM `building`");?></td></tr>
+	<tr><td align="left">Guilds</td><td><?=$maxb=sqlgetone("SELECT COUNT(`id`) FROM `guild`");?></td></tr>
+	<tr><td align="left">Population</td><td><?=sqlgetone("SELECT MAX(`pop`) FROM `user`");?></td></tr>
 	<tr><td align="left">genutze Fläche</td><td>
 	<?php 
 	$dx = sqlgetone("SELECT MAX(`x`)-MIN(`x`) FROM `building`");

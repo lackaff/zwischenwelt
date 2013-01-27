@@ -26,8 +26,8 @@ ImgBorderStart();
 ?>
 
 	<table border="0">
-	<tr><th colspan="3">Spieler</th></tr>
-	<tr><th></th><th>Name</th><th>HQ</th><th>Gilde</th><th>Bevölkerung</th></tr>
+	<tr><th colspan="3">Player</th></tr>
+	<tr><th></th><th>Name</th><th>HQ</th><th>Guild</th><th>Population</th></tr>
 	<?php
 		$i=1;
 		$time = time();
@@ -73,20 +73,20 @@ ImgBorderStart();
 ImgBorderEnd();
 include("../stats/footer.php");
 ?>
-<h3>Legende</h3>
+<h3>Legend</h3>
 <table style="text-align: left;" border="0" cellpadding="2" cellspacing="2">
-	<tr><td style="color: #338833;">gr&uuml;n</td>
-	<td>Spieler ist gerade online</td></tr>
-	<tr><td style="color: #3333AA;">blau</td>
-	<td>Spieler ist aktiv, aber nicht online</td></tr>
-	<tr><td style="color: #ff0000;">rot</td>
-	<td>Spieler war seit einer Woche nicht online</td></tr>
-	<tr><td style="color: #999999;">grau</td>
-	<td>Spieler wird bald gel&ouml;scht</td></tr>
+	<tr><td style="color: #338833;">green</td>
+	<td>Player is currently online</td></tr>
+	<tr><td style="color: #3333AA;">blue</td>
+	<td>Player is active, but not online</td></tr>
+	<tr><td style="color: #ff0000;">red</td>
+	<td>Player has not been active in last week</td></tr>
+	<tr><td style="color: #999999;">grey</td>
+	<td>Player will soon be deleted</td></tr>
 </table>
 <br>
 
-<h3>Titel</h3>
+<h3>Titles</h3>
 <table border=0 cellpadding=2 cellspacing=2>
 <?php foreach($gTitle as $t){ ?>
 	<tr><td><img src='../gfx/<?=$t->image?>' title='<?=$t->title?>' alt='<?=$t->title?>'></td>

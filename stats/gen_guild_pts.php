@@ -47,7 +47,7 @@ switch($f_what){
 
 
 echo "<table>";
-echo "<tr><th>Rang</th><th>Name</th><th>Punkte</th><th>&nbsp;</th><th>Spieler</th><th>&nbsp;</th><th>Durchschnitt</th></tr>";
+echo "<tr><th>Rank</th><th>Name</th><th>Points</th><th>&nbsp;</th><th>Players</th><th>&nbsp;</th><th>Average</th></tr>";
 $n=1;
 
 foreach($pts as $p){

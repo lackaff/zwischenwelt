@@ -97,19 +97,19 @@ if($gUser->guild == 0)
 {//neeee ------------------------------------------------------------
 ?>
 	<form method="post" action="<?=Query("guild.php?sid=?")?>">
-	<h4>Gilde gr&uuml;nden</h4>
-	Um eine Gilde zu gründen benötigst du folgende Rohstoffe: 2000,2000,2000,2000<br>
-	Gewünschter Name: <input type="text" name="guildname"><br>
-	Farbe: <input type="text" name="color"><br>
+	<h4>Found New Guild</h4>
+	<p>Founding a new guild requires these resources: 2000,2000,2000,2000</p>
+	Desired Name: <input type="text" name="guildname"><br>
+	Color: <input type="text" name="color"><br>
 	<input type="submit" name="create" value="gr&uuml;nden">
 	</form>
 
 	<form method="post" action="<?=Query("guild.php?sid=?")?>">
-	<h4>Gilde beitreten</h4>
-	Um eine Gilde zu beizutreten mu&szlig;t du dich bei einer bewerben:<br>
-	Name der Gilde: <select name="guildname"><?=PrintObjOptions(sqlgettable("SELECT `name` FROM `guild` ORDER BY `name`"),"name","name")?></select><br>
+	<h4>Join Guild</h4>
+	<p>You must apply to join an existing guild.</p>
+	Guild Name: <select name="guildname"><?=PrintObjOptions(sqlgettable("SELECT `name` FROM `guild` ORDER BY `name`"),"name","name")?></select><br>
 	Kommentar:<br>
-	<textarea name="comment" rows="4" cols="40">hier einen Bewerbungstext</textarea><br>
+	<textarea name="comment" rows="4" cols="40">write your comment here</textarea><br>
 	<input type="submit" name="join" value="abschicken">
 	</form>
 <?php
@@ -152,10 +152,10 @@ else
 		</tr>
 		<tr>
 		<td align="right" colspan="<?=(count($gRes)*2+2)?>">
-			<input type="submit" name="get" value="rausholen">
-			<input type="submit" name="getall" value="alles rausholen">
-			<input type="submit" name="put" value="reintun">
-			<input type="submit" name="putall" value="alles reintun">
+			<input type="submit" name="get" value="Withdraw">
+			<input type="submit" name="getall" value="Withdraw All">
+			<input type="submit" name="put" value="Deposit">
+			<input type="submit" name="putall" value="Deposit All">
 		</td>
 		</tr>
 	</table>
