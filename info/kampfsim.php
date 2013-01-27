@@ -59,7 +59,9 @@ $armyname = array(1=>"eigene",2=>"Feind");
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-<link rel="stylesheet" type="text/css" href="<?=GetZWStylePath()?>">
+<link href="http://fonts.googleapis.com/css?family=Bree+Serif" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet" type="text/css">
+<link rel="stylesheet" type="text/css" href="<?=BASEURL?>css/zwstyle_new_temp.css">
 <title>Zwischenwelt - Kampfsim</title>
 </head>
 <body>

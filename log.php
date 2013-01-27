@@ -9,7 +9,9 @@ Lock();
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 <meta http-equiv="refresh" content="300; URL=<?=sessionLink("log.php")?>">
-<link rel="stylesheet" type="text/css" href="<?=GetZWStylePath()?>">
+<link href="http://fonts.googleapis.com/css?family=Bree+Serif" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet" type="text/css">
+<link rel="stylesheet" type="text/css" href="<?=BASEURL?>css/zwstyle_new_temp.css">
 <title>Zwischenwelt - log</title>
 </head>
 <body leftMargin="0" topMargin="0" marginwidth="0" marginheight="0">
